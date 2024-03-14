@@ -1,4 +1,4 @@
-import InnerFrame from "../components/InnerFrame";
+import InnerFrame from "../components/ListClientsComponents";
 
 const ListaDeServicioOClientes = () => {
   return (

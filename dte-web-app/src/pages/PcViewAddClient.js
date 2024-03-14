@@ -1,5 +1,5 @@
-import GroupComponent1 from "../components/GroupComponent1";
-import DepartamentoText from "../components/DepartamentoText";
+import GroupComponent1 from "../components/PCComponentGroup";
+import DepartamentoText from "../components/PCComponentText";
 
 const PcViewAddClient = () => {
   return (

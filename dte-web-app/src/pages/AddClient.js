@@ -1,4 +1,4 @@
-import FrameComponent2 from "../components/FrameComponent2";
+import FrameComponent2 from "../components/ButtonsComponent";
 
 const CardOfClientAndAddClient = () => {
   return (

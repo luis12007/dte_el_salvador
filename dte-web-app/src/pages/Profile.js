@@ -1,4 +1,4 @@
-import FrameComponent2 from "./FrameComponent2";
+import FrameComponent2 from "../components/ButtonsProfileComponent";
 
 const Perfil = () => {
   return (

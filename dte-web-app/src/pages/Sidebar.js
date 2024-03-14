@@ -1,4 +1,4 @@
-import GroupComponent from "../components/GroupComponent";
+import GroupComponent from "../components/SideBarComponent";
 
 const Sidebar = () => {
   return (

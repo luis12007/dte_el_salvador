@@ -1,4 +1,4 @@
-import FrameGroup from "../components/FrameGroup";
+import FrameGroup from "../components/DetallesFacturaComponent";
 
 const Home1 = () => {
   return (

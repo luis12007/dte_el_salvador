@@ -1,5 +1,5 @@
-import TreeNode from "./TreeNode";
-import TableOfContents from "./TableOfContents";
+import TreeNode from "../components/TreeNode";
+import TableOfContents from "../components/TableOfContents";
 
 const CrearCreditoFiscal = () => {
   return (
