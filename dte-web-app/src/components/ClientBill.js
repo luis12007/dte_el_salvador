@@ -1,4 +1,4 @@
-import FrameComponent3 from "./FrameComponent3";
+import FrameComponent3 from "./SwitchCF";
 
 const DocumentTypeFrame = () => {
   return (

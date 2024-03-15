@@ -1,7 +1,12 @@
+import Homeimg from '../assets/imgs/homeimg.webp'
 const Home = () => {
+
+  
+
+
   return (
     <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-3.5 pb-1.5 pr-[62px] pl-[18px] box-border gap-[47px_0px] tracking-[normal]">
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-[420px] pr-[31px] pl-0">
+      <section className="self-stretch  flex flex-row items-start justify-start pt-0 pb-[420px] pr-[31px] pl-0">
         <header className="flex-1 flex flex-col items-start justify-start gap-[10px_0px] text-left text-xs text-black font-inter">
           <img
             className="w-[30px] h-[30px] relative object-contain"
@@ -9,23 +14,25 @@ const Home = () => {
             alt=""
             src="/image-10-4@2x.png"
           />
-          <div className="self-stretch flex flex-row items-start justify-end">
+          <div className="self-stretch  flex flex-row items-start  justify-end">
             <div className="h-[54px] w-[294px] relative">
               <img
-                className="absolute top-[0px] left-[-25px] rounded-mini w-[274px] h-8"
+                className="absolute rounded-mini  h-8"
                 loading="lazy"
                 alt=""
                 src="/rectangle-4.svg"
               />
-              <div className="absolute top-[10px] left-[-8px] font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] whitespace-nowrap z-[1]">{`BIENVENIDO! `}</div>
+              
+              <div className="absolute top-[5px]  ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! `}</div>
             </div>
           </div>
-        </header>
-      </section>
-      <div className="w-[303px] flex flex-row items-start justify-start py-0 px-[15px] box-border">
+        </header> 
+        <img className='bg-green-200' src='/rectangle-4.svg' alt='Homeimg'/>
+      </section >
+      <div className="w-[303px]  flex flex-row items-start justify-start py-0 px-[15px] box-border">
         <button className="cursor-pointer [border:none] p-0 bg-[transparent] flex-1 flex flex-row items-start justify-start gap-[0px_15px] mq328:flex-wrap">
           <img
-            className="h-[63px] w-[65px] relative object-cover z-[1]"
+            className="h-[63px] w-[65px]  relative object-cover z-[1]"
             alt=""
             src="/factura-2@2x.png"
           />
