@@ -26,6 +26,8 @@ export default function App() {
         <Route path="/facturas" element={<HomeFacturas/>}/> 
         <Route path="/detalles/:id" element={<DetallesFactura/>}/>
 
+
+        {/* TODO  */}
         <Route path="/clientes" element={<ListClients/>}/>
         <Route path="/items" element={<ListItems/>}/>
         <Route path="/agregar/cliente" element={<AddClient/>}/>
@@ -36,7 +38,7 @@ export default function App() {
 
         <Route path="/perfil" element={<Profile/>}/>
 
-        
+        {/* Working at */}
         <Route path="/crear/factura" element={<ClientesFacturaToFiscalProcess/>}/> {/* Create FActura */}
         <Route path="/crear/creditofiscal" element={<CreateCF/>}/>
         <Route path="/sidebar" element={<Sidebar/>}/>

@@ -7,17 +7,12 @@ const CrearCreditoFiscal = () => {
       <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">
         <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
         <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white">
-          <div className="h-[35px] w-[359px] relative rounded-mini bg-gainsboro-300 box-border hidden max-w-full border-[1px] border-solid border-white" />
-          <div className="flex flex-col items-start justify-start pt-0.5 px-0 pb-0">
-            <div className="relative text-xs font-inria-sans text-gray-300 text-left whitespace-nowrap z-[2]">
-              Comprobante Credito Fiscal
-            </div>
-          </div>
-          <img
-            className="h-4 w-[18px] relative object-contain min-h-[16px] z-[2]"
-            alt=""
-            src="/atras-1@2x.png"
-          />
+          
+          <select className="h-[35px] w-[359px] relative   bg-gainsboro-300  max-w-full">
+          <option value="CF">Comprobante Credito Fiscal</option>
+          <option value="Factura">Factura</option>
+  </select>
+  {/* Your other elements */}
         </div>
       </header>
       <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full">
@@ -41,22 +36,29 @@ const CrearCreditoFiscal = () => {
               <span className="text-black">{`Modelo de Facturacion `}</span>
               <span className="text-tomato">*</span>
             </div>
-            <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
+
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-            <input
-              className="w-[38px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-left inline-block p-0 z-[1]"
-              placeholder="Fecha *"
-              type="text"
-            />
-            <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-end pt-1 px-[7px] pb-[5px] max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
-              <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-              <img
-                className="h-3.5 w-3.5 relative object-cover z-[3]"
-                alt=""
-                src="/calendario-1@2x.png"
+            <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
+            <div className="flex flex-row items-start justify-start py-0 px-[3px]">
+                Dirección
+              </div>
+            </div>
+            <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
+              <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+              <input
+                className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="date"
               />
             </div>
           </div>
@@ -81,54 +83,76 @@ const CrearCreditoFiscal = () => {
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
-                <span className="text-black">{`DUI `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              <span className="text-black">{`DUI `}</span>
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
             </div>
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
                 <span className="text-black">NRC</span>
-                <span className="text-red-200">{` `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
             </div>
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
                 <span className="text-black">Nombre</span>
-                <span className="text-red-200">{` `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
             </div>
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
                 <span className="text-black">Nombre Comercial</span>
-                <span className="text-red-200">{` `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
             </div>
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
                 <span className="text-black">{`Actividad economica `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] rounded-6xs box-border flex flex-row items-start justify-start relative max-w-full z-[2] border-[0.3px] border-solid border-gray-100">
-                <img
-                  className="h-4 w-[18px] absolute !m-[0] top-[3px] right-[7px] object-contain z-[1]"
-                  alt=""
-                  src="/atras-1@2x.png"
-                />
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+      
                 <div className="self-stretch w-[359px] relative rounded-6xs box-border hidden max-w-full z-[1] border-[0.3px] border-solid border-gray-100" />
               </div>
             </div>
@@ -137,40 +161,60 @@ const CrearCreditoFiscal = () => {
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
                 <span className="text-black">Correo electronico</span>
-                <span className="text-red-200">{` `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
             </div>
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
                 <span className="text-black">Dirección</span>
-                <span className="text-red-200">{` `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
             </div>
           </div>
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1]">
                 <span className="text-black">Departamento</span>
-                <span className="text-red-200">{` `}</span>
-                <span className="text-tomato">*</span>
-              </div>
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
+            </div>
             </div>
           </div>
           <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-              <input
-                className="w-[59px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-left inline-block p-0 z-[1]"
-                placeholder="Municipio *"
+            <div className="relative text-xs font-inria-sans text-left z-[1]">
+            <span className="text-black">{`Municipio `}</span>
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
                 type="text"
               />
-              <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" />
+              </div>
             </div>
           </div>
         </div>

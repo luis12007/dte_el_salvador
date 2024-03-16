@@ -1,4 +1,25 @@
 const FrameComponent1 = () => {
+  const ViewBillHandler = () => {
+    console.log('ViewBillHandler');
+  }
+
+  const EditBillHandler = () => {
+    console.log('EditBillHandler');
+  }
+
+  const DownloadBillHandler = () => {
+    console.log('DownloadBillHandler');
+  }
+
+  const ValidateBillHandler = () => {
+    console.log('ValidateBillHandler');
+  }
+
+  const SendBillHandler = () => {
+    console.log('SendBillHandler');
+  }
+
+
   return (
     <div className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-2 box-border top-[0] z-[99] sticky max-w-full text-left text-3xs text-black font-inria-sans">
       <div className="self-stretch h-[138px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
@@ -14,20 +35,24 @@ const FrameComponent1 = () => {
             <img
               className="w-[33px] h-[33px] relative object-cover z-[3]"
               loading="lazy"
+              onClick={ViewBillHandler}
               alt=""
               src="/ver@2x.png"
             />
           </div>
-          <div className="flex flex-col items-start justify-start pt-1 px-0 pb-0">
+          <div className="flex flex-col  items-start justify-start pt-1 px-0 pb-0">
             <img
-              className="w-[26px] h-[26px] relative object-cover z-[3]"
+              className="w-[26px]  h-[26px] relative object-cover z-[3]"
               loading="lazy"
+            onClick={EditBillHandler}
+
               alt=""
               src="/editar@2x.png"
             />
           </div>
           <img
-            className="h-[33px] w-[30px] relative object-cover z-[3]"
+            className="h-[33px]  w-[30px] relative object-cover z-[3]"
+            onClick={DownloadBillHandler}
             loading="lazy"
             alt=""
             src="/descargar@2x.png"
@@ -66,7 +91,7 @@ const FrameComponent1 = () => {
               <div className="flex flex-row items-start justify-start gap-[0px_11px]">
                 <div className="flex flex-row items-start justify-start relative">
                   <div className="h-full w-full absolute !m-[0] right-[-3px] bottom-[-4px] rounded-11xl bg-lightgray-200 z-[1]" />
-                  <button className="cursor-pointer [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] bg-whitesmoke rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100">
+                  <button onClick={ValidateBillHandler} className="cursor-pointer [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] bg-whitesmoke rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100">
                     <div className="h-[38px] w-[82px] relative rounded-11xl bg-whitesmoke hidden" />
                     <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
                       validar
@@ -75,7 +100,7 @@ const FrameComponent1 = () => {
                 </div>
                 <div className="flex flex-row items-start justify-start relative">
                   <div className="h-full w-full absolute !m-[0] right-[-3px] bottom-[-4px] rounded-11xl bg-lightgray-200 z-[1]" />
-                  <button className="cursor-pointer [border:none] pt-[11px] pb-[13px] pr-[22px] pl-7 bg-whitesmoke rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100">
+                  <button onClick={SendBillHandler} className="cursor-pointer [border:none] pt-[11px] pb-[13px] pr-[22px] pl-7 bg-whitesmoke rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100">
                     <div className="h-[38px] w-[82px] relative rounded-11xl bg-whitesmoke hidden" />
                     <div className="relative text-xs font-light font-inria-sans text-black text-left z-[3]">
                       enviar

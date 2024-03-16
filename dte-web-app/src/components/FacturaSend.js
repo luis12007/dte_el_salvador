@@ -1,4 +1,19 @@
 const FrameComponent = () => {
+
+  const ViewBillHandler = () => {
+    console.log('ViewBillHandler');
+  }
+
+
+
+  const DownloadBillHandler = () => {
+    console.log('DownloadBillHandler');
+  }
+
+
+
+
+
   return (
     <div className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-2 box-border relative gap-[1px_0px] max-w-full text-left text-xl text-black font-inria-sans">
       <div className="self-stretch h-[138px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden z-[0]" />
@@ -13,14 +28,16 @@ const FrameComponent = () => {
         <div className="flex flex-row items-start justify-start gap-[0px_8px]">
           <div className="flex flex-col items-start justify-start pt-[3px] px-0 pb-0">
             <img
-              className="w-[33px] h-[33px] relative object-cover z-[2]"
+              className="w-[33px]  h-[33px] relative object-cover z-[2]"
               alt=""
+              onClick={ViewBillHandler}
               src="/ver@2x.png"
             />
           </div>
           <img
             className="h-[33px] w-[30px] relative object-cover z-[2]"
             alt=""
+            onClick={DownloadBillHandler}
             src="/descargar@2x.png"
           />
         </div>

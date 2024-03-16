@@ -29,7 +29,7 @@ const Perfil = () => {
               <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
                 <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
                 <input
-                  className="w-[178px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                  className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                   placeholder="datos personales datos personales"
                   type="text"
                 />
@@ -44,9 +44,13 @@ const Perfil = () => {
                 </div>
               </div>
               <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
-                <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-                <div className="relative text-xs font-inria-sans text-darkslategray text-left z-[2]">
-                  datos personales datos personales
+                <div className="h-[23px] w-full  relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+                <div className="relative text-xs font-inria-sans  text-darkslategray w-full text-left z-[2]">
+                <input
+                  className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                  placeholder="datos personales datos personales"
+                  type="text"
+                />
                 </div>
               </div>
             </div>
@@ -62,7 +66,7 @@ const Perfil = () => {
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
-                className="w-[178px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
               />
@@ -78,8 +82,12 @@ const Perfil = () => {
             </div>
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-              <div className="relative text-xs font-inria-sans text-darkslategray text-left z-[2]">
-                datos personales datos personales
+              <div className="relative text-xs font-inria-sans text-darkslategray w-full text-left z-[2]">
+              <input
+                  className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                  placeholder="datos personales datos personales"
+                  type="text"
+                />
               </div>
             </div>
           </div>
@@ -94,7 +102,7 @@ const Perfil = () => {
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
-                className="w-[178px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
               />
@@ -111,7 +119,7 @@ const Perfil = () => {
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
-                className="w-[178px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
               />
@@ -128,7 +136,7 @@ const Perfil = () => {
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
-                className="w-[178px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
               />
@@ -144,8 +152,12 @@ const Perfil = () => {
             </div>
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-              <div className="relative text-xs font-inria-sans text-darkslategray text-left z-[2]">
-                datos personales datos personales
+              <div className="relative text-xs font-inria-sans w-full text-darkslategray text-left z-[2]">
+              <input
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="text"
+              />
               </div>
             </div>
           </div>
@@ -158,9 +170,9 @@ const Perfil = () => {
               </div>
             </div>
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
-              <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+              <div className="h-[23px] w-full relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
-                className="w-[178px] [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
               />
