@@ -27,12 +27,6 @@ const FrameComponent3 = () => {
           </div>
         </div>
       </div>
-      <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
-        <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-          <div className="relative z-[3]">Documento de identificación</div>
-          <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[3] border-[0.3px] border-solid border-gray-100" />
-        </div>
-      </div>
     </div>
   );
 };

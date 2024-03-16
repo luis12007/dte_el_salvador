@@ -21,9 +21,9 @@ const FrameComponent1 = () => {
 
 
   return (
-    <div className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-2 box-border top-[0] z-[99] sticky max-w-full text-left text-3xs text-black font-inria-sans">
+    <div className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-2 box-border top-[0]  sticky max-w-full text-left text-3xs text-black font-inria-sans">
       <div className="self-stretch h-[138px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-      <header className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-0.5 pb-0 pr-[52px] pl-[15px] box-border max-w-full gap-[20px] z-[2] text-left text-xl text-black font-inria-sans mq450:pr-5 mq450:box-border">
+      <header className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-0.5 pb-0 pr-[52px] pl-[15px] box-border max-w-full gap-[20px]  text-left text-xl text-black font-inria-sans mq450:pr-5 mq450:box-border">
         <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
         <div className="flex flex-col items-start justify-start pt-1 px-0 pb-0">
           <h1 className="m-0 relative text-inherit font-bold font-inherit z-[3]">

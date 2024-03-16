@@ -1,6 +1,6 @@
-const SistemaDTE = () => {
+const SistemaDTE = (props) => {
   const LoginHandler = () => {
-    console.log("Ingresar");
+    props.goin();
   }
 
   const ForgetPassHandler = () => {
@@ -49,7 +49,7 @@ const SistemaDTE = () => {
         </div>
         <div className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-6">
           <button className="cursor-pointer [border:none] pt-3 pb-[13px] pr-10 pl-[31px] bg-steelblue-300 rounded-3xs
-           shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start z-[2]
+          shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start z-[2]
             hover:bg-slategray" onClick={LoginHandler}>
             <div className="h-[47px] w-[138px] relative rounded-3xs bg-steelblue-300 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
             <b className="relative text-lg font-inria-sans text-white text-left z-[1]">
