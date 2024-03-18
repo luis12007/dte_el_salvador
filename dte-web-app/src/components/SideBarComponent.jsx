@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-const GroupComponent = ({visible}) => {
+const GroupComponent = ({visible, setVisible}) => {
   const navigate = useNavigate();
   if (visible === true) {
     var sidebar = "visible invisible ";
@@ -54,6 +54,7 @@ const CloseHandler = () => {
           loading="lazy"
           alt=""
           src="/x-1@2x.png"
+          onClick={() => setVisible(!visible)}
         />
         <div className="self-stretch flex flex-row items-start justify-start">
           <nav className="m-0 flex-1 flex flex-col  items-start justify-start gap-[11px_0px] text-left text-xs text-black font-inter">

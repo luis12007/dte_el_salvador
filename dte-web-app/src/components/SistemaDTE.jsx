@@ -37,7 +37,7 @@ const SistemaDTE = (props) => {
             src="/bloquear@2x.png"
           />
           <input
-            className="w-full pb-2 [border:none] [outline:none] bg-[transparent] h-5 flex flex-col items-start justify-start pt-[5px] px-0 pb-0 box-border font-inter  text-gray-200"
+            className="w-full pb-2 [border:none] [outline:none] bg-[transparent] h-5 flex flex-col items-start justify-start pt-[5px] px-0 box-border font-inter  text-gray-200"
             placeholder="**************"
             type="password"
           />

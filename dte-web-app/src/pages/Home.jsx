@@ -1,15 +1,23 @@
 import Homeimg from '../assets/imgs/homeimg.webp'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import hamburgerimg from '../assets/imgs/hamburguerimg.png'
+import SidebarComponent from '../components/SideBarComponent';
+import HamburguerComponent from '../components/HamburguerComponent';
+
 const Home = () => {
   const [visible, setVisible] = useState(true);
-
+  const navigate = useNavigate();
 
   const SupportHandler = () => {
     console.log('SupportHandler')
+    /* TODO add wha direction */
   }
 
   const CreateBillHandler = () => {
-    console.log('CreateBillHandler')
+
+  navigate("/crear/factura");
+
   }
 
     const sidebar = () => {
@@ -18,15 +26,13 @@ const Home = () => {
 
   return (
     <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-3.5 pb-1.5 pr-[62px] pl-[18px] box-border gap-[47px_0px] tracking-[normal]">
-      <section className="self-stretch  flex flex-row items-start justify-start pt-0 pb-[420px] pr-[31px] pl-0">
-        <header className="flex-1 flex flex-col items-start justify-start gap-[10px_0px] text-left text-xs text-black font-inter">
-          <img
-            className="w-[30px] h-[30px] relative object-contain"
-            loading="lazy"
-            alt=""
-            src="/image-10-4@2x.png"
-          />
-          <div className="self-stretch  flex flex-row items-start  justify-end">
+      <HamburguerComponent sidebar={sidebar} visible={visible}/>
+
+      <section className="self-stretch  flex flex-row items-start pt-8 bg-slate-700 justify-start  pb-[420px] pr-[31px] pl-0">
+
+      <SidebarComponent visible={visible} setVisible={setVisible}/>
+        <header className="flex-1 flex flex-col items-start   justify-start gap-[10px_0px] text-left text-xs text-black font-inter">
+          <div className="self-stretch pt-6 left-4  flex flex-row items-start  justify-end">
             <div className="h-[54px] w-[294px] relative">
               <img
                 className="absolute rounded-mini  h-8"
@@ -35,7 +41,7 @@ const Home = () => {
                 src="/rectangle-4.svg"
               />
               
-              <div className="absolute top-[5px]  ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! `}</div>
+              <div className="absolute top-[5px]   ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! `}</div>
         <img className='h-96 top-20 absolute' src={Homeimg} alt='Homeimg'/>
 
             </div>

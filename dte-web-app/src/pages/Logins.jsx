@@ -1,6 +1,14 @@
 import SistemaDTE from "../components/SistemaDTE";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+
+  const navigate = useNavigate();
+
+  const HomeHandler = () => {
+    navigate("/principal");
+  }
+
   return (
     <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[15px] px-0 pb-0 box-border gap-[55px_0px] tracking-[normal]">
       <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
@@ -12,7 +20,7 @@ const Login = () => {
         />
       </div>
       <main className="self-stretch h-[753px] relative max-w-full">
-        <SistemaDTE />
+        <SistemaDTE goin={HomeHandler}/>
         <section className="absolute top-[170px] left-[0px] w-[430px] h-[583px]">
           <img
             className="absolute top-[0px] left-[-185px] w-[811px] h-[827px] object-cover"
