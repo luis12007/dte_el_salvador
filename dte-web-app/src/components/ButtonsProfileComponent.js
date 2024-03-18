@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 const FrameComponent2 = ({
   actionFrameAlignSelf,
@@ -7,6 +8,10 @@ const FrameComponent2 = ({
   updateControlsBackgroundColor,
   rectangleDivBackgroundColor,
 }) => {
+  const navigate = useNavigate();
+
+
+
   const actionFrameStyle = useMemo(() => {
     return {
       alignSelf: actionFrameAlignSelf,
@@ -32,7 +37,7 @@ const FrameComponent2 = ({
   }
 
   const GoBackHandler = () => {
-    console.log("GoBackHandler");
+    navigate("/Principal");
   }
 
 

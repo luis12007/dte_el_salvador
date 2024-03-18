@@ -76,7 +76,7 @@ const FrameComponent1 = () => {
                 Correo: luishdezmtz12@gmail.com
               </div>
               <div className="relative whitespace-nowrap z-[1]">
-                Telefono: 63232teamo3199
+                Telefono: 632323199
               </div>
             </div>
           </div>

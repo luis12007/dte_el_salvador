@@ -10,8 +10,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const SupportHandler = () => {
-    console.log('SupportHandler')
-    /* TODO add wha direction */
+    window.open("https://wa.link/h382bz", "_blank");
   }
 
   const CreateBillHandler = () => {
@@ -28,7 +27,7 @@ const Home = () => {
     <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-3.5 pb-1.5 pr-[62px] pl-[18px] box-border gap-[47px_0px] tracking-[normal]">
       <HamburguerComponent sidebar={sidebar} visible={visible}/>
 
-      <section className="self-stretch  flex flex-row items-start pt-8 bg-slate-700 justify-start  pb-[420px] pr-[31px] pl-0">
+      <section className="self-stretch  flex flex-row items-start pt-8  justify-start  pb-[420px] pr-[31px] pl-0">
 
       <SidebarComponent visible={visible} setVisible={setVisible}/>
         <header className="flex-1 flex flex-col items-start   justify-start gap-[10px_0px] text-left text-xs text-black font-inter">
@@ -41,7 +40,7 @@ const Home = () => {
                 src="/rectangle-4.svg"
               />
               
-              <div className="absolute top-[5px]   ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! `}</div>
+              <div className="absolute top-[5px]   ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! NombreUsuario`}</div>
         <img className='h-96 top-20 absolute' src={Homeimg} alt='Homeimg'/>
 
             </div>
@@ -96,7 +95,7 @@ const Home = () => {
           </h2>
           <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
             <img
-              className="h-[65px] w-[98px] relative object-cover"
+              className="h-[55px] relative object-cover"
               loading="lazy"
               alt=""
               src="/-cee3707255594486baada125edfbc74cremovebgpreview-2@2x.png"

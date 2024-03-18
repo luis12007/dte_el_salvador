@@ -1,9 +1,11 @@
 import DocumentTypeFrame from "../components/ClientBill";
 import TreeNode from "../components/TreeNode";
 import TableOfContents from "../components/TableOfContents";
+import { useNavigate } from "react-router-dom";
 
 const Clientes = () => {
 
+const navigate = useNavigate();
   const DeleteItemHander = () => {
     console.log('DeleteItemHander');
 }
@@ -16,6 +18,13 @@ const switchTypeItemHandler = () => {
     console.log('switchTypeItemHandler');
 }
 
+const addBillHandler = () => {
+    console.log('AddBillHandler');
+}
+
+const goBackHandler = () => {
+    navigate("/Principal");
+}
 
 
   return (
@@ -487,13 +496,13 @@ const switchTypeItemHandler = () => {
         </section>
         <footer className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[27px]">
             <div className="flex flex-col items-start justify-start gap-[13px_0px]">
-                <button className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100">
+                <button onClick={addBillHandler} className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100">
                     <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
                     <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
                         Añadir Factura
                     </b>
                 </button>
-                <button className="cursor-pointer [border:none] pt-3 pb-[13px] pr-11 pl-[49px] bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-indianred-100">
+                <button onClick={goBackHandler} className="cursor-pointer [border:none] pt-3 pb-[13px] pr-11 pl-[49px] bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-indianred-100">
                     <div className="h-12 w-[158px] relative rounded-3xs bg-indianred-500 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
                     <b className="relative text-mini font-inria-sans text-white text-left z-[1]">
                         Regresar

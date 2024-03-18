@@ -1,14 +1,24 @@
 import FrameComponent2 from "../components/ButtonsComponent";
-
+import { useNavigate } from "react-router-dom";
 const CardOfClientAndAddClient = () => {
+  const navigate = useNavigate();
+
+  const AddClientHandler = () => {
+    /* navigate("/agregar/cliente"); */
+    console.log('AddClientHandler')
+  }
+
+  const goBackHandler = () => {
+    navigate("/clientes");
+  }
   return (
-    <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[11px] px-5 pb-[215px] box-border gap-[23px_0px] tracking-[normal]">
-      <img
+    <div className="w-full relative pt-20 bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start  px-5 pb-[215px] box-border gap-[23px_0px] tracking-[normal]">
+      {/* <img
         className="w-[30px] h-[30px] relative object-cover"
         loading="lazy"
         alt=""
         src="/image-10-4@2x.png"
-      />
+      /> */}
       <main className="self-stretch flex flex-col items-start justify-start gap-[35px_0px] max-w-full mq390:gap-[17px_0px]">
         <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[19px] box-border gap-[5px] max-w-full text-left text-xs text-black font-inria-sans">
           <div className="self-stretch h-[510px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
@@ -109,7 +119,7 @@ const CardOfClientAndAddClient = () => {
             </div>
           </div>
         </section>
-        <FrameComponent2 />
+        <FrameComponent2 goBackHandler={goBackHandler}  AddClientHandler={AddClientHandler}/>
       </main>
     </div>
   );

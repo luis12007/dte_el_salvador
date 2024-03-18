@@ -1,6 +1,6 @@
 import UserLabel from "./UserLabel";
 import { useNavigate } from "react-router-dom";
-const InnerFrame = () => {
+const ListClientsComponents = () => {
   const navigate = useNavigate();
   const AddClientHandler = () => {
     navigate("/agregar/cliente");
@@ -49,4 +49,4 @@ const InnerFrame = () => {
   );
 };
 
-export default InnerFrame;
+export default ListClientsComponents;

@@ -4,7 +4,7 @@ const SistemaDTE = (props) => {
   }
 
   const ForgetPassHandler = () => {
-    console.log("Recuperar mi contraseña");
+    window.open("https://wa.link/h382bz", "_blank");
   }
 
   return (
@@ -43,7 +43,7 @@ const SistemaDTE = (props) => {
           />
         </div>
         <div className="flex flex-row items-start justify-start py-0 pr-[75px] pl-20" onClick={ForgetPassHandler}>
-          <div className="relative text-lg [text-decoration:underline] font-light font-inria-sans text-deepskyblue text-left z-[2]">
+          <div onClick={ForgetPassHandler} className="relative text-lg [text-decoration:underline] font-light font-inria-sans text-deepskyblue text-left z-[2]">
             Recuperar mi contraseña
           </div>
         </div>

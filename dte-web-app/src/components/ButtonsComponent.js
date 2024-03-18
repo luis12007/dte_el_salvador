@@ -6,6 +6,8 @@ const FrameComponent2 = ({
   actionFrameWidth,
   updateControlsBackgroundColor,
   rectangleDivBackgroundColor,
+  goBackHandler,
+  AddClientHandler,
 }) => {
   const actionFrameStyle = useMemo(() => {
     return {
@@ -33,13 +35,16 @@ const FrameComponent2 = ({
       style={actionFrameStyle}
     >
       <div className="flex flex-col items-start justify-start gap-[12px_0px]">
-        <button className="cursor-pointer [border:none] pt-3 px-[29px] pb-[13px] bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-seagreen-100">
+        <button
+        onClick={AddClientHandler}
+        className="cursor-pointer [border:none] pt-3 px-[29px] pb-[13px] bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-seagreen-100">
           <div className="h-[47px] w-[138px] relative rounded-3xs bg-seagreen-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
           <b className="relative text-lg font-inria-sans text-white text-left z-[1]">
             Actualizar
           </b>
         </button>
         <button
+          onClick={goBackHandler}
           className="cursor-pointer [border:none] pt-[9px] pb-4 pr-[34px] pl-[33px] bg-indianred-300 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-lightcoral"
           style={updateControlsStyle}
         >
