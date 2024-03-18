@@ -20,6 +20,7 @@ export default function App() {
     <Router>
       <Routes>
         {/* ADD SIDEBAR ALL AND ADJUST*/}
+        <Route path="/*" element={<Login/>}/>
         <Route path="/ingresar" element={<Login/>}/>
         <Route path="/principal" element={<Home/>}/>
 
