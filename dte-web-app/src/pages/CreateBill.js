@@ -12,6 +12,30 @@ const Clientes = () => {
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
 
+  /* All inputs for Bill */
+
+
+
+  /* Cliente array */
+  const [client, setClient] = useState(
+  );
+
+  const HandleupdateClient = (event) => {
+    event.preventDefault();
+    const newClient = {
+      name: event.target.name.value,
+      nit: event.target.nit.value,
+      address: event.target.address.value,
+      email: event.target.email.value,
+      phone: event.target.phone.value,
+      credit: event.target.credit.value,
+    };
+    
+    setClient(newClient);
+    console.log(client);
+  };
+
+
   /* Const Condiciones Operaciones array op op */
 
   const [contents, setContents] = useState([
@@ -48,6 +72,8 @@ const Clientes = () => {
   };
 
   const itemshandleAdd = (newContents) => {
+    console.log("itemshandleAdd");
+    console.log(newContents);
     setitems((prevContents) => [
       ...prevContents,
       { type: newContents.type, cuantity: newContents.cuantity, description: newContents.description, price: newContents.price },
@@ -64,7 +90,7 @@ const Clientes = () => {
   const itemsAdvancehandleAdd = (newContents) => {
     setitemsAdvance((prevContents) => [
       ...prevContents,
-      { type: newContents.type, cuantity: newContents.cuantity, code: newContents.code, unit: newContents.unit, description: newContents.description, typeV: newContents.typeV, price: newContents.price, taxes: newContents.taxes },
+      { type: newContents.type, quantity: newContents.quantity, code: newContents.code, units: newContents.units, description: newContents.description, saleType: newContents.saleType, price: newContents.price, taxes: newContents.taxes },
     ]);
   };
 
