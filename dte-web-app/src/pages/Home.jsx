@@ -8,6 +8,7 @@ import HamburguerComponent from '../components/HamburguerComponent';
 const Home = () => {
   const [visible, setVisible] = useState(true);
   const navigate = useNavigate();
+  const username = localStorage.getItem("username");
 
   const SupportHandler = () => {
     window.open("https://wa.link/h382bz", "_blank");
@@ -40,7 +41,7 @@ const Home = () => {
                 src="/rectangle-4.svg"
               />
               
-              <div className="absolute top-[5px]   ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! NombreUsuario`}</div>
+              <div className="absolute top-[5px]   ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! ${username}`}</div>
         <img className='h-96 top-20 absolute' src={Homeimg} alt='Homeimg'/>
 
             </div>

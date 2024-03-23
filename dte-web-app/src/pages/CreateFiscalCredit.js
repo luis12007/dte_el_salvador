@@ -1,7 +1,10 @@
 import TreeNode from "../components/TreeNode";
-import TableOfContents from "../components/TableOfContents";
-
+import TableOfContents from "../components/TableOfContentsWithDelete";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const CrearCreditoFiscal = () => {
+    const navigate = useNavigate();
+    const [selectedOption, setSelectedOption] = useState('');
 
     const DeleteItemHander = () => {
         console.log('DeleteItemHander');
@@ -15,6 +18,21 @@ const CrearCreditoFiscal = () => {
         console.log('switchTypeItemHandler');
     }
 
+    const ChangeHandler = (selectedValue) => {
+        if (selectedValue === "Factura") {
+            navigate("/crear/factura");
+
+        } else if (selectedValue === "CF") {
+            console.log('CF');
+
+        }
+    }
+    
+    const handleSelectChange = (event) => {
+        setSelectedOption(event.target.value);
+        ChangeHandler(event.target.value);
+    }
+
     
     return (
         <form className="m-0 w-[430px] bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
@@ -22,7 +40,7 @@ const CrearCreditoFiscal = () => {
                 <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
                 <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white">
 
-                    <select className="h-[35px] w-[359px] relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full">
+                    <select onChange={handleSelectChange} className="h-[35px] w-[359px] relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full">
                         <option value="CF">Comprobante Credito Fiscal</option>
                         <option value="Factura">Factura</option>
                     </select>

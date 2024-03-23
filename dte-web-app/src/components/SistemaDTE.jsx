@@ -1,6 +1,16 @@
+import { useState } from "react";
+import LoginAPI from "../services/Loginservices";
 const SistemaDTE = (props) => {
+  const [user, setUser] = useState({
+    usuario: "",
+    contraseña: "",
+  });
+
+
+
+
   const LoginHandler = () => {
-    props.goin();
+    props.goin(user);
   }
 
   const ForgetPassHandler = () => {
@@ -26,6 +36,7 @@ const SistemaDTE = (props) => {
           className=" w-full [border:none] [outline:none] bg-[transparent] h-5 flex flex-col items-start justify-start pt-0.5 px-0 pb-0 box-border font-inter font-light text-mini text-gray-200"
           placeholder="Usuario"
           type="text"
+          onChange={(e) => setUser({ ...user, usuario: e.target.value })}
         />
       </div>
       <div className="self-stretch flex flex-col items-start justify-start gap-[16.5px_0px] max-w-full">
@@ -40,6 +51,7 @@ const SistemaDTE = (props) => {
             className="w-full pb-2 [border:none] [outline:none] bg-[transparent] h-5 flex flex-col items-start justify-start pt-[5px] px-0 box-border font-inter  text-gray-200"
             placeholder="**************"
             type="password"
+            onChange={(e) => setUser({ ...user, contraseña: e.target.value })}
           />
         </div>
         <div className="flex flex-row items-start justify-start py-0 pr-[75px] pl-20" onClick={ForgetPassHandler}>

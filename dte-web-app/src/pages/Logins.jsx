@@ -1,12 +1,27 @@
 import SistemaDTE from "../components/SistemaDTE";
 import { useNavigate } from "react-router-dom";
+import LoginAPI from "../services/Loginservices";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
 
   const navigate = useNavigate();
 
-  const HomeHandler = () => {
-    navigate("/principal");
+  const HomeHandler = async (props) => {
+    /* navigate("/principal"); */
+    const result = await LoginAPI.login(props);
+
+    console.log(result);
+    if (result.token) {
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("user", result.user);
+      localStorage.setItem("username", props.username);
+      navigate("/principal");
+    }else{
+      toast.error("Credenciales incorrectas");
+
+    }
   }
 
   return (
@@ -40,6 +55,18 @@ const Login = () => {
           />
         </section>
       </main>
+      <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
     </div>
   );
 };

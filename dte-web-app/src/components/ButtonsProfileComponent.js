@@ -7,6 +7,7 @@ const FrameComponent2 = ({
   actionFrameWidth,
   updateControlsBackgroundColor,
   rectangleDivBackgroundColor,
+  handleSubmit,
 }) => {
   const navigate = useNavigate();
 
@@ -32,10 +33,6 @@ const FrameComponent2 = ({
     };
   }, [rectangleDivBackgroundColor]);
 
-  const UpdateHandler = () => {
-    console.log("UpdateHandler");
-  }
-
   const GoBackHandler = () => {
     navigate("/Principal");
   }
@@ -48,7 +45,7 @@ const FrameComponent2 = ({
     >
       <div className="flex flex-col items-start justify-start gap-[12px_0px]">
         <button
-        onClick={UpdateHandler} className="cursor-pointer [border:none] pt-3 px-[29px] pb-[13px] bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-seagreen-100">
+        onClick={handleSubmit} className="cursor-pointer [border:none] pt-3 px-[29px] pb-[13px] bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-seagreen-100">
           <div className="h-[47px] w-[138px] relative rounded-3xs bg-seagreen-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
           <b className="relative text-lg font-inria-sans text-white text-left z-[1]">
             Actualizar

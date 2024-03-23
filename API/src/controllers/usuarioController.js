@@ -32,7 +32,7 @@ const putUserInfo = async(req, res) => {
         const userExists = await knex('emisor').where('id', userId).first();
 
         if (!userExists) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+            return res.status(404).json({status:404, message: 'Usuario no encontrado' });
         }
 
         await knex('emisor').where('id', userId).update(user);
@@ -43,10 +43,22 @@ const putUserInfo = async(req, res) => {
     }
 };
 
+const createUser = async(req, res) => {
+    const user = req.body;
+    try {
+        const userId = await knex('emisor').insert(user);
+
+        res.status(201).json({ message: 'Usuario creado correctamente', userId });
+    } catch (error) {
+        console.error('Error al crear usuario', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
 
 
 // delete all of user
 module.exports = {
     getUserInfo,
     putUserInfo,
+    createUser,
 };

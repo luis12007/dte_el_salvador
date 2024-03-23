@@ -17,6 +17,7 @@ const login = async(req, res) => {
             const token = jwt.sign(user, "Motroco120072ñs1wa", { expiresIn: '200h' });
 
             res.status(200).json({
+                user: user.id, 
                 status: 'success',
                 message: 'Inicio de sesión exitoso',
                 token,

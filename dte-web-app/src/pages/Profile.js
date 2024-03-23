@@ -1,6 +1,69 @@
 import FrameComponent2 from "../components/ButtonsProfileComponent";
-
+import userAPI from "../services/UserServices";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react";
 const Perfil = () => {
+  const [name, setName] = useState('')
+  const [nit , setNit] = useState('')
+  const [nrc , setNrc] = useState('')
+  const [actividad_economica , setActividad_economica] = useState('')
+  const [direccion , setDireccion] = useState('')
+  const [numero_de_telefono , setNumero_telefono] = useState('')
+  const [correo_electronico , setCorreo_electronico] = useState('')
+  const [nombre_comercial , setNombre_comercial] = useState('')
+  const [id_usuario , setId_usuario] = useState(localStorage.getItem('user'))
+  const [	tipo_de_establecimieto , setTipo_establecimiento] = useState('')
+  const token = localStorage.getItem('token')
+
+  const handleSubmit = async (e) => {
+
+    const result = await userAPI.updateUser({
+      name,
+      nit,
+      nrc,
+      actividad_economica,
+      direccion,
+      numero_de_telefono,
+      correo_electronico,
+      nombre_comercial,
+      id_usuario,
+      tipo_de_establecimieto
+    },token)
+
+    console.log(result)
+
+    if(result.message === "Usuario actualizado correctamente"){
+      toast.success('Usuario actualizado correctamente')
+    }
+
+    
+    if(result.status === 404){
+      console.log('entro')
+      const result2 = await userAPI.createUser({
+        name,
+        nit,
+        nrc,
+        actividad_economica,
+        direccion,
+        numero_de_telefono,
+        correo_electronico,
+        nombre_comercial,
+        id_usuario,
+        tipo_de_establecimieto
+      },token)
+
+      console.log(result2)
+      if(result2.message === "Usuario creado correctamente"){
+        toast.success('Usuario creado correctamente')
+      }
+    }
+  }
+
+
+
+
+
   return (
     <form className="m-0 w-[430px] bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-[42px] px-5 pb-[182px] box-border gap-[25px_0px] tracking-[normal]">
       <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[15px] max-w-full">
@@ -32,6 +95,7 @@ const Perfil = () => {
                   className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                   placeholder="datos personales datos personales"
                   type="text"
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
             </div>
@@ -50,6 +114,7 @@ const Perfil = () => {
                   className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                   placeholder="datos personales datos personales"
                   type="text"
+                  onChange={(e) => setNit(e.target.value)}
                 />
                 </div>
               </div>
@@ -69,6 +134,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => setNrc(e.target.value)}
               />
             </div>
           </div>
@@ -87,6 +153,7 @@ const Perfil = () => {
                   className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                   placeholder="datos personales datos personales"
                   type="text"
+                  onChange={(e) => setActividad_economica(e.target.value)}
                 />
               </div>
             </div>
@@ -105,6 +172,8 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => setDireccion(e.target.value)}
+
               />
             </div>
           </div>
@@ -122,6 +191,8 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => setNumero_telefono(e.target.value)}
+
               />
             </div>
           </div>
@@ -139,6 +210,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => setCorreo_electronico(e.target.value)}
               />
             </div>
           </div>
@@ -157,6 +229,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => setNombre_comercial(e.target.value)}
               />
               </div>
             </div>
@@ -175,6 +248,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => setTipo_establecimiento(e.target.value)}
               />
             </div>
           </div>
@@ -186,8 +260,22 @@ const Perfil = () => {
         actionFrameWidth="382px"
         updateControlsBackgroundColor="#a85050"
         rectangleDivBackgroundColor="#a85050"
+        handleSubmit={handleSubmit}
       />
+      <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
     </form>
+    
   );
 };
 

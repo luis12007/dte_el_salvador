@@ -12,6 +12,6 @@ const authenticateToken = require('../middleware/verifyToken.js');
 
 // Define la ruta POST
 router.post('/create', authenticateToken, plantillacreate);
-router.get('/get', authenticateToken, getPlantillasByUserId);
+router.get('/get/:id', authenticateToken, getPlantillasByUserId);
 
 module.exports = router;
