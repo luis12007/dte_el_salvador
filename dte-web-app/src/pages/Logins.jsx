@@ -13,14 +13,15 @@ const Login = () => {
     const result = await LoginAPI.login(props);
 
     console.log(result);
-    if (result.token) {
+    if (result) {
       localStorage.setItem("token", result.token);
       localStorage.setItem("user", result.user);
       localStorage.setItem("username", props.username);
       navigate("/principal");
+
     }else{
       toast.error("Credenciales incorrectas");
-
+console.log("Credenciales incorrectas");
     }
   }
 

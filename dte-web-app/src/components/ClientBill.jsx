@@ -1,6 +1,13 @@
 import FrameComponent3 from "./SwitchOFF";
 
-const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
+const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
+  const handleChange = (field, value) => {
+    // Update the client state with the new value
+    setClient((prevClient) => ({
+      ...prevClient,
+      [field]: value,
+    }));
+  };
   return (
     <section className="self-stretch flex flex-row items-start justify-start py-0 px-2.5 box-border max-w-full text-left text-xs text-black font-inria-sans">
       <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0.5 px-0 pb-[29px] box-border gap-[14px] max-w-full">
@@ -20,6 +27,7 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                     placeholder="62486326-2"
                     type="text"
+                    onChange={(e) => handleChange("document", e.target.value)}
                   />
                 </div>
               </div>
@@ -29,7 +37,9 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
               <span className="text-tomato">*</span>
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
-              <select className="w-full relative  border-white bg-white border-2 max-w-full">
+              <select 
+              onChange={(e) => handleChange("documentType", e.target.value)}
+              className="w-full relative  border-white bg-white border-2 max-w-full">
                 <option value="CF">Comprobante Credito Fiscal</option>
                 <option value="Factura">Factura</option>
               </select>
@@ -48,6 +58,7 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => handleChange("name", e.target.value)}
               />
             </div>
           </div>
@@ -63,6 +74,8 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => handleChange("phone", e.target.value)}
+
               />
             </div>
           </div>
@@ -78,6 +91,8 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => handleChange("email", e.target.value)}
+
               />
             </div>
           </div>
@@ -93,6 +108,8 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                onChange={(e) => handleChange("address", e.target.value)}
+
               />
             </div>
           </div>
@@ -100,11 +117,13 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
-              <span className="text-black">{`Modelo de Facturacion `}</span>
+              <span className="text-black">{`Departamento `}</span>
               <span className="text-tomato">*</span>
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
-            <select className="w-full relative  border-white bg-white border-2 max-w-full">
+            <select
+                onChange={(e) => handleChange("department", e.target.value)}
+                className="w-full relative  border-white bg-white border-2 max-w-full">
                 <option value="CF">Comprobante Credito Fiscal</option>
                 <option value="Factura">Factura</option>
               </select>
@@ -114,12 +133,14 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient}) => {
         <div className="self-stretch flex flex-col items-start justify-start py-0 px-3.5 box-border max-w-full">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
               <div>
-              <span className="text-black">{`Modelo de Facturacion `}</span>
+              <span className="text-black">{`Municipio `}</span>
               <span className="text-tomato">*</span>
               </div>
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
-            <select className="w-full relative  border-white bg-white border-2 max-w-full">
+            <select 
+                onChange={(e) => handleChange("municipality", e.target.value)}
+                className="w-full relative  border-white bg-white border-2 max-w-full">
                 <option value="CF">Comprobante Credito Fiscal</option>
                 <option value="Factura">Factura</option>
               </select>

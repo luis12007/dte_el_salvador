@@ -9,7 +9,8 @@ const SistemaDTE = (props) => {
 
 
 
-  const LoginHandler = () => {
+  const LoginHandler = (e) => {
+    e.preventDefault();
     props.goin(user);
   }
 
