@@ -6,8 +6,8 @@ const jsonFiles ()  => {
             "version": 3,
             "ambiente": "01",
             "tipoDte": "03",
-            "numeroControl": "DTE-03-S006P006-000000000110752",
-            "codigoGeneracion": "E658AE2D-BD94-4C64-B9C3-629D5AF59865",
+            "numeroControl": "DTE-03-S006P006-000000000110752", /* wtf */
+            "codigoGeneracion": "E658AE2D-BD94-4C64-B9C3-629D5AF59865", /* wtf */
             "tipoModelo": 1,
             "tipoOperacion": 1,
             "tipoContingencia": null,

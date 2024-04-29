@@ -41,8 +41,10 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                     type="text"
 
                                 >
-                                    <option value="CF">Comprobante Credito Fiscal</option>
-                                    <option value="Factura">Factura</option>
+                                    <option value="CF">Bienes</option>
+                                    <option value="CF">Servicios</option>
+                                    <option value="Factura">Bienes y servicios</option>
+                                    <option value="Factura">Otro</option>
                                 </select>
                                 <div className="h-[23px] w-[362px] relative rounded-6xs box-border hidden max-w-full z-[1] border-[0.3px] border-solid border-gray-100" />
 
@@ -56,7 +58,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                             <input
                             onChange={(e) => setcuantity(e.target.value)}
                                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                placeholder="datos personales datos personales"
+                                placeholder="###"
                                 type="text"
                             />
 
@@ -70,7 +72,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                 <input
                                 onChange={(e) => setdescription(e.target.value)}
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                    placeholder="datos personales datos personales"
+                                    placeholder="Producto o servicio"
                                     type="text"
                                 />
                             </div>
@@ -84,7 +86,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                 <input
                                 onChange={(e) => setPrice(e.target.value)}
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                    placeholder="datos personales datos personales"
+                                    placeholder="1.2"
                                     type="text"
                                 />
                             </div>

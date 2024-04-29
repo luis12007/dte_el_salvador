@@ -6,10 +6,28 @@ import SidebarComponent from "../components/SideBarComponent";
 
 const HomeFacturas = () => {
 
+
+  /* SideBar */
   const [visible, setVisible] = useState(true);
     const sidebar = () => {
         setVisible(!visible);
     }
+
+/* Data */
+    useEffect(() => {
+      fetchData();
+  },);
+
+  const fetchData = async () => {
+    try {
+        const result = await api.findNameAscPagedpostequitment(token, reload);
+        settools(result.data || []); // Si result.clients es null o undefined, establecer como un array vacío
+    } catch (error) {
+        console.error("Error fetching clients:", error);
+    }
+};
+
+
 
     const excelHandler = () => {
         console.log('Excel');
@@ -21,6 +39,14 @@ const HomeFacturas = () => {
       <section className="self-stretch flex flex-col items-start justify-start gap-[13px_0px] max-w-full">
       <SidebarComponent visible={visible}/>
 
+
+{/* {items.map((content, index) => (
+                    <DataProductNoAdvanceComponent
+                      key={index}
+                      content={content}
+                      onRemove={() => itemshandleRemove(index)}
+                    />
+                  ))} */}
         <FacturaUnSend />
         <FacturaSend />
       </section>

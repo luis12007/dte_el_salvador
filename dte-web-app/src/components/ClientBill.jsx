@@ -16,6 +16,23 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
 
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+          <div className="relative text-xs font-inria-sans text-left z-[1]">
+              <span className="text-black">{`Tipo de documento de identificación `}</span>
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+              <select 
+              onChange={(e) => handleChange("documentType", e.target.value)}
+              className="w-full relative  bg-white border-2 max-w-full">
+                <option value="CF">NIT</option>
+                <option value="Factura">DUI </option>
+                <option value="Factura">Pasaporte</option>
+                <option value="Factura">Carnet de residencia</option>
+                <option value="Factura">Otro</option>
+              </select>
+              <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+            </div>
+            
             <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
               <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                 <div className="relative text-xs font-inria-sans text-left z-[1]">
@@ -32,19 +49,7 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
                 </div>
               </div>
             </div>
-            <div className="relative text-xs font-inria-sans text-left z-[1]">
-              <span className="text-black">{`Tipo de documento de identificación `}</span>
-              <span className="text-tomato">*</span>
-            </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
-              <select 
-              onChange={(e) => handleChange("documentType", e.target.value)}
-              className="w-full relative  border-white bg-white border-2 max-w-full">
-                <option value="CF">Comprobante Credito Fiscal</option>
-                <option value="Factura">Factura</option>
-              </select>
-              <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-            </div>
+            
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
@@ -124,8 +129,8 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
             <select
                 onChange={(e) => handleChange("department", e.target.value)}
                 className="w-full relative  border-white bg-white border-2 max-w-full">
-                <option value="CF">Comprobante Credito Fiscal</option>
-                <option value="Factura">Factura</option>
+                <option value="CF">San Salvador</option>
+                <option value="Factura">Santa Ana</option>
               </select>
             </div>
           </div>
@@ -141,8 +146,8 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
             <select 
                 onChange={(e) => handleChange("municipality", e.target.value)}
                 className="w-full relative  border-white bg-white border-2 max-w-full">
-                <option value="CF">Comprobante Credito Fiscal</option>
-                <option value="Factura">Factura</option>
+                <option value="CF">Municipio prueba1</option>
+                <option value="Factura">Municipio prueba2</option>
               </select>
             </div>
           </div>

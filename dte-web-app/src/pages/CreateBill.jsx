@@ -1,3 +1,5 @@
+import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import BillnoCF from "../components/ClientBill";
 import BillCF from "../components/ClientBillCF";
 import TreeNode from "../components/TreeNode";
@@ -7,11 +9,16 @@ import { useState } from "react";
 import AdvanceItemsComponentOnComponent from "../components/AdvanceItemsOnComponentl";
 import AdvanceItemsComponent from "../components/AdvanceNoItemsComponent";
 import TableOfContentsNew from "../components/TableOfContentsNew";
+import Firmservice from "../services/Firm";
+import PlantillaService from "../services/PlantillaService";
 const Clientes = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
-
+  const token = localStorage.getItem("token");
+  const id_emisor =1;
+  
+  
 
   /* Cliente array */
   const [client, setClient] = useState({
@@ -92,14 +99,16 @@ const Clientes = () => {
 
 
   /* ---------------------------------------------------------- */
-  const addBillHandler = () => {
+  const addBillHandler = async () => {
+
+    const myUuid = uuidv4().toUpperCase().toString();
     const data = {
       identificacion: { 
         version: 1, /* TODO: SEARCH IN DOCUMENTATION try with 1 2 3 and 4*/
         ambiente: "00", /* 0 dev mode 1 to production */
-        tipoDte: "00", /* 01 or 00 factura 03 CF*/
-        numeroControl: "DTE-01-00160000-000000000051666", /* Pending dinamic LOCAL */
-        codigoGeneracion: "027AEE1D-0DC9-4551-9A46-9877ACA87E62",  /* Pending dinamic LOCAL */
+        tipoDte: "01", /* 01 factura  and  03 CF*/
+        numeroControl: "DTE-01-00160000-000000000051667", /* Pending dinamic LOCAL */
+        codigoGeneracion: myUuid, /* DONE */
         tipoModelo: 1, /* 1 Modelo Facturación previo and 2 modelo diferido ???        */
         tipoOperacion: 1, /* 1 Transmisión normal  2 to contingencia       */
         fecEmi: "2024-03-06", /* DINAMIC LOCAL */
@@ -414,6 +423,25 @@ const Clientes = () => {
     };
 
     console.log(data);
+    const Firm = {
+      nit: "02101601741065", /* QUEMADO */
+      activo: true,
+      passwordPri: "Halogenados2024",  /* QUEMADO */
+      dteJson: data
+    }
+
+    const responseFirm = await Firmservice.create(Firm);
+    console.log(responseFirm);
+
+    const responsePlantilla = await PlantillaService.create(data,token, id_emisor);
+
+    console.log("PlantillaService - Create");
+    console.log(responsePlantilla);
+
+
+
+
+
   };
 
   /* ---------------------------------------------------------- */
@@ -482,25 +510,13 @@ const Clientes = () => {
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-2.5 box-border max-w-full">
-          <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-            <div className="relative text-xs font-inria-sans text-left z-[1]">
-              <span className="text-black">{`Modelo de Facturacion `}</span>
-              <span className="text-tomato">*</span>
-            </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-              <input
-                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
-                type="text"
-              />
-            </div>
-          </div>
+          
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
               <div className="flex flex-row items-start justify-start py-0 px-[3px]">
-                Dirección
+                Fecha
               </div>
             </div>
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
@@ -571,7 +587,9 @@ const Clientes = () => {
                         className="w-full h-full relative  border-white bg-white border-2 max-w-full"
                         type="text"
                       >
-                        <option value="CF">Al contado</option>
+                        <option value="CF">Contado</option>
+                        <option value="CF">Crédito</option>
+                        <option value="CF">Otro</option>
                       </select>
                     </div>
                   </div>
@@ -588,8 +606,7 @@ const Clientes = () => {
                 </div>
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px]">
-                <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-                <TableOfContentsNew handleAdd={handleAdd} />
+                <TableOfContentsNew handleAdd={handleAdd} /> {/* TODO: Add the credit metod */}
               </div>
             </div>
           </div>

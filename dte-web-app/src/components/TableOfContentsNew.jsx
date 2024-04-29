@@ -27,8 +27,11 @@ const TableOfContentsNew = ({handleAdd }) => {
             className="w-full h-full relative  border-white bg-white border-2 max-w-full"
             type="text"
           >
-            <option value="CF">Comprobante Credito Fiscal</option>
-            <option value="Factura">Factura</option>
+            <option value="Billetes">Billetes y monedas</option>
+            <option value="credito">Tarjeta de credito</option>
+            <option value="debito">Tarjeta de debito</option>
+            <option value="Transferencia">Transferencia o deposito bancario</option>
+            <option value="Bitcoin">Bitcoin</option>
           </select>
         </div>
       </div>

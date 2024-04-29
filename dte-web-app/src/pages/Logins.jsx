@@ -11,12 +11,12 @@ const Login = () => {
   const HomeHandler = async (props) => {
     /* navigate("/principal"); */
     const result = await LoginAPI.login(props);
-
+    console.log(result);
     console.log(result);
     if (result) {
       localStorage.setItem("token", result.token);
-      localStorage.setItem("user", result.user);
-      localStorage.setItem("username", props.username);
+      localStorage.setItem("user_id", result.user_id);
+      localStorage.setItem("username", result.username);
       navigate("/principal");
 
     }else{

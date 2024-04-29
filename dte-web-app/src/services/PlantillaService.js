@@ -4,12 +4,13 @@ const BASE_URL = "http://localhost:3000";
 
 const PlantillaAPI = {
  /* create and get */
-    create: async (plantilla, token) => {
+    create: async (plantilla, token, id_emisor) => {
         const res = await fetch(`${BASE_URL}/plantillas/create`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'id_emisor': `${id_emisor}`,
             },
             body: JSON.stringify(plantilla)
         });
