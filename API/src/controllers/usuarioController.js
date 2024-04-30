@@ -1,27 +1,22 @@
 const knex = require('../db/db');
 
-const getUserInfo = async(req, res) => {
-    const userId = req.params.id;
-    console.log(userId);
-    try {
-        const user = await knex('emisor').where('id', userId).first();
+const getUserInfo = async (req, res) => {
+  const userId = req.params.id; // This is the `id` from the `usuarios` table
+  try {
+    const user = await knex('emisor')
+      .join('usuario', 'emisor.id_usuario', '=', 'usuario.id') // Joining `emisor` with `usuarios`
+      .where('usuario.id', userId) // Filtering by user ID
+      .first(); // Get the first record
 
-        if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-
-        // Personaliza la respuesta según tu lógica y los campos disponibles en tu tabla de usuarios
-        const userInfo = {
-            id: user.id,
-            name: user.name,
-            id_rol: user.id_rol,
-        };
-
-        res.status(200).json(userInfo);
-    } catch (error) {
-        console.error('Error al obtener información del usuario', error);
-        res.status(500).json({ message: 'Error en el servidor' });
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' }); // User not found
     }
+
+    res.status(200).json(user); // Send the response
+  } catch (error) {
+    console.error('Error al obtener información del usuario', error);
+    res.status(500).json({ message: 'Error en el servidor' }); // Handle errors
+  }
 };
 
 const putUserInfo = async(req, res) => {
