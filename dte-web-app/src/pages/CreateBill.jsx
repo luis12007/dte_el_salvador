@@ -11,12 +11,13 @@ import AdvanceItemsComponent from "../components/AdvanceNoItemsComponent";
 import TableOfContentsNew from "../components/TableOfContentsNew";
 import Firmservice from "../services/Firm";
 import PlantillaService from "../services/PlantillaService";
+import PlantillaAPI from '../services/PlantillaService';
 const Clientes = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
   const token = localStorage.getItem("token");
-  const id_emisor =1;
+  const id_emisor = localStorage.getItem("user_id");
   
   
 
@@ -101,13 +102,20 @@ const Clientes = () => {
   /* ---------------------------------------------------------- */
   const addBillHandler = async () => {
 
+
+    /* Counting the sentences*/  
+    const count = await PlantillaAPI.count(id_emisor,"01",token)
+
+
     const myUuid = uuidv4().toUpperCase().toString();
+
+
     const data = {
       identificacion: { 
         version: 1, /* TODO: SEARCH IN DOCUMENTATION try with 1 2 3 and 4*/
         ambiente: "00", /* 0 dev mode 1 to production */
         tipoDte: "01", /* 01 factura  and  03 CF*/
-        numeroControl: "DTE-01-00160000-000000000051667", /* Pending dinamic LOCAL */
+        numeroControl: getNextFormattedNumber(count[0].count), /* Pending dinamic LOCAL */
         codigoGeneracion: myUuid, /* DONE */
         tipoModelo: 1, /* 1 Modelo Facturación previo and 2 modelo diferido ???        */
         tipoOperacion: 1, /* 1 Transmisión normal  2 to contingencia       */
@@ -310,10 +318,12 @@ const Clientes = () => {
           */
           complemento: "Bulevar Los Pr\u00f3ceres" /* DINAMIC LOCAL */
         },
-        nit: "06141509650017", /* DINAMIC LOCAL */
-        nrc: "282731", /* DINAMIC LOCAL */
-        nombre: "Universidad Centroamericana Jos\u00e9 Sime\u00f3n Ca\u00f1as", /* DINAMIC LOCAL */
-        codActividad: "85499", /* CAT-019 Código de Actividad Económica 86203 Servicios médicos */
+        nit: "02101601741065" /* DINAMIC LOCAL */,
+        nrc: "1837811" /* DINAMIC LOCAL */,
+        nombre:
+          "LUIS ALONSO HERNANDEZ MAGANIA" /* DINAMIC LOCAL */,
+        codActividad:
+          "86203" /* CAT-019 Código de Actividad Económica 86203 Servicios médicos */,
         descActividad: "Ense\u00f1anza formal", /* DINAMIC LOCAL */
         telefono: "22106600", /* DINAMIC LOCAL */
         correo: "tesoreria@uca.edu.sv", /* DINAMIC LOCAL */
@@ -430,9 +440,6 @@ const Clientes = () => {
       dteJson: data
     }
 
-    const responseFirm = await Firmservice.create(Firm);
-    console.log(responseFirm);
-
     const responsePlantilla = await PlantillaService.create(data,token, id_emisor);
 
     console.log("PlantillaService - Create");
@@ -478,6 +485,32 @@ const Clientes = () => {
     setItems(!Items);
   };
 
+
+
+  /* utils ----------------------------------- */
+
+  /**
+ * Increments a number and returns it in the specified format.
+ * 
+ * @param {number} currentNumber - The current number to increment.
+ * @param {number} totalDigits - The total number of digits for the output.
+ * @returns {string} The incremented number in the desired format.
+ */
+function getNextFormattedNumber(currentNumber, totalDigits = 15) {
+  // Increment the number by 1
+  const incrementedNumber = currentNumber;
+
+  // Convert the incremented number to a string
+  let incrementedString = incrementedNumber.toString();
+
+  // Pad with leading zeros to ensure the correct number of digits
+  incrementedString = incrementedString.padStart(totalDigits, '0');
+
+  // Format the output with the required prefix
+  const formattedOutput = `DTE-01-00000000-${incrementedString}`;
+
+  return formattedOutput;
+}
 
   return (
     <form className="m-0 w-[430px] bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">

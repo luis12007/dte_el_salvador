@@ -1,5 +1,5 @@
 //const BASE_URL = "https://cleaning-system-app-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://apitest.dtes.mh.gob.sv/fesv/recepciondte";
 
 /* TODO: */
 /* with token and all is transaccion */
@@ -7,14 +7,15 @@ const SendAPI = {
 
     /* Sing the bill or CF */
 
-    sendBill: async (bill, token) => {
-        const res = await fetch(`${BASE_URL}/send/bill`, {
+    sendBill: async (plantilla, token) => {
+        const res = await fetch(`${BASE_URL}`, {
             method: 'POST',
             headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
+                Authorization: `${token}`,
+                'Content-Type': 'application/json',
+                'User-Agent':'MysoftDTE'
             },
-            body: JSON.stringify(bill)
+            body: JSON.stringify(plantilla)
         });
         const data = await res.json();
         return data;

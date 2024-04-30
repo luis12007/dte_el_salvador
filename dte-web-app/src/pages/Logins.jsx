@@ -12,8 +12,8 @@ const Login = () => {
     /* navigate("/principal"); */
     const result = await LoginAPI.login(props);
     console.log(result);
-    console.log(result);
-    if (result) {
+    
+    if (result.status === "success") {
       localStorage.setItem("token", result.token);
       localStorage.setItem("user_id", result.user_id);
       localStorage.setItem("username", result.username);

@@ -27,11 +27,60 @@ const PlantillaAPI = {
                 }
             });
             const data = await res.json();
+
             return data;
         } catch (error) {
             console.log(error);
         }
     },
+
+    /* update field with the codigo_de_generacion */
+    update: async (id_emisor,plantilla, token,codigo_de_generacion) => {
+        const res = await fetch(`${BASE_URL}/plantillas/update/${codigo_de_generacion}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'id_emisor': `${id_emisor}`,
+            },
+            body: JSON.stringify(plantilla)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    updatesend: async (id_emisor,selladotoggle,selloRecibido,token,codigo_de_generacion) => {
+        const res = await fetch(`${BASE_URL}/plantillas/update/send/${codigo_de_generacion}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'id_emisor': `${id_emisor}`,
+            },
+            body: JSON.stringify({
+                selladotoggle: selladotoggle,
+                selloRecibido: selloRecibido
+            })
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    /* count how many plantillas by userid and by tipo */
+    count: async (id,tipo,token) => {
+        const res = await fetch(`${BASE_URL}/plantillas/get/count/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                /* token */
+                Authorization: `Bearer ${token}`,
+                'tipo': `${tipo}`,
+            },
+
+        });
+        const data = await res.json();
+        return data;
+    }
 
 }
 
