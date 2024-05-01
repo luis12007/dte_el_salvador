@@ -1,45 +1,62 @@
 import FrameComponent3 from "./SwitchOFF";
-
-const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
+import { useState } from "react";
+const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
+  // Extended list of departments and their corresponding municipalities
   const handleChange = (field, value) => {
+    var descActividaddata = "Otro";
+    if (value == "36") {
+      descActividaddata = "Nit";
+    } else if (value == "13") {
+      descActividaddata = "Dui";
+    } else if (value == "03") {
+      descActividaddata = "Pasaporte";
+    } else if (value == "02") {
+      descActividaddata = "Parnet de residencia";
+    } else if (value == "37") {
+      descActividaddata = "Otro";
+    }
+
     // Update the client state with the new value
     setClient((prevClient) => ({
       ...prevClient,
       [field]: value,
+      descActividad: descActividaddata,
     }));
   };
   return (
     <section className="self-stretch flex flex-row items-start justify-start py-0 px-2.5 box-border max-w-full text-left text-xs text-black font-inria-sans">
       <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0.5 px-0 pb-[29px] box-border gap-[14px] max-w-full">
         <div className="self-stretch h-[532px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-        <FrameComponent3 handleSelectChangeCFClient={handleSelectChangeCFClient} />
+        <FrameComponent3
+          handleSelectChangeCFClient={handleSelectChangeCFClient}
+        />
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
-
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-          <div className="relative text-xs font-inria-sans text-left z-[1]">
+            <div className="relative text-xs font-inria-sans text-left z-[1]">
               <span className="text-black">{`Tipo de documento de identificación `}</span>
               <span className="text-tomato">*</span>
             </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
-              <select 
-              onChange={(e) => handleChange("documentType", e.target.value)}
-              className="w-full relative  bg-white border-2 max-w-full">
-                <option value="CF">NIT</option>
-                <option value="Factura">DUI </option>
-                <option value="Factura">Pasaporte</option>
-                <option value="Factura">Carnet de residencia</option>
-                <option value="Factura">Otro</option>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+              <select
+                onChange={(e) => handleChange("documentType", e.target.value)}
+                className="w-full relative  bg-white border-2 max-w-full"
+              >
+                <option value="36">NIT</option>
+                <option value="13">DUI </option>
+                <option value="03">Pasaporte</option>
+                <option value="02">Carnet de residencia</option>
+                <option value="37">Otro</option>
               </select>
               <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
             </div>
-            
+
             <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
               <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                 <div className="relative text-xs font-inria-sans text-left z-[1]">
                   <span className="text-black">{`Documento de identificación `}</span>
                   <span className="text-tomato">*</span>
                 </div>
-                <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+                <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                   <input
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                     placeholder="62486326-2"
@@ -49,7 +66,6 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
                 </div>
               </div>
             </div>
-            
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
@@ -58,7 +74,7 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
               <span className="text-black">{`Nombre `}</span>
               <span className="text-tomato">*</span>
             </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
@@ -74,13 +90,12 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
               <span className="text-black">{`Teléfono `}</span>
               <span className="text-tomato">*</span>
             </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
                 onChange={(e) => handleChange("phone", e.target.value)}
-
               />
             </div>
           </div>
@@ -91,13 +106,12 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
               <span className="text-black">{`Correo Eléctronico `}</span>
               <span className="text-tomato">*</span>
             </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
                 onChange={(e) => handleChange("email", e.target.value)}
-
               />
             </div>
           </div>
@@ -108,51 +122,38 @@ const DocumentTypeFrame = ({handleSelectChangeCFClient, setClient}) => {
               <span className="text-black">{`Dirección `}</span>
               <span className="text-tomato">*</span>
             </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
                 onChange={(e) => handleChange("address", e.target.value)}
-
               />
             </div>
           </div>
         </div>
-        <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
-          <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+        <div className="self-stretch px-3">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
-              <span className="text-black">{`Departamento `}</span>
+              <span className="text-black">{`Tipo de documento de identificación `}</span>
               <span className="text-tomato">*</span>
             </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
-            <select
-                onChange={(e) => handleChange("department", e.target.value)}
-                className="w-full relative  border-white bg-white border-2 max-w-full">
-                <option value="CF">San Salvador</option>
-                <option value="Factura">Santa Ana</option>
+            <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100 px-3">
+              <select
+                onChange={(e) => handleChange("codActividad", e.target.value)}
+                className="w-full relative  bg-white border-2 max-w-full"
+              >
+                <option value="10005">Otros</option>
+                <option value="10001">Empleados</option>
+                <option value="10003">Estudiante</option>
+                <option value="97000">empleadores de personal doméstico</option>
+                <option value="99000">Actividades de organizaciones y órganos extraterritoriales </option>
+                <option value="10004">Desempleado</option>
               </select>
+              <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
             </div>
-          </div>
-        </div>
-        <div className="self-stretch flex flex-col items-start justify-start py-0 px-3.5 box-border max-w-full">
-            <div className="relative text-xs font-inria-sans text-left z-[1]">
-              <div>
-              <span className="text-black">{`Municipio `}</span>
-              <span className="text-tomato">*</span>
-              </div>
             </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
-            <select 
-                onChange={(e) => handleChange("municipality", e.target.value)}
-                className="w-full relative  border-white bg-white border-2 max-w-full">
-                <option value="CF">Municipio prueba1</option>
-                <option value="Factura">Municipio prueba2</option>
-              </select>
-            </div>
-          </div>
       </div>
-    </section >
+    </section>
   );
 };
 

@@ -23,6 +23,8 @@ const HomeFacturas = () => {
   // Data fetching
   useEffect(() => {
     const fetchData = async () => {
+      console.log("Fetching data...");
+      console.log(tokenminis);
       try {
         const result = await PlantillaAPI.getByUserId(user_id, token);
         console.log(result);
@@ -30,7 +32,7 @@ const HomeFacturas = () => {
 
         /* Change to login maybe */
         const resultusers = await UserService.getUserInfo(user_id, token);
-        if (tokenminis === "undefined") {
+        if (tokenminis === "undefined" || tokenminis === null) {
         console.log(resultusers);
         console.log(resultusers.nit);
         console.log(resultusers.codigo_hacienda);
