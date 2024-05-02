@@ -16,10 +16,10 @@ const port = 3000;
 
 // Middleware
 const corsOptions = {
-    origin: ['http://localhost:3001', 'https://adgard.net/code?id=bjyERE3DxNAm&type=1'],
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204,
+    origin: '*', // Permite cualquier origen
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP permitidos
+    credentials: false, // Indica si se permiten credenciales
+    optionsSuccessStatus: 204, // Estado para respuestas exitosas de opciones
 };
 
 app.use(cors(corsOptions));

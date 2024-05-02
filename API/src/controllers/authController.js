@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 
 const login = async(req, res) => {
     const { usuario, contraseña } = req.body;
-
+    console.log(usuario);
+    console.log(contraseña);
     try {
         const user = await db('usuario')
             .where({ usuario, contraseña })
@@ -17,7 +18,7 @@ const login = async(req, res) => {
             const token = jwt.sign(user, "Motroco120072ñs1wa", { expiresIn: '200h' });
 
             res.status(200).json({
-                user_id: user.id, 
+                user_id: user.id,
                 status: 'success',
                 message: 'Inicio de sesión exitoso',
                 token,
