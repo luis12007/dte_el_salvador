@@ -15,7 +15,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
           price: price,
         };
         if (newData.type === "") {
-            newData.type = "Bienes";
+            newData.type = "1";
         }
         console.log(newData);
         itemshandleAdd(newData);
@@ -41,10 +41,10 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                     type="text"
 
                                 >
-                                    <option value="CF">Bienes</option>
-                                    <option value="CF">Servicios</option>
-                                    <option value="Factura">Bienes y servicios</option>
-                                    <option value="Factura">Otro</option>
+                                    <option value="1">Bienes</option>
+                                    <option value="2">Servicios</option>
+                                    <option value="3">Bienes y servicios</option>
+                                    <option value="4">Otro</option>
                                 </select>
                                 <div className="h-[23px] w-[362px] relative rounded-6xs box-border hidden max-w-full z-[1] border-[0.3px] border-solid border-gray-100" />
 

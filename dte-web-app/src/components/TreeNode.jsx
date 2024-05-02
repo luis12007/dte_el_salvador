@@ -1,4 +1,5 @@
-const TreeNode = ({ subtotal }) => {
+const TreeNode = ({ text, data }) => {
+  
   return (
     <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full text-left text-mini text-black font-inria-sans">
       <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[14px] max-w-full z-[1]">
@@ -11,10 +12,10 @@ const TreeNode = ({ subtotal }) => {
             alt=""
             src="/atras-1@2x.png"
           />
-          <b className="relative z-[3]">{subtotal}</b>
+          <b className="relative z-[3]">{text}</b>
         </div>
         <div className="flex flex-row items-start justify-start py-0 px-[17px] text-6xl">
-          <div className="relative whitespace-nowrap z-[2]">$0.00</div>
+          <div className="relative whitespace-nowrap z-[2]">${data}</div>
         </div>
       </div>
     </section>

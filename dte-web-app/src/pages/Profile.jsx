@@ -401,7 +401,57 @@ const Perfil = () => {
       ...prevClient,
       municipality: municipalityIndex.toString(), // Store the index as a string
     }));
-  }; */
+  }; 
+  
+  
+  <div className="self-stretch flex flex-col items-start justify-start py-0 px-2.5 box-border max-w-full text-left text-xs text-black font-inria-sans">
+    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+      <div className="relative text-xs font-inria-sans text-left z-[1]">
+        <span className="text-black">Departamento</span>
+        <span className="text-tomato">*</span>
+      </div>
+      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+        <select
+          className="w-full relative bg-white border-2 max-w-full"
+          value={selectedDepartment}
+          onChange={handleDepartmentChange}
+        >
+          {Object.entries(departmentsAndMunicipalities).map(([key, department]) => (
+            <option key={key} value={key}>
+              {department.departmentName}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+
+    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+      <div className="relative text-xs font-inria-sans text-left z-[1]">
+        <span className="text-black">Municipio</span>
+        <span className="text-tomato">*</span>
+      </div>
+      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+        <select
+          className="w-full relative bg-white border-2 max-w-full"
+          value={selectedMunicipality}
+          onChange={handleMunicipalityChange}
+        >
+          {departmentsAndMunicipalities[selectedDepartment].municipalities.map((municipality, index) => (
+            <option key={index} value={municipality}>
+              {municipality}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  
+  
+  */
     console.log(result)
 
     if(result.message === "Usuario actualizado correctamente"){

@@ -1,6 +1,8 @@
 import DataProductNoAdvanceComponent from "./DataProuctNoAdvanceComponent";
 import DataProductNoAdvanceComponentNew from "./DataProuctNoAdvanceComponentNew";
-const AdvanceItemsComponent = ({ itemshandleRemove, handleSelectChangeItemsClient, itemshandleAdd, items }) => {
+const AdvanceItemsComponent = ({items, itemshandleRemove, handleSelectChangeItemsClient, itemshandleAdd, setListitems }) => {
+
+    console.log
 
 
     return (

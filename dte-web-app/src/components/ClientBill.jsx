@@ -3,24 +3,35 @@ import { useState } from "react";
 const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
   // Extended list of departments and their corresponding municipalities
   const handleChange = (field, value) => {
-    var descActividaddata = "Otro";
-    if (value == "36") {
-      descActividaddata = "Nit";
-    } else if (value == "13") {
-      descActividaddata = "Dui";
-    } else if (value == "03") {
-      descActividaddata = "Pasaporte";
-    } else if (value == "02") {
-      descActividaddata = "Parnet de residencia";
-    } else if (value == "37") {
-      descActividaddata = "Otro";
+
+    var descActividaddata2 = "Otros";
+    if (value == "10005") {
+      descActividaddata2 = "Otros";
+    } else if (value == "10001") {
+      descActividaddata2 = "Empleados";
+    } else if (value == "10003") {
+      descActividaddata2 = "Estudiante";
+    } else if (value == "97000") {
+      descActividaddata2 = "empleadores de personal doméstico";
+    } else if (value == "99000") {
+      descActividaddata2 = "Actividades de organizaciones y órganos extraterritoriales";
+    } else if (value == "10004") {
+      descActividaddata2 = "Desempleado";
     }
+
+    if (field == "codActividad") {
+      setClient((prevClient) => ({
+        ...prevClient,
+        [field]: value,
+        descActividad: descActividaddata2,
+      }));
+      return;
+    };
 
     // Update the client state with the new value
     setClient((prevClient) => ({
       ...prevClient,
       [field]: value,
-      descActividad: descActividaddata,
     }));
   };
   return (

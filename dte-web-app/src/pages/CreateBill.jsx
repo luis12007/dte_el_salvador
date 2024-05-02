@@ -20,35 +20,39 @@ const Clientes = () => {
   const token = localStorage.getItem("token");
   const id_emisor = localStorage.getItem("user_id");
   const [userinfo, setUserinfo] = useState({});
-  
-  
+  const [total, setTotal] = useState(0);
+  const [subtotal, setSubtotal] = useState(0);
+  const [iva, setiva] = useState(0);
+  const navigate = useNavigate();
+
+
   /* useefect */
-useEffect(() => {
-  const fetchData = async () => {
-    const response = await UserService.getUserInfo(id_emisor, token);
-    console.log("User Data");
-    console.log(response);
-    setUserinfo(response);
-  }
-  fetchData();
-}, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await UserService.getUserInfo(id_emisor, token);
+      console.log("User Data");
+      console.log(response);
+      setUserinfo(response);
+    }
+    fetchData();
+  }, []);
   /* Data of the DTE ------------------------------------ */
 
-const [observaciones, setObservaciones] = useState("");
+  const [observaciones, setObservaciones] = useState("");
 
 
   /* Call to the info of user */
-// Get the current date
-const now = new Date();
+  // Get the current date
+  const now = new Date();
 
-// Get hours, minutes, and seconds
-const hours = String(now.getHours()).padStart(2, '0'); // Ensure 2 digits with leading zero
-const minutes = String(now.getMinutes()).padStart(2, '0'); // Ensure 2 digits
-const seconds = String(now.getSeconds()).padStart(2, '0'); // Ensure 2 digits
+  // Get hours, minutes, and seconds
+  const hours = String(now.getHours()).padStart(2, '0'); // Ensure 2 digits with leading zero
+  const minutes = String(now.getMinutes()).padStart(2, '0'); // Ensure 2 digits
+  const seconds = String(now.getSeconds()).padStart(2, '0'); // Ensure 2 digits
 
-// Format the time in HH:MM:SS
-const time24Hour = `${hours}:${minutes}:${seconds}`;
-  
+  // Format the time in HH:MM:SS
+  const time24Hour = `${hours}:${minutes}:${seconds}`;
+
 
   const [time, setTime] = useState({
     date: "",
@@ -56,21 +60,31 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
   })
   /* Cliente array */
   var [client, setClient] = useState({
-    documentType: "nit",
+    documentType: "36",
     name: "",
     document: "",
     address: "",
     email: null,
     phone: "",
     codActividad: "10005",
-    codActividad: "10005",
     nrc: null,
-    descActividad: "Otro",
+    descActividad: "Otros",
   }
   );
 
-  const [total , setTotal] = useState(0);
-  const [subtotal , setSubtotal] = useState(0);
+  var [payment, setpayment] = useState({
+    paymentType: "1",
+    paymentmethod: "01",
+    numberdoc: "",
+    mount: "",
+  }
+  );
+
+  const [Listitems, setListitems] = useState([
+  ]);
+
+  const [items, setitems] = useState([])
+
 
 
   /* Const Condiciones Operaciones array op op */
@@ -94,10 +108,6 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
 
 
   /* Services Add */
-  const [items, setitems] = useState([
-
-  ]);
-
   const [itemsAdvance, setitemsAdvance] = useState([
 
   ]);
@@ -120,15 +130,74 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
   };
 
   const itemshandleAdd = (newContents) => {
-    console.log("itemshandleAdd");
-    console.log(newContents);
+
+    var type = "bienes"
+    if (newContents.type === "1") {
+      type = "Bienes";
+    } else if (newContents.type === "2") {
+      type = "Servicios";
+    }
+    else if (newContents.type === "3") {
+      type = "Bienes y Servicios";
+    }
+    else if (newContents.type === "4") {
+      type = "Otro";
+    }
+
+    /* add items*/
     setitems((prevContents) => [
       ...prevContents,
-      { type: newContents.type, cuantity: newContents.cuantity, description: newContents.description, price: newContents.price },
+      { type: type, cuantity: newContents.cuantity, description: newContents.description, price: newContents.price },
     ]);
-    console.log(items);
+
+    const cuantityint = parseInt(newContents.cuantity);
+    const pricefloat = parseFloat(newContents.price);
+    const typeitem = parseInt(newContents.type);
+
+    const ivaperitem = pricefloat / 1.13;
+    const ivaperitemfinal = ivaperitem * 0.13;
+    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const newItem = {
+      codTributo: null,/* DONE */
+      descripcion: newContents.description, // DONE Description for the new item
+      uniMedida: 99, // TODO:PENDING Example code
+      codigo: null, // TODO:PENDING Example code
+      cantidad: cuantityint, /* DONE */
+      numItem: Listitems.length + 1, // DONE Ensure unique item number
+      tributos: null, /* DONE */
+      ivaItem: ivarounded, // TODO:PENDING Sample IVA
+      noGravado: 0, /* DONE */
+      psv: 0, /* DONE */
+      montoDescu: 0, /* DONE */
+      numeroDocumento: null, /* DONE */
+      precioUni: pricefloat, // DONE Example price
+      /* TODPENDING */
+      ventaGravada: pricefloat, // DONE Example sale value
+      ventaExenta: 0, // DONE
+      ventaNoSuj: 0, // DONE
+      tipoItem: typeitem, // Example item type
+    };
+    // Update the list with the new item
+    setListitems((prevListitems) => [...prevListitems, newItem]);
+    const Listitemstrack = [...Listitems, newItem];
+    console.log("Listitems", Listitemstrack);
+
+    /* map all newitems and sum the  precioUni*cantidad */
+    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+    const rawSubtotal = Listitemstrack.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+    const rawiva = Listitemstrack.reduce((total, item) => total + (item.ivaItem), 0);
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
+    setTotal(roundedSubtotal); // Set the rounded subtotal
+
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
   };
-  
+
 
   const itemsAdvancehandleRemove = (index) => {
     setitemsAdvance((prevContents) =>
@@ -146,27 +215,22 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
 
   /* navigate and fu */
 
-  const navigate = useNavigate();
 
-  const addBillHandler = async () => {
-    console.log(client);
-    console.log(time);
-    console.log(Items);
-    console.log(observaciones);
-  }
+
   /* ---------------------------------------------------------- */
-  const addBillHandler2 = async () => {
+  const addBillHandler = async () => {
 
 
-    /* Counting the sentences*/  
-    const count = await PlantillaAPI.count(id_emisor,"01",token)
+    /* Counting the sentences*/
+    const count = await PlantillaAPI.count(id_emisor, "01", token)
 
 
     const myUuid = uuidv4().toUpperCase().toString();
 
+    const conditionoperationint = parseInt(payment.paymentType);
 
     var data = {
-      identificacion: { 
+      identificacion: {
         version: 1, /* TODO:D DONE change when update*/
         ambiente: userinfo.ambiente, /* DONE Change when production */
         tipoDte: "01", /* DONE 01 factura  and  03 CF*/
@@ -181,7 +245,7 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
         motivoContin: null /* DONE STOCK */
       },
       documentoRelacionado: null, /* DONE STOCK */
-      emisor: { 
+      emisor: {
         direccion: {
           municipio: userinfo.municipio, /* DONE */
           departamento: userinfo.departamento, /* DONE */
@@ -189,15 +253,13 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
         },
         nit: userinfo.nit /* DONE*/,
         nrc: userinfo.nrc /* DONE */,
-        nombre:
-          userinfo.name /* DONE DINAMIC LOCAL */,
-        codActividad:
-          userinfo.codActividad /* DONE CAT-019 Código de Actividad Económica 86203 Servicios médicos */,
-        descActividad: userinfo.descActividad, /* DONE DINAMIC LOCAL */
+        nombre: userinfo.name /* DONE DINAMIC LOCAL */,
+        codActividad: userinfo.codactividad /* DONE CAT-019 Código de Actividad Económica 86203 Servicios médicos */,
+        descActividad: userinfo.descactividad, /* DONE DINAMIC LOCAL */
         telefono: userinfo.numero_de_telefono, /* DONE DINAMIC LOCAL */
         correo: userinfo.correo_electronico, /* DONE DINAMIC LOCAL */
         nombreComercial: userinfo.nombre_comercial, /* DONE DINAMIC LOCAL */
-        tipoEstablecimiento: userinfo.tipoEstablecimiento , /*DONE 01 Sucursal / Agencia   02 Casa matriz   04 Bodega   07 Predio y/o patio   20 Otro  */
+        tipoEstablecimiento: userinfo.tipoestablecimiento, /*DONE 01 Sucursal / Agencia   02 Casa matriz   04 Bodega   07 Predio y/o patio   20 Otro  */
 
         /* TODO: Just in case establecimiento  */
         codEstableMH: "0000",  /* Pending dinamic LOCAL */
@@ -205,85 +267,51 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
         codPuntoVentaMH: "0000",  /* Pending dinamic LOCAL */
         codPuntoVenta: "0000"  /* Pending dinamic LOCAL */
       },
-      receptor: { 
+      receptor: {
         codActividad: client.codActividad, /* DONE */
-        direccion: client.address, /* DONE DINAMIC LOCAL */
+        direccion: null, /* DONE DINAMIC LOCAL client.address changed to null ///*/
         nrc: client.nrc, /* DONE DINAMIC LOCAL */
         descActividad: client.descActividad, /* DONE  DINAMIC LOCAL */
         correo: client.email, /* DONE  DINAMIC LOCAL */
         tipoDocumento: client.documentType, /* DONE  36 NIT   13 DUI   37 Otro   03 Pasaporte   02 Carnet de Residente  */
         nombre: client.name, /* DONE  DINAMIC LOCAL */
         telefono: client.phone, /* DONE  DINAMIC LOCAL */
-        numDocumento: client.document /* DINAMIC LOCAL */
+        numDocumento: client.document /*DONE DINAMIC LOCAL */
       },
       otrosDocumentos: null, /* DONE  STOCK */
       ventaTercero: null, /* DONE  STOCK */
-      cuerpoDocumento: [ 
-        {
-          codTributo: null, /* DONE  STOCK */
-          descripcion: "TALONARIO PARQUEO: 50 TICKETS", /* DINAMIC LOCAL */
-          uniMedida: 99, /* CAT-014 Unidad de Medida 99 otra PENDING */
-          codigo: "EST003", /* DINAMIC LOCAL */
-          cantidad: 1, /* DINAMIC LOCAL */
-          numItem: 1, /* DINAMIC LOCAL */
-          tributos: null, /* STOCK */
-          ivaItem: 3.4513, /* STOCK */
-          noGravado: 0, /* DINAMIC LOCAL */
-          psv: 0, /* DINAMIC LOCAL */
-          montoDescu: 0, /* DINAMIC LOCAL */
-          numeroDocumento: null, /* STOCK */
-          precioUni: 29.9999, /* DINAMIC LOCAL */
-          ventaGravada: 29.9999, /* DINAMIC LOCAL */
-          ventaExenta: 0, /* STOCK */
-          ventaNoSuj: 0, /* STOCK */
-          tipoItem: 2 /* 1 bienes 2 servicio 3 ambos 4 otros */
-        }
-      ],
+      cuerpoDocumento: Listitems /* DONE */,
       resumen: {
-        condicionOperacion: 1, /* 1 Contado 2 A crédito  3 Otro    */
-        totalIva: 3.45,   /* DINAMIC LOCAL */
-        saldoFavor: 0,  /* STOCK */
-        numPagoElectronico: null, /* STOCK */
+        condicionOperacion: conditionoperationint, /*DONE 1 Contado 2 A crédito  3 Otro   */
+        totalIva: iva,   /* TODO PENDING DINAMIC LOCAL -----------------*/
+        saldoFavor: 0,  /* DONE STOCK */
+        numPagoElectronico: null, /*DONE STOCK */
         pagos: [
-          {
-            periodo: null, /* STOCK */
-            plazo: null, /* STOCK */
-            montoPago: 30,  /* DINAMIC LOCAL */
-            codigo: "01", /* 01 Billetes y monedas
-            02 Tarjeta Débito
-            03 Tarjeta Crédito
-            04 Cheque
-            05 Transferencia_ Depósito Bancario
-            06 Vales o Cupones
-            08 Dinero electrónico
-            09 Monedero electrónico
-            10 Certificado o tarjeta de regalo
-            11 Bitcoin
-            12 Otras Criptomonedas
-            13 Cuentas por pagar del receptor
-            14 Giro bancario
-            99 Otros (se debe indicar el medio de pago) 
-             */
-            referencia: "20240306090346" /* DINAMIC LOCAL */
+          {/* TODO: ADD MORE PAYMENTS */
+            periodo: null, /*DONE STOCK */
+            plazo: null, /*DONE STOCK */
+            montoPago: total,  /*DONE DINAMIC LOCAL */
+            codigo: payment.paymentmethod, /* DONE */
+            referencia: null /*DONE DINAMIC LOCAL*/
           }
         ],
-        totalNoSuj: 0, /* STOCK */
-        tributos: null, /* STOCK */
-        totalLetras: "TREINTA CON 0\/100 D\u00d3LARES", /* DINAMIC LOCAL */
-        totalExenta: 0, /* STOCK */
-        subTotalVentas: 30, /* DINAMIC LOCAL */
-        totalGravada: 30, /* DINAMIC LOCAL */
-        montoTotalOperacion: 30, /* DINAMIC LOCAL */
-        descuNoSuj: 0,/* STOCK */
-        descuExenta: 0,/* STOCK */
-        descuGravada: 0,/* STOCK */
-        porcentajeDescuento: 0,/* STOCK */
-        totalDescu: 0, /* DINAMIC LOCAL */
-        subTotal: 30, /* DINAMIC LOCAL */
-        ivaRete1: 0,/* STOCK */
-        reteRenta: 0,/* STOCK */
-        totalNoGravado: 0,/* STOCK */
-        totalPagar: 30 /* DINAMIC LOCAL */
+        totalNoSuj: 0, /*DONE STOCK */
+        tributos: null, /* DONE STOCK */
+        totalLetras: convertirDineroALetras(total), /*DONE DINAMIC LOCAL */
+        totalExenta: 0, /* DONE STOCK */
+        subTotalVentas: total, /*DONE DINAMIC LOCAL */
+        totalGravada: total, /*DONE DINAMIC LOCAL */
+        montoTotalOperacion: total, /*  DONE DINAMIC LOCAL */
+        descuNoSuj: 0,/*DONE  STOCK */
+        descuExenta: 0,/*DONE  STOCK */
+        descuGravada: 0,/* DONE STOCK */
+        porcentajeDescuento: 0,/*DONE STOCK */
+        totalDescu: 0, /*DONE DINAMIC LOCAL */
+        subTotal: subtotal, /*DONE DINAMIC LOCAL */
+        ivaRete1: 0,/*DONE STOCK */
+        reteRenta: 0,/*DONE STOCK */
+        totalNoGravado: 0,/*DONE STOCK */
+        totalPagar: total /*DONE DINAMIC LOCAL */
       },
       extension: {
         docuEntrega: null,/* DONE  STOCK */
@@ -294,24 +322,26 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
         docuRecibe: null /* DONE  STOCK */
       },
       apendice: null, /* DONE  STOCK */
-      firma: null, /* Firm the document to the API */
     };
 
+    console.log("Data");
     console.log(data);
-    const Firm = {
-      nit: "02101601741065", /* QUEMADO */
-      activo: true,
-      passwordPri: "Halogenados2024",  /* QUEMADO */
-      dteJson: data
-    }
+    /* 
+    TODO CHANGE THIS THE OTHER SIDE console.log(data);
+     const Firm = {
+       nit: userinfo.nit, 
+       activo: true,
+       passwordPri: userinfo.passwordPri, 
+       dteJson: data
+     } */
 
-    const responsePlantilla = await PlantillaService.create(data,token, id_emisor);
+    const responsePlantilla = await PlantillaService.create(data, token, id_emisor);
 
     console.log("PlantillaService - Create");
     console.log(responsePlantilla);
 
 
-
+    navigate("/facturas");
 
 
   };
@@ -361,22 +391,80 @@ const time24Hour = `${hours}:${minutes}:${seconds}`;
  * @param {number} totalDigits - The total number of digits for the output.
  * @returns {string} The incremented number in the desired format.
  */
-function getNextFormattedNumber(currentNumber, totalDigits = 15) {
-  // Increment the number by 1
-  const incrementedNumber = currentNumber;
+  function getNextFormattedNumber(currentNumber, totalDigits = 15) {
+    // Increment the number by 1
+    const incrementedNumber = currentNumber;
 
-  // Convert the incremented number to a string
-  let incrementedString = incrementedNumber.toString();
+    // Convert the incremented number to a string
+    let incrementedString = incrementedNumber.toString();
 
-  // Pad with leading zeros to ensure the correct number of digits
-  incrementedString = incrementedString.padStart(totalDigits, '0');
+    // Pad with leading zeros to ensure the correct number of digits
+    incrementedString = incrementedString.padStart(totalDigits, '0');
 
-  // Format the output with the required prefix
-  const formattedOutput = `DTE-01-00000000-${incrementedString}`;
+    // Format the output with the required prefix
+    const formattedOutput = `DTE-01-00000030-${incrementedString}`;
 
-  return formattedOutput;
-}
+    return formattedOutput;
+  }
 
+
+  const unidades = ['', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'];
+  const especiales = ['', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISÉIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'];
+  const decenas = ['', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA', 'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'];
+  const centenas = ['', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'];
+
+  const convertirNumeroALetras = (numero) => {
+    if (numero === 0) return 'CERO';
+
+    let letras = '';
+    let negativo = false;
+
+    if (numero < 0) {
+      negativo = true;
+      numero = Math.abs(numero);
+    }
+
+    if (numero < 10) {
+      letras = unidades[numero];
+    } else if (numero < 20) {
+      letras = especiales[numero - 10];
+    } else if (numero < 100) {
+      letras = decenas[Math.floor(numero / 10)];
+      if (numero % 10 !== 0) {
+        letras += ' Y ' + unidades[numero % 10];
+      }
+    } else if (numero < 1000) {
+      letras = centenas[Math.floor(numero / 100)];
+      if (numero % 100 !== 0) {
+        letras += ' ' + convertirNumeroALetras(numero % 100);
+      }
+    } else {
+      letras = 'NÚMERO DEMASIADO GRANDE PARA CONVERTIR';
+    }
+
+    return negativo ? 'MENOS ' + letras : letras;
+  };
+
+  const convertirDineroALetras = (cantidad) => {
+    // Asegurarse de tener dos decimales
+    const cantidadRedondeada = cantidad.toFixed(2);
+    const partes = cantidadRedondeada.split('.'); // Divide la parte entera de los decimales
+    const dolares = parseInt(partes[0], 10); // Parte entera
+    const centavos = parseInt(partes[1], 10); // Parte decimal
+
+    // Convierte las partes a palabras
+    const dolaresEnLetras = convertirNumeroALetras(dolares);
+    const centavosEnLetras = convertirNumeroALetras(centavos);
+
+    // Construye la representación en palabras
+    let resultado = `${dolaresEnLetras} DÓLARES`;
+
+    if (centavos > 0) {
+      resultado += ` CON ${centavosEnLetras} CENTAVOS`;
+    }
+
+    return resultado;
+  };
   return (
     <form className="m-0 w-[430px] bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">
@@ -408,7 +496,7 @@ function getNextFormattedNumber(currentNumber, totalDigits = 15) {
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-2.5 box-border max-w-full">
-          
+
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
@@ -442,21 +530,21 @@ function getNextFormattedNumber(currentNumber, totalDigits = 15) {
           itemsAdvancehandleRemove={itemsAdvancehandleRemove}
           itemsAdvancehandleAdd={itemsAdvancehandleAdd}
           itemsAdvance={itemsAdvance}
-
+          items={items}
         />
       ) : (
         <AdvanceItemsComponent
           handleSelectChangeItemsClient={handleSelectChangeItemsClient}
           itemshandleRemove={itemshandleRemove}
           itemshandleAdd={itemshandleAdd}
+          setListitems={setListitems}
           items={items}
-
         />
       )}
 
-      <TreeNode subtotal="Subtotal" />
-      <TreeNode subtotal="Total Tributos" />
-      <TreeNode subtotal="Total a Pagar" />
+      <TreeNode text="Subtotal" data={subtotal} />
+      <TreeNode text="IVA" data={iva} />
+      <TreeNode text="Total a Pagar" data={total} />
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
           <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
@@ -486,6 +574,7 @@ function getNextFormattedNumber(currentNumber, totalDigits = 15) {
                       <select
                         className="w-full h-full relative  border-white bg-white border-2 max-w-full"
                         type="text"
+                        onChange={(e) => setpayment({ ...payment, paymentType: e.target.value })}
                       >
                         <option value="1">Contado</option>
                         <option value="2">Crédito</option>
@@ -506,7 +595,7 @@ function getNextFormattedNumber(currentNumber, totalDigits = 15) {
                 </div>
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px]">
-                <TableOfContentsNew handleAdd={handleAdd} /> {/* TODO: Add the credit metod */}
+                <TableOfContentsNew handleAdd={handleAdd} setpayment={setpayment} total={total} /> {/* TODO: Add the credit metod */}
               </div>
             </div>
           </div>

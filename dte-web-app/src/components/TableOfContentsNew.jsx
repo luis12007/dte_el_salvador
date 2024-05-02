@@ -1,5 +1,5 @@
 import { useState } from "react";
-const TableOfContentsNew = ({handleAdd }) => {
+const TableOfContentsNew = ({handleAdd, setpayment , total}) => {
   const [type, setType] = useState("Al contado");
   const [pay, setPay] = useState("");
   const [mount, setMount] = useState("");
@@ -16,6 +16,20 @@ const TableOfContentsNew = ({handleAdd }) => {
     handleAdd(newData);
   };
 
+  const datahandle = (newData) => {
+    setpayment((prevClient) => ({
+      ...prevClient,
+      ["paymentmethod"]: newData,
+    }));
+    setType(newData);
+  };
+  const setMount2 = (newData) => {
+    setpayment((prevClient) => ({
+      ...prevClient,
+      ["mount"]: newData,
+    }));
+    setMount(newData);
+  }
 
   return (
     <div className="self-stretch flex flex-col items-start justify-start gap-[9px_0px] text-left text-xs text-black font-inria-sans">
@@ -23,15 +37,15 @@ const TableOfContentsNew = ({handleAdd }) => {
         <div className="relative">Forma de pago</div>
         <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
           <select
-          onChange={(e) => setType(e.target.value)}
+          onChange={(e) => datahandle(e.target.value)}
             className="w-full h-full relative  border-white bg-white border-2 max-w-full"
             type="text"
           >
-            <option value="Billetes">Billetes y monedas</option>
-            <option value="credito">Tarjeta de credito</option>
-            <option value="debito">Tarjeta de debito</option>
-            <option value="Transferencia">Transferencia o deposito bancario</option>
-            <option value="Bitcoin">Bitcoin</option>
+            <option value="01">Billetes y monedas</option>
+            <option value="03">Tarjeta de credito</option>
+            <option value="02">Tarjeta de debito</option>
+            <option value="05">Transferencia o deposito bancario</option>
+            <option value="11">Bitcoin</option>
           </select>
         </div>
       </div>
@@ -44,10 +58,11 @@ const TableOfContentsNew = ({handleAdd }) => {
           <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
             <input
             name="mount"
-            onChange={(e) => setMount(e.target.value)}
+            onChange={(e) => setMount2(e.target.value)}
               className="w-full [border:none] pt-1 [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-              placeholder="datos personales datos personales"
+              placeholder={total}
               type="text"
+              readOnly
             />
           </div>
         </div>
@@ -67,7 +82,7 @@ const TableOfContentsNew = ({handleAdd }) => {
           />
         </div>
       </div>
-      <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
+      {/* <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
         <button
           onClick={handleUpdateAllAttributes}
           className="cursor-pointer [border:none] pt-3 pb-[13px] pr-[35px] pl-10 bg-steelblue-300 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-slategray"
@@ -77,7 +92,7 @@ const TableOfContentsNew = ({handleAdd }) => {
             Nuevo Item
           </b>
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -12,10 +12,9 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
       address: null,
       email: null,
       phone: null,
-      codActividad: "10005",
-      codActividad: "10005",
+      codActividad: null,
       nrc: null,
-      descActividad: "Otro",
+      descActividad: null,
     })
 
   }
