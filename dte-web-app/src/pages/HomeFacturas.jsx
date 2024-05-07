@@ -23,25 +23,25 @@ const HomeFacturas = () => {
   // Data fetching
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Fetching data...");
-      console.log(tokenminis);
       try {
-        const result = await PlantillaAPI.getByUserId(user_id, token);
-        console.log(result);
-        setItems(result || []); // Default to empty array
-
         /* Change to login maybe */
         const resultusers = await UserService.getUserInfo(user_id, token);
-        if (tokenminis === "undefined" || tokenminis === null) {
-        console.log(resultusers);
-        console.log(resultusers.nit);
-        console.log(resultusers.codigo_hacienda);
         setUser(resultusers);
-        const resultAuthminis = await LoginAPI.loginMinis(resultusers.nit,resultusers.codigo_hacienda,"MysoftwareSv");
-        
-        localStorage.setItem("tokenminis", resultAuthminis.body.token);
+        const result = await PlantillaAPI.getByUserId(user_id, token);
+        setItems(result || []); // Default to empty array
+
+        if (tokenminis === "undefined" || tokenminis === null) {
+ 
+          const resultAuthminis = await LoginAPI.loginMinis(
+            resultusers.nit,
+            resultusers.codigo_hacienda,
+            "MysoftwareSv"
+          );
+          console.log(resultAuthminis);
+          localStorage.setItem("tokenminis", resultAuthminis.body.token.slice(7));
+          /* reload */
+          window.location.reload();
         }
-        
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -61,18 +61,20 @@ const HomeFacturas = () => {
 
         {Array.isArray(items) ? (
           items.map((content, index) => (
-            <FacturaUnSend key={index} content={content} user={user}/>
+            <FacturaUnSend key={index} content={content} user={user} />
           ))
         ) : (
           <p>No items to display</p> // Fallback in case `items` is empty or invalid
         )}
       </section>
-        
+
       <button
         onClick={excelHandler}
         className="cursor-pointer [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-seagreen-100"
       >
-        <b className="relative text-lg font-inria-sans text-white text-left z-[1]">Excel</b>
+        <b className="relative text-lg font-inria-sans text-white text-left z-[1]">
+          Excel
+        </b>
       </button>
 
       <HamburguerComponent sidebar={toggleSidebar} visible={visible} />

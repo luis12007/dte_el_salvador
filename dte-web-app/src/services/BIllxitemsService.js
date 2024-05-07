@@ -15,7 +15,19 @@ const BillsxItemsAPI = {
         const data = await res.json();
         return data;
     },
+
+    getlist: async (token,code) => {
+        const res = await fetch(`${BASE_URL}/facturaxitems/list/${code}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        return data;
+    },
 }
+
+
 
 
 export default BillsxItemsAPI;

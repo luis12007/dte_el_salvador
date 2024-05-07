@@ -2,8 +2,6 @@ import DataProductNoAdvanceComponent from "./DataProuctNoAdvanceComponent";
 import DataProductNoAdvanceComponentNew from "./DataProuctNoAdvanceComponentNew";
 const AdvanceItemsComponent = ({items, itemshandleRemove, handleSelectChangeItemsClient, itemshandleAdd, setListitems }) => {
 
-    console.log
-
 
     return (
         <section className="self-stretch flex flex-row items-start justify-start pt-0  pr-[5px] pl-0 box-border max-w-full">

@@ -11,7 +11,7 @@ const SendAPI = {
         const res = await fetch(`${BASE_URL}`, {
             method: 'POST',
             headers: {
-                Authorization: `${token}`,
+                Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
                 'User-Agent':'MysoftDTE'
             },

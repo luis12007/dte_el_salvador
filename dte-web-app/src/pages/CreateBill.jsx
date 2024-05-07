@@ -158,24 +158,23 @@ const Clientes = () => {
     const ivaperitemfinal = ivaperitem * 0.13;
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
     const newItem = {
-      codTributo: null,/* DONE */
-      descripcion: newContents.description, // DONE Description for the new item
-      uniMedida: 99, // TODO:PENDING Example code
-      codigo: null, // TODO:PENDING Example code
-      cantidad: cuantityint, /* DONE */
-      numItem: Listitems.length + 1, // DONE Ensure unique item number
-      tributos: null, /* DONE */
-      ivaItem: ivarounded, // TODO:PENDING Sample IVA
-      noGravado: 0, /* DONE */
-      psv: 0, /* DONE */
-      montoDescu: 0, /* DONE */
-      numeroDocumento: null, /* DONE */
-      precioUni: pricefloat, // DONE Example price
-      /* TODPENDING */
-      ventaGravada: pricefloat, // DONE Example sale value
-      ventaExenta: 0, // DONE
-      ventaNoSuj: 0, // DONE
-      tipoItem: typeitem, // Example item type
+      codTributo: null,
+      descripcion: newContents.description, 
+      uniMedida: 99,
+      codigo: null,
+      cantidad: cuantityint, 
+      numItem: Listitems.length + 1, 
+      tributos: null,
+      ivaItem: ivarounded, 
+      noGravado: 0,
+      psv: 0, 
+      montoDescu: 0, 
+      numeroDocumento: null, 
+      precioUni: pricefloat, 
+      ventaGravada: pricefloat, 
+      ventaExenta: 0, 
+      ventaNoSuj: 0, 
+      tipoItem: typeitem, 
     };
     // Update the list with the new item
     setListitems((prevListitems) => [...prevListitems, newItem]);
@@ -185,7 +184,7 @@ const Clientes = () => {
     /* map all newitems and sum the  precioUni*cantidad */
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
     const rawSubtotal = Listitemstrack.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-    const rawiva = Listitemstrack.reduce((total, item) => total + (item.ivaItem), 0);
+    const rawiva = Listitemstrack.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
@@ -231,99 +230,100 @@ const Clientes = () => {
 
     var data = {
       identificacion: {
-        version: 1, /* TODO:D DONE change when update*/
-        ambiente: userinfo.ambiente, /* DONE Change when production */
-        tipoDte: "01", /* DONE 01 factura  and  03 CF*/
-        numeroControl: getNextFormattedNumber(count[0].count), /* DONE */
-        codigoGeneracion: myUuid, /* DONE */
-        tipoModelo: 1, /* DONE 1 Modelo Facturación previo and 2 modelo diferido ???        */
-        tipoOperacion: 1, /* DONE 1 Transmisión normal  2 to contingencia       */
-        fecEmi: time.date.toString(), /* DONE  */
-        horEmi: time.time, /* DONE */
-        tipoMoneda: "USD", /* DONE STOCK */
-        tipoContingencia: null, /* DONE review the types (Stock) */
-        motivoContin: null /* DONE STOCK */
+        version: 1, 
+        ambiente: userinfo.ambiente, 
+        tipoDte: "01", 
+        numeroControl: getNextFormattedNumber(count[0].count), 
+        codigoGeneracion: myUuid,
+        tipoModelo: 1, 
+        tipoOperacion: 1, 
+        fecEmi: time.date.toString(),
+        horEmi: time.time,
+        tipoMoneda: "USD", 
+        tipoContingencia: null, 
+        motivoContin: null 
       },
-      documentoRelacionado: null, /* DONE STOCK */
+      documentoRelacionado: null,
       emisor: {
         direccion: {
-          municipio: userinfo.municipio, /* DONE */
-          departamento: userinfo.departamento, /* DONE */
-          complemento: userinfo.direccion /* DONE */
+          municipio: userinfo.municipio, 
+          departamento: userinfo.departamento, 
+          complemento: userinfo.direccion 
         },
-        nit: userinfo.nit /* DONE*/,
-        nrc: userinfo.nrc /* DONE */,
-        nombre: userinfo.name /* DONE DINAMIC LOCAL */,
-        codActividad: userinfo.codactividad /* DONE CAT-019 Código de Actividad Económica 86203 Servicios médicos */,
-        descActividad: userinfo.descactividad, /* DONE DINAMIC LOCAL */
-        telefono: userinfo.numero_de_telefono, /* DONE DINAMIC LOCAL */
-        correo: userinfo.correo_electronico, /* DONE DINAMIC LOCAL */
-        nombreComercial: userinfo.nombre_comercial, /* DONE DINAMIC LOCAL */
-        tipoEstablecimiento: userinfo.tipoestablecimiento, /*DONE 01 Sucursal / Agencia   02 Casa matriz   04 Bodega   07 Predio y/o patio   20 Otro  */
+        nit: userinfo.nit,
+        nrc: userinfo.nrc ,
+        nombre: userinfo.name ,
+        codActividad: userinfo.codactividad,
+        descActividad: userinfo.descactividad, 
+        telefono: userinfo.numero_de_telefono, 
+        correo: userinfo.correo_electronico, 
+        nombreComercial: userinfo.nombre_comercial,
+        tipoEstablecimiento: userinfo.tipoestablecimiento,
 
         /* TODO: Just in case establecimiento  */
-        codEstableMH: "0000",  /* Pending dinamic LOCAL */
-        codEstable: "0000",  /* Pending dinamic LOCAL */
-        codPuntoVentaMH: "0000",  /* Pending dinamic LOCAL */
-        codPuntoVenta: "0000"  /* Pending dinamic LOCAL */
+        codEstableMH: null,
+        codEstable: null, 
+        codPuntoVentaMH: null, 
+        codPuntoVenta: null 
       },
-      receptor: {
-        codActividad: client.codActividad, /* DONE */
-        direccion: null, /* DONE DINAMIC LOCAL client.address changed to null ///*/
-        nrc: client.nrc, /* DONE DINAMIC LOCAL */
-        descActividad: client.descActividad, /* DONE  DINAMIC LOCAL */
-        correo: client.email, /* DONE  DINAMIC LOCAL */
-        tipoDocumento: client.documentType, /* DONE  36 NIT   13 DUI   37 Otro   03 Pasaporte   02 Carnet de Residente  */
-        nombre: client.name, /* DONE  DINAMIC LOCAL */
-        telefono: client.phone, /* DONE  DINAMIC LOCAL */
-        numDocumento: client.document /*DONE DINAMIC LOCAL */
+      receptor: { /* TODO ADDRES */
+        codActividad: client.codActividad,
+        direccion: /* client.address */null, 
+        nrc: client.nrc, 
+        descActividad: client.descActividad,
+        correo: client.email,
+        tipoDocumento: client.documentType,
+        nombre: client.name, 
+        telefono: client.phone, 
+        numDocumento: client.document
       },
-      otrosDocumentos: null, /* DONE  STOCK */
-      ventaTercero: null, /* DONE  STOCK */
-      cuerpoDocumento: Listitems /* DONE */,
+      otrosDocumentos: null, 
+      ventaTercero: null, 
+      cuerpoDocumento: Listitems ,
       resumen: {
-        condicionOperacion: conditionoperationint, /*DONE 1 Contado 2 A crédito  3 Otro   */
-        totalIva: iva,   /* TODO PENDING DINAMIC LOCAL -----------------*/
-        saldoFavor: 0,  /* DONE STOCK */
-        numPagoElectronico: null, /*DONE STOCK */
+        condicionOperacion: conditionoperationint, 
+        totalIva: iva,   /* IVA 0.1154 percent -----------------*/
+        saldoFavor: 0,   
+        numPagoElectronico: null,  
         pagos: [
           {/* TODO: ADD MORE PAYMENTS */
-            periodo: null, /*DONE STOCK */
-            plazo: null, /*DONE STOCK */
-            montoPago: total,  /*DONE DINAMIC LOCAL */
-            codigo: payment.paymentmethod, /* DONE */
-            referencia: null /*DONE DINAMIC LOCAL*/
+            periodo: null, 
+            plazo: null,  
+            montoPago: total,  
+            codigo: payment.paymentmethod, 
+            referencia: null 
           }
         ],
-        totalNoSuj: 0, /*DONE STOCK */
-        tributos: null, /* DONE STOCK */
-        totalLetras: convertirDineroALetras(total), /*DONE DINAMIC LOCAL */
-        totalExenta: 0, /* DONE STOCK */
-        subTotalVentas: total, /*DONE DINAMIC LOCAL */
-        totalGravada: total, /*DONE DINAMIC LOCAL */
-        montoTotalOperacion: total, /*  DONE DINAMIC LOCAL */
-        descuNoSuj: 0,/*DONE  STOCK */
-        descuExenta: 0,/*DONE  STOCK */
-        descuGravada: 0,/* DONE STOCK */
-        porcentajeDescuento: 0,/*DONE STOCK */
-        totalDescu: 0, /*DONE DINAMIC LOCAL */
-        subTotal: subtotal, /*DONE DINAMIC LOCAL */
-        ivaRete1: 0,/*DONE STOCK */
-        reteRenta: 0,/*DONE STOCK */
-        totalNoGravado: 0,/*DONE STOCK */
-        totalPagar: total /*DONE DINAMIC LOCAL */
+        totalNoSuj: 0,
+        tributos: null, 
+        totalLetras: convertirDineroALetras(total),  
+        totalExenta: 0,  
+        subTotalVentas: total, 
+        totalGravada: total,
+        montoTotalOperacion: total, 
+        descuNoSuj: 0,
+        descuExenta: 0,
+        descuGravada: 0,
+        porcentajeDescuento: 0,
+        totalDescu: 0, 
+        subTotal: subtotal, 
+        ivaRete1: 0,
+        reteRenta: 0,
+        totalNoGravado: 0,
+        totalPagar: total 
       },
       extension: {
-        docuEntrega: null,/* DONE  STOCK */
-        nombRecibe: null,/* DONE  STOCK */
-        observaciones: observaciones,/* DONE  STOCK */
-        placaVehiculo: null,/* DONE  STOCK */
-        nombEntrega: null, /* DONE  STOCK */
-        docuRecibe: null /* DONE  STOCK */
+        docuEntrega: null,
+        nombRecibe: null,
+        observaciones: observaciones,
+        placaVehiculo: null,
+        nombEntrega: null, 
+        docuRecibe: null 
       },
-      apendice: null, /* DONE  STOCK */
+      apendice: null,
     };
 
+    
     console.log("Data");
     console.log(data);
     /* 
@@ -340,8 +340,8 @@ const Clientes = () => {
     console.log("PlantillaService - Create");
     console.log(responsePlantilla);
 
-
-    navigate("/facturas");
+/* 
+    navigate("/facturas");  */
 
 
   };

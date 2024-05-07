@@ -1,7 +1,7 @@
 import userEvent from "@testing-library/user-event";
 import FrameComponent3 from "./SwitchON";
 import { useEffect } from "react";
-
+import { useState } from "react";
 const BillCF = ({handleSelectChangeCFClient, setClient}) => {
 
   useEffect(() => {
@@ -20,6 +20,24 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
   }
   , []);
 
+  const changeHandler = (field,e) => {
+
+    if (field === "document") {
+      setClient((prevClient) => ({
+        ...prevClient, // Copiar el estado anterior
+        ["documentType"]: "13", // Actualizar el campo específico
+      }));
+      
+    }
+
+    console.log(field)
+    console.log(e.target.value)
+    setClient((prevClient) => ({
+      ...prevClient, // Copiar el estado anterior
+      [field]: e.target.value, // Actualizar el campo específico
+    }));
+  };
+
   return (
     <section className="self-stretch flex flex-row items-start justify-start py-0 px-2.5 box-border max-w-full text-left text-xs text-black font-inria-sans">
       <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0.5 px-0 pb-[29px] box-border gap-[14px] max-w-full">
@@ -31,7 +49,7 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
             <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
               <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                 <div className="relative text-xs font-inria-sans text-left z-[1]">
-                  <span className="text-black">{`Documento de identificación `}</span>
+                  <span className="text-black">{`DUI`}</span>
                   <span className="text-tomato">*</span>
                 </div>
                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
@@ -39,7 +57,7 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                     placeholder="CF"
                     type="text"
-                    readOnly
+                    onChange={(e) => changeHandler("document", e)}
                   />
                 </div>
               </div>
@@ -55,9 +73,10 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="CF"
+                placeholder="Luis Alexander"
                 type="text"
-                readOnly
+                onChange={(e) => changeHandler("name", e)}
+
               />
             </div>
           </div>
@@ -72,9 +91,9 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="CF"
+                placeholder="Luishdezmtz12@gmail.con"
                 type="text"
-                readOnly
+                onChange={(e) => changeHandler("email", e)}
               />
             </div>
           </div>
