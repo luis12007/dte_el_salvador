@@ -12,7 +12,22 @@ const createitemxfactura = async(req, res) => {
     }
 };
 
+const getitemxfactura = async(req, res) => {
+
+    const idfactura = req.params.idfactura;
+    try {    /*tODO INNER JOIN FACTURASXITEMS WITH ITEMS WERE ID_ITEMS IS ID OF ITEMS */
+        const item = await db('facturasxitems').join('items', 'facturasxitems.id_items', 'items.id').where('facturasxitems.id_facturas', idfactura);
+        res.json(item);
+    }
+    catch (error) {
+        console.error('Error al obtener item', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+}
+
+
 
 module.exports = {
     createitemxfactura,
+    getitemxfactura,
 };
