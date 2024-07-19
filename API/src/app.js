@@ -10,6 +10,7 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const facturaxitems = require('./routes/facturaxitemsRoutes');
 const firmarRoutes = require('./routes/firmarRoutes');
 const sellarRoutes = require('./routes/sellarRoutes');
+const mailRoutes = require('./routes/mailRoutes');
 const app = express();
 const port = 3000;
 
@@ -34,6 +35,7 @@ app.use('/sellar', sellarRoutes);
 app.use('/facturaxitems', facturaxitems);
 app.use('/items', itemsRoutes);
 app.use('/emisor', usuarioRoutes);
+app.use('/mail' , mailRoutes);
 
 
 // Start the server

@@ -1,5 +1,6 @@
 const { version } = require("env");
 const db = require("../db/db"); // Asegúrate de tener correctamente configurado el objeto Knex
+const sendMail = require("../utils/mailUtils");
 
 const plantillacreate = async (req, res) => {
   const plantilla = req.body;
@@ -158,6 +159,11 @@ const plantillacreate = async (req, res) => {
     console.error("Error al crear plantilla:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
+
+
+
+
+
 };
 
 const insertarItems = async (items) => {
