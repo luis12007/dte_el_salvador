@@ -215,7 +215,139 @@ const Clientes = () => {
   /* navigate and fu */
 
 
+const testbill = async () => {
+// add a json mock with the structure of the data
+const count = await PlantillaAPI.count(id_emisor, "01", token)
 
+
+    const myUuid = uuidv4().toUpperCase().toString();
+
+    const conditionoperationint = parseInt(payment.paymentType);
+
+    var data = {
+      identificacion: {
+        version: 1, 
+        ambiente: 0, 
+        tipoDte: "01", 
+        numeroControl: getNextFormattedNumber(count[0].count), 
+        codigoGeneracion: myUuid,
+        tipoModelo: 1, 
+        tipoOperacion: 1, 
+        fecEmi: "2024-02-02",
+        horEmi: time.time,
+        tipoMoneda: "USD", 
+        tipoContingencia: null, 
+        motivoContin: null 
+      },
+      documentoRelacionado: null,
+      emisor: {
+        direccion: {
+          municipio: 1, 
+          departamento: 1, 
+          complemento: "userinfo.direccion" 
+        },
+        nit: "userinfo.nit",
+        nrc: "userinfo.nrc" ,
+        nombre: "userinfo.name" ,
+        codActividad: "userinfo.codactividad",
+        descActividad: "userinfo.descactividad", 
+        telefono: "userinfo.numero_de_telefono", 
+        correo: "userinfo.correo_electronico", 
+        nombreComercial: "userinfo.nombre_comercial",
+        tipoEstablecimiento: "userinfo.tipoestablecimiento",
+
+        /* TODO: Just in case establecimiento  */
+        codEstableMH: null,
+        codEstable: null, 
+        codPuntoVentaMH: null, 
+        codPuntoVenta: null 
+      },
+      receptor: { /* TODO ADDRES */
+        codActividad: "client.codActividad",
+        direccion: /* client.address */null, 
+        nrc: "client.nrc", 
+        descActividad: "client.descActividad",
+        correo: "client.email",
+        tipoDocumento: "client.documentType",
+        nombre: "client.name", 
+        telefono: "client.phone", 
+        numDocumento:" client.document"
+      },
+      otrosDocumentos: null, 
+      ventaTercero: null, 
+      cuerpoDocumento: [{
+        codTributo: null,
+        descripcion: "newContents.description", 
+        uniMedida: 99,
+        codigo: null,
+        cantidad: 1, 
+        numItem: 1, 
+        tributos: null,
+        ivaItem: 20.2, 
+        noGravado: 0,
+        psv: 0, 
+        montoDescu: 0, 
+        numeroDocumento: null, 
+        precioUni: 20.2, 
+        ventaGravada: 20.2, 
+        ventaExenta: 0, 
+        ventaNoSuj: 0, 
+        tipoItem: 1, 
+      }] ,
+      resumen: {
+        condicionOperacion: 20, 
+        totalIva: 0.1154,   /* IVA 0.1154 percent -----------------*/
+        saldoFavor: 0,   
+        numPagoElectronico: null,  
+        pagos: [
+          {/* TODO: ADD MORE PAYMENTS */
+            periodo: null, 
+            plazo: null,  
+            montoPago: 200,  
+            codigo: "CODIGO DE PRODUCTO", 
+            referencia: null 
+          }
+        ],
+        totalNoSuj: 0,
+        tributos: null, 
+        totalLetras: "DOSCIENTOS DOLARES",  
+        totalExenta: 0,  
+        subTotalVentas: 200, 
+        totalGravada: 200,
+        montoTotalOperacion: 200, 
+        descuNoSuj: 0,
+        descuExenta: 0,
+        descuGravada: 0,
+        porcentajeDescuento: 0,
+        totalDescu: 0, 
+        subTotal: subtotal, 
+        ivaRete1: 0,
+        reteRenta: 0,
+        totalNoGravado: 0,
+        totalPagar: 200
+      },
+      extension: {
+        docuEntrega: null,
+        nombRecibe: null,
+        observaciones: "observaciones",
+        placaVehiculo: null,
+        nombEntrega: null, 
+        docuRecibe: null 
+      },
+      apendice: null,
+    };
+
+    
+    console.log("Data");
+    console.log(data);
+
+    const responsePlantilla = await PlantillaService.create(data, token, id_emisor);
+
+    console.log("PlantillaService - Create");
+    console.log(responsePlantilla);
+
+
+}
   /* ---------------------------------------------------------- */
   const addBillHandler = async () => {
 
@@ -616,11 +748,25 @@ const Clientes = () => {
             onClick={addBillHandler}
             className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
           >
+
             <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
             <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
               Añadir Factura
             </b>
           </button>
+
+          <button
+            onClick={testbill}
+            className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
+          >
+
+            <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+            <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
+              probar factura
+            </b>
+          </button>
+
+
           <button
             onClick={goBackHandler}
             className="cursor-pointer [border:none] pt-3 pb-[13px] pr-11 pl-[49px] bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-indianred-100"

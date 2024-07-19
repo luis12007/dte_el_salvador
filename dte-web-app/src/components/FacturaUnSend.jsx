@@ -76,8 +76,123 @@ itemsdata();
     console.log("EditBillHandler");
   };
 
-  const DownloadBillHandler = () => {
+  const DownloadBillHandler = async () => {
     console.log("DownloadBillHandler");
+    var data = {
+      identificacion: {
+        version: parseInt(content.version), 
+        ambiente: content.ambiente, 
+        tipoDte: content.tipo, 
+        numeroControl: content.numero_de_control, 
+        codigoGeneracion: content.codigo_de_generacion,
+        tipoModelo: parseInt(content.modelo_de_factura), 
+        tipoOperacion: parseInt(content.tipo_de_transmision), 
+        fecEmi: content.fecha_y_hora_de_generacion,
+        horEmi: content.horemi,
+        tipoMoneda: content.tipomoneda, 
+        tipoContingencia: content.tipocontingencia, 
+        motivoContin: content.motivocontin, 
+      },
+      documentoRelacionado: content.documentorelacionado,
+      emisor: {
+        direccion: {
+          municipio: user.municipio, 
+          departamento: user.departamento, 
+          complemento: user.direccion 
+        },
+        nit: user.nit,
+        nrc: user.nrc ,
+        nombre: user.name ,
+        codActividad: user.codactividad,
+        descActividad: user.descactividad, 
+        telefono: user.numero_de_telefono, 
+        correo: user.correo_electronico, 
+        nombreComercial: user.nombre_comercial,
+        tipoEstablecimiento: user.tipoestablecimiento,
+    
+        /* TODO: Just in case establecimiento  */
+        codEstableMH: content.codestablemh,
+        codEstable: content.codestable, 
+        codPuntoVentaMH: content.codpuntoventamh, 
+        codPuntoVenta: content.codpuntoventa 
+      },
+      receptor: {
+        codActividad: content.re_codactividad,
+        direccion: content.re_direccion, 
+        nrc: content.re_nrc, 
+        descActividad: content.re_actividad_economica,
+        correo: content.re_correo_electronico,
+        tipoDocumento: content.re_tipodocumento,
+        nombre: content.re_name, 
+        telefono: content.re_numero_telefono, 
+        numDocumento: content.re_numdocumento
+      },
+      otrosDocumentos: content.otrosdocumentos, 
+      ventaTercero: content.ventatercero, 
+      cuerpoDocumento: Listitems ,
+      resumen: {
+        condicionOperacion: content.condicionoperacion, 
+        totalIva: parseFloat(content.iva_percibido),/* pending */   
+        saldoFavor: content.saldofavor,   
+        numPagoElectronico: content.numpagoelectronico,  
+        pagos: [
+          {/* TODO: ADD MORE PAYMENTS */
+            periodo: content.periodo, 
+            plazo: content.plazo,  
+            montoPago: content.montopago, 
+            codigo: content.codigo,        
+            referencia: content.referencia
+          }
+        ],
+        totalNoSuj: content.totalnosuj,
+        tributos: content.tributos, 
+        totalLetras: content.cantidad_en_letras,  
+        totalExenta: content.totalexenta,  
+        subTotalVentas: content.subtotalventas, 
+        totalGravada: parseFloat(content.total_agravada),
+        montoTotalOperacion: content.montototaloperacion, 
+        descuNoSuj: content.descunosuj,
+        descuExenta: content.descuexenta,
+        descuGravada: content.descugravada,
+        porcentajeDescuento: content.porcentajedescuento,
+        totalDescu: parseFloat(content.monto_global_de_descuento), 
+        subTotal: parseFloat(content.subtotal), 
+        ivaRete1: parseFloat(content.iva_retenido),
+        reteRenta: parseFloat(content.retencion_de_renta),
+        totalNoGravado: content.totalnogravado,
+        totalPagar: parseFloat(content.total_a_pagar)
+      },
+      extension: {
+        docuEntrega: content.documento_e,
+        nombRecibe: content.documento_r,
+        observaciones: content.observaciones,
+        placaVehiculo: content.placavehiculo,
+        nombEntrega: content.responsable_emisor, 
+        docuRecibe: content.documento_receptor, 
+      },
+      apendice: content.apendice,
+    };
+
+    console.log("---------------resultado--------------");
+    console.log(data);
+    console.log("---------------resultado--------------");
+
+    const Firm = {
+      nit: user.nit ,
+      activo: true,
+      passwordPri: user.passwordpri ,
+      dteJson: data,
+    };
+    const responseFirm = await Firmservice.create(Firm);
+    console.log(responseFirm);
+
+    data.firma = responseFirm.body;
+    data.sellado = content.sellado;
+    data.sello = content.sello;
+
+    /* Calling the API to send the email */
+
+
   };
 
   const ValidateBillHandler = async () => { /* Firm DTE */
@@ -209,6 +324,54 @@ var data = {
     /*  window.location.reload();  */
   };
 
+
+  const testmail = async () => {
+    console.log("testmail");
+    console.log("SendBillHandler");
+    console.log(content);
+    console.log("---------------resultado--------------");
+    console.log(content.ambiente);
+    console.log(content.tipo);
+    const count = await PlantillaAPI.count(id_emisor, content.tipo, token);
+
+    const parseintversion = parseInt(content.version);
+ 
+    const dataSend = { /* TODO: SEND */
+      tipoDte: content.tipo,
+      ambiente: content.ambiente,
+      idEnvio: parseInt(count[0].count + 1),
+      version: parseintversion,
+      codigoGeneracion: content.codigo_de_generacion,
+      documento: content.firm,
+    };
+
+
+    /* try {
+      console.log(dataSend);
+      const senddata = await SendAPI.sendBill(dataSend, tokenminis);
+      console.log(senddata);
+
+      
+    if (senddata.estado === "PROCESADO") {
+      const response = await PlantillaAPI.updatesend(id_emisor,true,senddata.selloRecibido,token,content.codigo_de_generacion);
+      console.log("edited");
+      console.log(response);
+      window.location.reload(); 
+    if (senddata.estado === "RECHAZADO")
+      alert("Error al enviar la factura", senddata.descripcionMsg);
+    }
+
+
+    } catch (error) {
+      console.log(error)
+    } */
+
+      /* Call the services */
+
+      
+
+  }
+
   const SendBillHandler = async () => {
     console.log("SendBillHandler");
     console.log(content);
@@ -290,6 +453,9 @@ var data = {
         </div>
         <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
       </button>
+
+
+
     </div>
   ) : (
     <div className=" flex flex-row">
@@ -299,6 +465,34 @@ var data = {
       >
         <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
           Enviar
+        </div>
+      </button>
+    </div>
+  );
+
+  const testbutton = content.sellado ? (
+    <div className=" flex flex-row">
+      <button
+        onClick={testmail}
+        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
+      >
+        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+          test mail
+        </div>
+        <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
+      </button>
+
+      
+
+    </div>
+  ) : (
+    <div className=" flex flex-row">
+      <button
+        onClick={testmail}
+        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
+      >
+        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+        test mail
         </div>
       </button>
     </div>
@@ -365,6 +559,7 @@ var data = {
             <div className="self-stretch flex  gap-[0px_8px]">
               {firmbutton}
               {sendedebutton} {/* Additional content if `firm` is not null */}
+              {testbutton} {/* Additional content if `firm` is not null */}
             </div>
           </div>
         </div>
