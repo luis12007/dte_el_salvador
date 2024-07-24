@@ -1,7 +1,7 @@
 const BASE_URL = "http://localhost:3000";
 
 
-const SendAPI = {
+const SendEmail = {
     /* 
 app.use('/mail' , mailRoutes);
 router.post('/factura:id_emisor', authenticateToken,sendMailFactura);
@@ -24,7 +24,8 @@ const sendMailFactura = async (req, res) => {
 
 */
     sendBill: async (id_emisor,plantilla, token) => {
-        const res = await fetch(`${BASE_URL}/factura/${id_emisor}`, {
+        try {
+        const res = await fetch(`${BASE_URL}/mail/factura/${id_emisor}`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -34,6 +35,9 @@ const sendMailFactura = async (req, res) => {
         });
         const data = await res.json();
         return data;
+    } catch (error) {
+        return error;  
+    }
     },
 
     sendCF: async (id_emisor,plantilla, token) => {
@@ -52,4 +56,4 @@ const sendMailFactura = async (req, res) => {
 
 }
 
-export default SendAPI;
+export default SendEmail;

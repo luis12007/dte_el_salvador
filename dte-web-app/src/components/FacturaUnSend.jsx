@@ -6,6 +6,7 @@ import SendAPI from "../services/SendService";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BillsxItemsAPI from "../services/BIllxitemsService";
+import SendEmail from "../services/SendMailService";
 
 const FrameComponent1 = ({key, content , user}) => {
   const [tipo, setTipo] = useState("");
@@ -328,11 +329,27 @@ var data = {
   const testmail = async () => {
     console.log("testmail");
     console.log("SendBillHandler");
+    console.log("---------------content--------------");
     console.log(content);
-    console.log("---------------resultado--------------");
     console.log(content.ambiente);
     console.log(content.tipo);
     const count = await PlantillaAPI.count(id_emisor, content.tipo, token);
+
+    /* Sending the email */
+
+
+    console.log("---------------enviando--------------");
+    console.log(content);
+    console.log(token);
+    console.log(id_emisor);
+    const sendEmailFactura = await SendEmail.sendBill(id_emisor,content,token);
+
+    console.log("---------------resultado de mail--------------");
+    console.log(sendEmailFactura);
+
+
+
+
 
     const parseintversion = parseInt(content.version);
  
