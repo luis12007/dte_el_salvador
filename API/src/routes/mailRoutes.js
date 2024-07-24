@@ -9,7 +9,7 @@ const authenticateToken = require('../middleware/verifyToken.js');
 
 
 
-router.post('/factura:id_emisor', authenticateToken,sendMailFactura);
+router.post('/factura/:id_emisor', authenticateToken,sendMailFactura);
 router.post('/CCF:id_emisor', authenticateToken,sendMailCCF);
 
 
