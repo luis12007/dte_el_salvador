@@ -171,7 +171,7 @@ const Clientes = () => {
       montoDescu: 0, 
       numeroDocumento: null, 
       precioUni: pricefloat, 
-      ventaGravada: pricefloat, 
+      ventaGravada: (pricefloat*cuantityint) + ivarounded*cuantityint, 
       ventaExenta: 0, 
       ventaNoSuj: 0, 
       tipoItem: typeitem, 

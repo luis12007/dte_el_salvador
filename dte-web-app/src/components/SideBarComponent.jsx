@@ -110,7 +110,7 @@ const CloseHandler = () => {
                 </div>
               </div>
             </button>
-            <button onClick={GoClientsHandler} className="flex w-full bg-white flex-row items-start justify-start gap-[0px_14px]">
+            {/* <button onClick={GoClientsHandler} className="flex w-full bg-white flex-row items-start justify-start gap-[0px_14px]">
               <img
                 className="h-8 w-8 relative object-cover z-[1]"
                 loading="lazy"
@@ -133,7 +133,7 @@ const CloseHandler = () => {
                   <div className="relative z-[1]">Añadir servicio</div>
                 </div>
               </div>
-            </button>
+            </button> */}
           </nav>
         </div>
       </div>

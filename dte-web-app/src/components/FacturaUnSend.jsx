@@ -410,6 +410,8 @@ var data = {
 
 
     try {
+      console.log(content);
+      console.log("---------------dataSend to minis--------------");
       console.log(dataSend);
       const senddata = await SendAPI.sendBill(dataSend, tokenminis);
       console.log(senddata);
@@ -419,6 +421,18 @@ var data = {
       const response = await PlantillaAPI.updatesend(id_emisor,true,senddata.selloRecibido,token,content.codigo_de_generacion);
       console.log("edited");
       console.log(response);
+
+      /* send email */
+
+      console.log("---------------enviando email--------------");
+      console.log(content);
+      console.log(token);
+      console.log(id_emisor);
+      const sendEmailFactura = await SendEmail.sendBill(id_emisor,content,token);
+  
+      console.log("---------------resultado de mail--------------");
+      console.log(sendEmailFactura);
+      
      /*  window.location.reload(); */
     if (senddata.estado === "RECHAZADO")
       alert("Error al enviar la factura", senddata.descripcionMsg);
@@ -557,7 +571,7 @@ var data = {
               </div>
               <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
               <div className="relative whitespace-nowrap z-[1]">
-                NIT: {content.re_nit}
+                Documento: {content.re_nit}
               </div>
               <div className="relative whitespace-nowrap z-[1]">
                 Correo: {content.re_correo_electronico}

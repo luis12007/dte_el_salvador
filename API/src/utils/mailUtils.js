@@ -164,14 +164,14 @@ Plantilla
   plazo: null
 } */
 
-const sendMail = async(user, plantillaDB, items) => {
+const sendMail = async(userDB, plantillaDB, itemsDB) => {
     try {
         // Example user and plantillaDB data
-        const user = { name: 'John Doe' };
-        const plantillaDB = { re_name: 'Invoice' };
+        const user = { name: userDB.name };
+        const plantilla = { re_name: 'Factura Electronica' };
 
         // Create the document PDF
-        const pdfPath = path.join(__dirname, `${user.name} ${plantillaDB.re_name}.pdf`);
+        const pdfPath = path.join(__dirname, `${user.name} ${plantilla.re_name}.pdf`);
 
         const pdfDoc = new PDFDocument({
             size: 'A4',
@@ -183,9 +183,9 @@ const sendMail = async(user, plantillaDB, items) => {
                 // Email configuration
                 const mailOptions = {
                     from: 'mysoftwaresv@gmail.com', // CHANGE MOCK DATA
-                    to: 'mysoftwaresv@gmail.com', // CHANGE MOCK DATA
-                    subject: `DTE ${user.name}`, // CHANGE MOCK DATA
-                    html: '<h3>¡DTE facturacion electronica!</h3><p>lore ipsum lore ipsum lore ipsum lore ipsum lore ipsum.</p>',
+                    to: 'mysoftwaresv@gmail.com', // CHANGE MOCK DATA plantillaDB.re_correo_electronico
+                    subject: `DTE de parte de ${user.name} `, // CHANGE MOCK DATA
+                    html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                     attachments: [{
                         filename: 'DTE.pdf',
                         path: pdfPath,
@@ -251,17 +251,17 @@ const sendMail = async(user, plantillaDB, items) => {
         };
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         // Generate and save the QR code image
-        generateQRCodeImage('https://admin.factura.gob.sv/consultaPublica?ambiente={ambiente}&codGen={cod_generacion}&fechaEmi={fechaEmi}', 'qrcode.png');
+        generateQRCodeImage(`https://admin.factura.gob.sv/consultaPublica?ambiente=${userDB.ambiente}&codGen=${plantillaDB.codigo_de_generacion}&fechaEmi=${plantillaDB.fecha_y_hora_de_generacion}`, 'qrcode.png');
         pdfDoc.rect(280, yscale, 100, 100).stroke('#000'); // Background box for QR code
         await delay(3000);
         const bgqr = path.join(__dirname, '../../qrcode.png');
         pdfDoc.image(bgqr, 280, yscale, { width: 100, height: 100 });
         pdfDoc.fontSize(10).font('Helvetica-Bold').text('Código de generación:', 400, yscale)
-            .font('Helvetica').text('IEJD-DKFI-DKKE-DKEO-DKS', 400, yscale + 15)
-            .font('Helvetica-Bold').text('Numero de control:', 400, yscale + 30)
-            .font('Helvetica').text('DTE-0100-002-00000000010', 400, yscale + 45)
-            .font('Helvetica-Bold').text('Sello de recepción:', 400, yscale + 60)
-            .font('Helvetica').text('024E68208639D4549FB9FA06E7CB6D57', 400, yscale + 75)
+            .font('Helvetica').text(`${plantillaDB.codigo_de_generacion}`, 400, yscale + 15)
+            .font('Helvetica-Bold').text('Numero de control:', 400, yscale + 40)
+            .font('Helvetica').text(`${plantillaDB.numero_de_control}`, 400, yscale + 55)
+            .font('Helvetica-Bold').text('Sello de recepción:', 400, yscale + 70)
+            .font('Helvetica').text(`${plantillaDB.sello_de_recepcion}`, 400, yscale + 85)
 
         /* An line to divide */
 
@@ -273,7 +273,7 @@ const sendMail = async(user, plantillaDB, items) => {
             .text('Tipo de transmisión', 480, yscale + 135);
 
         pdfDoc.font('Helvetica').text('Previo', 20, yscale + 150)
-            .text('8/01/2024 05:53 PM', 250, yscale + 150)
+            .text(`${plantillaDB.fecha_y_hora_de_generacion} - ${plantillaDB.horemi}`, 250, yscale + 150)
             .text('Normal', 540, yscale + 150);
 
         /* text bold */
@@ -291,40 +291,55 @@ const sendMail = async(user, plantillaDB, items) => {
 
 
         const truncateText = (text, maxLength) => {
+            if (text === null) {
+                return '';
+                
+            }
             if (text.length > maxLength) {
                 return text.slice(0, maxLength - 3) + '...';
             }
             return text;
         };
 
-        const nombreORazonSocial = 'Luis Alexander Hernández Martínez';
-        const direccion = 'Residencial San Gabriel 2, casa #3, Calle al volcán, Mejicanos, San Salvador';
+        console.log('userDB', userDB.name, userDB.direccion);
 
-        const truncatedNombreORazonSocial = truncateText(nombreORazonSocial, 25);
-        const truncatedDireccion = truncateText(direccion, 37);
+        const username = userDB.name.toLowerCase();
+        const truncatedNombreORazonSocial = truncateText(username, 20);
+        const truncatedDireccion = truncateText(userDB.direccion, 37);
 
         pdfDoc.fontSize(10).fillColor('#1E3256')
             .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
-            .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text('71238782173', infoX + 30, infoY + 40)
-            .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text('982839002900', infoX + 37, infoY + 55)
-            .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios médicos', infoX + 115, infoY + 70)
+            .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
+            .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
+            .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios médicos', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
             .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
-            .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text('Luishdezmtz12@gmail.com', infoX + 104, infoY + 100)
-            .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text('Nombre COmercial', infoX + 102, infoY + 115)
-            .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text('Tipo de e', infoX + 128, infoY + 130);
+            .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
+            .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
+            .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
 
+
+            console.log('plantillaDB', plantillaDB.re_name , plantillaDB.re_direccion);
+        const truncatedNombreORazonSocialReceptor = truncateText(plantillaDB.re_name, 25);
+        const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 37);
 
         pdfDoc.font('Helvetica-Bold').text('RECEPTOR', infoX + 280, infoY + 8)
 
+        /* if plantillaDB.re_documento has - var = DUI else NRC */
+        const re_numdocumentostring = 'DOC';
+        if (plantillaDB.re_numdocumento.includes('-')) {
+         re_numdocumentostring = 'DUI: ';
+        } else if(plantillaDB.re_numdocumento.includes('-') === false) {
+         re_numdocumentostring = 'NRC: ';
+
         pdfDoc.fontSize(10).fillColor('#1E3256')
-            .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 392, infoY + 25)
-            .font('Helvetica-Bold').text('NIT:', infoX + 280, infoY + 40).font('Helvetica').text('71238782173', infoX + 300, infoY + 40)
-            .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('982839002900', infoX + 307, infoY + 55)
-            .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('Servicios médicos', infoX + 385, infoY + 70)
-            .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 330, infoY + 85)
-            .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text('Luishdezmtz12@gmail.com', infoX + 374, infoY + 100)
-            .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('Nombre COmercial', infoX + 372, infoY + 115)
-            .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('Tipo de e', infoX + 398, infoY + 130);
+            .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
+            .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_numdocumento}`, infoX + 300, infoY + 40)
+            .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
+            .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
+            .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
+            .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
+            .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
+            .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
         // Add services section
         pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, infoY + 160, { underline: true });
@@ -344,13 +359,6 @@ const sendMail = async(user, plantillaDB, items) => {
             .text('Agravadas', servicesX + 410, servicesY)
             .text('Ventas extensas', servicesX + 470, servicesY);
 
-        const items = [
-            { num: '1', cantidad: '1', codigo: '#', descripcion: 'Servicio médico 1', precio: '$100.00', descuento: '$0.00', ventasNoSujetas: '$0.00', ventasExtensas: '$100.00', ventasAgravadas: '$0.00' },
-            { num: '2', cantidad: '1', codigo: '#', descripcion: 'Servicio médico 2', precio: '$25.00', descuento: '$0.00', ventasNoSujetas: '$0.00', ventasExtensas: '$25.00', ventasAgravadas: '$0.00' },
-            { num: '3', cantidad: '1', codigo: '#', descripcion: 'Servicio médico 3', precio: '$50.00', descuento: '$0.00', ventasNoSujetas: '$0.00', ventasExtensas: '$50.00', ventasAgravadas: '$0.00' },
-
-        ];
-
         const checkAndAddNewPageItems = (pdfDoc, y, threshold, newY) => {
             if (y > threshold) {
                 pdfDoc.addPage();
@@ -359,22 +367,23 @@ const sendMail = async(user, plantillaDB, items) => {
             return y;
         };
         let y = servicesY + 20;
-        items.forEach(item => {
+        let numcounter = 1;
+        itemsDB.forEach(itemsDB => {
 
-
+            
             // Check if a new page is needed and reset y if necessary
             y = checkAndAddNewPageItems(pdfDoc, y, 770, 20);
 
-            pdfDoc.text(item.num, servicesX, y)
-                .text(item.cantidad, servicesX + 20, y)
-                .text(item.codigo, servicesX + 70, y)
-                .text(item.descripcion, servicesX + 110, y)
-                .text(item.precio, servicesX + 240, y)
-                .text(item.descuento, servicesX + 290, y)
-                .text(item.ventasNoSujetas, servicesX + 350, y)
-                .text(item.ventasExtensas, servicesX + 410, y)
-                .text(item.ventasAgravadas, servicesX + 470, y);
-
+            pdfDoc.text(numcounter, servicesX, y)
+                .text(itemsDB.cantidad, servicesX + 20, y)
+                .text(itemsDB.codigo, servicesX + 70, y)
+                .text(itemsDB.descripcion, servicesX + 110, y)
+                .text(itemsDB.preciouni, servicesX + 240, y)
+                .text(itemsDB.montodescu, servicesX + 290, y)
+                .text(itemsDB.ventanosuj, servicesX + 350, y)
+                .text(itemsDB.ventaexenta, servicesX + 410, y)
+                .text(itemsDB.ventagravada * itemsDB.cantidad, servicesX + 470, y);
+            numcounter += 1;
             y += 20;
         });
 
@@ -392,36 +401,50 @@ const sendMail = async(user, plantillaDB, items) => {
         // Check if a new page is needed and reset y if necessary
         y = checkAndAddNewPage(pdfDoc, y);
 
-        pdfDoc.roundedRect(20, y + 30, 200, 150, 10).fill('#EAEAEA').stroke('#000'); // Background box for sender
+        pdfDoc.roundedRect(20, y + 30, 210, 140, 10).fill('#EAEAEA').stroke('#000'); // Background box for sender
 
+        /* Truncate the text */
 
-        // Add Observations and totals
+                    const funcenter = (text, y, x) => {
+                        /* for and slice every 26 caracters */
+                        for (let i = 0; i < text.length; i += 26) {
+                            pdfDoc.fontSize(10).text(text.slice(i, i + 26), x, y + (i / 26 * 15));
+                        }
+                    }
+        
         pdfDoc.fillColor('#1E3256').fontSize(13).text('Observaciones', 30, y + 40);
-        pdfDoc.fontSize(10).text('Observaciones del DTE opcional', 30, y + 55);
-        pdfDoc.text('Observaciones del DTE DTE DTE DTE', 30, y + 65);
-        pdfDoc.text('Observaciones del DTE DTE DTE DTE', 30, y + 75);
-        pdfDoc.text('Observaciones del DTE DTE DTE DTE', 30, y + 85);
-        pdfDoc.text('Observaciones del DTE DTE DTE DTE', 30, y + 95);
+        funcenter(plantillaDB.observaciones, y + 55, 30);
 
-        pdfDoc.fontSize(14).text('Ventas no sujetas: $0.00', 300, y + 10, { align: 'right' })
-            .text('Total gravado: $0.00', 300, y + 30, { align: 'right' })
-            .text('Monto de descuento: $0.00', 300, y + 50, { align: 'right' })
-            .text('Sumatoria de ventas: $175.00', 300, y + 70, { align: 'right' })
-            .text('Impuesto valor agregado 13%: $0.00', 300, y + 90, { align: 'right' })
-            .text('IVA recibido: $0.00', 300, y + 110, { align: 'right' })
-            .text('IVA retenido: $0.00', 300, y + 130, { align: 'right' })
+        pdfDoc.fontSize(14).text(`Subtotal: ${plantillaDB.montototaloperacion - plantillaDB.iva_percibido}`, 300, y + 10, { align: 'right' })
+            .text(`Impuesto valor agregado 13%: $${plantillaDB.iva_percibido}`, 300, y + 30, { align: 'right' })
+            .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
+            .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
+            .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}` , 300, y + 90, { align: 'right' })
+            .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
+            .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
             .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
             .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
-            .text('Monto total de operación: $175.00', 300, y + 190, { align: 'right' });
+            .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+
+
 
 
         /* pdfDoc.moveTo(500, 770).lineTo(580, 770).stroke('#000'); */
         pdfDoc.moveTo(500, y + 230).lineTo(580, y + 230).stroke('#000');
         pdfDoc.moveTo(500, y + 270).lineTo(580, y + 270).stroke('#000');
-        pdfDoc.fontSize(30).fillColor('#009A9A').text('$100', 500, y + 238, { align: 'right' });
-        pdfDoc.fontSize(15).fillColor('#000000').text('CIEN DÓLARES Y CERO CENTAVOS', 230, y + 245, );
-        pdfDoc.fontSize(12).fillColor('#000000').text('Responsable emisor: responsable', 20, y + 240, );
-        pdfDoc.fontSize(12).fillColor('#000000').text('Responsable receptor: responsable', 20, y + 260, );
+        pdfDoc.fontSize(30).fillColor('#009A9A').text(`$${plantillaDB.total_a_pagar}`, 400, y + 238, { align: 'right' });
+
+        const funcenter2 = (text, y, x) => {
+            /* for and slice every 26 caracters */
+            for (let i = 0; i < text.length; i += 50) {
+                pdfDoc.fontSize(12).fillColor('#000000').text(text.slice(i, i + 50), x, y + (i / 50 * 15));
+            }
+        }
+
+
+        funcenter2(plantillaDB.cantidad_en_letras, y + 230, 20);
+        pdfDoc.fontSize(12).fillColor('#000000').text(`Responsable emisor: ${plantillaDB.documento_e}`, 20, y + 180, );
+        pdfDoc.fontSize(12).fillColor('#000000').text(`Responsable receptor: ${plantillaDB.documento_r}`, 20, y + 200, );
         /* text in the bottom right bold */
 
 
