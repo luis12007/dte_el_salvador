@@ -7,6 +7,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BillsxItemsAPI from "../services/BIllxitemsService";
 import SendEmail from "../services/SendMailService";
+import downloadPDF from "../services/DownloadPDF";
+import { useNavigate } from "react-router-dom";
 
 const FrameComponent1 = ({key, content , user}) => {
   const [tipo, setTipo] = useState("");
@@ -14,6 +16,7 @@ const FrameComponent1 = ({key, content , user}) => {
   const id_emisor = localStorage.getItem("user_id");
   const tokenminis = localStorage.getItem("tokenminis");
   const [Listitems , setItems] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     if (content.tipo === "01") {
       setTipo("Factura");
@@ -69,12 +72,110 @@ itemsdata();
     
   }, []);
 
-  const ViewBillHandler = () => {
-    console.log("ViewBillHandler");
-  };
+
 
   const EditBillHandler = () => {
     console.log("EditBillHandler");
+    var data = {
+      identificacion: {
+        version: parseInt(content.version), 
+        ambiente: content.ambiente, 
+        tipoDte: content.tipo, 
+        numeroControl: content.numero_de_control, 
+        codigoGeneracion: content.codigo_de_generacion,
+        tipoModelo: parseInt(content.modelo_de_factura), 
+        tipoOperacion: parseInt(content.tipo_de_transmision), 
+        fecEmi: content.fecha_y_hora_de_generacion,
+        horEmi: content.horemi,
+        tipoMoneda: content.tipomoneda, 
+        tipoContingencia: content.tipocontingencia, 
+        motivoContin: content.motivocontin, 
+      },
+      documentoRelacionado: content.documentorelacionado,
+      emisor: {
+        direccion: {
+          municipio: user.municipio, 
+          departamento: user.departamento, 
+          complemento: user.direccion 
+        },
+        nit: user.nit,
+        nrc: user.nrc ,
+        nombre: user.name ,
+        codActividad: user.codactividad,
+        descActividad: user.descactividad, 
+        telefono: user.numero_de_telefono, 
+        correo: user.correo_electronico, 
+        nombreComercial: user.nombre_comercial,
+        tipoEstablecimiento: user.tipoestablecimiento,
+    
+        /* TODO: Just in case establecimiento  */
+        codEstableMH: content.codestablemh,
+        codEstable: content.codestable, 
+        codPuntoVentaMH: content.codpuntoventamh, 
+        codPuntoVenta: content.codpuntoventa 
+      },
+      receptor: {
+        codActividad: content.re_codactividad,
+        direccion: content.re_direccion, 
+        nrc: content.re_nrc, 
+        descActividad: content.re_actividad_economica,
+        correo: content.re_correo_electronico,
+        tipoDocumento: content.re_tipodocumento,
+        nombre: content.re_name, 
+        telefono: content.re_numero_telefono, 
+        numDocumento: content.re_numdocumento
+      },
+      otrosDocumentos: content.otrosdocumentos, 
+      ventaTercero: content.ventatercero, 
+      cuerpoDocumento: Listitems ,
+      resumen: {
+        condicionOperacion: content.condicionoperacion, 
+        totalIva: parseFloat(content.iva_percibido),/* pending */   
+        saldoFavor: content.saldofavor,   
+        numPagoElectronico: content.numpagoelectronico,  
+        pagos: [
+          {/* TODO: ADD MORE PAYMENTS */
+            periodo: content.periodo, 
+            plazo: content.plazo,  
+            montoPago: content.montopago, 
+            codigo: content.codigo,        
+            referencia: content.referencia
+          }
+        ],
+        totalNoSuj: content.totalnosuj,
+        tributos: content.tributos, 
+        totalLetras: content.cantidad_en_letras,  
+        totalExenta: content.totalexenta,  
+        subTotalVentas: content.subtotalventas, 
+        totalGravada: parseFloat(content.total_agravada),
+        montoTotalOperacion: content.montototaloperacion, 
+        descuNoSuj: content.descunosuj,
+        descuExenta: content.descuexenta,
+        descuGravada: content.descugravada,
+        porcentajeDescuento: content.porcentajedescuento,
+        totalDescu: parseFloat(content.monto_global_de_descuento), 
+        subTotal: parseFloat(content.subtotal), 
+        ivaRete1: parseFloat(content.iva_retenido),
+        reteRenta: parseFloat(content.retencion_de_renta),
+        totalNoGravado: content.totalnogravado,
+        totalPagar: parseFloat(content.total_a_pagar)
+      },
+      extension: {
+        docuEntrega: content.documento_e,
+        nombRecibe: content.documento_r,
+        observaciones: content.observaciones,
+        placaVehiculo: content.placavehiculo,
+        nombEntrega: content.responsable_emisor, 
+        docuRecibe: content.documento_receptor, 
+      },
+      apendice: content.apendice,
+    };
+
+    console.log("---------------resultado--------------");
+    console.log(data);
+    console.log("---------------resultado--------------");
+
+    navigate(`/editar/factura/${content.codigo_de_generacion}`);
   };
 
   const DownloadBillHandler = async () => {
@@ -184,12 +285,7 @@ itemsdata();
       passwordPri: user.passwordpri ,
       dteJson: data,
     };
-    const responseFirm = await Firmservice.create(Firm);
-    console.log(responseFirm);
-
-    data.firma = responseFirm.body;
-    data.sellado = content.sellado;
-    data.sello = content.sello;
+    downloadPDF(id_emisor, data.identificacion.codigoGeneracion , token);
 
     /* Calling the API to send the email */
 
@@ -352,7 +448,6 @@ var data = {
 
 
     const parseintversion = parseInt(content.version);
- 
     const dataSend = { /* TODO: SEND */
       tipoDte: content.tipo,
       ambiente: content.ambiente,
@@ -533,16 +628,17 @@ var data = {
     <div className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-2 box-border text-left text-3xs text-black font-inria-sans">
       <header className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-0.5 pb-0 pr-[52px] pl-[15px] box-border text-xl text-black font-inria-sans">
         <div className="flex flex-col items-start justify-start pt-1 px-0 pb-0">
+          
           <h1 className="m-0 relative text-inherit font-bold z-[3]">{tipo}</h1>
         </div>
         <div className="flex flex-row items-start justify-start gap-[0px_8px]">
-          <img
+          {/* <img
             className="w-[33px] h-[33px] relative object-cover z-[3]"
             loading="lazy"
             onClick={ViewBillHandler}
             alt=""
             src="/ver@2x.png"
-          />
+          /> */}
           <img
             className="w-[26px]  h-[26px] relative object-cover z-[3]"
             loading="lazy"

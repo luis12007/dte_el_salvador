@@ -28,6 +28,12 @@ const HomeFacturas = () => {
         const resultusers = await UserService.getUserInfo(user_id, token);
         setUser(resultusers);
         const result = await PlantillaAPI.getByUserId(user_id, token);
+        console.log("result");
+        console.log(result);
+        /* organize the results by fecha_y_hora_de_generacion desc*/
+        result.sort((a, b) => {
+          return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
+        });
         setItems(result || []); // Default to empty array
 
         if (tokenminis === "undefined" || tokenminis === null) {
@@ -54,18 +60,36 @@ const HomeFacturas = () => {
     console.log("Excel");
   };
 
+  const groupItemsByDate = (items) => {
+    return items.reduce((acc, item) => {
+      const date = item.fecha_y_hora_de_generacion.split(" ")[0]; // Extract the date part
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(item);
+      return acc;
+    }, {});
+  };
+
+  const groupedItems = groupItemsByDate(items);
+
   return (
     <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[66px] pb-[33px] pr-[22px] pl-[18px] box-border gap-[495px_0px] tracking-[normal]">
       <section className="self-stretch flex flex-col items-start justify-start gap-[13px_0px] max-w-full">
         <SidebarComponent visible={visible} />
-
-        {Array.isArray(items) ? (
-          items.map((content, index) => (
+{/* show the date of the bills if the bill is in the same date just stack them */}
+    {Array.isArray(items) && items.length > 0 ? (
+      Object.keys(groupedItems).map((date) => (
+        <div key={date}>
+          <h2>{date}</h2>
+          {groupedItems[date].map((content, index) => (
             <FacturaUnSend key={index} content={content} user={user} />
-          ))
-        ) : (
-          <p>No items to display</p> // Fallback in case `items` is empty or invalid
-        )}
+          ))}
+        </div>
+      ))
+    ) : (
+      <p>No facturas para mostrar</p>
+    )}
       </section>
 
       <button

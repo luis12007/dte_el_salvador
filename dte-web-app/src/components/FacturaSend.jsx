@@ -16,13 +16,15 @@ const FrameComponent = () => {
 
   return (
     <div className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-2 box-border relative gap-[1px_0px] max-w-full text-left text-xl text-black font-inria-sans">
+      {/* show the date of the bills if the bill is in the same date just stack them */}
       <div className="self-stretch h-[138px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden z-[0]" />
       <div className="w-[174px] h-px absolute !m-[0] top-[62px] left-[6px] box-border z-[1] border-t-[1px] border-solid border-black" />
       <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-px pb-0 pr-11 pl-1.5 box-border max-w-full gap-[20px] z-[1] mq450:flex-wrap mq450:pr-5 mq450:box-border">
         <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
         <div className="flex flex-col items-start justify-start pt-[5px] px-0 pb-0">
           <h1 className="m-0 relative text-inherit font-bold font-inherit z-[2]">
-            Credito Fiscal
+            Credito Fiscal{/* if the code is 01 is factura whereas the code is 02 is CreditoFiscal */}
+
           </h1>
         </div>
         <div className="flex flex-row items-start justify-start gap-[0px_8px]">

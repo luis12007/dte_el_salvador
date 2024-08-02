@@ -12,7 +12,7 @@ import Sidebar from "./pages/Sidebar";
 import ClientesFacturaToFiscalProcess from "./pages/CreateBill"
 import ListItems from "./pages/ListItems";
 import AddItem from "./pages/AddItem";
-
+import EditBill from "./pages/EditBill";
 
 /* http://localhost:3000/#/ingresar the example route */
 export default function App() {
@@ -26,7 +26,8 @@ export default function App() {
 
         <Route path="/facturas" element={<HomeFacturas/>}/> 
         <Route path="/detalles/:id" element={<DetallesFactura/>}/>
-
+        <Route path="/facturas/:id" element={<HomeFacturas/>}/>
+        <Route path="/editar/factura/:codigo_de_generacion" element={<EditBill/>}/>
 
         {/* TODO  */}
         <Route path="/clientes" element={<ListClients/>}/>
@@ -35,7 +36,6 @@ export default function App() {
         <Route path="/agregar/item" element={<AddItem/>}/>
         <Route path="/cliente/:id" element={<AddClient/>}/>{/* TODO: edit  */}
         <Route path="/item/:id" element={<AddItem/>}/>{/* TODO: edit*/}
-
 
         <Route path="/perfil" element={<Profile/>}/>
 

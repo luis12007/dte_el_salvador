@@ -2,338 +2,338 @@ const { version } = require("env");
 const db = require("../db/db"); // Asegúrate de tener correctamente configurado el objeto Knex
 const sendMail = require("../utils/mailUtils");
 
-const plantillacreate = async (req, res) => {
-  const plantilla = req.body;
-/* 
-  console.log("plantillacreate");
-  console.log(plantilla); */
-  /* id_emisor in the headers*/
-  const id_emisor = req.headers.id_emisor;
+const plantillacreate = async(req, res) => {
+    const plantilla = req.body;
+    /* 
+      console.log("plantillacreate");
+      console.log(plantilla); */
+    /* id_emisor in the headers*/
+    const id_emisor = req.headers.id_emisor;
 
-  const JsontoDB = {
-    /* identification */
-    version: plantilla.identificacion.version,
-    ambiente: plantilla.identificacion.ambiente,
-    tipo: plantilla.identificacion.tipoDte,
-    numero_de_control: plantilla.identificacion.numeroControl,
-    codigo_de_generacion: plantilla.identificacion.codigoGeneracion,
-    modelo_de_factura: plantilla.identificacion.tipoModelo,
-    tipo_de_transmision: plantilla.identificacion.tipoOperacion,
-    fecha_y_hora_de_generacion:plantilla.identificacion.fecEmi,
-    horemi:plantilla.identificacion.horEmi,
-    tipomoneda: plantilla.identificacion.tipoMoneda,
-    tipocontingencia: plantilla.identificacion.tipoContingencia,
-    motivocontin: plantilla.identificacion.motivoContin,
-    /* --------------------------------------------------------- */
-    /* DOCUMENTO RELACIONADOS */
-    documentorelacionado: plantilla.documentoRelacionado,
-    /* --------------------------------------------------------- */
-    /* EMISOR INFO IN TABLE USERS*/
-    codestablemh: plantilla.emisor.codEstableMH,
-    codestable: plantilla.emisor.codEstable,
-    codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
-    codpuntoventa: plantilla.emisor.codPuntoVenta,
-    /* --------------------------------------------------------- */
-    /* RECEPTOR */
+    const JsontoDB = {
+        /* identification */
+        version: plantilla.identificacion.version,
+        ambiente: plantilla.identificacion.ambiente,
+        tipo: plantilla.identificacion.tipoDte,
+        numero_de_control: plantilla.identificacion.numeroControl,
+        codigo_de_generacion: plantilla.identificacion.codigoGeneracion,
+        modelo_de_factura: plantilla.identificacion.tipoModelo,
+        tipo_de_transmision: plantilla.identificacion.tipoOperacion,
+        fecha_y_hora_de_generacion: plantilla.identificacion.fecEmi,
+        horemi: plantilla.identificacion.horEmi,
+        tipomoneda: plantilla.identificacion.tipoMoneda,
+        tipocontingencia: plantilla.identificacion.tipoContingencia,
+        motivocontin: plantilla.identificacion.motivoContin,
+        /* --------------------------------------------------------- */
+        /* DOCUMENTO RELACIONADOS */
+        documentorelacionado: plantilla.documentoRelacionado,
+        /* --------------------------------------------------------- */
+        /* EMISOR INFO IN TABLE USERS*/
+        codestablemh: plantilla.emisor.codEstableMH,
+        codestable: plantilla.emisor.codEstable,
+        codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
+        codpuntoventa: plantilla.emisor.codPuntoVenta,
+        /* --------------------------------------------------------- */
+        /* RECEPTOR */
 
-    re_codactividad: plantilla.receptor.codActividad,
-    re_direccion: plantilla.receptor.direccion,
-    re_nit:plantilla.receptor.nit,
-    re_nrc: plantilla.receptor.nrc,
-    re_actividad_economica: plantilla.receptor.descActividad,
-    re_correo_electronico: plantilla.receptor.correo,
-    re_tipodocumento: plantilla.receptor.tipoDocumento,
-    re_name: plantilla.receptor.nombre,
-    re_numero_telefono: plantilla.receptor.telefono,
-    re_numdocumento: plantilla.receptor.numDocumento,
+        re_codactividad: plantilla.receptor.codActividad,
+        re_direccion: plantilla.receptor.direccion,
+        re_nit: plantilla.receptor.nit,
+        re_nrc: plantilla.receptor.nrc,
+        re_actividad_economica: plantilla.receptor.descActividad,
+        re_correo_electronico: plantilla.receptor.correo,
+        re_tipodocumento: plantilla.receptor.tipoDocumento,
+        re_name: plantilla.receptor.nombre,
+        re_numero_telefono: plantilla.receptor.telefono,
+        re_numdocumento: plantilla.receptor.numDocumento,
 
-    /* --------------------------------------------------------- */
-    /* OTROS DOCUMENTOS */
-    otrosdocumentos: plantilla.otrosDocumentos,
-    /* --------------------------------------------------------- */
-    ventatercero: plantilla.ventaTercero,
-    /* --------------------------------------------------------- */
-    /* ITEMS */
-    /* --------------------------------------------------------- */
-    /* RESUMEN */
-    condicionoperacion: plantilla.resumen.condicionOperacion,
-    iva_percibido: plantilla.resumen.totalIva,
-    saldofavor: plantilla.resumen.saldoFavor,
-    numpagoelectronico: plantilla.resumen.numPagoElectronico,
-    /* pagos */
-    periodo: plantilla.resumen.pagos[0].periodo,
-    montopago: plantilla.resumen.pagos[0].montoPago,
-    codigo: plantilla.resumen.pagos[0].codigo,
-    referencia: plantilla.resumen.pagos[0].referencia,
-    plazo: plantilla.resumen.pagos[0].plazo,
+        /* --------------------------------------------------------- */
+        /* OTROS DOCUMENTOS */
+        otrosdocumentos: plantilla.otrosDocumentos,
+        /* --------------------------------------------------------- */
+        ventatercero: plantilla.ventaTercero,
+        /* --------------------------------------------------------- */
+        /* ITEMS */
+        /* --------------------------------------------------------- */
+        /* RESUMEN */
+        condicionoperacion: plantilla.resumen.condicionOperacion,
+        iva_percibido: plantilla.resumen.totalIva,
+        saldofavor: plantilla.resumen.saldoFavor,
+        numpagoelectronico: plantilla.resumen.numPagoElectronico,
+        /* pagos */
+        periodo: plantilla.resumen.pagos[0].periodo,
+        montopago: plantilla.resumen.pagos[0].montoPago,
+        codigo: plantilla.resumen.pagos[0].codigo,
+        referencia: plantilla.resumen.pagos[0].referencia,
+        plazo: plantilla.resumen.pagos[0].plazo,
 
-    totalnosuj: plantilla.resumen.totalNoSuj,
-    tributos: plantilla.resumen.tributos,
-    cantidad_en_letras: plantilla.resumen.totalLetras,
-    totalexenta: plantilla.resumen.totalExenta,
-    subtotalventas: plantilla.resumen.subTotalVentas,
-    total_agravada: plantilla.resumen.totalGravada,
-    montototaloperacion: plantilla.resumen.montoTotalOperacion,
-    descunosuj: plantilla.resumen.descuNoSuj,
-    descuexenta: plantilla.resumen.descuExenta,
-    descugravada: plantilla.resumen.descuGravada,
-    porcentajedescuento: plantilla.resumen.porcentajeDescuento,
-    monto_global_de_descuento: plantilla.resumen.totalDescu,
-    subtotal: plantilla.resumen.subTotal,
-    iva_retenido: plantilla.resumen.ivaRete1,
-    retencion_de_renta: plantilla.resumen.reteRenta,
-    totalnogravado: plantilla.resumen.totalNoGravado,
-    total_a_pagar: plantilla.resumen.totalPagar,
-    /* -------------------------------------------- */
-    /* EXTENSION */
-    observaciones: plantilla.extension.observaciones,
+        totalnosuj: plantilla.resumen.totalNoSuj,
+        tributos: plantilla.resumen.tributos,
+        cantidad_en_letras: plantilla.resumen.totalLetras,
+        totalexenta: plantilla.resumen.totalExenta,
+        subtotalventas: plantilla.resumen.subTotalVentas,
+        total_agravada: plantilla.resumen.totalGravada,
+        montototaloperacion: plantilla.resumen.montoTotalOperacion,
+        descunosuj: plantilla.resumen.descuNoSuj,
+        descuexenta: plantilla.resumen.descuExenta,
+        descugravada: plantilla.resumen.descuGravada,
+        porcentajedescuento: plantilla.resumen.porcentajeDescuento,
+        monto_global_de_descuento: plantilla.resumen.totalDescu,
+        subtotal: plantilla.resumen.subTotal,
+        iva_retenido: plantilla.resumen.ivaRete1,
+        retencion_de_renta: plantilla.resumen.reteRenta,
+        totalnogravado: plantilla.resumen.totalNoGravado,
+        total_a_pagar: plantilla.resumen.totalPagar,
+        /* -------------------------------------------- */
+        /* EXTENSION */
+        observaciones: plantilla.extension.observaciones,
 
-    responsable_emisor: plantilla.extension.docuEntrega,
-    documento_e: plantilla.extension.nombEntrega,
-    documento_r: plantilla.extension.nombRecibe,
-    documento_receptor: plantilla.extension.docuRecibe,
-    placavehiculo: plantilla.extension.placaVehiculo,
-    /* -------------------------------------------- */
-    /* APENDICE */
-    apendice: plantilla.apendice,
-    /* -------------------------------------------- */
-    /* INFO OF DTE */
-    id_emisor: id_emisor,
-    qr: null,
-    id_receptor: null,
-    firm: null,
-    sellado: false,
-    sello_de_recepcion: null,
-  };
-
-  try {
-    const [createdPlantilla] = await db("plantilla")
-      .returning("id")
-      .insert(JsontoDB)
-      .returning("*");
+        responsable_emisor: plantilla.extension.docuEntrega,
+        documento_e: plantilla.extension.nombEntrega,
+        documento_r: plantilla.extension.nombRecibe,
+        documento_receptor: plantilla.extension.docuRecibe,
+        placavehiculo: plantilla.extension.placaVehiculo,
+        /* -------------------------------------------- */
+        /* APENDICE */
+        apendice: plantilla.apendice,
+        /* -------------------------------------------- */
+        /* INFO OF DTE */
+        id_emisor: id_emisor,
+        qr: null,
+        id_receptor: null,
+        firm: null,
+        sellado: false,
+        sello_de_recepcion: null,
+    };
 
     try {
-      const plantilla = req.body;
-      const items = plantilla.cuerpoDocumento;
+        const [createdPlantilla] = await db("plantilla")
+            .returning("id")
+            .insert(JsontoDB)
+            .returning("*");
 
-      // Crear objetos para insertar en la tabla 'items'
-      const itemsDB = items.map((item) => ({
-        codtributo: item.codTributo,
-        descripcion: item.descripcion,
-        unimedida: item.uniMedida,
-        codigo: item.codigo,
-        cantidad: item.cantidad,
-        numitem: item.numItem,
-        tributos: item.tributos,
-        ivaitem: item.ivaItem,
-        nogravado: item.noGravado,
-        psv: item.psv,
-        montodescu: item.montoDescu,
-        numerodocumento: item.numeroDocumento,
-        preciouni: item.precioUni,
-        ventagravada: item.ventaGravada,
-        ventaexenta: item.ventaExenta,
-        ventanosuj: item.ventaNoSuj,
-        tipoitem: item.tipoItem,
-      }));
+        try {
+            const plantilla = req.body;
+            const items = plantilla.cuerpoDocumento;
+
+            // Crear objetos para insertar en la tabla 'items'
+            const itemsDB = items.map((item) => ({
+                codtributo: item.codTributo,
+                descripcion: item.descripcion,
+                unimedida: item.uniMedida,
+                codigo: item.codigo,
+                cantidad: item.cantidad,
+                numitem: item.numItem,
+                tributos: item.tributos,
+                ivaitem: item.ivaItem,
+                nogravado: item.noGravado,
+                psv: item.psv,
+                montodescu: item.montoDescu,
+                numerodocumento: item.numeroDocumento,
+                preciouni: item.precioUni,
+                ventagravada: item.ventaGravada,
+                ventaexenta: item.ventaExenta,
+                ventanosuj: item.ventaNoSuj,
+                tipoitem: item.tipoItem,
+            }));
 
 
-      // Insertar en 'items' y obtener IDs
-      const insertedItems = await insertarItems(itemsDB);
-      // Crear objetos para insertar en 'facturasxitems'
-      const facturasxitems = insertedItems.map((item, index) => ({
-        id_facturas: plantilla.identificacion.codigoGeneracion,
-        id_items: item.id, // ID retornado por 'items'
-      }));
+            // Insertar en 'items' y obtener IDs
+            const insertedItems = await insertarItems(itemsDB);
+            // Crear objetos para insertar en 'facturasxitems'
+            const facturasxitems = insertedItems.map((item, index) => ({
+                id_facturas: plantilla.identificacion.codigoGeneracion,
+                id_items: item.id, // ID retornado por 'items'
+            }));
 
-      // Insertar en 'facturasxitems'
-      await insertarFacturasxItems(facturasxitems);
+            // Insertar en 'facturasxitems'
+            await insertarFacturasxItems(facturasxitems);
 
-      res.status(200).json({ message: "Inserción exitosa", createdPlantilla });
+            res.status(200).json({ message: "Inserción exitosa", createdPlantilla });
+        } catch (error) {
+            console.error("Error al crear objetos:", error);
+            res.status(500).json({ message: "Error en el servidor" });
+        }
+
     } catch (error) {
-      console.error("Error al crear objetos:", error);
-      res.status(500).json({ message: "Error en el servidor" });
+        console.error("Error al crear plantilla:", error);
+        res.status(500).json({ message: "Error en el servidor" });
     }
 
-  } catch (error) {
-    console.error("Error al crear plantilla:", error);
-    res.status(500).json({ message: "Error en el servidor" });
-  }
-
 
 
 
 
 };
 
-const insertarItems = async (items) => {
-  // Inserta los items y devuelve el ID para cada uno
-  const insertedItems = await db("items").returning("id").insert(items);
-  return insertedItems; // Devuelve el array de IDs insertados
+const insertarItems = async(items) => {
+    // Inserta los items y devuelve el ID para cada uno
+    const insertedItems = await db("items").returning("id").insert(items);
+    return insertedItems; // Devuelve el array de IDs insertados
 };
 
-const insertarFacturasxItems = async (facturasxitems) => {
-  await db("facturasxitems").insert(facturasxitems); // Inserta las facturasxitems
+const insertarFacturasxItems = async(facturasxitems) => {
+    await db("facturasxitems").insert(facturasxitems); // Inserta las facturasxitems
 };
 
 //get all plantillas where by user id
-const getPlantillasByUserId = async (req, res) => {
-  console.log("getPlantillasByUserId");
-  const usuarioid = req.params.id;
-  try {
-    //return all plantillas by user id
-    const plantilla = await db("plantilla").where({ id_emisor: usuarioid });
-    if (!plantilla) {
-      return res.status(404).json({ message: "plantilla no encontrado" });
+const getPlantillasByUserId = async(req, res) => {
+    console.log("getPlantillasByUserId");
+    const usuarioid = req.params.id;
+    try {
+        //return all plantillas by user id
+        const plantilla = await db("plantilla").where({ id_emisor: usuarioid });
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        console.log(plantilla);
+        res.status(200).json(plantilla);
+    } catch (error) {
+        console.error("Error al obtener plantilla por ID", error);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-    console.log(plantilla);
-    res.status(200).json(plantilla);
-  } catch (error) {
-    console.error("Error al obtener plantilla por ID", error);
-    res.status(500).json({ message: "Error en el servidor" });
-  }
 };
 
 /* update the plantilla with codigo_de_generacion */
 
-const updatePlantilla = async (req, res) => {
-  const codigo_de_generacion = req.params.codigo_de_generacion;
-  const plantilla = req.body;
-  const id_emisor = req.headers.id_emisor;
-  console.log("updatePlantilla");
-  console.log(codigo_de_generacion);
+const updatePlantilla = async(req, res) => {
+    const codigo_de_generacion = req.params.codigo_de_generacion;
+    const plantilla = req.body;
+    const id_emisor = req.headers.id_emisor;
+    console.log("updatePlantilla");
+    console.log(codigo_de_generacion);
 
-  const JsontoDB = {
-    /* identification */
-    version: plantilla.identificacion.version,
-    ambiente: plantilla.identificacion.ambiente,
-    tipo: plantilla.identificacion.tipoDte,
-    numero_de_control: plantilla.identificacion.numeroControl,
-    codigo_de_generacion: plantilla.identificacion.codigoGeneracion,
-    modelo_de_factura: plantilla.identificacion.tipoModelo,
-    tipo_de_transmision: plantilla.identificacion.tipoOperacion,
-    fecha_y_hora_de_generacion:plantilla.identificacion.fecEmi,
-    horemi:plantilla.identificacion.horEmi,
-    tipomoneda: plantilla.identificacion.tipoMoneda,
-    tipocontingencia: plantilla.identificacion.tipoContingencia,
-    motivocontin: plantilla.identificacion.motivoContin,
-    /* --------------------------------------------------------- */
-    /* DOCUMENTO RELACIONADOS */
-    documentorelacionado: plantilla.documentoRelacionado,
-    /* --------------------------------------------------------- */
-    /* EMISOR INFO IN TABLE USERS*/
-    codestablemh: plantilla.emisor.codEstableMH,
-    codestable: plantilla.emisor.codEstable,
-    codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
-    codpuntoventa: plantilla.emisor.codPuntoVenta,
-    /* --------------------------------------------------------- */
-    /* RECEPTOR */
+    const JsontoDB = {
+        /* identification */
+        version: plantilla.identificacion.version,
+        ambiente: plantilla.identificacion.ambiente,
+        tipo: plantilla.identificacion.tipoDte,
+        numero_de_control: plantilla.identificacion.numeroControl,
+        codigo_de_generacion: plantilla.identificacion.codigoGeneracion,
+        modelo_de_factura: plantilla.identificacion.tipoModelo,
+        tipo_de_transmision: plantilla.identificacion.tipoOperacion,
+        fecha_y_hora_de_generacion: plantilla.identificacion.fecEmi,
+        horemi: plantilla.identificacion.horEmi,
+        tipomoneda: plantilla.identificacion.tipoMoneda,
+        tipocontingencia: plantilla.identificacion.tipoContingencia,
+        motivocontin: plantilla.identificacion.motivoContin,
+        /* --------------------------------------------------------- */
+        /* DOCUMENTO RELACIONADOS */
+        documentorelacionado: plantilla.documentoRelacionado,
+        /* --------------------------------------------------------- */
+        /* EMISOR INFO IN TABLE USERS*/
+        codestablemh: plantilla.emisor.codEstableMH,
+        codestable: plantilla.emisor.codEstable,
+        codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
+        codpuntoventa: plantilla.emisor.codPuntoVenta,
+        /* --------------------------------------------------------- */
+        /* RECEPTOR */
 
-    re_codactividad: plantilla.receptor.codActividad,
-    re_direccion: plantilla.receptor.direccion,
-    re_nit:plantilla.receptor.nit,
-    re_nrc: plantilla.receptor.nrc,
-    re_actividad_economica: plantilla.receptor.descActividad,
-    re_correo_electronico: plantilla.receptor.correo,
-    re_tipodocumento: plantilla.receptor.tipoDocumento,
-    re_name: plantilla.receptor.nombre,
-    re_numero_telefono: plantilla.receptor.telefono,
-    re_numdocumento: plantilla.receptor.numDocumento,
+        re_codactividad: plantilla.receptor.codActividad,
+        re_direccion: plantilla.receptor.direccion,
+        re_nit: plantilla.receptor.nit,
+        re_nrc: plantilla.receptor.nrc,
+        re_actividad_economica: plantilla.receptor.descActividad,
+        re_correo_electronico: plantilla.receptor.correo,
+        re_tipodocumento: plantilla.receptor.tipoDocumento,
+        re_name: plantilla.receptor.nombre,
+        re_numero_telefono: plantilla.receptor.telefono,
+        re_numdocumento: plantilla.receptor.numDocumento,
 
-    /* --------------------------------------------------------- */
-    /* OTROS DOCUMENTOS */
-    otrosdocumentos: plantilla.otrosDocumentos,
-    /* --------------------------------------------------------- */
-    ventatercero: plantilla.ventaTercero,
-    /* --------------------------------------------------------- */
-    /* ITEMS */
-    /* --------------------------------------------------------- */
-    /* RESUMEN */
-    condicionoperacion: plantilla.resumen.condicionOperacion,
-    iva_percibido: plantilla.resumen.totalIva,
-    saldofavor: plantilla.resumen.saldoFavor,
-    numpagoelectronico: plantilla.resumen.numPagoElectronico,
-    /* pagos */
-    periodo: plantilla.resumen.pagos[0].periodo,
-    montopago: plantilla.resumen.pagos[0].montoPago,
-    codigo: plantilla.resumen.pagos[0].codigo,
-    referencia: plantilla.resumen.pagos[0].referencia,
-    plazo: plantilla.resumen.pagos[0].plazo,
+        /* --------------------------------------------------------- */
+        /* OTROS DOCUMENTOS */
+        otrosdocumentos: plantilla.otrosDocumentos,
+        /* --------------------------------------------------------- */
+        ventatercero: plantilla.ventaTercero,
+        /* --------------------------------------------------------- */
+        /* ITEMS */
+        /* --------------------------------------------------------- */
+        /* RESUMEN */
+        condicionoperacion: plantilla.resumen.condicionOperacion,
+        iva_percibido: plantilla.resumen.totalIva,
+        saldofavor: plantilla.resumen.saldoFavor,
+        numpagoelectronico: plantilla.resumen.numPagoElectronico,
+        /* pagos */
+        periodo: plantilla.resumen.pagos[0].periodo,
+        montopago: plantilla.resumen.pagos[0].montoPago,
+        codigo: plantilla.resumen.pagos[0].codigo,
+        referencia: plantilla.resumen.pagos[0].referencia,
+        plazo: plantilla.resumen.pagos[0].plazo,
 
-    totalnosuj: plantilla.resumen.totalNoSuj,
-    tributos: plantilla.resumen.tributos,
-    cantidad_en_letras: plantilla.resumen.totalLetras,
-    totalexenta: plantilla.resumen.totalExenta,
-    subtotalventas: plantilla.resumen.subTotalVentas,
-    total_agravada: plantilla.resumen.totalGravada,
-    montototaloperacion: plantilla.resumen.montoTotalOperacion,
-    descunosuj: plantilla.resumen.descuNoSuj,
-    descuexenta: plantilla.resumen.descuExenta,
-    descugravada: plantilla.resumen.descuGravada,
-    porcentajedescuento: plantilla.resumen.porcentajeDescuento,
-    monto_global_de_descuento: plantilla.resumen.totalDescu,
-    subtotal: plantilla.resumen.subTotal,
-    iva_retenido: plantilla.resumen.ivaRete1,
-    retencion_de_renta: plantilla.resumen.reteRenta,
-    totalnogravado: plantilla.resumen.totalNoGravado,
-    total_a_pagar: plantilla.resumen.totalPagar,
-    /* -------------------------------------------- */
-    /* EXTENSION */
-    observaciones: plantilla.extension.observaciones,
+        totalnosuj: plantilla.resumen.totalNoSuj,
+        tributos: plantilla.resumen.tributos,
+        cantidad_en_letras: plantilla.resumen.totalLetras,
+        totalexenta: plantilla.resumen.totalExenta,
+        subtotalventas: plantilla.resumen.subTotalVentas,
+        total_agravada: plantilla.resumen.totalGravada,
+        montototaloperacion: plantilla.resumen.montoTotalOperacion,
+        descunosuj: plantilla.resumen.descuNoSuj,
+        descuexenta: plantilla.resumen.descuExenta,
+        descugravada: plantilla.resumen.descuGravada,
+        porcentajedescuento: plantilla.resumen.porcentajeDescuento,
+        monto_global_de_descuento: plantilla.resumen.totalDescu,
+        subtotal: plantilla.resumen.subTotal,
+        iva_retenido: plantilla.resumen.ivaRete1,
+        retencion_de_renta: plantilla.resumen.reteRenta,
+        totalnogravado: plantilla.resumen.totalNoGravado,
+        total_a_pagar: plantilla.resumen.totalPagar,
+        /* -------------------------------------------- */
+        /* EXTENSION */
+        observaciones: plantilla.extension.observaciones,
 
-    responsable_emisor: plantilla.extension.docuEntrega,
-    documento_e: plantilla.extension.nombEntrega,
-    documento_r: plantilla.extension.nombRecibe,
-    documento_receptor: plantilla.extension.docuRecibe,
-    placavehiculo: plantilla.extension.placaVehiculo,
-    /* -------------------------------------------- */
-    /* APENDICE */
-    apendice: plantilla.apendice,
-    /* -------------------------------------------- */
-    /* INFO OF DTE */
-    id_emisor: id_emisor,
-    qr: null,
-    id_receptor: null,
-    firm: plantilla.firma,
-    sellado: plantilla.sellado,
-    sello_de_recepcion: plantilla.sello,
-  };
-  try {
-    const plantilla = await db("plantilla")
-      .where({ codigo_de_generacion: codigo_de_generacion })
-      .first();
-    if (!plantilla) {
-      return res.status(404).json({ message: "plantilla no encontrado" });
+        responsable_emisor: plantilla.extension.docuEntrega,
+        documento_e: plantilla.extension.nombEntrega,
+        documento_r: plantilla.extension.nombRecibe,
+        documento_receptor: plantilla.extension.docuRecibe,
+        placavehiculo: plantilla.extension.placaVehiculo,
+        /* -------------------------------------------- */
+        /* APENDICE */
+        apendice: plantilla.apendice,
+        /* -------------------------------------------- */
+        /* INFO OF DTE */
+        id_emisor: id_emisor,
+        qr: null,
+        id_receptor: null,
+        firm: plantilla.firma,
+        sellado: plantilla.sellado,
+        sello_de_recepcion: plantilla.sello,
+    };
+    try {
+        const plantilla = await db("plantilla")
+            .where({ codigo_de_generacion: codigo_de_generacion })
+            .first();
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        await db("plantilla")
+            .where({ codigo_de_generacion: codigo_de_generacion })
+            .update(JsontoDB);
+        res.status(200).json({ message: "plantilla actualizado" });
+    } catch (error) {
+        console.error("Error al actualizar plantilla", error);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-    await db("plantilla")
-      .where({ codigo_de_generacion: codigo_de_generacion })
-      .update(JsontoDB);
-    res.status(200).json({ message: "plantilla actualizado" });
-  } catch (error) {
-    console.error("Error al actualizar plantilla", error);
-    res.status(500).json({ message: "Error en el servidor" });
-  }
 };
 /* Count plantillas and count by id in params and type in headers  */
-const countplantilla = async (req, res) => {
-  console.log("countplantilla");
-  console.log(req.params.id);
-  console.log(req.headers.tipo);
-  const usuarioid = req.params.id;
-  const tipo = req.headers.tipo;
-  try {
-    const plantilla = await db("plantilla")
-      .where({ id_emisor: usuarioid, tipo: tipo })
-      .count();
-    if (!plantilla) {
-      return res.status(404).json({ message: "plantilla no encontrado" });
+const countplantilla = async(req, res) => {
+    console.log("countplantilla");
+    console.log(req.params.id);
+    console.log(req.headers.tipo);
+    const usuarioid = req.params.id;
+    const tipo = req.headers.tipo;
+    try {
+        const plantilla = await db("plantilla")
+            .where({ id_emisor: usuarioid, tipo: tipo })
+            .count();
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        console.log(plantilla);
+        res.status(200).json(plantilla);
+    } catch (error) {
+        console.error("Error al obtener plantilla por ID", error);
+        res.status(500).json({ message: "Error en el servidor" });
     }
-    console.log(plantilla);
-    res.status(200).json(plantilla);
-  } catch (error) {
-    console.error("Error al obtener plantilla por ID", error);
-    res.status(500).json({ message: "Error en el servidor" });
-  }
 };
 /* update the plantilla with codigo_de_generacion updatePlantillasend
     updatesend: async (selladotoggle,selloRecibido,token,codigo_de_generacion) => {
@@ -353,32 +353,54 @@ const countplantilla = async (req, res) => {
             return data;
         },*/
 
-const updatePlantillasend = async (req, res) => {
-  const selladotoggle = req.body.selladotoggle;
-  const selloRecibido = req.body.selloRecibido;
-  const codigo_de_generacion = req.params.codigo_de_generacion;
-  const id_emisor = req.headers.id_emisor;
-  console.log("updatePlantillasend");
-  try {
-    const plantilla = await db("plantilla")
-      .where({ codigo_de_generacion: codigo_de_generacion })
-      .first();
-    if (!plantilla) {
-      return res.status(404).json({ message: "plantilla no encontrado" });
+const updatePlantillasend = async(req, res) => {
+    const selladotoggle = req.body.selladotoggle;
+    const selloRecibido = req.body.selloRecibido;
+    const codigo_de_generacion = req.params.codigo_de_generacion;
+    const id_emisor = req.headers.id_emisor;
+    console.log("updatePlantillasend");
+    try {
+        const plantilla = await db("plantilla")
+            .where({ codigo_de_generacion: codigo_de_generacion })
+            .first();
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        await db("plantilla")
+            .where({ codigo_de_generacion: codigo_de_generacion })
+            .update({ sellado: selladotoggle, sello_de_recepcion: selloRecibido });
+        res.status(200).json({ message: "plantilla actualizado" });
+    } catch (error) {
+        res.status(500).json({ message: "Error en el servidor" });
     }
-    await db("plantilla")
-      .where({ codigo_de_generacion: codigo_de_generacion })
-      .update({ sellado: selladotoggle, sello_de_recepcion: selloRecibido });
-    res.status(200).json({ message: "plantilla actualizado" });
-  } catch (error) {
-    res.status(500).json({ message: "Error en el servidor" });
-  }
+};
+
+const getplantilla = async(req, res) => {
+    console.log("getPlantillasByUserId");
+    const codigo_de_generacion = req.params.codigo_de_generacion;
+    try {
+        //return all plantillas by user id
+        const plantilla = await db("plantilla").where({ codigo_de_generacion: codigo_de_generacion });
+        /* innerjoin facturasxitems where id_facturas id codigo_de_generacion and id_items is id of table items where codigo_de_generacion */
+        const items = await db("facturasxitems").join("items", "facturasxitems.id_items", "=", "items.id").where("facturasxitems.id_facturas", "=", codigo_de_generacion);
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        console.log(plantilla);
+        console.log(items);
+        /* send the items and the plantilla */
+        res.status(200).json({ plantilla, items });
+    } catch (error) {
+        console.error("Error al obtener plantilla por ID", error);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
 };
 
 module.exports = {
-  plantillacreate,
-  getPlantillasByUserId,
-  updatePlantilla,
-  countplantilla,
-  updatePlantillasend,
+    plantillacreate,
+    getPlantillasByUserId,
+    updatePlantilla,
+    countplantilla,
+    updatePlantillasend,
+    getplantilla,
 };
