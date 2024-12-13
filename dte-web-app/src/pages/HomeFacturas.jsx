@@ -75,13 +75,18 @@ const HomeFacturas = () => {
 
   return (
     <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[66px] pb-[33px] pr-[22px] pl-[18px] box-border gap-[495px_0px] tracking-[normal]">
-      <section className="self-stretch flex flex-col items-start justify-start gap-[13px_0px] max-w-full">
-        <SidebarComponent visible={visible} />
+      <SidebarComponent visible={visible} />
+      <section className="self-stretch flex flex-col items-center justify-center gap-[13px_0px] max-w-full">
+        
 {/* show the date of the bills if the bill is in the same date just stack them */}
     {Array.isArray(items) && items.length > 0 ? (
       Object.keys(groupedItems).map((date) => (
         <div key={date}>
-          <h2>{date}</h2>
+<div className="flex items-center justify-center my-4">
+  <div className="flex-grow border-t border-gray-300"></div>
+  <span className="mx-4 text-xl font-thin">{date}</span>
+  <div className="flex-grow border-t border-gray-300"></div>
+</div>
           {groupedItems[date].map((content, index) => (
             <FacturaUnSend key={index} content={content} user={user} />
           ))}

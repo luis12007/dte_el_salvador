@@ -13,6 +13,8 @@ import Firmservice from "../services/Firm";
 import PlantillaService from "../services/PlantillaService";
 import PlantillaAPI from '../services/PlantillaService';
 import UserService from '../services/UserServices';
+
+
 const Clientes = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
@@ -227,7 +229,7 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
     var data = {
       identificacion: {
         version: 1, 
-        ambiente: 0, 
+        ambiente: "00", 
         tipoDte: "01", 
         numeroControl: getNextFormattedNumber(count[0].count), 
         codigoGeneracion: myUuid,
@@ -351,7 +353,6 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
   /* ---------------------------------------------------------- */
   const addBillHandler = async () => {
 
-
     /* Counting the sentences*/
     const count = await PlantillaAPI.count(id_emisor, "01", token)
 
@@ -458,6 +459,7 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
     
     console.log("Data");
     console.log(data);
+
     /* 
     TODO CHANGE THIS THE OTHER SIDE console.log(data);
      const Firm = {
@@ -651,9 +653,9 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
         </div>
       </section>
       {CF ? (
-        <BillCF handleSelectChangeCFClient={handleSelectChangeCFClient} setClient={setClient} />
+        <BillCF handleSelectChangeCFClient={handleSelectChangeCFClient} setClient={setClient}  client={client}/>
       ) : (
-        <BillnoCF handleSelectChangeCFClient={handleSelectChangeCFClient} setClient={setClient} />
+        <BillnoCF handleSelectChangeCFClient={handleSelectChangeCFClient} setClient={setClient} client={client} />
       )}
 
       {Items ? (

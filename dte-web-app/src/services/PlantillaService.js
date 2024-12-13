@@ -51,8 +51,31 @@ const PlantillaAPI = {
         }
     },
 
+    /* updatebillNoitems */
+    updateNoItems: async(id_emisor, plantilla, token, codigo_de_generacion) => {
+        const res = await fetch(`${BASE_URL}/plantillas/updateNoItems/${codigo_de_generacion}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'id_emisor': `${id_emisor}`,
+            },
+            /* add items and plantilla in body */
+            body: JSON.stringify({  
+                plantilla: plantilla
+            })
+        });
+        const data = await res.json();
+        return data;
+    },
+
+
     /* update field with the codigo_de_generacion */
-    update: async(id_emisor, plantilla, token, codigo_de_generacion) => {
+    update: async(id_emisor, plantilla, items, token, codigo_de_generacion) => {
+        console.log("plantilla");
+        console.log(plantilla);
+        console.log("items");
+        console.log(items);
         const res = await fetch(`${BASE_URL}/plantillas/update/${codigo_de_generacion}`, {
             method: 'PUT',
             headers: {
@@ -60,7 +83,11 @@ const PlantillaAPI = {
                 'Content-Type': 'application/json',
                 'id_emisor': `${id_emisor}`,
             },
-            body: JSON.stringify(plantilla)
+            /* add items and plantilla in body */
+            body: JSON.stringify({
+                plantilla: plantilla,
+                items: items
+            })
         });
         const data = await res.json();
         return data;
@@ -97,8 +124,22 @@ const PlantillaAPI = {
         });
         const data = await res.json();
         return data;
-    }
+    },
 
+
+    deletePlantillabyCodeGeneration: async(codigo_de_generacion, token) => {
+        const res = await fetch(`${BASE_URL}/plantillas/delete/${codigo_de_generacion}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                /* token */
+                Authorization: `Bearer ${token}`,
+            },
+    });
+    const data = await res.json();
+    return data;
+
+}
 }
 
 export default PlantillaAPI;

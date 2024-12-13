@@ -9,6 +9,10 @@ import BillsxItemsAPI from "../services/BIllxitemsService";
 import SendEmail from "../services/SendMailService";
 import downloadPDF from "../services/DownloadPDF";
 import { useNavigate } from "react-router-dom";
+import imgx from "../assets/imgs/x.png";
+import LoginAPI from "../services/Loginservices";
+import mailimg from "../assets/imgs/correo.png";
+
 
 const FrameComponent1 = ({key, content , user}) => {
   const [tipo, setTipo] = useState("");
@@ -33,6 +37,34 @@ const FrameComponent1 = ({key, content , user}) => {
         delete item.id_items;
         delete item.id_facturas;
       });
+
+      if (content.tipo === "03") {
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
+            noGravado: item.nogravado,
+            psv: item.psv,
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+        console.log(newItems);
+        setItems(newItems);
+        
+      }else if (content.tipo === "01") {
+        
 
 const newItems = data.map((item) => {
   const newItem = {
@@ -60,6 +92,7 @@ const newItems = data.map((item) => {
 
 console.log(newItems);
 setItems(newItems);
+}
 
 };
 itemsdata();
@@ -75,107 +108,113 @@ itemsdata();
 
 
   const EditBillHandler = () => {
-    console.log("EditBillHandler");
-    var data = {
-      identificacion: {
-        version: parseInt(content.version), 
-        ambiente: content.ambiente, 
-        tipoDte: content.tipo, 
-        numeroControl: content.numero_de_control, 
-        codigoGeneracion: content.codigo_de_generacion,
-        tipoModelo: parseInt(content.modelo_de_factura), 
-        tipoOperacion: parseInt(content.tipo_de_transmision), 
-        fecEmi: content.fecha_y_hora_de_generacion,
-        horEmi: content.horemi,
-        tipoMoneda: content.tipomoneda, 
-        tipoContingencia: content.tipocontingencia, 
-        motivoContin: content.motivocontin, 
-      },
-      documentoRelacionado: content.documentorelacionado,
-      emisor: {
-        direccion: {
-          municipio: user.municipio, 
-          departamento: user.departamento, 
-          complemento: user.direccion 
+    if (content.tipo === "01") {
+      console.log("EditBillHandler");
+      var data = {
+        identificacion: {
+          version: parseInt(content.version), 
+          ambiente: content.ambiente, 
+          tipoDte: content.tipo, 
+          numeroControl: content.numero_de_control, 
+          codigoGeneracion: content.codigo_de_generacion,
+          tipoModelo: parseInt(content.modelo_de_factura), 
+          tipoOperacion: parseInt(content.tipo_de_transmision), 
+          fecEmi: content.fecha_y_hora_de_generacion,
+          horEmi: content.horemi,
+          tipoMoneda: content.tipomoneda, 
+          tipoContingencia: content.tipocontingencia, 
+          motivoContin: content.motivocontin, 
         },
-        nit: user.nit,
-        nrc: user.nrc ,
-        nombre: user.name ,
-        codActividad: user.codactividad,
-        descActividad: user.descactividad, 
-        telefono: user.numero_de_telefono, 
-        correo: user.correo_electronico, 
-        nombreComercial: user.nombre_comercial,
-        tipoEstablecimiento: user.tipoestablecimiento,
+        documentoRelacionado: content.documentorelacionado,
+        emisor: {
+          direccion: {
+            municipio: user.municipio, 
+            departamento: user.departamento, 
+            complemento: user.direccion 
+          },
+          nit: user.nit,
+          nrc: user.nrc ,
+          nombre: user.name ,
+          codActividad: user.codactividad,
+          descActividad: user.descactividad, 
+          telefono: user.numero_de_telefono, 
+          correo: user.correo_electronico, 
+          nombreComercial: user.nombre_comercial,
+          tipoEstablecimiento: user.tipoestablecimiento,
+      
+          /* TODO: Just in case establecimiento  */
+          codEstableMH: content.codestablemh,
+          codEstable: content.codestable, 
+          codPuntoVentaMH: content.codpuntoventamh, 
+          codPuntoVenta: content.codpuntoventa 
+        },
+        receptor: {
+          codActividad: content.re_codactividad,
+          direccion: content.re_direccion, 
+          nrc: content.re_nrc, 
+          descActividad: content.re_actividad_economica,
+          correo: content.re_correo_electronico,
+          tipoDocumento: content.re_tipodocumento,
+          nombre: content.re_name, 
+          telefono: content.re_numero_telefono, 
+          numDocumento: content.re_numdocumento
+        },
+        otrosDocumentos: content.otrosdocumentos, 
+        ventaTercero: content.ventatercero, 
+        cuerpoDocumento: Listitems ,
+        resumen: {
+          condicionOperacion: content.condicionoperacion, 
+          totalIva: parseFloat(content.iva_percibido),/* pending */   
+          saldoFavor: content.saldofavor,   
+          numPagoElectronico: content.numpagoelectronico,  
+          pagos: [
+            {/* TODO: ADD MORE PAYMENTS */
+              periodo: content.periodo, 
+              plazo: content.plazo,  
+              montoPago: content.montopago, 
+              codigo: content.codigo,        
+              referencia: content.referencia
+            }
+          ],
+          totalNoSuj: content.totalnosuj,
+          tributos: content.tributos, 
+          totalLetras: content.cantidad_en_letras,  
+          totalExenta: content.totalexenta,  
+          subTotalVentas: content.subtotalventas, 
+          totalGravada: parseFloat(content.total_agravada),
+          montoTotalOperacion: content.montototaloperacion, 
+          descuNoSuj: content.descunosuj,
+          descuExenta: content.descuexenta,
+          descuGravada: content.descugravada,
+          porcentajeDescuento: content.porcentajedescuento,
+          totalDescu: parseFloat(content.monto_global_de_descuento), 
+          subTotal: parseFloat(content.subtotal), 
+          ivaRete1: parseFloat(content.iva_retenido),
+          reteRenta: parseFloat(content.retencion_de_renta),
+          totalNoGravado: content.totalnogravado,
+          totalPagar: parseFloat(content.total_a_pagar)
+        },
+        extension: {
+          docuEntrega: content.documento_e,
+          nombRecibe: content.documento_r,
+          observaciones: content.observaciones,
+          placaVehiculo: content.placavehiculo,
+          nombEntrega: content.responsable_emisor, 
+          docuRecibe: content.documento_receptor, 
+        },
+        apendice: content.apendice,
+      };
+  
+      console.log("---------------resultado--------------");
+      console.log(data);
+      console.log("---------------resultado--------------");
+  
+      navigate(`/editar/factura/${content.codigo_de_generacion}`);
+  
+    }else if (content.tipo === "03") {
+      navigate(`/editar/CreditoFiscal/${content.codigo_de_generacion}`);
+    }
     
-        /* TODO: Just in case establecimiento  */
-        codEstableMH: content.codestablemh,
-        codEstable: content.codestable, 
-        codPuntoVentaMH: content.codpuntoventamh, 
-        codPuntoVenta: content.codpuntoventa 
-      },
-      receptor: {
-        codActividad: content.re_codactividad,
-        direccion: content.re_direccion, 
-        nrc: content.re_nrc, 
-        descActividad: content.re_actividad_economica,
-        correo: content.re_correo_electronico,
-        tipoDocumento: content.re_tipodocumento,
-        nombre: content.re_name, 
-        telefono: content.re_numero_telefono, 
-        numDocumento: content.re_numdocumento
-      },
-      otrosDocumentos: content.otrosdocumentos, 
-      ventaTercero: content.ventatercero, 
-      cuerpoDocumento: Listitems ,
-      resumen: {
-        condicionOperacion: content.condicionoperacion, 
-        totalIva: parseFloat(content.iva_percibido),/* pending */   
-        saldoFavor: content.saldofavor,   
-        numPagoElectronico: content.numpagoelectronico,  
-        pagos: [
-          {/* TODO: ADD MORE PAYMENTS */
-            periodo: content.periodo, 
-            plazo: content.plazo,  
-            montoPago: content.montopago, 
-            codigo: content.codigo,        
-            referencia: content.referencia
-          }
-        ],
-        totalNoSuj: content.totalnosuj,
-        tributos: content.tributos, 
-        totalLetras: content.cantidad_en_letras,  
-        totalExenta: content.totalexenta,  
-        subTotalVentas: content.subtotalventas, 
-        totalGravada: parseFloat(content.total_agravada),
-        montoTotalOperacion: content.montototaloperacion, 
-        descuNoSuj: content.descunosuj,
-        descuExenta: content.descuexenta,
-        descuGravada: content.descugravada,
-        porcentajeDescuento: content.porcentajedescuento,
-        totalDescu: parseFloat(content.monto_global_de_descuento), 
-        subTotal: parseFloat(content.subtotal), 
-        ivaRete1: parseFloat(content.iva_retenido),
-        reteRenta: parseFloat(content.retencion_de_renta),
-        totalNoGravado: content.totalnogravado,
-        totalPagar: parseFloat(content.total_a_pagar)
-      },
-      extension: {
-        docuEntrega: content.documento_e,
-        nombRecibe: content.documento_r,
-        observaciones: content.observaciones,
-        placaVehiculo: content.placavehiculo,
-        nombEntrega: content.responsable_emisor, 
-        docuRecibe: content.documento_receptor, 
-      },
-      apendice: content.apendice,
-    };
-
-    console.log("---------------resultado--------------");
-    console.log(data);
-    console.log("---------------resultado--------------");
-
-    navigate(`/editar/factura/${content.codigo_de_generacion}`);
   };
 
   const DownloadBillHandler = async () => {
@@ -292,103 +331,219 @@ itemsdata();
 
   };
 
+
+
   const ValidateBillHandler = async () => { /* Firm DTE */
 /* -----------------CONST DATA--------------------------- */
 
-var data = {
-  identificacion: {
-    version: parseInt(content.version), 
-    ambiente: content.ambiente, 
-    tipoDte: content.tipo, 
-    numeroControl: content.numero_de_control, 
-    codigoGeneracion: content.codigo_de_generacion,
-    tipoModelo: parseInt(content.modelo_de_factura), 
-    tipoOperacion: parseInt(content.tipo_de_transmision), 
-    fecEmi: content.fecha_y_hora_de_generacion,
-    horEmi: content.horemi,
-    tipoMoneda: content.tipomoneda, 
-    tipoContingencia: content.tipocontingencia, 
-    motivoContin: content.motivocontin, 
-  },
-  documentoRelacionado: content.documentorelacionado,
-  emisor: {
-    direccion: {
-      municipio: user.municipio, 
-      departamento: user.departamento, 
-      complemento: user.direccion 
+if (content.tipo === "01") {
+  var data = {
+    identificacion: {
+      version: parseInt(content.version), 
+      ambiente: content.ambiente, 
+      tipoDte: content.tipo, 
+      numeroControl: content.numero_de_control, 
+      codigoGeneracion: content.codigo_de_generacion,
+      tipoModelo: parseInt(content.modelo_de_factura), 
+      tipoOperacion: parseInt(content.tipo_de_transmision), 
+      fecEmi: content.fecha_y_hora_de_generacion,
+      horEmi: content.horemi,
+      tipoMoneda: content.tipomoneda, 
+      tipoContingencia: content.tipocontingencia, 
+      motivoContin: content.motivocontin, 
     },
-    nit: user.nit,
-    nrc: user.nrc ,
-    nombre: user.name ,
-    codActividad: user.codactividad,
-    descActividad: user.descactividad, 
-    telefono: user.numero_de_telefono, 
-    correo: user.correo_electronico, 
-    nombreComercial: user.nombre_comercial,
-    tipoEstablecimiento: user.tipoestablecimiento,
+    documentoRelacionado: content.documentorelacionado,
+    emisor: {
+      direccion: {
+        municipio: user.municipio, 
+        departamento: user.departamento, 
+        complemento: user.direccion 
+      },
+      nit: user.nit,
+      nrc: user.nrc ,
+      nombre: user.name ,
+      codActividad: user.codactividad,
+      descActividad: user.descactividad, 
+      telefono: user.numero_de_telefono, 
+      correo: user.correo_electronico, 
+      nombreComercial: user.nombre_comercial,
+      tipoEstablecimiento: user.tipoestablecimiento,
+  
+      /* TODO: Just in case establecimiento  */
+      codEstableMH: content.codestablemh,
+      codEstable: content.codestable, 
+      codPuntoVentaMH: content.codpuntoventamh, 
+      codPuntoVenta: content.codpuntoventa 
+    },
+    receptor: {
+      codActividad: content.re_codactividad,
+      direccion: content.re_direccion, 
+      nrc: content.re_nrc, 
+      descActividad: content.re_actividad_economica,
+      correo: content.re_correo_electronico,
+      tipoDocumento: content.re_tipodocumento,
+      nombre: content.re_name, 
+      telefono: content.re_numero_telefono, 
+      numDocumento: content.re_numdocumento
+    },
+    otrosDocumentos: content.otrosdocumentos, 
+    ventaTercero: content.ventatercero, 
+    cuerpoDocumento: Listitems ,
+    resumen: {
+      condicionOperacion: content.condicionoperacion, 
+      totalIva: parseFloat(content.iva_percibido),/* pending */   
+      saldoFavor: content.saldofavor,   
+      numPagoElectronico: content.numpagoelectronico,  
+      pagos: [
+        {/* TODO: ADD MORE PAYMENTS */
+          periodo: content.periodo, 
+          plazo: content.plazo,  
+          montoPago: content.montopago, 
+          codigo: content.codigo,        
+          referencia: content.referencia
+        }
+      ],
+      totalNoSuj: content.totalnosuj,
+      tributos: content.tributos, 
+      totalLetras: content.cantidad_en_letras,  
+      totalExenta: content.totalexenta,  
+      subTotalVentas: content.subtotalventas, 
+      totalGravada: parseFloat(content.total_agravada),
+      montoTotalOperacion: content.montototaloperacion, 
+      descuNoSuj: content.descunosuj,
+      descuExenta: content.descuexenta,
+      descuGravada: content.descugravada,
+      porcentajeDescuento: content.porcentajedescuento,
+      totalDescu: parseFloat(content.monto_global_de_descuento), 
+      subTotal: parseFloat(content.subtotal), 
+      ivaRete1: parseFloat(content.iva_retenido),
+      reteRenta: parseFloat(content.retencion_de_renta),
+      totalNoGravado: content.totalnogravado,
+      totalPagar: parseFloat(content.total_a_pagar)
+    },
+    extension: {
+      docuEntrega: content.documento_e,
+      nombRecibe: content.documento_r,
+      observaciones: content.observaciones,
+      placaVehiculo: content.placavehiculo,
+      nombEntrega: content.responsable_emisor, 
+      docuRecibe: content.documento_receptor, 
+    },
+    apendice: content.apendice,
+  };
+} else if (content.tipo === "03") {
+  /* Split in this structure direccion: {
+        municipio: userinfo.municipio, 
+        departamento: userinfo.departamento, 
+        complemento: userinfo.direccion 
+      }, the string "08|08|direccion" */
 
-    /* TODO: Just in case establecimiento  */
-    codEstableMH: content.codestablemh,
-    codEstable: content.codestable, 
-    codPuntoVentaMH: content.codpuntoventamh, 
-    codPuntoVenta: content.codpuntoventa 
-  },
-  receptor: {
-    codActividad: content.re_codactividad,
-    direccion: content.re_direccion, 
-    nrc: content.re_nrc, 
-    descActividad: content.re_actividad_economica,
-    correo: content.re_correo_electronico,
-    tipoDocumento: content.re_tipodocumento,
-    nombre: content.re_name, 
-    telefono: content.re_numero_telefono, 
-    numDocumento: content.re_numdocumento
-  },
-  otrosDocumentos: content.otrosdocumentos, 
-  ventaTercero: content.ventatercero, 
-  cuerpoDocumento: Listitems ,
-  resumen: {
-    condicionOperacion: content.condicionoperacion, 
-    totalIva: parseFloat(content.iva_percibido),/* pending */   
-    saldoFavor: content.saldofavor,   
-    numPagoElectronico: content.numpagoelectronico,  
-    pagos: [
-      {/* TODO: ADD MORE PAYMENTS */
-        periodo: content.periodo, 
-        plazo: content.plazo,  
-        montoPago: content.montopago, 
-        codigo: content.codigo,        
-        referencia: content.referencia
-      }
-    ],
-    totalNoSuj: content.totalnosuj,
-    tributos: content.tributos, 
-    totalLetras: content.cantidad_en_letras,  
-    totalExenta: content.totalexenta,  
-    subTotalVentas: content.subtotalventas, 
-    totalGravada: parseFloat(content.total_agravada),
-    montoTotalOperacion: content.montototaloperacion, 
-    descuNoSuj: content.descunosuj,
-    descuExenta: content.descuexenta,
-    descuGravada: content.descugravada,
-    porcentajeDescuento: content.porcentajedescuento,
-    totalDescu: parseFloat(content.monto_global_de_descuento), 
-    subTotal: parseFloat(content.subtotal), 
-    ivaRete1: parseFloat(content.iva_retenido),
-    reteRenta: parseFloat(content.retencion_de_renta),
-    totalNoGravado: content.totalnogravado,
-    totalPagar: parseFloat(content.total_a_pagar)
-  },
-  extension: {
-    docuEntrega: content.documento_e,
-    nombRecibe: content.documento_r,
-    observaciones: content.observaciones,
-    placaVehiculo: content.placavehiculo,
-    nombEntrega: content.responsable_emisor, 
-    docuRecibe: content.documento_receptor, 
-  },
-  apendice: content.apendice,
-};
+  const address = content.re_direccion.split("|");
+  const tributocf = content.tributocf.split("|");
+  var data = {
+    identificacion: {
+      version: parseInt(content.version), 
+      ambiente: content.ambiente, 
+      tipoDte: content.tipo, 
+      numeroControl: content.numero_de_control, 
+      codigoGeneracion: content.codigo_de_generacion,
+      tipoModelo: parseInt(content.modelo_de_factura), 
+      tipoOperacion: parseInt(content.tipo_de_transmision), 
+      fecEmi: content.fecha_y_hora_de_generacion,
+      horEmi: content.horemi,
+      tipoMoneda: content.tipomoneda, 
+      tipoContingencia: content.tipocontingencia, 
+      motivoContin: content.motivocontin, 
+    },
+    documentoRelacionado: content.documentorelacionado,
+    emisor: {
+      direccion: {
+        municipio: user.municipio, 
+        departamento: user.departamento, 
+        complemento: user.direccion 
+      },
+      nit: user.nit,
+      nrc: user.nrc ,
+      nombre: user.name ,
+      codActividad: user.codactividad,
+      descActividad: user.descactividad, 
+      telefono: user.numero_de_telefono, 
+      correo: user.correo_electronico, 
+      nombreComercial: user.nombre_comercial,
+      tipoEstablecimiento: user.tipoestablecimiento,
+  
+      /* TODO: Just in case establecimiento  */
+      codEstableMH: content.codestablemh,
+      codEstable: content.codestable, 
+      codPuntoVentaMH: content.codpuntoventamh, 
+      codPuntoVenta: content.codpuntoventa 
+    },
+    receptor: {
+      codActividad: content.re_codactividad,
+      direccion: {
+        municipio: address[1], 
+        departamento: address[0], 
+        complemento: address[2] 
+      },
+      nrc: content.re_nrc, 
+      descActividad: content.re_actividad_economica,
+      correo: content.re_correo_electronico,
+      nombre: content.re_name, 
+      telefono: content.re_numero_telefono, 
+      nombreComercial: content.re_numdocumento,
+      nit: content.re_nit
+    },
+    otrosDocumentos: content.otrosdocumentos, 
+    ventaTercero: content.ventatercero, 
+    cuerpoDocumento: Listitems ,
+    resumen: {
+      condicionOperacion: content.condicionoperacion, 
+      saldoFavor: content.saldofavor,   
+      numPagoElectronico: content.numpagoelectronico,  
+      pagos: [
+        {/* TODO: ADD MORE PAYMENTS */
+          periodo: content.periodo, 
+          plazo: content.plazo,  
+          montoPago: content.montopago, 
+          codigo: content.codigo,        
+          referencia: content.referencia
+        }
+      ],
+      totalNoSuj: content.totalnosuj,
+      tributos: [{
+        codigo: tributocf[0],
+        descripcion: tributocf[1],
+        valor: parseFloat(tributocf[2])
+    }], 
+      totalLetras: content.cantidad_en_letras,  
+      totalExenta: content.totalexenta,  
+      subTotalVentas: content.subtotalventas, 
+      totalGravada: parseFloat(content.total_agravada),
+      montoTotalOperacion: content.montototaloperacion, 
+      descuNoSuj: content.descunosuj,
+      descuExenta: content.descuexenta,
+      descuGravada: content.descugravada,
+      porcentajeDescuento: content.porcentajedescuento,
+      totalDescu: parseFloat(content.monto_global_de_descuento), 
+      subTotal: parseFloat(content.subtotal), 
+      ivaRete1: parseFloat(content.iva_retenido),
+      reteRenta: parseFloat(content.retencion_de_renta),
+      totalNoGravado: content.totalnogravado,
+      totalPagar: parseFloat(content.total_a_pagar),
+      ivaPerci1: content.iva_percibido,
+    },
+    extension: {
+      docuEntrega: content.documento_e,
+      nombRecibe: content.documento_r,
+      observaciones: content.observaciones,
+      placaVehiculo: content.placavehiculo,
+      nombEntrega: content.responsable_emisor, 
+      docuRecibe: content.documento_receptor, 
+    },
+    apendice: content.apendice,
+  };
+}
+
 
     console.log("---------------resultado--------------");
     console.log(data);
@@ -410,7 +565,8 @@ var data = {
 
     console.log("---------------resultado of firm server--------------");
     console.log(responseFirm);
-    const response = await PlantillaAPI.update(
+    // update the bill without the items 
+    const response = await PlantillaAPI.updateNoItems(
       id_emisor,
       data,
       token,
@@ -433,7 +589,6 @@ var data = {
 
     /* Sending the email */
 
-
     console.log("---------------enviando--------------");
     console.log(content);
     console.log(token);
@@ -446,16 +601,16 @@ var data = {
 
 
 
-
+/* 
     const parseintversion = parseInt(content.version);
-    const dataSend = { /* TODO: SEND */
+    const dataSend = { 
       tipoDte: content.tipo,
       ambiente: content.ambiente,
-      idEnvio: parseInt(count[0].count + 1),
+      idEnvio: parseInt(count[0].count +1),
       version: parseintversion,
       codigoGeneracion: content.codigo_de_generacion,
       documento: content.firm,
-    };
+    }; */
 
 
     /* try {
@@ -508,7 +663,15 @@ var data = {
       console.log(content);
       console.log("---------------dataSend to minis--------------");
       console.log(dataSend);
-      const senddata = await SendAPI.sendBill(dataSend, tokenminis);
+
+      /* ADD token minis */
+      const resultAuthminis = await LoginAPI.loginMinis(
+        user.nit,
+        user.codigo_hacienda,
+        "MysoftwareSv"
+      );
+      console.log(resultAuthminis);
+      const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
       console.log(senddata);
 
       
@@ -531,11 +694,18 @@ var data = {
      /*  window.location.reload(); */
     if (senddata.estado === "RECHAZADO")
       alert("Error al enviar la factura", senddata.descripcionMsg);
+    toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+    
     }
+
+    console.log("---------------resultado--------------");
+    console.log(senddata.estado);
+    
 
 
     } catch (error) {
       console.log(error)
+      toast.error("Error al enviar la factura no autorizado");
     }
 
 
@@ -547,12 +717,12 @@ var data = {
     <div className=" flex flex-row">
       <button
         onClick={ValidateBillHandler}
-        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
+        className={`cursor-pointer h-12 [border:none]  pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
       >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+        <div className="relative text-xs pt-1.5 font-light font-inter text-black text-left z-[3]">
           Firmar
         </div>
-        <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
+        <img src={checkimg} alt="Tick" className="w-[30px] ml-1 h-[30px]" />
       </button>
     </div>
   ) : (
@@ -574,7 +744,7 @@ var data = {
         onClick={SendBillHandler}
         className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
       >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+        <div className="relative pt-1.5 text-xs font-light font-inter text-black text-left z-[3]">
           Enviar
         </div>
         <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
@@ -587,9 +757,9 @@ var data = {
     <div className=" flex flex-row">
       <button
         onClick={SendBillHandler}
-        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
+        className={`cursor-pointer h-12 [border:none] pt-[11px]  pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
       >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+        <div className="relative pt-1.5 text-xs font-light font-inter text-black text-left z-[3]">
           Enviar
         </div>
       </button>
@@ -603,7 +773,7 @@ var data = {
         className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
       >
         <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-          test mail
+          mail
         </div>
         <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
       </button>
@@ -618,20 +788,29 @@ var data = {
         className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
       >
         <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-        test mail
+        <img src={mailimg} className="h-5 w-5" alt="" />
         </div>
       </button>
     </div>
   );
 
+
+    /* Delete bill handler using the services */
+
+    const DeleteBillHandler = async () => {
+      console.log("DeleteBillHandler");
+      const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
+    };
+
+
   return (
-    <div className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-2 box-border text-left text-3xs text-black font-inria-sans">
-      <header className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-0.5 pb-0 pr-[52px] pl-[15px] box-border text-xl text-black font-inria-sans">
-        <div className="flex flex-col items-start justify-start pt-1 px-0 pb-0">
+    <div className="flex self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-start   px-0 pb-2 box-border my-6  text-left text-3xs text-black font-inria-sans">
+      <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-0.5 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans">
+        <div className="flex flex-col  items-start justify-start pt-1 px-0 pb-0">
           
           <h1 className="m-0 relative text-inherit font-bold z-[3]">{tipo}</h1>
         </div>
-        <div className="flex flex-row items-start justify-start gap-[0px_8px]">
+        <div className="flex flex-row  items-start justify-start gap-[0px_8px]">
           {/* <img
             className="w-[33px] h-[33px] relative object-cover z-[3]"
             loading="lazy"
@@ -640,21 +819,33 @@ var data = {
             src="/ver@2x.png"
           /> */}
           <img
-            className="w-[26px]  h-[26px] relative object-cover z-[3]"
+            className="w-[26px]  h-[26px] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white  relative object-cover z-[3]"
             loading="lazy"
             onClick={EditBillHandler}
             alt=""
             src="/editar@2x.png"
           />
           <img
-            className="h-[33px]  w-[30px] relative object-cover z-[3]"
+            className="h-[33px] w-[30px] relative object-cover z-[3] rounded-lg px-2  my-1 focus:pointer-events-auto hover:bg-white "
             onClick={DownloadBillHandler}
             loading="lazy"
             alt=""
             src="/descargar@2x.png"
           />
+                    <img
+            className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
+            onClick={DeleteBillHandler}
+            loading="lazy"
+            alt=""
+            /* import the img x.png from assets/img */
+            src={imgx}
+          />
+
+          
         </div>
+        
       </header>
+      
       <div className="self-stretch flex flex-row items-start justify-start py-0 pr-[3px] pl-0">
         <div className="flex flex-row items-start justify-start gap-[0px_11px]"></div>
       </div>
@@ -667,7 +858,8 @@ var data = {
               </div>
               <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
               <div className="relative whitespace-nowrap z-[1]">
-                Documento: {content.re_nit}
+                {/* re_nit if it is null re_numdocumento */}
+                Documento: {content.re_nit ? content.re_nit : content.re_numdocumento}
               </div>
               <div className="relative whitespace-nowrap z-[1]">
                 Correo: {content.re_correo_electronico}

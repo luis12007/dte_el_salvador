@@ -2,15 +2,15 @@ import userEvent from "@testing-library/user-event";
 import FrameComponent3 from "./SwitchON";
 import { useEffect } from "react";
 import { useState } from "react";
-const BillCF = ({handleSelectChangeCFClient, setClient}) => {
+const BillCF = ({handleSelectChangeCFClient, setClient , client}) => {
 
   useEffect(() => {
     setClient({
       documentType: null,
-      name: null,
-      document: null,
+      name: client.name,
+      document: client.document,
       address: null,
-      email: null,
+      email: client.email,
       phone: null,
       codActividad: null,
       nrc: null,
@@ -57,6 +57,7 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                     placeholder="CF"
                     type="text"
+                    value={client.document}
                     onChange={(e) => changeHandler("document", e)}
                   />
                 </div>
@@ -75,6 +76,7 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="Luis Alexander"
                 type="text"
+                value={client.name}
                 onChange={(e) => changeHandler("name", e)}
 
               />
@@ -91,8 +93,9 @@ const BillCF = ({handleSelectChangeCFClient, setClient}) => {
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="Luishdezmtz12@gmail.con"
+                placeholder="Email"
                 type="text"
+                value={client.email}
                 onChange={(e) => changeHandler("email", e)}
               />
             </div>

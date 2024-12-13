@@ -1,0 +1,143 @@
+{
+  "identificacion": {
+    "version": 3,
+    "ambiente": "00",
+    "tipoDte": "03",
+    "numeroControl": "DTE-03-00000030-000000000000001",
+    "codigoGeneracion": "D2BF47F2-1031-44D0-AA22-B61DBC83F3E8",
+    "tipoModelo": 1,
+    "tipoOperacion": 1,
+    "fecEmi": "2024-08-30",
+    "horEmi": "16:43:32",
+    "tipoMoneda": "USD",
+    "tipoContingencia": null,
+    "motivoContin": null
+  },
+  "documentoRelacionado": null,
+  "emisor": {
+    "direccion": {
+      "municipio": "08",
+      "departamento": "06",
+      "complemento": "Residencial san gabriel 2, calle al volcan casa #3, San Salvador Mejicanos"
+    },
+    "nit": "02101601741065",
+    "nrc": "1837811",
+    "nombre": "LUIS ALONSO HERNANDEZ MAGAÑA",
+    "codActividad": "86203",
+    "descActividad": "Servicios médicos ",
+    "telefono": "64319239",
+    "correo": "luishdezmtz12@gmail.com",
+    "nombreComercial": "nombre comercial",
+    "tipoEstablecimiento": "20",
+    "codEstableMH": null,
+    "codEstable": null,
+    "codPuntoVentaMH": null,
+    "codPuntoVenta": null
+  },
+  "receptor": {
+    "codActividad": "10005",
+    "direccion": {
+      "municipio": "08",
+      "departamento": "02",
+      "complemento": "direccion direccion"
+    },
+    "nrc": "1837811",
+    "descActividad": "Otros",
+    "correo": "Luishdezmtz12@gmail.com",
+    "nit": "02101601741065",
+    "nombre": "Luis Hernandez",
+    "telefono": "64319239",
+    "nombreComercial": "Nombre comercial"
+  },
+  "otrosDocumentos": null,
+  "ventaTercero": null,
+  "cuerpoDocumento": [
+    {
+      "codTributo": null,
+      "descripcion": "description",
+      "uniMedida": 99,
+      "codigo": null,
+      "cantidad": 22,
+      "numItem": 1,
+      "tributos": [
+        "20"
+      ],
+      "noGravado": 0,
+      "psv": 0,
+      "montoDescu": 0,
+      "numeroDocumento": null,
+      "precioUni": 2,
+      "ventaGravada": 49.06,
+      "ventaExenta": 0,
+      "ventaNoSuj": 0,
+      "tipoItem": 1
+    },
+    {
+      "codTributo": null,
+      "descripcion": "description",
+      "uniMedida": 99,
+      "codigo": null,
+      "cantidad": 22,
+      "numItem": 2,
+      "tributos": [
+        "20"
+      ],
+      "noGravado": 0,
+      "psv": 0,
+      "montoDescu": 0,
+      "numeroDocumento": null,
+      "precioUni": 2,
+      "ventaGravada": 49.06,
+      "ventaExenta": 0,
+      "ventaNoSuj": 0,
+      "tipoItem": 1
+    }
+  ],
+  "resumen": {
+    "condicionOperacion": 1,
+    "saldoFavor": 0,
+    "numPagoElectronico": null,
+    "pagos": [
+      {
+        "periodo": null,
+        "plazo": null,
+        "montoPago": 88,
+        "codigo": "01",
+        "referencia": null
+      }
+    ],
+    "totalNoSuj": 0,
+    "tributos": [
+      {
+        "codigo": "20",
+        "descripcion": "Impuesto al Valor Agregado 13%",
+        "valor": 6.32
+      }
+    ],
+    "totalLetras": "OCHENTA Y OCHO",
+    "totalExenta": 0,
+    "subTotalVentas": 88,
+    "totalGravada": null,
+    "montoTotalOperacion": 88,
+    "descuNoSuj": 0,
+    "descuExenta": 0,
+    "descuGravada": 0,
+    "porcentajeDescuento": 0,
+    "totalDescu": 0,
+    "subTotal": 88,
+    "ivaRete1": 0,
+    "reteRenta": 0,
+    "totalNoGravado": 0,
+    "totalPagar": 88,
+    "ivaPerci1": 0
+  },
+  "extension": {
+    "docuEntrega": null,
+    "nombRecibe": null,
+    "observaciones": "desc desc desc",
+    "placaVehiculo": null,
+    "nombEntrega": null,
+    "docuRecibe": null
+  },
+  "apendice": null
+}

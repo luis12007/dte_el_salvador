@@ -2,7 +2,7 @@ import FrameComponent2 from "../components/ButtonsProfileComponent";
 import userAPI from "../services/UserServices";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useState } from "react";
+import { useState , useEffect } from "react";
 const Perfil = () => {
   const [name, setName] = useState('')
   const [nit , setNit] = useState('')
@@ -12,9 +12,34 @@ const Perfil = () => {
   const [numero_de_telefono , setNumero_telefono] = useState('')
   const [correo_electronico , setCorreo_electronico] = useState('')
   const [nombre_comercial , setNombre_comercial] = useState('')
-  const [id_usuario , setId_usuario] = useState(localStorage.getItem('user'))
+  const [id_usuario , setId_usuario] = useState(localStorage.getItem('user_id'))
   const [	tipo_de_establecimieto , setTipo_establecimiento] = useState('')
   const token = localStorage.getItem('token')
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await userAPI.getUserInfo(id_usuario, token);
+        if (result.status === 404) {
+          console.log('User not found');
+          return;
+        }
+        setName(result.name);
+        setNit(result.nit);
+        setNrc(result.nrc);
+        setActividad_economica(result.codactividad);
+        setDireccion(result.direccion);
+        setNumero_telefono(result.numero_de_telefono);
+        setCorreo_electronico(result.correo_electronico);
+        setNombre_comercial(result.nombre_comercial);
+        setTipo_establecimiento(result.tipoestablecimiento);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+    fetchData();
+  }, [id_usuario, token]); // Dependency array
+
 
   const handleSubmit = async (e) => {
 
@@ -31,427 +56,6 @@ const Perfil = () => {
       tipo_de_establecimieto
     },token)
 
-    const departmentsAndMunicipalities = {
-      0: { departmentName: 'Otro pais', municipalities: ["Otro pais"] },
-      1: {
-        departmentName: 'Ahuachapán',
-        municipalities: [
-          'Ahuachapán',
-          'Apaneca',
-          'Atiquizaya',
-          'Concepción de Ataco',
-          'El Refugio',
-          'Guaymango',
-          'Jujutla',
-          'San Francisco Menéndez',
-          'San Lorenzo',
-          'San Pedro Puxtla',
-          'Tacuba',
-          'Turín',
-        ],
-      },
-      2: {
-        departmentName: 'Santa Ana',
-         municipalities: [
-          'Candelaria de la Frontera', 
-          'Coatepeque',
-          'Chalchuapa',
-          'El Congo',
-          'El Porvenir',
-          'Masahuat',
-          'Metapán',
-          'San Antonio Pajonal',
-          'San Sebastián Salitrillo',
-          'Santa Ana',
-          'Santa Rosa Guachipilín',
-          'Santiago de la Frontera',
-          'Texistepeque',
-        ],
-      },
-      3: {
-        departmentName: 'Sonsonate',
-        municipalities: [
-          'Acajutla',
-          'Armenia',
-          'Caluco',
-          'Cuisnahuat',
-          'sta i ishuatan',
-          'Izalco',
-          'Juayúa',
-          'Nahuizalco',
-          'Nahulingo',
-          'Salcoatitán',
-          'San Antonio del Monte',
-          'San Julián',
-          'Santa Catarina Masahuat',
-          'Santo Domingo de Guzmán',
-          'Sonsonate',
-          'Sonzacate',
-        ],
-      },
-      4: {
-        departmentName: 'Chalatenango',
-        municipalities: [
-          'Agua Caliente',
-          'Arcatao',
-          'Azacualpa',
-          'Citalá',
-          'Comalapa',
-          'Concepción Quezaltepeque',
-          'Chalatenango',
-          'Dulce Nombre de María',
-          'El Carrizal',
-          'El Paraíso',
-          'La Laguna',
-          'La Palma',
-          'La Reina',
-          'Las Vueltas',
-          'Nombre de Jesús',
-          'Nueva Concepción',
-          'Nueva Trinidad',
-          'Ojos de Agua',
-          'Potonico',
-          'San Antonio La Cruz',
-          'San Antonio Los Ranchos',
-          'San Fernando',
-          'San Francisco Lempa',
-          'San Francisco Morazán',
-          'San Ignacio',
-          'San Isidro Labrador',
-          'San José Cancasque',
-          'San José Flores',
-          'San Luis del Carmen',
-          'San Miguel de Mercedes',
-          'San Rafael',
-          'Santa Rita',
-          'Tejutla',
-        ],
-      },
-      5: {
-        departmentName: 'La Libertad',
-        municipalities: [
-          'Antiguo Cuscatlán',
-          'Ciudad Arce',
-          'Colón',
-          'Comasagua',
-          'Chiltiupán',
-          'Huizúcar',
-          'Jayaque',
-          'Jicalapa',
-          'La Libertad',
-          'Nuevo Cuscatlán',
-          'Santa tecla',
-          'Quezaltepeque',
-          'Sacacoyo',
-          'San juan villanueva',
-          'San Juan Opico',
-          'San Matías',
-          'San Pablo Tacachico',
-          'Tamanique',
-          'Talnique',
-          'Teotepeque',
-          'Tepecoyo',
-          'Zaragoza',
-        ],
-      },
-      6: {
-        departmentName: 'San Salvador',
-        municipalities: [
-          'Aguilares',
-          'Apopa',
-          'Ayutuxtepeque',
-          'Cuscatancingo',
-          'El Paisnal',
-          'Guazapa',
-          'Ilopango',
-          'Mejicanos',
-          'Nejapa',
-          'Panchimalco',
-          'Rosario de Mora',
-          'San Marcos',
-          'San Martín',
-          'San Salvador',
-          'Santiago Texacuangos',
-          'Santo Tomás',
-          'Soyapango',
-          'Tonacatepeque',
-          'Ciudad Delgado',
-        ],
-      },
-      7: {
-        departmentName: 'Cuscatlán',
-        municipalities:  [
-          'Candelaria',
-          'Cojutepeque',
-          'El Carmen',
-          'El Rosario',
-          'Monte San Juan',
-          'Oratorio de Concepción',
-          'San Bartolomé Perulapia',
-          'San Cristóbal',
-          'San José Guayabal',
-          'San Pedro Perulapán',
-          'San Rafael Cedros',
-          'San Ramón',
-          'Santa Cruz Analquito',
-          'Santa Cruz Michapa',
-          'Suchitoto',
-          'Tenancingo',
-        ],
-      },
-      8: {
-        departmentName: 'La Paz',
-        municipalities: [
-          'Cuyultitán',
-          'El Rosario',
-          'Jerusalén',
-          'Mercedes La Ceiba',
-          'Olocuilta',
-          'Paraíso de Osorio',
-          'San Antonio Masahuat',
-          'San Emigdio',
-          'San Francisco Chinameca',
-          'San Juan Nonualco',
-          'San Juan Talpa',
-          'San Juan Tepezontes',
-          'San Luis Talpa',
-          'San Miguel Tepezontes',
-          'San Pedro Masahuat',
-          'San Pedro Nonualco',
-          'San Rafael Obrajuelo',
-          'Santa María Ostuma',
-          'Santiago Nonualco',
-          'Tapalhuaca',
-          'Zacatecoluca',
-          'San Luis La Herradura',
-        ],
-      },
-      9: {
-        departmentName: 'Cabañas',
-        municipalities: [
-          'Cinquera',
-          'Guacotecti',
-          'Ilobasco',
-          'Jutiapa',
-          'San Isidro',
-          'Sensuntepeque',
-          'Tejutla',
-          'Victoria',
-          'Dolores',
-        ],
-      },
-      10: {
-        departmentName: 'San Vicente',
-        municipalities: [
-          'Apastepeque',
-          'Guadalupe',
-          'San Cayetano Istepeque',
-          'Santa Clara',
-          'Santo Domingo',
-          'San Esteban Catarina',
-          'San Ildefonso',
-          'San Lorenzo',
-          'San Sebastián',
-          'San Vicente',
-          'Tecoluca',
-          'Tepetitán',
-          'Verapaz',
-        ],
-      },
-      11: {
-        departmentName: 'Usulután',
-        municipalities: [
-          'Alegría',
-          'Berlín',
-          'California',
-          'Concepción Batres',
-          'El Triunfo',
-          'Ereguayquín',
-          'Estanzuelas',
-          'Jiquilisco',
-          'Jucuapa',
-          'Jucuará',
-          'Mercedes Umaña',
-          'Nueva Granada',
-          'Ozatlán',
-          'Puerto El Triunfo',
-          'San Agustín',
-          'San Buenaventura',
-          'San Dionisio',
-          'Santa Elena',
-          'San Francisco Javier',
-          'Santa María',
-          'Santiago de María',
-          'Tecapán',
-          'Usulután',
-        ],
-      },
-      12: {
-        departmentName: 'San Miguel',
-        municipalities: [
-          'Carolina',
-          'Ciudad Barrios',
-          'Comacarán',
-          'Chapeltiquex',
-          'Chinameca',
-          'Chirilagua',
-          'El Tránsito',
-          'Lolotique',
-          'Moncagua',
-          'Nueva Guadalupe',
-          'Nuevo Edén de San Juan',
-          'Quelepa',
-          'San Antonio del Mosco',
-          'San Gerardo',
-          'San Jorge',
-          'San Luis de la Reina',
-          'San Miguel',
-          'San Rafael Oriente',
-          'Sesori',
-          'Uluazapa',
-        ],
-      },
-      13: {
-        departmentName: 'Morazán',
-        municipalities: [
-          'Arambala',
-          'Cacaopera',
-          'Corinto',
-          'Chilanga',
-          'Delicias de Concepción',
-          'El Divisadero',
-          'El Rosario',
-          'Guatajiagua',
-          'Joateca',
-          'Jocoaitique',
-          'Jocoro',
-          'Lolotiquillo',
-          'Meanguera',
-          'Osicala',
-          'Perquín',
-          'San Carlos',
-          'San Fernando',
-          'San Francisco Gotera',
-          'San Isidro',
-          'San Simón',
-          'Sensembra',
-          'Sociedad',
-          'Torola',
-          'Yamabal',
-          'Yoloaiquín',
-        ],
-      },
-      14: {
-        departmentName: 'La Unión',
-        municipalities: [
-          'Anamorós',
-          'Bolívar',
-          'Concepción de Oriente',
-          'Conchagua',
-          'El Carmen',
-          'El Sauce',
-          'Intipucá',
-          'La Unión',
-          'Lislique',
-          'Meanguera del Golfo',
-          'Nueva Esparta',
-          'Pasaquina',
-          'Polorós',
-          'San Alejo',
-          'San José',
-          'Santa Rosa de Lima',
-          'Yayantique',
-          'Yucuaiquín',
-        ],
-      },
-      // You can add more departments and their municipalities as needed
-    };
-    /* const initialDepartmentId = Object.keys(departmentsAndMunicipalities)[0];
-  const [selectedDepartment, setSelectedDepartment] = useState(initialDepartmentId);
-  const [selectedMunicipality, setSelectedMunicipality] = useState(
-    departmentsAndMunicipalities[initialDepartmentId].municipalities[0]
-  );
-
-  const handleDepartmentChange = (e) => {
-    const departmentId = e.target.value;
-    setSelectedDepartment(departmentId);
-    setClient((prevClient) => ({
-      ...prevClient,
-      department: departmentId,
-    }));
-
-    // Reset the selected municipality to the first in the new department
-    setSelectedMunicipality(departmentsAndMunicipalities[departmentId].municipalities[0]);
-    const themunicipality = departmentsAndMunicipalities[initialDepartmentId].municipalities.indexOf(departmentsAndMunicipalities[initialDepartmentId].municipalities[0]) +1
-    setClient((prevClient) => ({
-      ...prevClient,
-      municipality: themunicipality.toString(),
-    }));
-  };
-
-  const handleMunicipalityChange = (e) => {
-    const newMunicipality = e.target.value;
-  
-    setSelectedMunicipality(newMunicipality);
-  
-    // Find the one-based index of the selected municipality
-    const municipalityIndex = departmentsAndMunicipalities[selectedDepartment].municipalities.indexOf(newMunicipality) + 1;
-  
-    setClient((prevClient) => ({
-      ...prevClient,
-      municipality: municipalityIndex.toString(), // Store the index as a string
-    }));
-  }; 
-  
-  
-  <div className="self-stretch flex flex-col items-start justify-start py-0 px-2.5 box-border max-w-full text-left text-xs text-black font-inria-sans">
-    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-      <div className="relative text-xs font-inria-sans text-left z-[1]">
-        <span className="text-black">Departamento</span>
-        <span className="text-tomato">*</span>
-      </div>
-      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-        <select
-          className="w-full relative bg-white border-2 max-w-full"
-          value={selectedDepartment}
-          onChange={handleDepartmentChange}
-        >
-          {Object.entries(departmentsAndMunicipalities).map(([key, department]) => (
-            <option key={key} value={key}>
-              {department.departmentName}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-
-
-    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-      <div className="relative text-xs font-inria-sans text-left z-[1]">
-        <span className="text-black">Municipio</span>
-        <span className="text-tomato">*</span>
-      </div>
-      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-        <select
-          className="w-full relative bg-white border-2 max-w-full"
-          value={selectedMunicipality}
-          onChange={handleMunicipalityChange}
-        >
-          {departmentsAndMunicipalities[selectedDepartment].municipalities.map((municipality, index) => (
-            <option key={index} value={municipality}>
-              {municipality}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-  </div>
-
-  
-  
-  
-  
-  */
     console.log(result)
 
     if(result.message === "Usuario actualizado correctamente"){
@@ -516,6 +120,7 @@ const Perfil = () => {
                   className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                   placeholder="datos personales datos personales"
                   type="text"
+                  value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
@@ -535,6 +140,7 @@ const Perfil = () => {
                   className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                   placeholder="datos personales datos personales"
                   type="text"
+                  value={nit}
                   onChange={(e) => setNit(e.target.value)}
                 />
                 </div>
@@ -555,6 +161,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={nrc}
                 onChange={(e) => setNrc(e.target.value)}
               />
             </div>
@@ -574,6 +181,7 @@ const Perfil = () => {
                   className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                   placeholder="datos personales datos personales"
                   type="text"
+                  value={actividad_economica}
                   onChange={(e) => setActividad_economica(e.target.value)}
                 />
               </div>
@@ -593,6 +201,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={direccion}
                 onChange={(e) => setDireccion(e.target.value)}
 
               />
@@ -612,6 +221,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={numero_de_telefono}
                 onChange={(e) => setNumero_telefono(e.target.value)}
 
               />
@@ -631,6 +241,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={correo_electronico}
                 onChange={(e) => setCorreo_electronico(e.target.value)}
               />
             </div>
@@ -650,6 +261,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={nombre_comercial}
                 onChange={(e) => setNombre_comercial(e.target.value)}
               />
               </div>
@@ -669,6 +281,7 @@ const Perfil = () => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={tipo_de_establecimieto}
                 onChange={(e) => setTipo_establecimiento(e.target.value)}
               />
             </div>

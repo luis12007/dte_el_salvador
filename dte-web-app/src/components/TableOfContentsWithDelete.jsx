@@ -25,7 +25,7 @@ const TableOfContents = ({key, content, onRemove}) => {
           <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
             <input
               className="w-full [border:none] pt-1 [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-              placeholder={`${content.mount}`}
+              placeholder={`Hello`}
               type="text"
               readOnly
             />
@@ -40,7 +40,7 @@ const TableOfContents = ({key, content, onRemove}) => {
         <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
           <input
             className="w-full [border:none] pt-1 [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-            placeholder={`${content.Doc}`}
+            placeholder={`Hello`}
             type="text"
             readOnly
           />

@@ -13,6 +13,7 @@ import ClientesFacturaToFiscalProcess from "./pages/CreateBill"
 import ListItems from "./pages/ListItems";
 import AddItem from "./pages/AddItem";
 import EditBill from "./pages/EditBill";
+import EditCF from "./pages/EditCF";
 
 /* http://localhost:3000/#/ingresar the example route */
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/detalles/:id" element={<DetallesFactura/>}/>
         <Route path="/facturas/:id" element={<HomeFacturas/>}/>
         <Route path="/editar/factura/:codigo_de_generacion" element={<EditBill/>}/>
+        <Route path="/editar/CreditoFiscal/:codigo_de_generacion" element={<EditCF/>}/>
 
         {/* TODO  */}
         <Route path="/clientes" element={<ListClients/>}/>

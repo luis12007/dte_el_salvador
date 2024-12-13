@@ -1,6 +1,6 @@
 import FrameComponent3 from "./SwitchOFF";
 import { useState } from "react";
-const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
+const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) => {
   // Extended list of departments and their corresponding municipalities
   const handleChange = (field, value) => {
 
@@ -49,6 +49,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <select
+              value={client.documentType}
                 onChange={(e) => handleChange("documentType", e.target.value)}
                 className="w-full relative  bg-white border-2 max-w-full"
               >
@@ -72,6 +73,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                     placeholder="62486326-2"
                     type="text"
+                    value={client.document}
                     onChange={(e) => handleChange("document", e.target.value)}
                   />
                 </div>
@@ -90,6 +92,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={client.name}
                 onChange={(e) => handleChange("name", e.target.value)}
               />
             </div>
@@ -106,6 +109,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={client.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
               />
             </div>
@@ -122,6 +126,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={client.email}
                 onChange={(e) => handleChange("email", e.target.value)}
               />
             </div>
@@ -138,6 +143,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
+                value={client.address}
                 onChange={(e) => handleChange("address", e.target.value)}
               />
             </div>
@@ -150,6 +156,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient }) => {
             </div>
             <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100 px-3">
               <select
+              value={client.codActividad}
                 onChange={(e) => handleChange("codActividad", e.target.value)}
                 className="w-full relative  bg-white border-2 max-w-full"
               >

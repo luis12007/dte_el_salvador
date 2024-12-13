@@ -5,13 +5,17 @@ import hamburgerimg from '../assets/imgs/hamburguerimg.png'
 import SidebarComponent from '../components/SideBarComponent';
 import HamburguerComponent from '../components/HamburguerComponent';
 
+import list from '../assets/imgs/portapapeles.png';
+
 const Home = () => {
   const [visible, setVisible] = useState(true);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
 
   const SupportHandler = () => {
-    window.open("https://wa.link/h382bz", "_blank");
+    /* window.open("https://wa.link/h382bz", "_blank"); */
+  navigate("/facturas");
+
   }
 
   const CreateBillHandler = () => {
@@ -79,20 +83,20 @@ const Home = () => {
               src="/rectangle-5.svg"
             />
             <img
-              className="h-[78px] left-2 w-[79px] relative object-cover z-[1]"
+              className="h-[78px] pb-1 left-2 w-[79px] relative object-cover z-[1]"
               alt=""
-              src="/apoyotecnico-1@2x.png"
+              src={list}
             />
           </div>
           <div className="flex-1 flex flex-col items-start justify-start pt-[26px] px-0 pb-0 box-border min-w-[125px]">
-            <div className="self-stretch  h-[31px] relative text-3xl font-light font-inter text-black text-left inline-block shrink-0 [-webkit-text-stroke:1px_#000] z-[1]">
-              Soporte
+            <div className="self-stretch   h-[31px] relative text-3xl font-light font-inter text-black text-left inline-block shrink-0 [-webkit-text-stroke:1px_#000] z-[1]">
+              Lista de Facturas
             </div>
           </div>
         </button>
         <div className="w-[278px] flex flex-col items-center justify-center gap-[9px_0px]">
           <h2 className="m-0 relative text-inherit font-bold font-inherit">
-            My software SV
+            Sistema de facturación
           </h2>
           <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
             <img
