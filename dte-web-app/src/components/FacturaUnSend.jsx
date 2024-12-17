@@ -800,6 +800,14 @@ if (content.tipo === "01") {
     const DeleteBillHandler = async () => {
       console.log("DeleteBillHandler");
       const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
+      console.log("deleted");
+      console.log(response);
+      if (response.message === "plantilla eliminado") {
+        toast.success("Plantilla eliminada");
+        window.location.reload();
+      }else{
+        toast.error("Error al eliminar la plantilla recarga pagina");
+      }
     };
 
 

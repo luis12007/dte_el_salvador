@@ -6,6 +6,7 @@ import SidebarComponent from "../components/SideBarComponent";
 import PlantillaAPI from "../services/PlantillaService";
 import UserService from "../services/UserServices";
 import LoginAPI from "../services/Loginservices";
+import * as XLSX from "xlsx";
 
 const HomeFacturas = () => {
   const token = localStorage.getItem("token");
@@ -57,7 +58,21 @@ const HomeFacturas = () => {
   }, []); // Ensure this runs only once on mount
 
   const excelHandler = () => {
-    console.log("Excel");
+
+    const now = new Date();
+    const dateString = now.toLocaleDateString('en-GB').replace(/\//g, '-'); // Format as DD-MM-YYYY
+
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
+
+    // Convert the data to a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(items);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+
+    // Write the file and trigger the download
+    XLSX.writeFile(workbook, `facturas- ${dateString}.xlsx`);
   };
 
   const groupItemsByDate = (items) => {

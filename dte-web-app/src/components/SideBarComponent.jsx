@@ -49,13 +49,13 @@ const CloseHandler = () => {
     pl-[18px] box-border gap-[55px] text-left text-xs text-black font-inter ${sidebar} ${w}`}>
       <div className="w-[202px] h-[396px] relative rounded-11xl bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
       <div className="self-stretch flex flex-col items-end justify-start gap-[26px_0px]">
-        <img
+        {/* <img
           className="w-[15px] h-[15px] relative object-cover z-[1]"
           loading="lazy"
           alt=""
           src="/x-1@2x.png"
-          onClick={() => setVisible(!visible)}
-        />
+          onClick={() => setVisible(!visible)} 
+        /> */}
         <div className="self-stretch flex flex-row items-start justify-start">
           <nav className="m-0 flex-1 flex flex-col  items-start justify-start gap-[11px_0px] text-left text-xs text-black font-inter">
             <button onClick={GoHomeHandler} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">

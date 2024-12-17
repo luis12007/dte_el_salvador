@@ -13,6 +13,9 @@ import Firmservice from "../services/Firm";
 import PlantillaService from "../services/PlantillaService";
 import PlantillaAPI from '../services/PlantillaService';
 import UserService from '../services/UserServices';
+import EmisorService from '../services/emisor';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const Clientes = () => {
@@ -219,8 +222,16 @@ const Clientes = () => {
 
 const testbill = async () => {
 // add a json mock with the structure of the data
-const count = await PlantillaAPI.count(id_emisor, "01", token)
+/* const count = await PlantillaAPI.count(id_emisor, "01", token) */
 
+try {
+  /* EmisorService */
+  const response = await EmisorService.count_factura(id_emisor, token);
+  console.log("Count Factura");
+  console.log(response);
+} catch (error) {
+  console.log(error);
+}
 
     const myUuid = uuidv4().toUpperCase().toString();
 
@@ -231,7 +242,7 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
         version: 1, 
         ambiente: "00", 
         tipoDte: "01", 
-        numeroControl: getNextFormattedNumber(count[0].count), 
+        numeroControl: userinfo.id_emisor + 1, 
         codigoGeneracion: myUuid,
         tipoModelo: 1, 
         tipoOperacion: 1, 
@@ -347,15 +358,55 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
 
     console.log("PlantillaService - Create");
     console.log(responsePlantilla);
+    /*  */
 
 
 }
   /* ---------------------------------------------------------- */
   const addBillHandler = async () => {
 
-    /* Counting the sentences*/
-    const count = await PlantillaAPI.count(id_emisor, "01", token)
+    try {
+      /* EmisorService */
 
+      if (Listitems.length === 0) {
+        toast.error("Factura no items en factura!", {
+          position: "top-center",
+          autoClose: 3000,  // Auto close after 3 seconds
+          hideProgressBar: false,  // Display the progress bar
+          closeOnClick: true,  // Close the toast when clicked
+          draggable: true,  // Allow dragging the toast
+        });
+        return
+      }
+
+      if (client.document === "") {
+        toast.error("Factura no cliente!", {
+          position: "top-center",
+          autoClose: 3000,  // Auto close after 3 seconds
+          hideProgressBar: false,  // Display the progress bar
+          closeOnClick: true,  // Close the toast when clicked
+          draggable: true,  // Allow dragging the toast
+        });
+        return
+      }
+
+
+
+
+
+      const response = await EmisorService.count_factura(id_emisor, token);
+      console.log("Count Factura");
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+
+
+    /* Counting the sentences*/
+    /* const count = await PlantillaAPI.count(id_emisor, "01", token) */
+
+    try {
+      
 
     const myUuid = uuidv4().toUpperCase().toString();
 
@@ -366,7 +417,7 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
         version: 1, 
         ambiente: userinfo.ambiente, 
         tipoDte: "01", 
-        numeroControl: getNextFormattedNumber(count[0].count), 
+        numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1), 
         codigoGeneracion: myUuid,
         tipoModelo: 1, 
         tipoOperacion: 1, 
@@ -472,11 +523,42 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
     const responsePlantilla = await PlantillaService.create(data, token, id_emisor);
 
     console.log("PlantillaService - Create");
-    console.log(responsePlantilla);
+    console.log(responsePlantilla.message);
+    if (responsePlantilla.message === "Error en el servidor") {
+        toast.error("Factura no creada!", {
+        position: "top-center",
+        autoClose: 3000,  // Auto close after 3 seconds
+        hideProgressBar: false,  // Display the progress bar
+        closeOnClick: true,  // Close the toast when clicked
+        draggable: true,  // Allow dragging the toast
+      });
+      return
+    } 
+
+    if (responsePlantilla.message != "Error en el servidor") {
+      toast.success("Factura creada!", {
+        position: "top-center",
+        autoClose: 3000,  // Auto close after 3 seconds
+        hideProgressBar: false,  // Display the progress bar
+        closeOnClick: true,  // Close the toast when clicked
+        draggable: true,  // Allow dragging the toast
+      });
+      return
+    }
 
 /* 
     navigate("/facturas");  */
 
+  } catch (error) {
+    toast.error("Factura no creada!", {
+      position: "top-center",
+      autoClose: 3000,  // Auto close after 3 seconds
+      hideProgressBar: false,  // Display the progress bar
+      closeOnClick: true,  // Close the toast when clicked
+      draggable: true,  // Allow dragging the toast
+    });
+
+  }
 
   };
 
@@ -780,6 +862,7 @@ const count = await PlantillaAPI.count(id_emisor, "01", token)
           </button>
         </div>
       </footer>
+      <ToastContainer />
     </form>
   );
 };
