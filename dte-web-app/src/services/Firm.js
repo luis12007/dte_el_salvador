@@ -1,6 +1,6 @@
 //const BASE_URL = "https://cleaning-system-app-production.up.railway.app";
 const BASE_URL = "http://174.138.54.64:8113";
-const BASE_URL_withotprotocol = "http://174.138.54.64:8113";
+const BASE_URL_withotprotocol = "//174.138.54.64:8113";
 
 
 const Firm = {
