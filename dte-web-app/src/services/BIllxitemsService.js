@@ -1,5 +1,5 @@
-//const BASE_URL = "https://cleaning-system-app-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+/* const BASE_URL = "http://localhost:3000"; */
 
 
 const BillsxItemsAPI = {
