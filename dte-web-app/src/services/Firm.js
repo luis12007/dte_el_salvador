@@ -1,5 +1,5 @@
 //const BASE_URL = "https://cleaning-system-app-production.up.railway.app";
-const BASE_URL = "https://174.138.54.64:443";
+const BASE_URL_Firm = "https://174.138.54.64:443";
 
 
 const Firm = {
@@ -12,7 +12,7 @@ const Firm = {
      */
 
     create: async (firm) => {
-        const res = await fetch(`${BASE_URL}/firmardocumento/`, {
+        const res = await fetch(`${BASE_URL_Firm}/firmardocumento/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
