@@ -12,7 +12,7 @@ const Firm = {
      */
 
     create: async (firm) => {
-        const res = await fetch(`${BASE_URL}/firmardocumento/`, {
+        const res = await fetch(`//174.138.54.64:8113/firmardocumento/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
