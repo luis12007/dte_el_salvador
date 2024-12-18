@@ -12,7 +12,7 @@ const FrameComponent3 = ({handleSelectChangeCFClient}) => {
           />
         </div>
       </div>
-      <div onClick={handleSelectChangeCFClient} className="flex flex-row items-start justify-start py-0 px-3.5">
+      {/* <div onClick={handleSelectChangeCFClient} className="flex flex-row items-start justify-start py-0 px-3.5">
         <div className="flex flex-row items-start justify-start gap-[0px_4px]">
           <div  className="h-[19px] w-[30px] relative rounded-6xs bg-limegreen box-border z-[1] border-[0.2px] border-solid border-black">
             <div className="absolute top-[0px] left-[0px] rounded-6xs bg-limegreen box-border w-full h-full hidden border-[0.2px] border-solid border-black" />
@@ -23,7 +23,7 @@ const FrameComponent3 = ({handleSelectChangeCFClient}) => {
             <div className="relative z-[3]">Consumidor Final</div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

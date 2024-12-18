@@ -59,7 +59,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                             onChange={(e) => setcuantity(e.target.value)}
                                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                                 placeholder="###"
-                                type="text"
+                                type="number"
                             />
 
                         </div>
@@ -86,8 +86,8 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                 <input
                                 onChange={(e) => setPrice(e.target.value)}
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                    placeholder="1.2"
-                                    type="text"
+                                    placeholder="###"
+                                    type="number"
                                 />
                             </div>
                         </div>

@@ -11,13 +11,15 @@ const DataProductNoAdvanceComponent = ({onRemove, handleSelectChangeItemsClient,
                         <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                             <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
                                 <span className="text-black">{`Tipo `}</span>
-                                <span className="text-tomato">*</span>
+                                {/* <span className="text-tomato">*</span> */}
                             </div>
                             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
                                 <select
                                     value={content.type}
                                     className="w-full h-full relative  border-white bg-white border-2 max-w-full"
-                                    type="text"
+                                    /* type numbers */
+                                    type= "text"
+                                    
 
                                 >
                                     <option value="CF">{`${content.type}`}</option>
@@ -28,40 +30,46 @@ const DataProductNoAdvanceComponent = ({onRemove, handleSelectChangeItemsClient,
                         </div>
                         <div className="self-stretch flex  items-start justify-start ">
                             <span className="text-black">{`Cantidad `}</span>
-                            <span className="text-tomato">*</span>
+                            {/* <span className="text-tomato">*</span> */}
                         </div>
                         <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
                             <input
                                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                type="text"
+                                type= "number"
                                 placeholder={content.cuantity}
+                                value={content.cuantity}
+                                readOnly={true}
                             />
 
                         </div>
                         <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px]">
                             <div>
                                 <span className="text-black">{`Descripción`}</span>
-                                <span className="text-tomato">*</span>
+                                {/* <span className="text-tomato">*</span> */}
                             </div>
                             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
                                 <input
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                    type="text"
+                                    type= "text"
                                     value={content.description}
+                                    readOnly={true}
                                 />
                             </div>
                         </div>
                         <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px]">
                             <div>
                                 <span className="text-black">{`Precio`}</span>
-                                <span className="text-tomato">*</span>
+                                {/* <span className="text-tomato">*</span> */}
                             </div>
                             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
                                 <input
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                                     placeholder="datos personales datos personales"
-                                    type="text"
+                                    type="number"
                                     value={content.price}
+                                    readOnly={true}
+                                    /* just make sure that are numbers */
+                                    
                                 />
                             </div>
                         </div>

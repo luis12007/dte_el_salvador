@@ -60,7 +60,7 @@ const EditBill = () => {
     document: "",
     address: "",
     email: null,
-    phone: "",
+    phone: null,
     codActividad: "10005",
     nrc: null,
     descActividad: "Otros",
@@ -156,6 +156,11 @@ const EditBill = () => {
       }
 
       fetchClientData();
+
+      const totalapagar = responsePlantilla.plantilla[0].montopago;
+      setTotal(totalapagar);
+
+
     };
     fetchData();
   }, []);
@@ -312,14 +317,14 @@ const EditBill = () => {
         cantidad: cuantityint,
         numItem: setListitems.length + 1,
         tributos: null,
-        ivaItem: ivarounded,
+        ivaItem: 0,
         noGravado: 0,
         psv: 0,
         montoDescu: 0,
         numeroDocumento: null,
         precioUni: pricefloat,
-        ventaGravada: pricefloat * cuantityint + ivarounded * cuantityint,
-        ventaExenta: 0,
+        ventaGravada: 0,
+        ventaExenta: pricefloat * cuantityint,
         ventaNoSuj: 0,
         tipoItem: typeitem,
       };
@@ -404,7 +409,7 @@ const EditBill = () => {
 
   };
 
-  const itemshandleAdd = (newContents) => {
+/*   const itemshandleAdd = (newContents) => {
     var type = "bienes";
     if (newContents.type === "1") {
       type = "Bienes";
@@ -447,6 +452,86 @@ const EditBill = () => {
     // Update the list with the new item
     setListitems((prevListitems) => [...prevListitems, newItem]);
 
+
+
+    setitems((prevContents) => [
+        ...prevContents,
+        {
+          type: type,
+          cuantity: newContents.cuantity,
+          description: newContents.description,
+          price: newContents.price,
+        },
+      ]);
+
+    const Listitemstrack = [...Listitems, newItem];
+
+
+    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+    const rawSubtotal = Listitemstrack.reduce(
+      (total, item) => total + item.precioUni * item.cantidad,
+      0
+    );
+    const rawiva = Listitemstrack.reduce(
+      (total, item) => total + item.ivaItem * item.cantidad,
+      0
+    );
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
+    setTotal(roundedSubtotal); // Set the rounded subtotal
+    console.log("ListitemsAddAfter")
+    console.log(Listitems)
+  };
+
+ */
+
+  const itemshandleAdd = (newContents) => {
+    var type = "bienes";
+    if (newContents.type === "1") {
+      type = "Bienes";
+    } else if (newContents.type === "2") {
+      type = "Servicios";
+    } else if (newContents.type === "3") {
+      type = "Bienes y Servicios";
+    } else if (newContents.type === "4") {
+      type = "Otro";
+    }
+
+
+
+    const cuantityint = parseInt(newContents.cuantity);
+    const pricefloat = parseFloat(newContents.price);
+    const typeitem = parseInt(newContents.type);
+
+    const ivaperitem = pricefloat / 1.13;
+    const ivaperitemfinal = ivaperitem * 0.13;
+    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const newItem = {
+      codTributo: null,
+      descripcion: newContents.description,
+      uniMedida: 99,
+      codigo: null,
+      cantidad: cuantityint,
+      numItem: Listitems.length + 1,
+      tributos: null,
+      ivaItem: 0,
+      noGravado: 0,
+      psv: 0,
+      montoDescu: 0,
+      numeroDocumento: null,
+      precioUni: pricefloat,
+      ventaGravada: 0,
+      ventaExenta:  pricefloat * cuantityint,
+      ventaNoSuj: 0,
+      tipoItem: typeitem,
+    };
+    // Update the list with the new item
+    setListitems((prevListitems) => [...prevListitems, newItem]);
+
     /* add items*/
 
     setitems((prevContents) => [
@@ -482,6 +567,8 @@ const EditBill = () => {
     console.log(Listitems)
   };
 
+
+  
   const itemsAdvancehandleRemove = (index) => {
     setitemsAdvance((prevContents) =>
       prevContents.filter((_, i) => i !== index)
@@ -512,6 +599,9 @@ const EditBill = () => {
 
     const conditionoperationint = parseInt(payment.paymentType);
 
+    console.log("codes");
+    console.log(plantilla.plantilla[0].numero_de_control);
+    console.log(plantilla.plantilla[0].codigo_de_generacion);
     const data = {
       identificacion: {
         version: 1,
@@ -566,7 +656,7 @@ const EditBill = () => {
       cuerpoDocumento: Listitems,
       resumen: {
         condicionOperacion: conditionoperationint,
-        totalIva: iva /* IVA 0.1154 percent -----------------*/,
+        totalIva: 0 /* IVA 0.1154 percent -----------------*/,
         saldoFavor: 0,
         numPagoElectronico: null,
         pagos: [
@@ -581,16 +671,16 @@ const EditBill = () => {
         totalNoSuj: 0,
         tributos: null,
         totalLetras: convertirDineroALetras(total),
-        totalExenta: 0,
+        totalExenta: total,
         subTotalVentas: total,
-        totalGravada: total,
+        totalGravada: 0,
         montoTotalOperacion: total,
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
         porcentajeDescuento: 0,
         totalDescu: 0,
-        subTotal: subtotal,
+        subTotal: total, /* subtotal */
         ivaRete1: 0,
         reteRenta: 0,
         totalNoGravado: 0,
@@ -605,8 +695,23 @@ const EditBill = () => {
         docuRecibe: null,
       },
       apendice: null,
+      firma: null,
     };
 
+    /* traverse data.cuerpoDocumento to set new values in propiety numItem */
+    data.cuerpoDocumento.map((item, index) => {
+      item.numItem = index + 1;
+    });
+
+
+    if (client.name === "") {
+      data.receptor.nombre = null;
+    }
+
+    if (client.phone === "") {
+      data.receptor.telefono = null;
+    }
+    
     console.log("Data");
     console.log(data);
     /* 
@@ -868,8 +973,11 @@ const EditBill = () => {
         />
       )}
 
-      <TreeNode text="Subtotal" data={subtotal} />
+      {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
+      <TreeNode text="Total a Pagar" data={total} /> */}
+      <TreeNode text="Subtotal" data={total} />
+      <TreeNode text="IVA" data={0} />
       <TreeNode text="Total a Pagar" data={total} />
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">

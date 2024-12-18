@@ -21,6 +21,7 @@ const FrameComponent1 = ({key, content , user}) => {
   const tokenminis = localStorage.getItem("tokenminis");
   const [Listitems , setItems] = useState([]);
   const navigate = useNavigate();
+  const [usuario, setUser] = useState([]);
   useEffect(() => {
     if (content.tipo === "01") {
       setTipo("Factura");
@@ -98,11 +99,17 @@ setItems(newItems);
 itemsdata();
     console.log("user");
     console.log(user);
+    setUser(user)
 
     console.log("content");
     console.log(content);
 
     
+
+
+
+
+
   }, []);
 
 
@@ -574,6 +581,22 @@ if (content.tipo === "01") {
     );
     console.log("edited");
     console.log(response); 
+
+    if (response.message === "plantilla actualizado") {
+      toast.success("Factura firmada");
+
+      /* wait 5 seconds */
+      setTimeout(() => {
+      window.location.reload();
+
+      }, 3000);
+
+
+
+
+    }else {
+      toast.error("Error al actualizar factura");
+    }
     /*  window.location.reload();  */
   };
 
@@ -588,6 +611,11 @@ if (content.tipo === "01") {
     const count = await PlantillaAPI.count(id_emisor, content.tipo, token);
 
     /* Sending the email */
+    if (content.re_correo_electronico === null) {
+      toast.error("el receptor no tiene correo electronico");
+
+      return
+    }
 
     console.log("---------------enviando--------------");
     console.log(content);
@@ -597,6 +625,12 @@ if (content.tipo === "01") {
 
     console.log("---------------resultado de mail--------------");
     console.log(sendEmailFactura);
+
+    if (sendEmailFactura.message === "Email sent") {
+      toast.success("Email enviado");
+    }else {
+      toast.error("No enviado problema");
+    }
 
 
 
@@ -649,15 +683,105 @@ if (content.tipo === "01") {
 
     const parseintversion = parseInt(content.version);
  
+    if (content.tipo === "01"){
     const dataSend = { /* TODO: SEND */
       tipoDte: content.tipo,
       ambiente: content.ambiente,
-      idEnvio: parseInt(count[0].count + 1),
+      idEnvio: usuario.count_factura,
       version: parseintversion,
       codigoGeneracion: content.codigo_de_generacion,
       documento: content.firm,
     };
 
+    try {
+      console.log(content);
+      console.log("---------------dataSend to minis--------------");
+      console.log(dataSend);
+
+      /* ADD token minis */
+      const resultAuthminis = await LoginAPI.loginMinis(
+        user.nit,
+        user.codigo_hacienda,
+        "MysoftwareSv"
+      );
+      console.log(resultAuthminis);
+      if (resultAuthminis.status != "OK"){
+        toast.success("Error eb ek nubusterui vuelve a intentar");
+        return
+      }
+      const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+      console.log(senddata);
+
+
+
+      
+    if (senddata.estado === "PROCESADO") {
+      const response = await PlantillaAPI.updatesend(id_emisor,true,senddata.selloRecibido,token,content.codigo_de_generacion);
+      console.log("edited");
+      console.log(response);
+
+      toast.success("Factura enviada al ministerio");
+
+      /* send email */
+
+    /* Sending the email */
+
+    
+    if (content.re_correo_electronico === null) {
+      toast.error("el receptor no tiene correo electronico");
+
+      setTimeout(() => {
+        window.location.reload();
+  
+        }, 5000);
+      return
+    }
+      console.log("---------------enviando email--------------");
+      console.log(content);
+      console.log(token);
+      console.log(id_emisor);
+      const sendEmailFactura = await SendEmail.sendBill(id_emisor,content,token);
+  
+      console.log("---------------resultado de mail--------------");
+      console.log(sendEmailFactura);
+
+      if (sendEmailFactura.message === "Email sent") {
+        toast.success("Email enviado");
+      }else {
+        toast.error("No enviado problema");
+      }
+      /* wait for 5 seconds */
+      setTimeout(() => {
+        window.location.reload();
+  
+        }, 5000);
+  
+    }
+    
+    if (senddata.estado === "RECHAZADO")
+      toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+    
+
+    console.log("---------------resultado--------------");
+    console.log(senddata.estado);
+    
+
+
+    } catch (error) {
+      console.log(error)
+      toast.error("Error al enviar la factura no autorizado");
+    }
+
+
+  } else {
+    const dataSend = { /* TODO: SEND */
+      tipoDte: content.tipo,
+      ambiente: content.ambiente,
+      idEnvio: usuario.count_fiscal,
+      version: parseintversion,
+      codigoGeneracion: content.codigo_de_generacion,
+      documento: content.firm,
+    };
 
     try {
       console.log(content);
@@ -692,11 +816,11 @@ if (content.tipo === "01") {
       console.log(sendEmailFactura);
       
      /*  window.location.reload(); */
-    if (senddata.estado === "RECHAZADO")
-      alert("Error al enviar la factura", senddata.descripcionMsg);
-    toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-    
     }
+    
+    if (senddata.estado === "RECHAZADO")
+      toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+    
 
     console.log("---------------resultado--------------");
     console.log(senddata.estado);
@@ -707,7 +831,7 @@ if (content.tipo === "01") {
       console.log(error)
       toast.error("Error al enviar la factura no autorizado");
     }
-
+  }
 
   };
 
@@ -804,7 +928,11 @@ if (content.tipo === "01") {
       console.log(response);
       if (response.message === "plantilla eliminado") {
         toast.success("Plantilla eliminada");
+              /* wait 5 seconds */
+      setTimeout(() => {
         window.location.reload();
+  
+        }, 3000);
       }else{
         toast.error("Error al eliminar la plantilla recarga pagina");
       }

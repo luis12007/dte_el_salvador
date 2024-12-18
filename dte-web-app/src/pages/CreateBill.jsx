@@ -70,7 +70,7 @@ const Clientes = () => {
     document: "",
     address: "",
     email: null,
-    phone: "",
+    phone: null,
     codActividad: "10005",
     nrc: null,
     descActividad: "Otros",
@@ -134,6 +134,75 @@ const Clientes = () => {
     );
   };
 
+ /* before with IVA
+ const itemshandleAdd = (newContents) => {
+
+    var type = "bienes"
+    if (newContents.type === "1") {
+      type = "Bienes";
+    } else if (newContents.type === "2") {
+      type = "Servicios";
+    }
+    else if (newContents.type === "3") {
+      type = "Bienes y Servicios";
+    }
+    else if (newContents.type === "4") {
+      type = "Otro";
+    }
+
+    setitems((prevContents) => [
+      ...prevContents,
+      { type: type, cuantity: newContents.cuantity, description: newContents.description, price: newContents.price },
+    ]);
+
+    const cuantityint = parseInt(newContents.cuantity);
+    const pricefloat = parseFloat(newContents.price);
+    const typeitem = parseInt(newContents.type);
+
+    const ivaperitem = pricefloat / 1.13;
+    const ivaperitemfinal = ivaperitem * 0.13;
+    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const newItem = {
+      codTributo: null,
+      descripcion: newContents.description, 
+      uniMedida: 99,
+      codigo: null,
+      cantidad: cuantityint, 
+      numItem: Listitems.length + 1, 
+      tributos: null,
+      ivaItem: ivarounded, 
+      noGravado: 0,
+      psv: 0, 
+      montoDescu: 0, 
+      numeroDocumento: null, 
+      precioUni: pricefloat, 
+      ventaGravada: (pricefloat*cuantityint) + ivarounded*cuantityint, 
+      ventaExenta: 0, 
+      ventaNoSuj: 0, 
+      tipoItem: typeitem, 
+    };
+    // Update the list with the new item
+    setListitems((prevListitems) => [...prevListitems, newItem]);
+    const Listitemstrack = [...Listitems, newItem];
+    console.log("Listitems", Listitemstrack);
+
+
+    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+    const rawSubtotal = Listitemstrack.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+    const rawiva = Listitemstrack.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
+    setTotal(roundedSubtotal); // Set the rounded subtotal
+
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
+  }; */
+
+  /* Adding factura without IVA */
   const itemshandleAdd = (newContents) => {
 
     var type = "bienes"
@@ -170,14 +239,14 @@ const Clientes = () => {
       cantidad: cuantityint, 
       numItem: Listitems.length + 1, 
       tributos: null,
-      ivaItem: ivarounded, 
+      ivaItem: 0, 
       noGravado: 0,
       psv: 0, 
       montoDescu: 0, 
       numeroDocumento: null, 
       precioUni: pricefloat, 
-      ventaGravada: (pricefloat*cuantityint) + ivarounded*cuantityint, 
-      ventaExenta: 0, 
+      ventaGravada: 0, 
+      ventaExenta: pricefloat*cuantityint, 
       ventaNoSuj: 0, 
       tipoItem: typeitem, 
     };
@@ -363,8 +432,8 @@ try {
 
 }
   /* ---------------------------------------------------------- */
-  const addBillHandler = async () => {
-
+  const addBillHandler = async (event) => {
+    event.preventDefault();
     try {
       /* EmisorService */
 
@@ -417,7 +486,7 @@ try {
         version: 1, 
         ambiente: userinfo.ambiente, 
         tipoDte: "01", 
-        numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1), 
+        numeroControl: getNextFormattedNumber(userinfo.count_factura + 1), 
         codigoGeneracion: myUuid,
         tipoModelo: 1, 
         tipoOperacion: 1, 
@@ -466,7 +535,7 @@ try {
       cuerpoDocumento: Listitems ,
       resumen: {
         condicionOperacion: conditionoperationint, 
-        totalIva: iva,   /* IVA 0.1154 percent -----------------*/
+        totalIva: 0,   /* totalIva: iva, IVA 0.1154 percent ----------------- Eliminated here*/
         saldoFavor: 0,   
         numPagoElectronico: null,  
         pagos: [
@@ -478,12 +547,13 @@ try {
             referencia: null 
           }
         ],
+        /* Changing the agravada for exenta */
         totalNoSuj: 0,
         tributos: null, 
         totalLetras: convertirDineroALetras(total),  
-        totalExenta: 0,  
+        totalExenta: total,  
         subTotalVentas: total, 
-        totalGravada: total,
+        totalGravada: 0,
         montoTotalOperacion: total, 
         descuNoSuj: 0,
         descuExenta: 0,
@@ -507,6 +577,13 @@ try {
       apendice: null,
     };
 
+    if (client.name === "") {
+      data.receptor.nombre = null;
+    }
+
+    if (client.phone === "") {
+      data.receptor.telefono = null;
+    }
     
     console.log("Data");
     console.log(data);
@@ -543,6 +620,7 @@ try {
         closeOnClick: true,  // Close the toast when clicked
         draggable: true,  // Allow dragging the toast
       });
+
       return
     }
 
@@ -618,7 +696,7 @@ try {
     incrementedString = incrementedString.padStart(totalDigits, '0');
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-01-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-01-00000${userinfo.ambiente}0-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -758,10 +836,13 @@ try {
         />
       )}
 
-      <TreeNode text="Subtotal" data={subtotal} />
+      {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
+      <TreeNode text="Total a Pagar" data={total} /> */}
+      <TreeNode text="Subtotal" data={total} />
+      <TreeNode text="IVA" data={0} />
       <TreeNode text="Total a Pagar" data={total} />
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
+      {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
           <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-3 px-[9px] pb-[11px] box-border relative whitespace-nowrap max-w-full z-[1]">
@@ -811,12 +892,14 @@ try {
                 </div>
               </div>
               <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px]">
-                <TableOfContentsNew handleAdd={handleAdd} setpayment={setpayment} total={total} /> {/* TODO: Add the credit metod */}
+                <TableOfContentsNew handleAdd={handleAdd} setpayment={setpayment} total={total} /> 
               </div>
             </div>
           </div>
         </form>
       </section>
+
+       */}
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
@@ -839,7 +922,7 @@ try {
             </b>
           </button>
 
-          <button
+          {/* <button
             onClick={testbill}
             className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
           >
@@ -848,7 +931,7 @@ try {
             <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
               probar factura
             </b>
-          </button>
+          </button> */}
 
 
           <button
