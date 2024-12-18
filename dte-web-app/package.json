@@ -16,6 +16,7 @@
     "react-router-dom": "^6.22.3",
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.6",
+    "serve": "^14.2.4",
     "tailwindcss": "^3.4.1",
     "toastify": "^2.0.1",
     "uuid": "^9.0.1",
@@ -23,8 +24,8 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "serve dist",
+    "build": "serve -s build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
