@@ -1,5 +1,5 @@
 //const BASE_URL = "https://cleaning-system-app-production.up.railway.app";
-const BASE_URL = "http://174.138.54.64:443";
+const BASE_URL = "https://174.138.54.64:443";
 
 
 const Firm = {
