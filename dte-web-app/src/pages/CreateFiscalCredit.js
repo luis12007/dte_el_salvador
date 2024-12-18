@@ -10,7 +10,8 @@ import BillnoCF from "../components/ClientBillCredit";
 import PlantillaAPI from '../services/PlantillaService';
 import PlantillaService from "../services/PlantillaService";
 import EmisorService from "../services/emisor";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CrearCreditoFiscal = () => {
     const [selectedOption, setSelectedOption] = useState("");
@@ -27,9 +28,11 @@ const CrearCreditoFiscal = () => {
     const [Listitems, setListitems] = useState([]);
     const [items, setitems] = useState([])
     const [contents, setContents] = useState([]);
+    
 
 
     /* data for municipalities ------------------------------------ */
+    /* TODO */
     const departmentsAndMunicipalities = {
         0: { departmentName: 'Otro pais', municipalities: ["Otro pais"] },
         1: {
@@ -424,12 +427,12 @@ const CrearCreditoFiscal = () => {
 
     /* CLIENTE */
     var [client, setClient] = useState({
-        name: "",
-        document: "",
-        address: "",
+        name: null,
+        document: null,
+        address: null,
         email: null,
-        phone: "",
-        codActividad: "10005", /* TODO CODIGO */
+        phone: null,
+        codActividad: "10005", /* TODO CODIGO  servicios medicos*/
         nrc: null,
         descActividad: "Otros",
         nit: null,
@@ -481,7 +484,7 @@ const CrearCreditoFiscal = () => {
         const ivaperitem = pricefloat / 1.13;
         const ivaperitemfinal = ivaperitem * 0.13;
         const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
-        const newItem = {/* DELETED ivaitem */
+        const newItem = {
             codTributo: null,
             descripcion: newContents.description,
             uniMedida: 99,
@@ -494,7 +497,7 @@ const CrearCreditoFiscal = () => {
             montoDescu: 0,
             numeroDocumento: null,
             precioUni: pricefloat,
-            ventaGravada: (pricefloat * cuantityint) + ivarounded * cuantityint,
+            ventaGravada: pricefloat * cuantityint,
             ventaExenta: 0,
             ventaNoSuj: 0,
             tipoItem: typeitem,
@@ -507,19 +510,15 @@ const CrearCreditoFiscal = () => {
         /* map all newitems and sum the  precioUni*cantidad */
         // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
         const rawSubtotal = Listitemstrack.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-        const rawiva = Listitemstrack.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
+        const rawiva = Listitemstrack.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
         // Round to two decimal places
         const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
         const roundediva = Math.round(rawiva * 100) / 100;
 
         setiva(roundediva); // Set the rounded subtotal
-        setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-        setTotal(roundedSubtotal); // Set the rounded subtotal
-
-        /* for the moment TODO CHANGE */
-        setiva(6.32)
-        setSubtotal(roundedSubtotal)
-
+        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+        
         console.log("Subtotal", subtotal);
         console.log("Total", total);
     };
@@ -575,8 +574,8 @@ const CrearCreditoFiscal = () => {
     };
 
     /* --------------------------SEND DATA-------------------------------- */
-    const addBillHandler = async () => {
-
+    const addBillHandler = async (event) => {
+        event.preventDefault();
         const municipalities = getMunicipalityNumber().toString().padStart(2, '0');
         const department = getDepartmentNumber().toString().padStart(2, '0');
         /* Counting the sentences*/
@@ -769,8 +768,8 @@ const CrearCreditoFiscal = () => {
                 ],
                 totalLetras: convertirDineroALetras(total),
                 totalExenta: 0,
-                subTotalVentas: total,
-                totalGravada: total,
+                subTotalVentas: subtotal,
+                totalGravada: subtotal,
                 montoTotalOperacion: total,
                 descuNoSuj: 0,
                 descuExenta: 0,
@@ -782,7 +781,7 @@ const CrearCreditoFiscal = () => {
                 reteRenta: 0,
                 totalNoGravado: 0,
                 totalPagar: total,
-                ivaPerci1: 0 /* TODO: CREATE AND FUNCTION JUST TO DO THIS VALUE */
+                ivaPerci1: 0 
             },
             extension: {
                 docuEntrega: null,
@@ -795,12 +794,26 @@ const CrearCreditoFiscal = () => {
             apendice: null,
         };
 
+
+        if (client.phone === ""){
+            data.emisor.telefono = null;
+        }
+
         console.log("Data");
         console.log(data);
 
         const responsePlantilla = await PlantillaService.create(data, token, id_emisor);
         console.log("PlantillaService - Create");
         console.log(responsePlantilla);
+
+        if (responsePlantilla.message === "Inserción exitosa") {
+            toast.success("Credito Fiscal creado con exito");
+
+            /* wait 5 second and navigate to /facturas */
+            setTimeout(() => {
+                navigate("/facturas");
+            }, 5000);
+        }
 
         /* 
         TODO CHANGE THIS THE OTHER SIDE console.log(data);
@@ -952,6 +965,7 @@ const CrearCreditoFiscal = () => {
                         <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
                             <div className="flex flex-row items-start justify-start py-0 px-[3px]">
                                 Fecha
+                                <span className="text-tomato pl-1"> *</span> 
                             </div>
                         </div>
                         <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
@@ -1187,7 +1201,7 @@ const CrearCreditoFiscal = () => {
             <TreeNode text="Subtotal" data={subtotal} />
             <TreeNode text="IVA" data={iva} />
             <TreeNode text="Total a Pagar" data={total} />
-            <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
+             {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
                 <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
                     <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
                     <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-3 px-[9px] pb-[11px] box-border relative whitespace-nowrap max-w-full z-[1]">
@@ -1204,7 +1218,7 @@ const CrearCreditoFiscal = () => {
                     <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
                         <div className="flex-1 flex flex-col items-start justify-start gap-[23.5px_0px] max-w-full">
                             <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px] max-w-full">
-                                {/* <div className="self-stretch flex flex-col items-start justify-start gap-[10px_0px] max-w-full">
+                                 <div className="self-stretch flex flex-col items-start justify-start gap-[10px_0px] max-w-full">
                                      <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                                         <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
                                         </div>
@@ -1225,7 +1239,7 @@ const CrearCreditoFiscal = () => {
                                     </div>
                                         </div>
                                     <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-                                </div> */}
+                                </div> 
                                 <div className="self-stretch flex flex-col items-end justify-start gap-[28px] max-w-full z-[1]">
                                     {contents.map((content, index) => (
                                         <TableOfContents
@@ -1237,23 +1251,23 @@ const CrearCreditoFiscal = () => {
                                 </div>
                             </div>
                             <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px]">
-                                <TableOfContentsNew handleAdd={handleAdd} setpayment={setpayment} total={total} /> {/* TODO: Add the credit metod */}
+                                <TableOfContentsNew handleAdd={handleAdd} setpayment={setpayment} total={total} /> {/* TODO: Add the credit metod 
                             </div>
-                            {/*<div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
+                            <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
                                 <button className="cursor-pointer [border:none] pt-3 pb-[13px] pr-[35px] pl-10 bg-steelblue-300 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-slategray">
                                     <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-300 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
                                     <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
                                         Nuevo Item
                                     </b>
                                 </button>
-                            </div> */}
+                            </div> 
 
 
 
                         </div>
                     </div>
                 </form>
-            </section>
+            </section> */}
             <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full">
                 <textarea
                     className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
@@ -1285,6 +1299,7 @@ const CrearCreditoFiscal = () => {
                         </b>
                     </button>
                 </div>
+                <ToastContainer />
             </footer>
         </form>
     );

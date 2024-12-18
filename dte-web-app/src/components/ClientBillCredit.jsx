@@ -77,7 +77,7 @@ const ClietnBillCredit = ({
                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                   <input
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                    placeholder="62486326-2"
+                    placeholder="######"
                     type="text"
                     value={client.nit}
                     onChange={(e) => handleChange("nit", e.target.value)}
@@ -94,7 +94,7 @@ const ClietnBillCredit = ({
                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                   <input
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                    placeholder="62486326-2"
+                    placeholder="######"
                     type="text"
                     value={client.nrc}
                     onChange={(e) => handleChange("nrc", e.target.value)}
@@ -113,7 +113,7 @@ const ClietnBillCredit = ({
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
+                placeholder="Nombre"
                 type="text"
                 value={client.name}
                 onChange={(e) => handleChange("name", e.target.value)}
@@ -125,7 +125,7 @@ const ClietnBillCredit = ({
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
               <span className="text-black">{`Numero de telefono`}</span>
-              <span className="text-tomato">*</span>
+              {/* <span className="text-tomato">*</span> */}
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
@@ -143,12 +143,12 @@ const ClietnBillCredit = ({
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
               <span className="text-black">{`Nombre Comercial. `}</span>
-              <span className="text-tomato">*</span>
+              {/* <span className="text-tomato">*</span> */}
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="62486326-2"
+                placeholder="Nombre Comercial"
                 type="text"
                 value={client.nombreComercial}
                 onChange={(e) =>
@@ -162,14 +162,15 @@ const ClietnBillCredit = ({
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
               <span className="text-black">{`Actividad economica`}</span>
-              <span className="text-tomato">*</span>
+              <span className="text-tomato pl-1">*</span>
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
+                placeholder="datos personales"
                 type="text"
                 value={client.codActividad}
+                readOnly={true}
                 onChange={(e) => handleChange("codActividad", e.target.value)}
               />
             </div>
@@ -184,7 +185,7 @@ const ClietnBillCredit = ({
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
+                placeholder="Correo Eléctronico"
                 type="text"
                 value={client.email}
                 onChange={(e) => handleChange("email", e.target.value)}
@@ -201,7 +202,7 @@ const ClietnBillCredit = ({
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
+                placeholder="Dirección"
                 type="text"
                 value={client.address}
                 onChange={(e) => handleChange("address", e.target.value)}

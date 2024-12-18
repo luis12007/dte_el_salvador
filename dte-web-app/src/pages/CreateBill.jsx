@@ -796,8 +796,10 @@ try {
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
               <div className="flex flex-row items-start justify-start py-0 px-[3px]">
-                Fecha
+                Fecha 
+                <span className="text-tomato pl-1"> *</span> 
               </div>
+              
             </div>
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
