@@ -29,6 +29,8 @@ const ClietnBillCredit = ({
         "Actividades de organizaciones y órganos extraterritoriales";
     } else if (value == "10004") {
       descActividaddata2 = "Desempleado";
+    } else if (value == "86203") {
+      descActividaddata2 = "Servicios de medicos";
     }
 
     if (field == "codActividad") {
@@ -169,7 +171,7 @@ const ClietnBillCredit = ({
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales"
                 type="text"
-                value={client.codActividad}
+                value={"Servicios de médicos"}
                 readOnly={true}
                 onChange={(e) => handleChange("codActividad", e.target.value)}
               />
@@ -213,58 +215,59 @@ const ClietnBillCredit = ({
         <div>
           <div className="self-stretch flex flex-col items-start justify-start pt-0 px-3.5 pb-[5px] box-border max-w-full">
             
-                {/* municipality */}
-                {/* Department selection */}
-                {visible && (
-<div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-  <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
-    <span className="text-black">Departamento</span>
-    <span className="text-tomato">*</span>
+                {/* Municipality */}
+{/* Department selection */}
+{visible && (
+  <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+    <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
+      <span className="text-black">Departamento</span>
+      <span className="text-tomato">*</span>
+    </div>
+    <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+      <select
+        className="w-full h-full relative border-white bg-white border-2 max-w-full"
+        value={selectedDepartment}
+        onChange={handleDepartmentChange}
+      >
+        <option value="">Select a department</option>
+        {Object.keys(departmentsAndMunicipalities).map((key) => (
+          <option key={key} value={key}>
+            {departmentsAndMunicipalities[key].departmentName}
+          </option>
+        ))}
+      </select>
+    </div>
   </div>
-  <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-    <select
-      className="w-full h-full relative border-white bg-white border-2 max-w-full"
-      value={selectedDepartment}
-      onChange={handleDepartmentChange}
-    >
-      <option value="">Select a department</option>
-      {Object.keys(departmentsAndMunicipalities).map((key) => (
-        <option key={key} value={key}>
-          {departmentsAndMunicipalities[key].departmentName}
-        </option>
-      ))}
-    </select>
+)}
+{visible && (
+  <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full mt-4">
+    <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
+      <span className="text-black">Municipio</span>
+      <span className="text-tomato">*</span>
+    </div>
+    <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+      <select
+        className="w-full h-full relative border-white bg-white border-2 max-w-full"
+        value={selectedMunicipality}
+        onChange={handleMunicipalityChange}
+        disabled={!selectedDepartment} // Disable if no department is selected
+      >
+        <option value="">Select a municipality</option>
+        {selectedDepartment &&
+          departmentsAndMunicipalities[selectedDepartment].municipalities.map(
+            (municipality, index) => (
+              <option key={index} value={municipality.index}>
+                {municipality.name}
+              </option>
+            )
+          )}
+      </select>
+    </div>
   </div>
-</div>
-                )}
-                {visible && (
-<div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full mt-4">
-  <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
-    <span className="text-black">Municipio</span>
-    <span className="text-tomato">*</span>
-  </div>
-  <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-    <select
-      className="w-full h-full relative border-white bg-white border-2 max-w-full"
-      value={selectedMunicipality}
-      onChange={handleMunicipalityChange}
-      disabled={!selectedDepartment} // Disable if no department is selected
-    >
-      <option value="">Select a municipality</option>
-      {selectedDepartment &&
-        departmentsAndMunicipalities[selectedDepartment].municipalities.map(
-          (municipality, index) => (
-            <option key={index} value={municipality}>
-              {municipality}
-            </option>
-          )
-        )}
-    </select>
-  </div>
-</div>
-                )}
+)}
 
-                {/* end municipality */}
+{/* End Municipality */}
+
             
           </div>
         </div>

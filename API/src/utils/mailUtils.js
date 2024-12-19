@@ -209,8 +209,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
       montoDescu: item.montodescu,
       numeroDocumento: item.numerodocumento,
       precioUni: item.preciouni,
-      ventaGravada: item.ventagravada,
-      ventaExenta: item.ventaexenta,
+      ventaGravada: item.ventaexenta,
+      ventaExenta: item.ventagravada,
       ventaNoSuj: item.ventanosuj,
       tipoItem: item.tipoitem,
     };
@@ -326,8 +326,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                   montoDescu: item.montodescu,
                   numeroDocumento: item.numerodocumento,
                   precioUni: item.preciouni,
-                  ventaGravada: item.ventagravada,
-                  ventaExenta: item.ventaexenta,
+                  ventaGravada: item.ventaexenta,
+                  ventaExenta:  item.ventagravada,
                   ventaNoSuj: item.ventanosuj,
                   tipoItem: item.tipoitem,
                 };
