@@ -200,8 +200,8 @@ const sendPDF = async(req, res) => {
                 .text(itemsDB.preciouni, servicesX + 240, y)
                 .text(itemsDB.montodescu, servicesX + 290, y)
                 .text(itemsDB.ventanosuj, servicesX + 350, y)
-                .text(itemsDB.ventaexenta, servicesX + 410, y)
-                .text(itemsDB.ventagravada * itemsDB.cantidad, servicesX + 470, y);
+                .text(itemsDB.ventagravada * itemsDB.cantidad, servicesX + 410, y)
+                .text(itemsDB.ventaexenta, servicesX + 470, y);
             numcounter += 1;
             y += 20;
         });

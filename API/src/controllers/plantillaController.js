@@ -64,7 +64,7 @@ const plantillacreate = async(req, res) => {
             /* --------------------------------------------------------- */
             /* RESUMEN */
             condicionoperacion: plantilla.resumen.condicionOperacion,
-            iva_percibido: plantilla.resumen.ivaPerci1,
+            iva_percibido: Number(plantilla.resumen.ivaPerci1),
             saldofavor: plantilla.resumen.saldoFavor,
             numpagoelectronico: plantilla.resumen.numPagoElectronico,
             /* pagos */
@@ -414,7 +414,7 @@ const updatePlantilla = async(req, res) => {
             /* --------------------------------------------------------- */
             /* RESUMEN */
             condicionoperacion: plantilla.resumen.condicionOperacion,
-            iva_percibido: plantilla.resumen.ivaPerci1,
+            iva_percibido: Number(plantilla.resumen.ivaPerci1),
             saldofavor: plantilla.resumen.saldoFavor,
             numpagoelectronico: plantilla.resumen.numPagoElectronico,
             /* pagos */
@@ -828,7 +828,7 @@ const updatePlantillaNoItems = async(req, res) => {
             /* --------------------------------------------------------- */
             /* RESUMEN */
             condicionoperacion: plantilla.resumen.condicionOperacion,
-            iva_percibido: plantilla.resumen.ivaPerci1,
+            iva_percibido: Number(plantilla.resumen.ivaPerci1),
             saldofavor: plantilla.resumen.saldoFavor,
             numpagoelectronico: plantilla.resumen.numPagoElectronico,
             /* pagos */
