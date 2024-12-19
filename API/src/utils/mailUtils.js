@@ -209,8 +209,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
       montoDescu: item.montodescu,
       numeroDocumento: item.numerodocumento,
       precioUni: item.preciouni,
-      ventaGravada: item.ventaexenta,
-      ventaExenta: item.ventagravada,
+      ventaGravada: item.ventagravada,
+      ventaExenta: item.ventaexenta,
       ventaNoSuj: item.ventanosuj,
       tipoItem: item.tipoitem,
     };
@@ -326,8 +326,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                   montoDescu: item.montodescu,
                   numeroDocumento: item.numerodocumento,
                   precioUni: item.preciouni,
-                  ventaGravada: item.ventaexenta,
-                  ventaExenta:  item.ventagravada,
+                  ventaGravada: item.ventagravada,
+                  ventaExenta:  item.ventaexenta,
                   ventaNoSuj: item.ventanosuj,
                   tipoItem: item.tipoitem,
                 };
@@ -699,8 +699,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(itemsDB.preciouni, servicesX + 240, y)
                 .text(itemsDB.montodescu, servicesX + 290, y)
                 .text(itemsDB.ventanosuj, servicesX + 350, y)
-                .text(itemsDB.ventaexenta, servicesX + 410, y)
-                .text(itemsDB.ventagravada * itemsDB.cantidad, servicesX + 470, y);
+                .text( itemsDB.ventagravada * itemsDB.cantidad, servicesX + 410, y)
+                .text(itemsDB.ventaexenta, servicesX + 470, y);
             numcounter += 1;
             y += 20;
         });

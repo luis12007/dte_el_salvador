@@ -155,20 +155,24 @@ const CrearCreditoFiscal = () => {
             ]
         }
     };
-    
+
 
     const [selectedDepartment, setSelectedDepartment] = useState(null);
     const [selectedMunicipality, setSelectedMunicipality] = useState('');
 
     const handleDepartmentChange = (event) => {
-        const departmentIndex = event.target.value;
-        setSelectedDepartment(departmentIndex);
+        const departmentKey = event.target.value; // Get the department key
+        setSelectedDepartment(departmentKey); // Update selected department
+        console.log("Municipality Index", departmentKey);
+        console.log("Municipality Index", selectedMunicipality);
         setSelectedMunicipality(''); // Reset municipality when department changes
-    };
-
-    const handleMunicipalityChange = (event) => {
-        setSelectedMunicipality(event.target.value);
-    };
+      };
+      
+      const handleMunicipalityChange = (event) => {
+        const municipalityIndex = event.target.value; // Get the selected municipality index
+        console.log("Municipality Index", municipalityIndex);
+        setSelectedMunicipality(municipalityIndex); // Update selected municipality
+      };
 
     const getMunicipalityNumber = () => {
         if (selectedDepartment !== null && selectedMunicipality) {
@@ -518,8 +522,8 @@ const CrearCreditoFiscal = () => {
                 codActividad: client.codActividad,
                 direccion:
                 {
-                    departamento: department,
-                    municipio: municipalities,
+                    departamento: selectedDepartment,
+                    municipio: selectedMunicipality,
                     complemento: client.address
                 },
                 nrc: client.nrc,
@@ -586,6 +590,23 @@ const CrearCreditoFiscal = () => {
         if (client.phone === ""){
             data.emisor.telefono = null;
         }
+        if(client.nit === "" || client.nit === null){
+            toast.error("NIT no puede estar vacio");
+        }else if(client.name === "" || client.name === null){
+            toast.error("Nombre no puede estar vacio");
+        }else if(client.address === "" || client.address === null){
+            toast.error("Direccion no puede estar vacio");
+        }else if(client.email === "" || client.email === null){
+            toast.error("Correo no puede estar vacio");
+        }else if(client.codActividad === "" || client.codActividad === null){
+            toast.error("Codigo de actividad no puede estar vacio");
+        }else if(client.nrc === "" || client.nrc === null){
+            toast.error("NRC no puede estar vacio");
+        }else if(client.departamento === "" || client.departamento === null){
+            toast.error("Departamento no puede estar vacio");
+        }else if(client.minicipio === "" || client.minicipio === null){
+            toast.error("Municipio no puede estar vacio");
+        }
 
         console.log("Data");
         console.log(data);
@@ -601,6 +622,8 @@ const CrearCreditoFiscal = () => {
             setTimeout(() => {
                 navigate("/facturas");
             }, 5000);
+        }else{
+            toast.error("CF no creado intentar de nuevo");
         }
 
         /* 
