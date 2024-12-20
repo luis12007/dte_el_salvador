@@ -89,18 +89,18 @@ const HomeFacturas = () => {
   const groupedItems = groupItemsByDate(items);
 
   return (
-    <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[66px] pb-[33px] pr-[22px] pl-[18px] box-border gap-[495px_0px] tracking-[normal]">
+    <div className="w-screen  bg-steelblue-300  flex flex-col  pt-[66px] pb-[33px] pr-[22px] box-border gap-[495px_0px] ">
       <SidebarComponent visible={visible} />
-      <section className="self-stretch flex flex-col items-center justify-center gap-[13px_0px] max-w-full">
+      <section className=" pl-2">
         
 {/* show the date of the bills if the bill is in the same date just stack them */}
     {Array.isArray(items) && items.length > 0 ? (
       Object.keys(groupedItems).map((date) => (
         <div key={date}>
-<div className="flex items-center justify-center my-4">
-  <div className="flex-grow border-t border-gray-300"></div>
-  <span className="mx-4 text-xl font-thin">{date}</span>
-  <div className="flex-grow border-t border-gray-300"></div>
+<div className="flex items-center  justify-center my-4">
+  <div className="flex-grow border-t  border-gray-300"></div>
+  <span className="mx-4 text-xl  font-thin">{date}</span>
+  <div className="flex-grow border-t  border-gray-300"></div>
 </div>
           {groupedItems[date].map((content, index) => (
             <FacturaUnSend key={index} content={content} user={user} />
@@ -114,9 +114,9 @@ const HomeFacturas = () => {
 
       <button
         onClick={excelHandler}
-        className="cursor-pointer [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-seagreen-100"
+        className="cursor-pointer self-center mt-16 [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center hover:bg-seagreen-100"
       >
-        <b className="relative text-lg font-inria-sans text-white text-left z-[1]">
+        <b className="relative  text-lg font-inria-sans text-white text-left z-[1]">
           Excel
         </b>
       </button>

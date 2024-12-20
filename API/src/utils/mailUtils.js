@@ -639,7 +639,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
     
         } else if (plantillaDB.tipo === "03") {
-            const re_numdocumentostring = plantillaDB.re_numdocumento.includes('-') ? 'DUI: ' : 'NIT: ';
+            console.log(plantillaDB.re_numdocumento)
+            const re_numdocumentostring =  'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
             const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
@@ -699,7 +700,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(itemsDB.preciouni, servicesX + 240, y)
                 .text(itemsDB.montodescu, servicesX + 290, y)
                 .text(itemsDB.ventanosuj, servicesX + 350, y)
-                .text( itemsDB.ventagravada * itemsDB.cantidad, servicesX + 410, y)
+                .text( itemsDB.preciouni * itemsDB.cantidad, servicesX + 410, y)
                 .text(itemsDB.ventaexenta, servicesX + 470, y);
             numcounter += 1;
             y += 20;
@@ -749,7 +750,19 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         // Example usage
         funcenter(plantillaDB.observaciones, y + 55, 30);
 
-        pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.montototaloperacion - plantillaDB.iva_percibido}`, 300, y + 10, { align: 'right' })
+        if(plantillaDB.tipo === "03"){
+        pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
+            .text(`Impuesto valor agregado 13%: $${plantillaDB.subtotalventas * 0.13}`, 300, y + 90, { align: 'right' })
+            .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
+            .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
+            .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
+            .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
+            .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
+            .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
+            .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+            .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+        }else if(plantillaDB.tipo === "01"){
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
             .text(`Impuesto valor agregado 13%: $${plantillaDB.iva_percibido}`, 300, y + 30, { align: 'right' })
             .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
             .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
@@ -759,7 +772,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
             .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
             .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
-
+        }
 
 
 
@@ -789,6 +802,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
     } catch (error) {
         console.error('Error:', error);
         // Handle error if something goes wrong
+        return false;
     }
 };
 

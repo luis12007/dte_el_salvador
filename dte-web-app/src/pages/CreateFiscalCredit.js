@@ -368,12 +368,7 @@ const CrearCreditoFiscal = () => {
     /* --------------------------SEND DATA-------------------------------- */
     const addBillHandler = async (event) => {
         event.preventDefault();
-        const municipalities = getMunicipalityNumber().toString().padStart(2, '0');
-        const department = getDepartmentNumber().toString().padStart(2, '0');
-        /* Counting the sentences*/
-        const count = await PlantillaAPI.count(id_emisor, "01", token)
-
-
+        
         const myUuid = uuidv4().toUpperCase().toString();
 
         const conditionoperationint = parseInt(payment.paymentType);
@@ -592,20 +587,38 @@ const CrearCreditoFiscal = () => {
         }
         if(client.nit === "" || client.nit === null){
             toast.error("NIT no puede estar vacio");
+            return;
         }else if(client.name === "" || client.name === null){
             toast.error("Nombre no puede estar vacio");
+            return;
+
         }else if(client.address === "" || client.address === null){
             toast.error("Direccion no puede estar vacio");
+            return;
+
         }else if(client.email === "" || client.email === null){
             toast.error("Correo no puede estar vacio");
+            return;
+
         }else if(client.codActividad === "" || client.codActividad === null){
             toast.error("Codigo de actividad no puede estar vacio");
+            return;
+
         }else if(client.nrc === "" || client.nrc === null){
             toast.error("NRC no puede estar vacio");
-        }else if(client.departamento === "" || client.departamento === null){
+            return;
+
+        }else if(selectedDepartment === "" || selectedDepartment === null){
             toast.error("Departamento no puede estar vacio");
-        }else if(client.minicipio === "" || client.minicipio === null){
+            return;
+
+        }else if(selectedMunicipality === "" || selectedMunicipality === null){
             toast.error("Municipio no puede estar vacio");
+            return;
+
+        }else if (Listitems.length === 0) {
+            toast.error("No hay items en la factura");
+            return;
         }
 
         console.log("Data");
@@ -690,6 +703,7 @@ const CrearCreditoFiscal = () => {
         // Increment the number by 1
         const incrementedNumber = currentNumber;
 
+        
         // Convert the incremented number to a string
         let incrementedString = incrementedNumber.toString();
 
@@ -741,12 +755,12 @@ const CrearCreditoFiscal = () => {
     };
 
     return (
-        <form className="m-0 w-[430px] bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
+        <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
             <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">
-                <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
+                <div className="h-full w-full relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
                 <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white">
 
-                    <select onChange={handleSelectChange} className="h-[35px] w-[359px] relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full">
+                    <select onChange={handleSelectChange} className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full">
                         <option value="CF">Comprobante Credito Fiscal</option>
                         <option value="Factura">Factura</option>
                     </select>
