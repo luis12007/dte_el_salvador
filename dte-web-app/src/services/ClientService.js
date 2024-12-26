@@ -1,23 +1,23 @@
-//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+//const BASE_URL = "http://localhost:3000";
 
 
 const ClientAPI = {
-   create: async (client, token) => {
-       const res = await fetch(`${BASE_URL}/client/create`, {
-           method: 'POST',
-           headers: {
+    create: async(client, token) => {
+        const res = await fetch(`${BASE_URL}/client/create`, {
+            method: 'POST',
+            headers: {
                 Authorization: `Bearer ${token}`,
-               'Content-Type': 'application/json'
-           },
-           body: JSON.stringify(client)
-       });
-       const data = await res.json();
-       return data;
-   },
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(client)
+        });
+        const data = await res.json();
+        return data;
+    },
 
-   /* /get/:id */
-    get: async (id, token) => {
+    /* /get/:id */
+    get: async(id, token) => {
         try {
 
             const res = await fetch(`${BASE_URL}/client/get/${id}`, {
@@ -32,7 +32,7 @@ const ClientAPI = {
         }
     },
 
-    put: async (client, id, token) => {
+    put: async(client, id, token) => {
         const res = await fetch(`${BASE_URL}/client/put/${id}`, {
             method: 'PUT',
             headers: {
@@ -45,7 +45,7 @@ const ClientAPI = {
         return data;
     },
 
-    delete: async (id, token) => {
+    delete: async(id, token) => {
         const res = await fetch(`${BASE_URL}/client/delete/${id}`, {
             method: 'DELETE',
             headers: {

@@ -1,5 +1,5 @@
-//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000"; 
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+//const BASE_URL = "http://localhost:3000"; 
 
 const SendEmail = {
     /* 
@@ -23,24 +23,24 @@ const sendMailFactura = async (req, res) => {
 }
 
 */
-    sendBill: async (id_emisor,plantilla, token) => {
+    sendBill: async(id_emisor, plantilla, token) => {
         try {
-        const res = await fetch(`${BASE_URL}/mail/factura/${id_emisor}`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(plantilla)
-        });
-        const data = await res.json();
-        return data;
-    } catch (error) {
-        return error;  
-    }
+            const res = await fetch(`${BASE_URL}/mail/factura/${id_emisor}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(plantilla)
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            return error;
+        }
     },
 
-    sendCF: async (id_emisor,plantilla, token) => {
+    sendCF: async(id_emisor, plantilla, token) => {
         const res = await fetch(`${BASE_URL}/CCF${id_emisor}`, {
             method: 'POST',
             headers: {

@@ -1,10 +1,10 @@
-// const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+// const BASE_URL = "http://localhost:3000";
 
 /* with token */
 const ItemsAPI = {
     /* create, get/id, put/id, delete/id */
-    create: async (item, token) => {
+    create: async(item, token) => {
         const res = await fetch(`${BASE_URL}/items/create`, {
             method: 'POST',
             headers: {
@@ -19,7 +19,7 @@ const ItemsAPI = {
 
     /* /get/:id */
 
-    get: async (id, token) => {
+    get: async(id, token) => {
         try {
 
             const res = await fetch(`${BASE_URL}/items/get/${id}`, {
@@ -34,7 +34,7 @@ const ItemsAPI = {
         }
     },
 
-    put: async (item, id, token) => {
+    put: async(item, id, token) => {
         const res = await fetch(`${BASE_URL}/items/put/${id}`, {
             method: 'PUT',
             headers: {
@@ -47,7 +47,7 @@ const ItemsAPI = {
         return data;
     },
 
-    delete: async (id, token) => {
+    delete: async(id, token) => {
         const res = await fetch(`${BASE_URL}/items/delete/${id}`, {
             method: 'DELETE',
             headers: {
@@ -60,7 +60,7 @@ const ItemsAPI = {
 
     /* /getall */
 
-    getAll: async (token) => {
+    getAll: async(token) => {
         try {
             const res = await fetch(`${BASE_URL}/items/getall`, {
                 headers: {

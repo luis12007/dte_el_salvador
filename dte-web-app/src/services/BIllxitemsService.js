@@ -1,9 +1,9 @@
-// const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000"; 
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+// const BASE_URL = "http://localhost:3000"; 
 
 
 const BillsxItemsAPI = {
-    create: async (billxitem, token) => {
+    create: async(billxitem, token) => {
         const res = await fetch(`${BASE_URL}/facturaxitems/create`, {
             method: 'POST',
             headers: {
@@ -16,7 +16,7 @@ const BillsxItemsAPI = {
         return data;
     },
 
-    getlist: async (token,code) => {
+    getlist: async(token, code) => {
         const res = await fetch(`${BASE_URL}/facturaxitems/list/${code}`, {
             headers: {
                 Authorization: `Bearer ${token}`
