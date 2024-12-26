@@ -537,7 +537,7 @@ if (content.tipo === "01") {
       reteRenta: parseFloat(content.retencion_de_renta),
       totalNoGravado: content.totalnogravado,
       totalPagar: parseFloat(content.total_a_pagar),
-      ivaPerci1: content.iva_percibido,
+      ivaPerci1: parseFloat(content.iva_percibido),
     },
     extension: {
       docuEntrega: content.documento_e,
@@ -682,7 +682,7 @@ if (content.tipo === "01") {
     const count = await PlantillaAPI.count(id_emisor, content.tipo, token);
 
     const parseintversion = parseInt(content.version);
- 
+
     if (content.tipo === "01"){
     const dataSend = { /* TODO: SEND */
       tipoDte: content.tipo,
@@ -940,8 +940,8 @@ if (content.tipo === "01") {
 
 
   return (
-    <div className="flex self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-start   px-0 pb-2 box-border my-6  text-left text-3xs text-black font-inria-sans">
-      <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-0.5 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans">
+    <div className="flex w-full self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-center  px-0 pb-3 box-border my-6  text-black font-inria-sans ">
+      <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-1 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans">
         <div className="flex flex-col  items-start justify-start pt-1 px-0 pb-0">
           
           <h1 className="m-0 relative text-inherit font-bold z-[3]">{tipo}</h1>
@@ -982,17 +982,17 @@ if (content.tipo === "01") {
         
       </header>
       
-      <div className="self-stretch flex flex-row items-start justify-start py-0 pr-[3px] pl-0">
-        <div className="flex flex-row items-start justify-start gap-[0px_11px]"></div>
+      <div className="">
+        <div className=""></div>
       </div>
-      <div className="self-stretch flex flex-row items-start justify-start py-0 px-[7px] box-border">
-        <div className="flex-1 flex flex-row items-start justify-start gap-[0px_21px]">
-          <div className="flex-1 flex flex-col items-start justify-start pt-[7px] px-0 pb-0">
-            <div className="self-stretch flex flex-col items-start justify-start gap-[7px_0px]">
-              <div className="relative whitespace-nowrap z-[1]">
+      <div className="self-stretch flex flex-row items-center justify-center  py-0 px-[10px] box-border">
+        <div className="flex flex-col justify-center self-center">
+          <div className="flex-1 flex flex-col items-center justify-center  pt-[7px] px-0 pb-0">
+            <div className="self-stretch  flex flex-col items-start justify-start gap-[7px_0px]">
+              <div className="relative  whitespace-nowrap z-[1]">
                 {content.re_name}
               </div>
-              <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
+              <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
               <div className="relative whitespace-nowrap z-[1]">
                 {/* re_nit if it is null re_numdocumento */}
                 Documento: {content.re_nit ? content.re_nit : content.re_numdocumento}
@@ -1005,13 +1005,13 @@ if (content.tipo === "01") {
               </div>
             </div>
           </div>
-          <div className="flex-1 flex flex-col items-end justify-start gap-[8px_0px]">
-            <button className="cursor-pointer [border:none] pt-[7px] px-2 pb-1 bg-white rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
+          <div className="flex-1 flex w-full pt-4 flex-col items-center justify-center gap-[8px_0px]">
+            <button className="cursor-pointer [border:none] px-2 pb-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
               <b className="relative text-11xl font-inria-sans text-black text-left whitespace-nowrap z-[2]">
                 TOTAL: ${content.total_a_pagar}
               </b>
             </button>
-            <div className="self-stretch flex  gap-[0px_8px]">
+            <div className="self-center justify-center flex py-2 p-6 gap-[0px_8px]">
               {firmbutton}
               {sendedebutton} {/* Additional content if `firm` is not null */}
               {testbutton} {/* Additional content if `firm` is not null */}

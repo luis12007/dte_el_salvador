@@ -19,7 +19,7 @@ const SistemaDTE = (props) => {
   }
 
   return (
-    <form className="m-0 absolute top-[0px] left-[22px] rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] w-[390px] flex flex-col items-start justify-start pt-[19px] pb-[51px] pr-6 pl-5 box-border gap-[31.5px_0px] max-w-full z-[1]">
+    <form className="m-0 absolute mt-2 items-center justify-center self-center top-[0px] rounded-mini  w-11/12 bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col  pt-[19px] pb-[51px] pr-6 pl-5 box-border gap-[31.5px_0px] max-w-full z-[1]">
       <div className="w-[390px] h-[341px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
       <div className="w-[325px] flex flex-row items-start justify-center max-w-full">
         <b className="relative text-3xl font-inria-sans text-black text-left z-[2]">
@@ -40,23 +40,23 @@ const SistemaDTE = (props) => {
           onChange={(e) => setUser({ ...user, usuario: e.target.value })}
         />
       </div>
-      <div className="self-stretch flex flex-col items-start justify-start gap-[16.5px_0px] max-w-full">
+      <div className="self-stretch flex flex-col items-center  justify-start gap-[16.5px_0px] max-w-full">
         <div className="self-stretch rounded-3xs bg-lavender flex flex-row items-start justify-start py-2.5 px-[9px] box-border gap-[9px] max-w-full z-[2]">
-          <div className="h-10 w-[346px] relative rounded-3xs bg-lavender hidden max-w-full" />
+          <div className="h-10 w-[346px] relative  rounded-3xs bg-lavender hidden max-w-full" />
           <img
             className="h-5 w-5 relative object-cover min-h-[20px] z-[1]"
             alt=""
             src="/bloquear@2x.png"
           />
           <input
-            className="w-full pb-2 [border:none] [outline:none] bg-[transparent] h-5 flex flex-col items-start justify-start pt-[5px] px-0 box-border font-inter  text-gray-200"
+            className="w-full pb-2 [border:none]  [outline:none] bg-[transparent] h-5 flex flex-col items-start justify-start pt-[5px] px-0 box-border font-inter  text-gray-200"
             placeholder="**************"
             type="password"
             onChange={(e) => setUser({ ...user, contraseña: e.target.value })}
           />
         </div>
-        <div className="flex flex-row items-start justify-start py-0 pr-[75px] pl-20" onClick={ForgetPassHandler}>
-          <div onClick={ForgetPassHandler} className="relative text-lg [text-decoration:underline] font-light font-inria-sans text-deepskyblue text-left z-[2]">
+        <div className="flex flex-row  relative items-center justify-center  " onClick={ForgetPassHandler}>
+          <div onClick={ForgetPassHandler} className="flex flex-row relative text-lg [text-decoration:underline] font-light font-inria-sans text-deepskyblue text-center">
             Recuperar mi contraseña
           </div>
         </div>

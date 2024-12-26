@@ -29,15 +29,15 @@ const Home = () => {
     }
 
   return (
-    <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-3.5 pb-1.5 pr-[62px] pl-[18px] box-border gap-[47px_0px] tracking-[normal]">
+    <div className="w-full relative bg-steelblue-300 flex flex-col items-center justify-center  box-border gap-[47px_0px] ">
       <HamburguerComponent sidebar={sidebar} visible={visible}/>
 
       <section className="self-stretch  flex flex-row items-start pt-8  justify-start  pb-[420px] pr-[31px] pl-0">
 
       <SidebarComponent visible={visible} setVisible={setVisible}/>
         <header className="flex-1 flex flex-col items-start   justify-start gap-[10px_0px] text-left text-xs text-black font-inter">
-          <div className="self-stretch pt-6 left-4  flex flex-row items-start  justify-end">
-            <div className="h-[54px] w-[294px] relative">
+          <div className="self-center pt-6 left-4   flex flex-row items-start  justify-end">
+            <div className="h-[54px] w-[294px]  relative">
               <img
                 className="absolute rounded-mini  h-8"
                 loading="lazy"
@@ -45,8 +45,8 @@ const Home = () => {
                 src="/rectangle-4.svg"
               />
               
-              <div className="absolute top-[5px]   ml-3 font-light inline-block w-60 h-11 [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO! ${username}`}</div>
-        <img className='h-96 top-20 absolute' src={Homeimg} alt='Homeimg'/>
+              <div className="relative top-[5px]  ml-3 font-light inline-block  [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO!`}</div>
+        <img className='h-96 top-20 relative' src={Homeimg} alt='Homeimg'/>
 
             </div>
 
@@ -100,7 +100,7 @@ const Home = () => {
           </h2>
           <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
             <img
-              className="h-[55px] relative object-cover"
+              className="h-[55px] mb-10 relative object-cover"
               loading="lazy"
               alt=""
               src="/-cee3707255594486baada125edfbc74cremovebgpreview-2@2x.png"

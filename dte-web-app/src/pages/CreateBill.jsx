@@ -132,6 +132,25 @@ const Clientes = () => {
     setitems((prevContents) =>
       prevContents.filter((_, i) => i !== index)
     );
+
+        Listitems.splice(index, 1);
+        setListitems(Listitems);
+
+        console.log("Listitems", Listitems);
+    /* map all newitems and sum the  precioUni*cantidad */
+    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+    const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+    const rawiva = Listitems.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
+    setTotal(roundedSubtotal); // Set the rounded subtotal
+
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
   };
 
  /* before with IVA
@@ -760,13 +779,13 @@ try {
     return resultado;
   };
   return (
-    <form className="m-0 w-[430px] bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
+    <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">
         <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
         <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white">
           <select
             onChange={handleSelectChange}
-            className="h-[35px] w-[359px] relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
+            className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
           >
             <option value="Factura">Factura</option>
             <option value="CF">Comprobante Credito Fiscal</option>

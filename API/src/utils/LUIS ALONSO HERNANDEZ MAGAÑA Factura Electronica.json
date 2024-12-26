@@ -1,14 +1,14 @@
 {
   "identificacion": {
-    "version": 1,
+    "version": 3,
     "ambiente": "00",
-    "tipoDte": "01",
-    "numeroControl": "DTE-01-00000030-000000000000206",
-    "codigoGeneracion": "683FAFD7-D5AF-4E20-91B8-6602DAE4CF58",
+    "tipoDte": "03",
+    "numeroControl": "DTE-03-00000030-000000000000219",
+    "codigoGeneracion": "50E70697-0E8C-4459-A024-42F13A11C678",
     "tipoModelo": 1,
     "tipoOperacion": 1,
-    "fecEmi": "2024-12-16",
-    "horEmi": "19:04:58",
+    "fecEmi": "2024-12-04",
+    "horEmi": "17:41:57",
     "tipoMoneda": "USD",
     "tipoContingencia": null,
     "motivoContin": null
@@ -27,7 +27,7 @@
     "descActividad": "Servicios médicos ",
     "telefono": "64319239",
     "correo": "luishdezmtz12@gmail.com",
-    "nombreComercial": "nombre comercial",
+    "nombreComercial": "Servicios de anestesia",
     "tipoEstablecimiento": "20",
     "codEstableMH": null,
     "codEstable": null,
@@ -35,75 +35,106 @@
     "codPuntoVenta": null
   },
   "receptor": {
-    "codActividad": "10005",
-    "direccion": null,
-    "nrc": null,
-    "descActividad": "Otros",
-    "correo": null,
-    "tipoDocumento": "13",
-    "nombre": "",
-    "telefono": "",
-    "numDocumento": "06384275-4"
+    "codActividad": "86203",
+    "direccion": {
+      "municipio": "16",
+      "departamento": "2",
+      "complemento": "mi direccion"
+    },
+    "nrc": "2952950",
+    "descActividad": "Servicios de medicos",
+    "correo": "luishdezmtz12@gmail.com",
+    "nit": "2952950",
+    "nombre": "AVILES MARTINEZ, CAMILO JOSE",
+    "telefono": "2952950",
+    "nombreComercial": null
   },
   "otrosDocumentos": null,
   "ventaTercero": null,
   "cuerpoDocumento": [
     {
       "codTributo": null,
-      "descripcion": "2",
+      "descripcion": "cosa 2",
       "uniMedida": 99,
       "codigo": null,
-      "cantidad": 20,
+      "cantidad": 50,
       "numItem": 1,
-      "tributos": null,
-      "ivaItem": 0,
+      "tributos": [
+        "20"
+      ],
       "noGravado": 0,
       "psv": 0,
       "montoDescu": 0,
       "numeroDocumento": null,
       "precioUni": 10,
-      "ventaGravada": 0,
-      "ventaExenta": 200,
+      "ventaGravada": 500,
+      "ventaExenta": 0,
+      "ventaNoSuj": 0,
+      "tipoItem": 1
+    },
+    {
+      "codTributo": null,
+      "descripcion": "cosa 2",
+      "uniMedida": 99,
+      "codigo": null,
+      "cantidad": 50,
+      "numItem": 2,
+      "tributos": [
+        "20"
+      ],
+      "noGravado": 0,
+      "psv": 0,
+      "montoDescu": 0,
+      "numeroDocumento": null,
+      "precioUni": 1,
+      "ventaGravada": 50,
+      "ventaExenta": 0,
       "ventaNoSuj": 0,
       "tipoItem": 1
     }
   ],
   "resumen": {
     "condicionOperacion": 1,
-    "totalIva": 0,
     "saldoFavor": 0,
     "numPagoElectronico": null,
     "pagos": [
       {
         "periodo": null,
         "plazo": null,
-        "montoPago": 200,
+        "montoPago": 621.5,
         "codigo": "01",
         "referencia": null
       }
     ],
     "totalNoSuj": 0,
-    "tributos": null,
-    "totalLetras": "DOSCIENTOS DÓLARES",
-    "totalExenta": 200,
-    "subTotalVentas": 200,
+    "tributos": [
+      {
+        "codigo": "20",
+        "descripcion": "Impuesto al Valor Agregado 13%",
+        "valor": 71.5
+      }
+    ],
+    "totalLetras": "SEISCIENTOS VEINTE Y undefined",
+    "totalExenta": 0,
+    "subTotalVentas": 550,
     "totalGravada": null,
-    "montoTotalOperacion": 200,
+    "montoTotalOperacion": 621.5,
     "descuNoSuj": 0,
     "descuExenta": 0,
     "descuGravada": 0,
     "porcentajeDescuento": 0,
     "totalDescu": 0,
-    "subTotal": 200,
-    "ivaRete1": "0",
-    "reteRenta": "0",
+    "subTotal": 550,
+    "ivaRete1": 0,
+    "reteRenta": 0,
     "totalNoGravado": 0,
-    "totalPagar": 200
+    "totalPagar": 621.5,
+    "ivaPerci1": 0
   },
   "extension": {
     "docuEntrega": null,
     "nombRecibe": null,
-    "observaciones": "observacioines",
+    "observaciones": "",
     "placaVehiculo": null,
     "nombEntrega": null,
     "docuRecibe": null

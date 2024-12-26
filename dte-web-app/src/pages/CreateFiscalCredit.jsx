@@ -273,6 +273,10 @@ const CrearCreditoFiscal = () => {
         const pricefloat = parseFloat(newContents.price);
         const typeitem = parseInt(newContents.type);
 
+        
+
+
+
         const ivaperitem = pricefloat / 1.13;
         const ivaperitemfinal = ivaperitem * 0.13;
         const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
@@ -315,10 +319,31 @@ const CrearCreditoFiscal = () => {
         console.log("Total", total);
     };
 
-    const itemshandleRemove = (index) => {
+    const itemshandleRemove = (indexToRemove) => {
         setitems((prevContents) =>
-            prevContents.filter((_, i) => i !== index)
+            prevContents.filter((_, i) => i !== indexToRemove)
         );
+
+
+        Listitems.splice(indexToRemove, 1);
+        setListitems(Listitems);
+
+        console.log("Listitems", Listitems);
+
+        const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+        const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+        // Round to two decimal places
+        const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+        const roundediva = Math.round(rawiva * 100) / 100;
+
+        setiva(roundediva); // Set the rounded subtotal
+        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+        
+        console.log("Subtotal", subtotal);
+        console.log("Total", total);
+
+        
     };
 
     const handleSelectChangeItemsClient = () => {
@@ -368,12 +393,7 @@ const CrearCreditoFiscal = () => {
     /* --------------------------SEND DATA-------------------------------- */
     const addBillHandler = async (event) => {
         event.preventDefault();
-        const municipalities = getMunicipalityNumber().toString().padStart(2, '0');
-        const department = getDepartmentNumber().toString().padStart(2, '0');
-        /* Counting the sentences*/
-        const count = await PlantillaAPI.count(id_emisor, "01", token)
-
-
+        
         const myUuid = uuidv4().toUpperCase().toString();
 
         const conditionoperationint = parseInt(payment.paymentType);
@@ -480,6 +500,19 @@ const CrearCreditoFiscal = () => {
         } catch (error) {
             console.log(error);
         }
+
+
+        var selectedDepartmentnum = selectedDepartment
+        /* if num is only 1 digit will be 0(digit) or if it is 9 it will be 09, it id 12 will be 12 */
+        if(selectedDepartmentnum < 10){
+            selectedDepartmentnum = "0" + selectedDepartmentnum;
+        }
+        var selectedMunicipalitynum = selectedMunicipality
+        if(selectedMunicipalitynum < 10){
+            selectedMunicipalitynum = "0" + selectedMunicipalitynum;
+        }
+
+
         var data = {
             identificacion: {
                 version: 3,
@@ -522,8 +555,8 @@ const CrearCreditoFiscal = () => {
                 codActividad: client.codActividad,
                 direccion:
                 {
-                    departamento: selectedDepartment,
-                    municipio: selectedMunicipality,
+                    departamento: selectedDepartmentnum,
+                    municipio: selectedMunicipalitynum,
                     complemento: client.address
                 },
                 nrc: client.nrc,
@@ -592,20 +625,38 @@ const CrearCreditoFiscal = () => {
         }
         if(client.nit === "" || client.nit === null){
             toast.error("NIT no puede estar vacio");
+            return;
         }else if(client.name === "" || client.name === null){
             toast.error("Nombre no puede estar vacio");
+            return;
+
         }else if(client.address === "" || client.address === null){
             toast.error("Direccion no puede estar vacio");
+            return;
+
         }else if(client.email === "" || client.email === null){
             toast.error("Correo no puede estar vacio");
+            return;
+
         }else if(client.codActividad === "" || client.codActividad === null){
             toast.error("Codigo de actividad no puede estar vacio");
+            return;
+
         }else if(client.nrc === "" || client.nrc === null){
             toast.error("NRC no puede estar vacio");
-        }else if(client.departamento === "" || client.departamento === null){
+            return;
+
+        }else if(selectedDepartment === "" || selectedDepartment === null){
             toast.error("Departamento no puede estar vacio");
-        }else if(client.minicipio === "" || client.minicipio === null){
+            return;
+
+        }else if(selectedMunicipality === "" || selectedMunicipality === null){
             toast.error("Municipio no puede estar vacio");
+            return;
+
+        }else if (Listitems.length === 0) {
+            toast.error("No hay items en la factura");
+            return;
         }
 
         console.log("Data");
@@ -690,6 +741,7 @@ const CrearCreditoFiscal = () => {
         // Increment the number by 1
         const incrementedNumber = currentNumber;
 
+        
         // Convert the incremented number to a string
         let incrementedString = incrementedNumber.toString();
 
@@ -741,12 +793,12 @@ const CrearCreditoFiscal = () => {
     };
 
     return (
-        <form className="m-0 w-[430px] bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
+        <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
             <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">
-                <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
+                <div className="h-full w-full relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
                 <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white">
 
-                    <select onChange={handleSelectChange} className="h-[35px] w-[359px] relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full">
+                    <select onChange={handleSelectChange} className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full">
                         <option value="CF">Comprobante Credito Fiscal</option>
                         <option value="Factura">Factura</option>
                     </select>
