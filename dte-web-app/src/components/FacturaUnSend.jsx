@@ -804,7 +804,19 @@ if (content.tipo === "01") {
       console.log("edited");
       console.log(response);
 
+        toast.success("Factura enviada al ministerio");
+
       /* send email */
+
+      if (content.re_correo_electronico === null) {
+        toast.error("el receptor no tiene correo electronico");
+  
+        setTimeout(() => {
+          window.location.reload();
+    
+          }, 5000);
+        return
+      }
 
       console.log("---------------enviando email--------------");
       console.log(content);
@@ -816,6 +828,10 @@ if (content.tipo === "01") {
       console.log(sendEmailFactura);
       
      /*  window.location.reload(); */
+      setTimeout(() => {
+      window.location.reload();
+
+      }, 5000);
     }
     
     if (senddata.estado === "RECHAZADO")

@@ -576,7 +576,8 @@ const EditCF = () => {
   };
 
   /* --------------------------SEND DATA-------------------------------- */
-  const addBillHandler = async () => {
+  const addBillHandler = async (event) => {
+    event.preventDefault();
     console.log("Sending data to the server...");
     console.log("Data to send:", plantilla.plantilla);
     const municipalities = plantilla.plantilla[0].re_direccion.split("|")[1];
