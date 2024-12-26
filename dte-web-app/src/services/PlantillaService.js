@@ -1,5 +1,5 @@
-//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+//const BASE_URL = "http://localhost:3000";
 
 const PlantillaAPI = {
     /* create and get */
@@ -60,7 +60,7 @@ const PlantillaAPI = {
                 'id_emisor': `${id_emisor}`,
             },
             /* add items and plantilla in body */
-            body: JSON.stringify({  
+            body: JSON.stringify({
                 plantilla: plantilla
             })
         });
@@ -134,11 +134,11 @@ const PlantillaAPI = {
                 /* token */
                 Authorization: `Bearer ${token}`,
             },
-    });
-    const data = await res.json();
-    return data;
+        });
+        const data = await res.json();
+        return data;
 
-}
+    }
 }
 
 export default PlantillaAPI;
