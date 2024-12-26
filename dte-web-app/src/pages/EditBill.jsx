@@ -144,12 +144,6 @@ const EditBill = () => {
               responsePlantilla.plantilla[0].re_actividad_economica || "Otros",
           });
 
-          if (
-            responsePlantilla.plantilla[0].re_numero_telefono == null ||
-            responsePlantilla.plantilla[0].re_numero_telefono == ""
-          ) {
-            setCF(true);
-          }
         } catch (error) {
           console.error("Failed to fetch client data", error);
         }

@@ -273,6 +273,10 @@ const CrearCreditoFiscal = () => {
         const pricefloat = parseFloat(newContents.price);
         const typeitem = parseInt(newContents.type);
 
+        
+
+
+
         const ivaperitem = pricefloat / 1.13;
         const ivaperitemfinal = ivaperitem * 0.13;
         const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
@@ -475,6 +479,19 @@ const CrearCreditoFiscal = () => {
         } catch (error) {
             console.log(error);
         }
+
+
+        var selectedDepartmentnum = selectedDepartment
+        /* if num is only 1 digit will be 0(digit) or if it is 9 it will be 09, it id 12 will be 12 */
+        if(selectedDepartmentnum < 10){
+            selectedDepartmentnum = "0" + selectedDepartmentnum;
+        }
+        var selectedMunicipalitynum = selectedMunicipality
+        if(selectedMunicipalitynum < 10){
+            selectedMunicipalitynum = "0" + selectedMunicipalitynum;
+        }
+
+
         var data = {
             identificacion: {
                 version: 3,
@@ -517,8 +534,8 @@ const CrearCreditoFiscal = () => {
                 codActividad: client.codActividad,
                 direccion:
                 {
-                    departamento: selectedDepartment,
-                    municipio: selectedMunicipality,
+                    departamento: selectedDepartmentnum,
+                    municipio: selectedMunicipalitynum,
                     complemento: client.address
                 },
                 nrc: client.nrc,

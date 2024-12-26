@@ -2,7 +2,7 @@ const DataProductNoAdvanceComponent = ({onRemove, handleSelectChangeItemsClient,
   
     return (
         <div className="w-[376px] flex flex-row items-start justify-start pt-0 pb-[29px] pr-3.5 pl-0 box-border max-w-full">
-                    <div className="flex-1 flex flex-col items-start justify-start gap-[10px_0px] max-w-full">
+                    <div className="flex-1 flex flex-col items-start pl-2 justify-start gap-[10px_0px] max-w-full">
                         <div className="flex flex-row items-start justify-start py-0 px-[3px]">
                             <div className="flex flex-row items-start justify-start gap-[0px_5px]">
                             
