@@ -132,6 +132,25 @@ const Clientes = () => {
     setitems((prevContents) =>
       prevContents.filter((_, i) => i !== index)
     );
+
+        Listitems.splice(index, 1);
+        setListitems(Listitems);
+
+        console.log("Listitems", Listitems);
+    /* map all newitems and sum the  precioUni*cantidad */
+    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+    const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+    const rawiva = Listitems.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
+    setTotal(roundedSubtotal); // Set the rounded subtotal
+
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
   };
 
  /* before with IVA

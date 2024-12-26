@@ -38,340 +38,127 @@ const EditCF = () => {
 
   /* data for municipalities ------------------------------------ */
   const departmentsAndMunicipalities = {
-    0: { departmentName: "Otro pais", municipalities: ["Otro pais"] },
+    0: {
+        departmentName: 'Otro Pais',
+        municipalities: [
+            { name: 'Otro Pais', index: 0 }
+        ]
+    },
     1: {
-      departmentName: "Ahuachapán",
-      municipalities: [
-        "Ahuachapán",
-        "Apaneca",
-        "Atiquizaya",
-        "Concepción de Ataco",
-        "El Refugio",
-        "Guaymango",
-        "Jujutla",
-        "San Francisco Menéndez",
-        "San Lorenzo",
-        "San Pedro Puxtla",
-        "Tacuba",
-        "Turín",
-      ],
+        departmentName: 'Ahuachapan',
+        municipalities: [
+            { name: 'Ahuachapan Norte', index: 13 },
+            { name: 'Ahuachapan Centro', index: 14 },
+            { name: 'Ahuachapan Sur', index: 15 }
+        ]
     },
     2: {
-      departmentName: "Santa Ana",
-      municipalities: [
-        "Candelaria de la Frontera",
-        "Coatepeque",
-        "Chalchuapa",
-        "El Congo",
-        "El Porvenir",
-        "Masahuat",
-        "Metapán",
-        "San Antonio Pajonal",
-        "San Sebastián Salitrillo",
-        "Santa Ana",
-        "Santa Rosa Guachipilín",
-        "Santiago de la Frontera",
-        "Texistepeque",
-      ],
+        departmentName: 'Santa Ana',
+        municipalities: [
+            { name: 'Santa Ana Norte', index: 14 },
+            { name: 'Santa Ana Centro', index: 15 },
+            { name: 'Santa Ana Este', index: 16 },
+            { name: 'Santa Ana Oeste', index: 17 }
+        ]
     },
     3: {
-      departmentName: "Sonsonate",
-      municipalities: [
-        "Acajutla",
-        "Armenia",
-        "Caluco",
-        "Cuisnahuat",
-        "sta i ishuatan",
-        "Izalco",
-        "Juayúa",
-        "Nahuizalco",
-        "Nahulingo",
-        "Salcoatitán",
-        "San Antonio del Monte",
-        "San Julián",
-        "Santa Catarina Masahuat",
-        "Santo Domingo de Guzmán",
-        "Sonsonate",
-        "Sonzacate",
-      ],
+        departmentName: 'Sonsonate',
+        municipalities: [
+            { name: 'Sonsonate Norte', index: 17 },
+            { name: 'Sonsonate Centro', index: 18 },
+            { name: 'Sonsonate Este', index: 19 },
+            { name: 'Sonsonate Oeste', index: 20 }
+        ]
     },
     4: {
-      departmentName: "Chalatenango",
-      municipalities: [
-        "Agua Caliente",
-        "Arcatao",
-        "Azacualpa",
-        "Citalá",
-        "Comalapa",
-        "Concepción Quezaltepeque",
-        "Chalatenango",
-        "Dulce Nombre de María",
-        "El Carrizal",
-        "El Paraíso",
-        "La Laguna",
-        "La Palma",
-        "La Reina",
-        "Las Vueltas",
-        "Nombre de Jesús",
-        "Nueva Concepción",
-        "Nueva Trinidad",
-        "Ojos de Agua",
-        "Potonico",
-        "San Antonio La Cruz",
-        "San Antonio Los Ranchos",
-        "San Fernando",
-        "San Francisco Lempa",
-        "San Francisco Morazán",
-        "San Ignacio",
-        "San Isidro Labrador",
-        "San José Cancasque",
-        "San José Flores",
-        "San Luis del Carmen",
-        "San Miguel de Mercedes",
-        "San Rafael",
-        "Santa Rita",
-        "Tejutla",
-      ],
+        departmentName: 'Chalatenango',
+        municipalities: [
+            { name: 'Chalatenango Norte', index: 34 },
+            { name: 'Chalatenango Centro', index: 35 },
+            { name: 'Chalatenango Sur', index: 36 }
+        ]
     },
     5: {
-      departmentName: "La Libertad",
-      municipalities: [
-        "Antiguo Cuscatlán",
-        "Ciudad Arce",
-        "Colón",
-        "Comasagua",
-        "Chiltiupán",
-        "Huizúcar",
-        "Jayaque",
-        "Jicalapa",
-        "La Libertad",
-        "Nuevo Cuscatlán",
-        "Santa tecla",
-        "Quezaltepeque",
-        "Sacacoyo",
-        "San juan villanueva",
-        "San Juan Opico",
-        "San Matías",
-        "San Pablo Tacachico",
-        "Tamanique",
-        "Talnique",
-        "Teotepeque",
-        "Tepecoyo",
-        "Zaragoza",
-      ],
+        departmentName: 'La Libertad',
+        municipalities: [
+            { name: 'La Libertad Norte', index: 23 },
+            { name: 'La Libertad Centro', index: 24 },
+            { name: 'La Libertad Oeste', index: 25 },
+            { name: 'La Libertad Este', index: 26 },
+            { name: 'La Libertad Costa', index: 27 },
+            { name: 'La Libertad Sur', index: 28 }
+        ]
     },
     6: {
-      departmentName: "San Salvador",
-      municipalities: [
-        "Aguilares",
-        "Apopa",
-        "Ayutuxtepeque",
-        "Cuscatancingo",
-        "El Paisnal",
-        "Guazapa",
-        "Ilopango",
-        "Mejicanos",
-        "Nejapa",
-        "Panchimalco",
-        "Rosario de Mora",
-        "San Marcos",
-        "San Martín",
-        "San Salvador",
-        "Santiago Texacuangos",
-        "Santo Tomás",
-        "Soyapango",
-        "Tonacatepeque",
-        "Ciudad Delgado",
-      ],
+        departmentName: 'San Salvador',
+        municipalities: [
+            { name: 'San Salvador Norte', index: 20 },
+            { name: 'San Salvador Oeste', index: 21 },
+            { name: 'San Salvador Este', index: 22 },
+            { name: 'San Salvador Centro', index: 23 },
+            { name: 'San Salvador Sur', index: 24 }
+        ]
     },
     7: {
-      departmentName: "Cuscatlán",
-      municipalities: [
-        "Candelaria",
-        "Cojutepeque",
-        "El Carmen",
-        "El Rosario",
-        "Monte San Juan",
-        "Oratorio de Concepción",
-        "San Bartolomé Perulapia",
-        "San Cristóbal",
-        "San José Guayabal",
-        "San Pedro Perulapán",
-        "San Rafael Cedros",
-        "San Ramón",
-        "Santa Cruz Analquito",
-        "Santa Cruz Michapa",
-        "Suchitoto",
-        "Tenancingo",
-      ],
+        departmentName: 'Cuscatlan',
+        municipalities: [
+            { name: 'Cuscatlan Norte', index: 17 },
+            { name: 'Cuscatlan Sur', index: 18 }
+        ]
     },
     8: {
-      departmentName: "La Paz",
-      municipalities: [
-        "Cuyultitán",
-        "El Rosario",
-        "Jerusalén",
-        "Mercedes La Ceiba",
-        "Olocuilta",
-        "Paraíso de Osorio",
-        "San Antonio Masahuat",
-        "San Emigdio",
-        "San Francisco Chinameca",
-        "San Juan Nonualco",
-        "San Juan Talpa",
-        "San Juan Tepezontes",
-        "San Luis Talpa",
-        "San Miguel Tepezontes",
-        "San Pedro Masahuat",
-        "San Pedro Nonualco",
-        "San Rafael Obrajuelo",
-        "Santa María Ostuma",
-        "Santiago Nonualco",
-        "Tapalhuaca",
-        "Zacatecoluca",
-        "San Luis La Herradura",
-      ],
+        departmentName: 'La Paz',
+        municipalities: [
+            { name: 'La Paz Oeste', index: 23 },
+            { name: 'La Paz Centro', index: 24 },
+            { name: 'La Paz Este', index: 25 }
+        ]
     },
     9: {
-      departmentName: "Cabañas",
-      municipalities: [
-        "Cinquera",
-        "Guacotecti",
-        "Ilobasco",
-        "Jutiapa",
-        "San Isidro",
-        "Sensuntepeque",
-        "Tejutla",
-        "Victoria",
-        "Dolores",
-      ],
+        departmentName: 'Cabanas',
+        municipalities: [
+            { name: 'Cabanas Oeste', index: 10 },
+            { name: 'Cabanas Este', index: 11 }
+        ]
     },
     10: {
-      departmentName: "San Vicente",
-      municipalities: [
-        "Apastepeque",
-        "Guadalupe",
-        "San Cayetano Istepeque",
-        "Santa Clara",
-        "Santo Domingo",
-        "San Esteban Catarina",
-        "San Ildefonso",
-        "San Lorenzo",
-        "San Sebastián",
-        "San Vicente",
-        "Tecoluca",
-        "Tepetitán",
-        "Verapaz",
-      ],
+        departmentName: 'San Vicente',
+        municipalities: [
+            { name: 'San Vicente Norte', index: 14 },
+            { name: 'San Vicente Sur', index: 15 }
+        ]
     },
     11: {
-      departmentName: "Usulután",
-      municipalities: [
-        "Alegría",
-        "Berlín",
-        "California",
-        "Concepción Batres",
-        "El Triunfo",
-        "Ereguayquín",
-        "Estanzuelas",
-        "Jiquilisco",
-        "Jucuapa",
-        "Jucuará",
-        "Mercedes Umaña",
-        "Nueva Granada",
-        "Ozatlán",
-        "Puerto El Triunfo",
-        "San Agustín",
-        "San Buenaventura",
-        "San Dionisio",
-        "Santa Elena",
-        "San Francisco Javier",
-        "Santa María",
-        "Santiago de María",
-        "Tecapán",
-        "Usulután",
-      ],
+        departmentName: 'Usulutan',
+        municipalities: [
+            { name: 'Usulutan Norte', index: 24 },
+            { name: 'Usulutan Este', index: 25 },
+            { name: 'Usulutan Oeste', index: 26 }
+        ]
     },
     12: {
-      departmentName: "San Miguel",
-      municipalities: [
-        "Carolina",
-        "Ciudad Barrios",
-        "Comacarán",
-        "Chapeltiquex",
-        "Chinameca",
-        "Chirilagua",
-        "El Tránsito",
-        "Lolotique",
-        "Moncagua",
-        "Nueva Guadalupe",
-        "Nuevo Edén de San Juan",
-        "Quelepa",
-        "San Antonio del Mosco",
-        "San Gerardo",
-        "San Jorge",
-        "San Luis de la Reina",
-        "San Miguel",
-        "San Rafael Oriente",
-        "Sesori",
-        "Uluazapa",
-      ],
+        departmentName: 'San Miguel',
+        municipalities: [
+            { name: 'San Miguel Norte', index: 21 },
+            { name: 'San Miguel Centro', index: 22 },
+            { name: 'San Miguel Oeste', index: 23 }
+        ]
     },
     13: {
-      departmentName: "Morazán",
-      municipalities: [
-        "Arambala",
-        "Cacaopera",
-        "Corinto",
-        "Chilanga",
-        "Delicias de Concepción",
-        "El Divisadero",
-        "El Rosario",
-        "Guatajiagua",
-        "Joateca",
-        "Jocoaitique",
-        "Jocoro",
-        "Lolotiquillo",
-        "Meanguera",
-        "Osicala",
-        "Perquín",
-        "San Carlos",
-        "San Fernando",
-        "San Francisco Gotera",
-        "San Isidro",
-        "San Simón",
-        "Sensembra",
-        "Sociedad",
-        "Torola",
-        "Yamabal",
-        "Yoloaiquín",
-      ],
+        departmentName: 'Morazan',
+        municipalities: [
+            { name: 'Morazan Norte', index: 27 },
+            { name: 'Morazan Sur', index: 28 }
+        ]
     },
     14: {
-      departmentName: "La Unión",
-      municipalities: [
-        "Anamorós",
-        "Bolívar",
-        "Concepción de Oriente",
-        "Conchagua",
-        "El Carmen",
-        "El Sauce",
-        "Intipucá",
-        "La Unión",
-        "Lislique",
-        "Meanguera del Golfo",
-        "Nueva Esparta",
-        "Pasaquina",
-        "Polorós",
-        "San Alejo",
-        "San José",
-        "Santa Rosa de Lima",
-        "Yayantique",
-        "Yucuaiquín",
-      ],
-    },
-    // You can add more departments and their municipalities as needed
-  };
+        departmentName: 'La Union',
+        municipalities: [
+            { name: 'La Union Norte', index: 19 },
+            { name: 'La Union Sur', index: 20 }
+        ]
+    }
+};
 
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState("");
@@ -543,52 +330,54 @@ const EditCF = () => {
   /* FOR CLIENTS */
 
   const itemshandleAdd = (newContents) => {
-    var type = "bienes";
+
+    var type = "bienes"
     if (newContents.type === "1") {
-      type = "Bienes";
+        type = "Bienes";
     } else if (newContents.type === "2") {
-      type = "Servicios";
-    } else if (newContents.type === "3") {
-      type = "Bienes y Servicios";
-    } else if (newContents.type === "4") {
-      type = "Otro";
+        type = "Servicios";
+    }
+    else if (newContents.type === "3") {
+        type = "Bienes y Servicios";
+    }
+    else if (newContents.type === "4") {
+        type = "Otro";
     }
 
     /* add items*/
     setitems((prevContents) => [
-      ...prevContents,
-      {
-        type: type,
-        cuantity: newContents.cuantity,
-        description: newContents.description,
-        price: newContents.price,
-      },
+        ...prevContents,
+        { type: type, cuantity: newContents.cuantity, description: newContents.description, price: newContents.price },
     ]);
 
     const cuantityint = parseInt(newContents.cuantity);
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
+    
+
+
+
     const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
     const newItem = {
-      /* DELETED ivaitem */ codTributo: null,
-      descripcion: newContents.description,
-      uniMedida: 99,
-      codigo: null,
-      cantidad: cuantityint,
-      numItem: Listitems.length + 1,
-      tributos: ["20"],
-      noGravado: 0,
-      psv: 0,
-      montoDescu: 0,
-      numeroDocumento: null,
-      precioUni: pricefloat,
-      ventaGravada: pricefloat * cuantityint + ivarounded * cuantityint,
-      ventaExenta: 0,
-      ventaNoSuj: 0,
-      tipoItem: typeitem,
+        codTributo: null,
+        descripcion: newContents.description,
+        uniMedida: 99,
+        codigo: null,
+        cantidad: cuantityint,
+        numItem: Listitems.length + 1,
+        tributos: ["20"],
+        noGravado: 0,
+        psv: 0,
+        montoDescu: 0,
+        numeroDocumento: null,
+        precioUni: pricefloat,
+        ventaGravada: pricefloat * cuantityint,
+        ventaExenta: 0,
+        ventaNoSuj: 0,
+        tipoItem: typeitem,
     };
     // Update the list with the new item
     setListitems((prevListitems) => [...prevListitems, newItem]);
@@ -597,29 +386,19 @@ const EditCF = () => {
 
     /* map all newitems and sum the  precioUni*cantidad */
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
-    const rawSubtotal = Listitemstrack.reduce(
-      (total, item) => total + item.precioUni * item.cantidad,
-      0
-    );
-    const rawiva = Listitemstrack.reduce(
-      (total, item) => total + item.ivaItem * item.cantidad,
-      0
-    );
+    const rawSubtotal = Listitemstrack.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+    const rawiva = Listitemstrack.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(roundedSubtotal); // Set the rounded subtotal
-
-    /* for the moment TODO CHANGE */
-    setiva(6.32);
-    setSubtotal(roundedSubtotal);
-
+    setSubtotal(rawSubtotal); // Set the rounded subtotal
+    setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+    
     console.log("Subtotal", subtotal);
     console.log("Total", total);
-  };
+};
 
   const inicializeitems = (newContents ,responsePlantilla) => {
     var type = "bienes";
@@ -644,9 +423,9 @@ const EditCF = () => {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
-    const ivaperitem = pricefloat / 1.13;
+    /* const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const ivarounded = Math.round(ivaperitemfinal * 100) / 100; */
     const newItem = {
         codTributo: null,
         descripcion: newContents.description,
@@ -655,13 +434,12 @@ const EditCF = () => {
         cantidad: cuantityint,
         numItem: setListitems.length + 1,
         tributos: ["20"],
-        ivaItem: ivarounded,
         noGravado: 0,
         psv: 0,
         montoDescu: 0,
         numeroDocumento: null,
         precioUni: pricefloat,
-        ventaGravada: pricefloat * cuantityint + ivarounded * cuantityint,
+        ventaGravada: pricefloat * cuantityint,
         ventaExenta: 0,
         ventaNoSuj: 0,
         tipoItem: typeitem,
@@ -678,6 +456,19 @@ const EditCF = () => {
           description: item.descripcion,
           price: item.precioUni,
         })));
+
+        const rawSubtotal = updatedList.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+        const rawiva = updatedList.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+        // Round to two decimal places
+        const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+        const roundediva = Math.round(rawiva * 100) / 100;
+
+        setiva(roundediva); // Set the rounded subtotal
+        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+        
+        console.log("Subtotal", subtotal);
+        console.log("Total", total);
       
         return updatedList;
       });
@@ -711,47 +502,32 @@ const EditCF = () => {
   };
 
 
-  const itemshandleRemove = (index) => {
-    // Remove the item from the items list
+  const itemshandleRemove = (indexToRemove) => {
+    setitems((prevContents) =>
+        prevContents.filter((_, i) => i !== indexToRemove)
+    );
 
-    console.log("ListitemsAddbefore")
-    console.log(Listitems)
 
-    setitems((prevContents) => {
-      const updatedItems = prevContents.filter((_, i) => i !== index);
+    Listitems.splice(indexToRemove, 1);
+    setListitems(Listitems);
 
-      // Recalculate the totals based on the remaining items
-      const rawSubtotal = updatedItems.reduce(
-        (total, item) => total + item.price * item.cuantity,
-        0
-      );
-      const rawIva = updatedItems.reduce(
-        (total, item) => total + (item.price / 1.13) * 0.13 * item.cuantity,
-        0
-      );
+    console.log("Listitems", Listitems);
 
-      const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      const roundedIva = Math.round(rawIva * 100) / 100;
+    const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+    const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
 
-      // Update the state with the new totals
-      setiva(roundedIva);
-      setSubtotal(roundedSubtotal - roundedIva);
-      setTotal(roundedSubtotal);
-
-      return updatedItems;
-    });
-    /* delete that item in ListItem */
-    setListitems((prevListitems) => {
-        const updatedList = prevListitems.filter((_, i) => i !== index);
-        return updatedList;
-        });
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(rawSubtotal); // Set the rounded subtotal
+    setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
     
-  console.log("ListitemsAddafter")
-  console.log(Listitems)
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
 
-
-
-  };
+    
+};
 
 
   const handleSelectChangeItemsClient = () => {
@@ -933,6 +709,15 @@ const EditCF = () => {
 
     console.log("PlantillaService - update?");
     console.log(responsePlantilla);
+    if (responsePlantilla.message === "plantilla actualizado") {
+      toast.success("Factura actualizada con éxito");
+      setTimeout(() => {
+        navigate("/facturas");
+      }, 5000);
+    }else
+    {
+      toast.error("Error al actualizar la factura recargar la pagina e intentar de nuevo");
+    }
 
     /* toast.success("Factura creada con éxito");
 
@@ -1362,7 +1147,7 @@ const EditCF = () => {
       <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Total a Pagar" data={total} />
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
+      {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
           <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-3 px-[9px] pb-[11px] box-border relative whitespace-nowrap max-w-full z-[1]">
@@ -1400,7 +1185,7 @@ const EditCF = () => {
                                     </div>
                                         </div>
                                     <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-                                </div> */}
+                                </div>
                 <div className="self-stretch flex flex-col items-end justify-start gap-[28px] max-w-full z-[1]">
                   {contents.map((content, index) => (
                     <TableOfContents
@@ -1417,7 +1202,7 @@ const EditCF = () => {
                   setpayment={setpayment}
                   total={total}
                 />{" "}
-                {/* TODO: Add the credit metod */}
+                {/* TODO: Add the credit metod 
               </div>
               {/*<div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
                                 <button className="cursor-pointer [border:none] pt-3 pb-[13px] pr-[35px] pl-10 bg-steelblue-300 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-slategray">
@@ -1426,11 +1211,11 @@ const EditCF = () => {
                                         Nuevo Item
                                     </b>
                                 </button>
-                            </div> */}
+                            </div>
             </div>
           </div>
         </form>
-      </section>
+      </section> */}
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"

@@ -537,7 +537,7 @@ if (content.tipo === "01") {
       reteRenta: parseFloat(content.retencion_de_renta),
       totalNoGravado: content.totalnogravado,
       totalPagar: parseFloat(content.total_a_pagar),
-      ivaPerci1: content.iva_percibido,
+      ivaPerci1: parseFloat(content.iva_percibido),
     },
     extension: {
       docuEntrega: content.documento_e,
@@ -682,7 +682,7 @@ if (content.tipo === "01") {
     const count = await PlantillaAPI.count(id_emisor, content.tipo, token);
 
     const parseintversion = parseInt(content.version);
- 
+
     if (content.tipo === "01"){
     const dataSend = { /* TODO: SEND */
       tipoDte: content.tipo,

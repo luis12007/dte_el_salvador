@@ -319,10 +319,31 @@ const CrearCreditoFiscal = () => {
         console.log("Total", total);
     };
 
-    const itemshandleRemove = (index) => {
+    const itemshandleRemove = (indexToRemove) => {
         setitems((prevContents) =>
-            prevContents.filter((_, i) => i !== index)
+            prevContents.filter((_, i) => i !== indexToRemove)
         );
+
+
+        Listitems.splice(indexToRemove, 1);
+        setListitems(Listitems);
+
+        console.log("Listitems", Listitems);
+
+        const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+        const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+        // Round to two decimal places
+        const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+        const roundediva = Math.round(rawiva * 100) / 100;
+
+        setiva(roundediva); // Set the rounded subtotal
+        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+        
+        console.log("Subtotal", subtotal);
+        console.log("Total", total);
+
+        
     };
 
     const handleSelectChangeItemsClient = () => {
