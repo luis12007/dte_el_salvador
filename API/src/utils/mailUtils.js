@@ -194,105 +194,103 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
   tipoestablecimiento: '20'
 } */
 
-  const Listitems = itemsDB.map((item, index) => {
-    const newItem = {
-      codTributo: item.codtributo,
-      descripcion: item.descripcion,
-      uniMedida: item.unimedida,
-      codigo: item.codigo,
-      cantidad: item.cantidad,
-      numItem: index + 1,  // Using the index for numbering
-      tributos: item.tributos,
-      ivaItem: item.ivaitem,
-      noGravado: item.nogravado,
-      psv: item.psv,
-      montoDescu: item.montodescu,
-      numeroDocumento: item.numerodocumento,
-      precioUni: item.preciouni,
-      ventaGravada: item.ventagravada,
-      ventaExenta: item.ventaexenta,
-      ventaNoSuj: item.ventanosuj,
-      tipoItem: item.tipoitem,
-    };
-    return newItem;
-  });
+            const Listitems = itemsDB.map((item, index) => {
+                const newItem = {
+                    codTributo: item.codtributo,
+                    descripcion: item.descripcion,
+                    uniMedida: item.unimedida,
+                    codigo: item.codigo,
+                    cantidad: item.cantidad,
+                    numItem: index + 1, // Using the index for numbering
+                    tributos: item.tributos,
+                    ivaItem: item.ivaitem,
+                    noGravado: item.nogravado,
+                    psv: item.psv,
+                    montoDescu: item.montodescu,
+                    numeroDocumento: item.numerodocumento,
+                    precioUni: item.preciouni,
+                    ventaGravada: item.ventagravada,
+                    ventaExenta: item.ventaexenta,
+                    ventaNoSuj: item.ventanosuj,
+                    tipoItem: item.tipoitem,
+                };
+                return newItem;
+            });
             var json = {
                 identificacion: {
-                    version: parseInt(plantillaDB.version), 
-                    ambiente: plantillaDB.ambiente, 
-                    tipoDte: plantillaDB.tipo, 
-                    numeroControl: plantillaDB.numero_de_control, 
+                    version: parseInt(plantillaDB.version),
+                    ambiente: plantillaDB.ambiente,
+                    tipoDte: plantillaDB.tipo,
+                    numeroControl: plantillaDB.numero_de_control,
                     codigoGeneracion: plantillaDB.codigo_de_generacion,
-                    tipoModelo: parseInt(plantillaDB.modelo_de_factura), 
-                    tipoOperacion: parseInt(plantillaDB.tipo_de_transmision), 
+                    tipoModelo: parseInt(plantillaDB.modelo_de_factura),
+                    tipoOperacion: parseInt(plantillaDB.tipo_de_transmision),
                     fecEmi: plantillaDB.fecha_y_hora_de_generacion, // Extracting date
                     horEmi: plantillaDB.horemi,
-                    tipoMoneda: plantillaDB.tipomoneda, 
-                    tipoContingencia: plantillaDB.tipocontingencia, 
-                    motivoContin: plantillaDB.motivocontin 
+                    tipoMoneda: plantillaDB.tipomoneda,
+                    tipoContingencia: plantillaDB.tipocontingencia,
+                    motivoContin: plantillaDB.motivocontin
                 },
                 documentoRelacionado: plantillaDB.documentorelacionado,
                 emisor: {
                     direccion: {
-                        municipio: userDB.municipio, 
-                        departamento: userDB.departamento, 
-                        complemento: userDB.direccion 
+                        municipio: userDB.municipio,
+                        departamento: userDB.departamento,
+                        complemento: userDB.direccion
                     },
                     nit: userDB.nit,
                     nrc: userDB.nrc,
                     nombre: userDB.name,
                     codActividad: userDB.codactividad,
-                    descActividad: userDB.descactividad, 
-                    telefono: userDB.numero_de_telefono, 
-                    correo: userDB.correo_electronico, 
+                    descActividad: userDB.descactividad,
+                    telefono: userDB.numero_de_telefono,
+                    correo: userDB.correo_electronico,
                     nombreComercial: userDB.nombre_comercial,
                     tipoEstablecimiento: userDB.tipoestablecimiento,
                     codEstableMH: plantillaDB.codestablemh,
-                    codEstable: plantillaDB.codestable, 
-                    codPuntoVentaMH: plantillaDB.codpuntoventamh, 
-                    codPuntoVenta: plantillaDB.codpuntoventa 
+                    codEstable: plantillaDB.codestable,
+                    codPuntoVentaMH: plantillaDB.codpuntoventamh,
+                    codPuntoVenta: plantillaDB.codpuntoventa
                 },
                 receptor: {
                     codActividad: plantillaDB.re_codactividad,
                     direccion: plantillaDB.re_direccion,
                     nrc: plantillaDB.re_nrc,
-                    descActividad: plantillaDB.re_actividad_economica ,
-                    correo: plantillaDB.re_correo_electronico ,
+                    descActividad: plantillaDB.re_actividad_economica,
+                    correo: plantillaDB.re_correo_electronico,
                     tipoDocumento: plantillaDB.re_tipodocumento,
                     nombre: plantillaDB.re_name,
                     telefono: plantillaDB.re_numero_telefono,
-                    numDocumento: plantillaDB.re_numdocumento 
+                    numDocumento: plantillaDB.re_numdocumento
                 },
                 otrosDocumentos: plantillaDB.otrosdocumentos,
                 ventaTercero: plantillaDB.ventatercero,
                 cuerpoDocumento: Listitems,
                 resumen: {
-                    condicionOperacion: plantillaDB.condicionoperacion, 
-                    totalIva: parseFloat(plantillaDB.iva_percibido),  
+                    condicionOperacion: plantillaDB.condicionoperacion,
+                    totalIva: parseFloat(plantillaDB.iva_percibido),
                     saldoFavor: plantillaDB.saldofavor,
-                    numPagoElectronico: plantillaDB.numpagoelectronico,  
-                    pagos: [
-                        {
-                            periodo: plantillaDB.periodo, 
-                            plazo: plantillaDB.plazo,  
-                            montoPago: parseFloat(plantillaDB.montopago),  
-                            codigo: plantillaDB.codigo, 
-                            referencia: plantillaDB.referencia 
-                        }
-                    ],
+                    numPagoElectronico: plantillaDB.numpagoelectronico,
+                    pagos: [{
+                        periodo: plantillaDB.periodo,
+                        plazo: plantillaDB.plazo,
+                        montoPago: parseFloat(plantillaDB.montopago),
+                        codigo: plantillaDB.codigo,
+                        referencia: plantillaDB.referencia
+                    }],
                     totalNoSuj: plantillaDB.totalnosuj,
-                    tributos: plantillaDB.tributos, 
-                    totalLetras: plantillaDB.cantidad_en_letras,  
-                    totalExenta: plantillaDB.totalexenta,  
-                    subTotalVentas: parseFloat(plantillaDB.subtotalventas), 
+                    tributos: plantillaDB.tributos,
+                    totalLetras: plantillaDB.cantidad_en_letras,
+                    totalExenta: plantillaDB.totalexenta,
+                    subTotalVentas: parseFloat(plantillaDB.subtotalventas),
                     totalGravada: parseFloat(plantillaDB.totalagravada),
-                    montoTotalOperacion: parseFloat(plantillaDB.montototaloperacion), 
+                    montoTotalOperacion: parseFloat(plantillaDB.montototaloperacion),
                     descuNoSuj: plantillaDB.descunosuj,
                     descuExenta: plantillaDB.descuexenta,
                     descuGravada: plantillaDB.descugravada,
                     porcentajeDescuento: plantillaDB.porcentajedescuento,
-                    totalDescu: parseFloat(plantillaDB.totalnogravado), 
-                    subTotal: parseFloat(plantillaDB.subtotal), 
+                    totalDescu: parseFloat(plantillaDB.totalnogravado),
+                    subTotal: parseFloat(plantillaDB.subtotal),
                     ivaRete1: plantillaDB.iva_retenido,
                     reteRenta: plantillaDB.retencion_de_renta,
                     totalNoGravado: plantillaDB.totalnogravado,
@@ -303,124 +301,122 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     nombRecibe: plantillaDB.documento_receptor,
                     observaciones: plantillaDB.observaciones,
                     placaVehiculo: plantillaDB.placavehiculo,
-                    nombEntrega: plantillaDB.documento_r, 
-                    docuRecibe: plantillaDB.documento_receptor 
+                    nombEntrega: plantillaDB.documento_r,
+                    docuRecibe: plantillaDB.documento_receptor
                 },
                 apendice: plantillaDB.apendice
             };
-        
+
             console.log('JSON to send:', json);
         } else if (plantillaDB.tipo === "03") {
 
             const Listitems = itemsDB.map((item, index) => {
                 const newItem = {
-                  codTributo: item.codtributo,
-                  descripcion: item.descripcion,
-                  uniMedida: item.unimedida,
-                  codigo: item.codigo,
-                  cantidad: item.cantidad,
-                  numItem: index + 1,  // Using the index for numbering
-                  tributos: [item.tributos.toString()],
-                  noGravado: item.nogravado,
-                  psv: item.psv,
-                  montoDescu: item.montodescu,
-                  numeroDocumento: item.numerodocumento,
-                  precioUni: item.preciouni,
-                  ventaGravada: item.ventagravada,
-                  ventaExenta:  item.ventaexenta,
-                  ventaNoSuj: item.ventanosuj,
-                  tipoItem: item.tipoitem,
+                    codTributo: item.codtributo,
+                    descripcion: item.descripcion,
+                    uniMedida: item.unimedida,
+                    codigo: item.codigo,
+                    cantidad: item.cantidad,
+                    numItem: index + 1, // Using the index for numbering
+                    tributos: [item.tributos.toString()],
+                    noGravado: item.nogravado,
+                    psv: item.psv,
+                    montoDescu: item.montodescu,
+                    numeroDocumento: item.numerodocumento,
+                    precioUni: item.preciouni,
+                    ventaGravada: item.ventagravada,
+                    ventaExenta: item.ventaexenta,
+                    ventaNoSuj: item.ventanosuj,
+                    tipoItem: item.tipoitem,
                 };
                 return newItem;
-              });
+            });
 
 
-              const address = plantillaDB.re_direccion.split("|");
-              const tributocf = plantillaDB.tributocf.split("|");
-         var json = {
+            const address = plantillaDB.re_direccion.split("|");
+            const tributocf = plantillaDB.tributocf.split("|");
+            var json = {
                 identificacion: {
-                    version: parseInt(plantillaDB.version), 
-                    ambiente: plantillaDB.ambiente, 
-                    tipoDte: plantillaDB.tipo, 
-                    numeroControl: plantillaDB.numero_de_control, 
+                    version: parseInt(plantillaDB.version),
+                    ambiente: plantillaDB.ambiente,
+                    tipoDte: plantillaDB.tipo,
+                    numeroControl: plantillaDB.numero_de_control,
                     codigoGeneracion: plantillaDB.codigo_de_generacion,
-                    tipoModelo: parseInt(plantillaDB.modelo_de_factura), 
-                    tipoOperacion: parseInt(plantillaDB.tipo_de_transmision), 
+                    tipoModelo: parseInt(plantillaDB.modelo_de_factura),
+                    tipoOperacion: parseInt(plantillaDB.tipo_de_transmision),
                     fecEmi: plantillaDB.fecha_y_hora_de_generacion, // Extracting date
                     horEmi: plantillaDB.horemi,
-                    tipoMoneda: plantillaDB.tipomoneda, 
-                    tipoContingencia: plantillaDB.tipocontingencia, 
-                    motivoContin: plantillaDB.motivocontin 
+                    tipoMoneda: plantillaDB.tipomoneda,
+                    tipoContingencia: plantillaDB.tipocontingencia,
+                    motivoContin: plantillaDB.motivocontin
                 },
                 documentoRelacionado: plantillaDB.documentorelacionado,
                 emisor: {
                     direccion: {
-                        municipio: userDB.municipio, 
-                        departamento: userDB.departamento, 
-                        complemento: userDB.direccion 
+                        municipio: userDB.municipio,
+                        departamento: userDB.departamento,
+                        complemento: userDB.direccion
                     },
                     nit: userDB.nit,
                     nrc: userDB.nrc,
                     nombre: userDB.name,
                     codActividad: userDB.codactividad,
-                    descActividad: userDB.descactividad, 
-                    telefono: userDB.numero_de_telefono, 
-                    correo: userDB.correo_electronico, 
+                    descActividad: userDB.descactividad,
+                    telefono: userDB.numero_de_telefono,
+                    correo: userDB.correo_electronico,
                     nombreComercial: userDB.nombre_comercial,
                     tipoEstablecimiento: userDB.tipoestablecimiento,
                     codEstableMH: plantillaDB.codestablemh,
-                    codEstable: plantillaDB.codestable, 
-                    codPuntoVentaMH: plantillaDB.codpuntoventamh, 
-                    codPuntoVenta: plantillaDB.codpuntoventa 
+                    codEstable: plantillaDB.codestable,
+                    codPuntoVentaMH: plantillaDB.codpuntoventamh,
+                    codPuntoVenta: plantillaDB.codpuntoventa
                 },
                 receptor: {
                     codActividad: plantillaDB.re_codactividad,
                     direccion: {
-                        municipio: address[1], 
-                        departamento: address[0], 
-                        complemento: address[2] 
-                      },
+                        municipio: address[1],
+                        departamento: address[0],
+                        complemento: address[2]
+                    },
                     nrc: plantillaDB.re_nrc,
-                    descActividad: plantillaDB.re_actividad_economica ,
-                    correo: plantillaDB.re_correo_electronico ,
+                    descActividad: plantillaDB.re_actividad_economica,
+                    correo: plantillaDB.re_correo_electronico,
                     nit: plantillaDB.re_nit,
                     nombre: plantillaDB.re_name,
                     telefono: plantillaDB.re_numero_telefono,
-                    nombreComercial: plantillaDB.re_numdocumento 
+                    nombreComercial: plantillaDB.re_numdocumento
                 },
                 otrosDocumentos: plantillaDB.otrosdocumentos,
                 ventaTercero: plantillaDB.ventatercero,
                 cuerpoDocumento: Listitems,
                 resumen: {
-                    condicionOperacion: plantillaDB.condicionoperacion, 
+                    condicionOperacion: plantillaDB.condicionoperacion,
                     saldoFavor: plantillaDB.saldofavor,
-                    numPagoElectronico: plantillaDB.numpagoelectronico,  
-                    pagos: [
-                        {
-                            periodo: plantillaDB.periodo, 
-                            plazo: plantillaDB.plazo,  
-                            montoPago: parseFloat(plantillaDB.montopago),  
-                            codigo: plantillaDB.codigo, 
-                            referencia: plantillaDB.referencia 
-                        }
-                    ],
+                    numPagoElectronico: plantillaDB.numpagoelectronico,
+                    pagos: [{
+                        periodo: plantillaDB.periodo,
+                        plazo: plantillaDB.plazo,
+                        montoPago: parseFloat(plantillaDB.montopago),
+                        codigo: plantillaDB.codigo,
+                        referencia: plantillaDB.referencia
+                    }],
                     totalNoSuj: plantillaDB.totalnosuj,
                     tributos: [{
                         codigo: tributocf[0],
                         descripcion: tributocf[1],
                         valor: parseFloat(tributocf[2])
-                    }], 
-                    totalLetras: plantillaDB.cantidad_en_letras,  
-                    totalExenta: plantillaDB.totalexenta,  
-                    subTotalVentas: parseFloat(plantillaDB.subtotalventas), 
+                    }],
+                    totalLetras: plantillaDB.cantidad_en_letras,
+                    totalExenta: plantillaDB.totalexenta,
+                    subTotalVentas: parseFloat(plantillaDB.subtotalventas),
                     totalGravada: parseFloat(plantillaDB.totalagravada),
-                    montoTotalOperacion: parseFloat(plantillaDB.montototaloperacion), 
+                    montoTotalOperacion: parseFloat(plantillaDB.montototaloperacion),
                     descuNoSuj: plantillaDB.descunosuj,
                     descuExenta: plantillaDB.descuexenta,
                     descuGravada: plantillaDB.descugravada,
                     porcentajeDescuento: plantillaDB.porcentajedescuento,
-                    totalDescu: parseFloat(plantillaDB.totalnogravado), 
-                    subTotal: parseFloat(plantillaDB.subtotal), 
+                    totalDescu: parseFloat(plantillaDB.totalnogravado),
+                    subTotal: parseFloat(plantillaDB.subtotal),
                     ivaRete1: parseFloat(plantillaDB.iva_retenido),
                     reteRenta: parseFloat(plantillaDB.retencion_de_renta),
                     totalNoGravado: plantillaDB.totalnogravado,
@@ -433,8 +429,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     nombRecibe: plantillaDB.documento_receptor,
                     observaciones: plantillaDB.observaciones,
                     placaVehiculo: plantillaDB.placavehiculo,
-                    nombEntrega: plantillaDB.documento_r, 
-                    docuRecibe: plantillaDB.documento_receptor 
+                    nombEntrega: plantillaDB.documento_r,
+                    docuRecibe: plantillaDB.documento_receptor
                 },
                 apendice: plantillaDB.apendice
             };
@@ -462,47 +458,46 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         });
         console.log('mail:', plantillaDB.re_correo_electronico);
         pdfDoc.pipe(fs.createWriteStream(pdfPath))
-        .on('finish', async () => {
-        // Email configuration
-        const mailOptions = {
-            from: 'mysoftwaresv@gmail.com',
-            to: plantillaDB.re_correo_electronico,
-            subject: `DTE de parte de ${user.name}`,
-            html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
-            attachments: [
-                {
-                    filename: 'DTE.pdf',
-                    path: pdfPath,
-                    encoding: 'base64'
-                },
-                {
-                    filename: 'DTE.json', // Name of the JSON file
-                    path: jsonPath, // Path to the JSON file
-                    encoding: 'base64'
-                }
-            ]
-        };
+            .on('finish', async() => {
+                // Email configuration
+                const mailOptions = {
+                    from: 'mysoftwaresv@gmail.com',
+                    to: plantillaDB.re_correo_electronico,
+                    subject: `DTE de parte de ${user.name}`,
+                    html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
+                    attachments: [{
+                            filename: 'DTE.pdf',
+                            path: pdfPath,
+                            encoding: 'base64'
+                        },
+                        {
+                            filename: 'DTE.json', // Name of the JSON file
+                            path: jsonPath, // Path to the JSON file
+                            encoding: 'base64'
+                        }
+                    ]
+                };
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'mysoftwaresv@gmail.com',
-                pass: 'ajbh eozh iltf oinf'
-            }
-        });
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'mysoftwaresv@gmail.com',
+                        pass: 'ajbh eozh iltf oinf'
+                    }
+                });
 
-        // Send email
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Error sending email:', error);
-            } else {
-                console.log('Email sent:', info.response);
-            }
-        });
-    })
-    .on('error', (error) => {
-        console.error('Error creating PDF:', error);
-    });
+                // Send email
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.error('Error sending email:', error);
+                    } else {
+                        console.log('Email sent:', info.response);
+                    }
+                });
+            })
+            .on('error', (error) => {
+                console.error('Error creating PDF:', error);
+            });
 
         // Add background color
         pdfDoc.rect(0, 0, 650, 250).fill('#EAEAEA');
@@ -511,10 +506,10 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         pdfDoc.fontSize(15).fillColor('#1E3256').text('DOCUMENTO TRIBUTARIO ELECTRONICO', { align: 'center' });
         if (plantillaDB.tipo === "03") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('CREDITO FISCAL', { align: 'center' });
-                
-        }else if (plantillaDB.tipo === "01") {
+
+        } else if (plantillaDB.tipo === "01") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA', { align: 'center' });
-                
+
         }
         const yscale = 70;
 
@@ -619,14 +614,14 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 37);
 
         pdfDoc.font('Helvetica-Bold').text('RECEPTOR', infoX + 280, infoY + 8)
-  
+
         if (plantillaDB.tipo === "01") {
             let re_numdocumentostring = 'DOC';
-        if (plantillaDB.re_numdocumento.includes('-')) {
-            re_numdocumentostring = 'DUI: ';
-        } else if (plantillaDB.re_numdocumento.includes('-') === false) {
-            re_numdocumentostring = 'NRC: ';
-        }
+            if (plantillaDB.re_numdocumento.includes('-')) {
+                re_numdocumentostring = 'DUI: ';
+            } else if (plantillaDB.re_numdocumento.includes('-') === false) {
+                re_numdocumentostring = 'NRC: ';
+            }
 
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
@@ -637,10 +632,10 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-    
+
         } else if (plantillaDB.tipo === "03") {
             console.log(plantillaDB.re_numdocumento)
-            const re_numdocumentostring =  'NIT: ';
+            const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
             const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
@@ -656,7 +651,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-     
+
         }
         // Add services section
         pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, infoY + 160, { underline: true });
@@ -700,7 +695,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(itemsDB.preciouni, servicesX + 240, y)
                 .text(itemsDB.montodescu, servicesX + 290, y)
                 .text(itemsDB.ventanosuj, servicesX + 350, y)
-                .text( itemsDB.preciouni * itemsDB.cantidad, servicesX + 410, y)
+                .text(itemsDB.preciouni * itemsDB.cantidad, servicesX + 410, y)
                 .text(itemsDB.ventaexenta, servicesX + 470, y);
             numcounter += 1;
             y += 20;
@@ -749,29 +744,30 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Example usage
         funcenter(plantillaDB.observaciones, y + 55, 30);
+        var ivaC = plantillaDB.subtotalventas * 0.13
 
-        if(plantillaDB.tipo === "03"){
-        pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
-            .text(`Impuesto valor agregado 13%: $${plantillaDB.subtotalventas * 0.13}`, 300, y + 90, { align: 'right' })
-            .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
-            .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
-            .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
-            .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
-            .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
-            .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
-            .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
-            .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
-        }else if(plantillaDB.tipo === "01"){
+        if (plantillaDB.tipo === "03") {
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
-            .text(`Impuesto valor agregado 13%: $${plantillaDB.iva_percibido}`, 300, y + 30, { align: 'right' })
-            .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
-            .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
-            .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 90, { align: 'right' })
-            .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
-            .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
-            .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
-            .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
-            .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+                .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
+                .text(`IVA recibido: $${plantillaDB.iva_percibido.toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
+                .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
+                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+        } else if (plantillaDB.tipo === "01") {
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${plantillaDB.iva_percibido}`, 300, y + 30, { align: 'right' })
+                .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 90, { align: 'right' })
+                .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
+                .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
+                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
         }
 
 
