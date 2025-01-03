@@ -636,7 +636,7 @@ const EditBill = () => {
       },
       receptor: {
         /* TODO ADDRES */ codActividad: client.codActividad,
-        direccion: /* client.address */ null,
+        direccion: client.address,
         nrc: client.nrc,
         descActividad: client.descActividad,
         correo: client.email,
@@ -728,7 +728,8 @@ const EditBill = () => {
     console.log("PlantillaService - update?");
     console.log(responsePlantilla);
 
-    toast.success("Factura creada con éxito");
+  if (responsePlantilla.message === "plantilla actualizado") {
+    toast.success("Factura editada con éxito");
 
         /* wait 5 seconds */
         setTimeout(() => {
@@ -736,6 +737,9 @@ const EditBill = () => {
         }, 5000);
 
            /*  navigate("/facturas");  */
+  } else {
+    toast.error("Error al editar la factura");
+  }
   };
 
   /* ---------------------------------------------------------- */
@@ -793,93 +797,21 @@ const EditBill = () => {
     return formattedOutput;
   }
 
-  const unidades = [
-    "",
-    "UNO",
-    "DOS",
-    "TRES",
-    "CUATRO",
-    "CINCO",
-    "SEIS",
-    "SIETE",
-    "OCHO",
-    "NUEVE",
-  ];
-  const especiales = [
-    "",
-    "ONCE",
-    "DOCE",
-    "TRECE",
-    "CATORCE",
-    "QUINCE",
-    "DIECISÉIS",
-    "DIECISIETE",
-    "DIECIOCHO",
-    "DIECINUEVE",
-  ];
-  const decenas = [
-    "",
-    "DIEZ",
-    "VEINTE",
-    "TREINTA",
-    "CUARENTA",
-    "CINCUENTA",
-    "SESENTA",
-    "SETENTA",
-    "OCHENTA",
-    "NOVENTA",
-  ];
-  const centenas = [
-    "",
-    "CIENTO",
-    "DOSCIENTOS",
-    "TRESCIENTOS",
-    "CUATROCIENTOS",
-    "QUINIENTOS",
-    "SEISCIENTOS",
-    "SETECIENTOS",
-    "OCHOCIENTOS",
-    "NOVECIENTOS",
-  ];
-
-  const convertirNumeroALetras = (numero) => {
-    if (numero === 0) return "CERO";
-
-    let letras = "";
-    let negativo = false;
-
-    if (numero < 0) {
-      negativo = true;
-      numero = Math.abs(numero);
-    }
-
-    if (numero < 10) {
-      letras = unidades[numero];
-    } else if (numero < 20) {
-      letras = especiales[numero - 10];
-    } else if (numero < 100) {
-      letras = decenas[Math.floor(numero / 10)];
-      if (numero % 10 !== 0) {
-        letras += " Y " + unidades[numero % 10];
-      }
-    } else if (numero < 1000) {
-      letras = centenas[Math.floor(numero / 100)];
-      if (numero % 100 !== 0) {
-        letras += " " + convertirNumeroALetras(numero % 100);
-      }
-    } else {
-      letras = "NÚMERO DEMASIADO GRANDE PARA CONVERTIR";
-    }
-
-    return negativo ? "MENOS " + letras : letras;
-  };
-
   const convertirDineroALetras = (cantidad) => {
-    // Asegurarse de tener dos decimales
-    const cantidadRedondeada = cantidad.toFixed(2);
-    const partes = cantidadRedondeada.split("."); // Divide la parte entera de los decimales
+    if (typeof cantidad !== 'number' || isNaN(cantidad)) {
+        throw new Error('La cantidad debe ser un número válido.');
+    }
+
+    // Asegurarse de que la cantidad tenga como máximo dos decimales
+    const cantidadRedondeada = Math.round(cantidad * 100) / 100;
+    const partes = cantidadRedondeada.toFixed(2).split('.'); // Divide la parte entera de los decimales
+
     const dolares = parseInt(partes[0], 10); // Parte entera
     const centavos = parseInt(partes[1], 10); // Parte decimal
+
+    if (dolares > Number.MAX_SAFE_INTEGER) {
+        throw new Error('La cantidad en dólares es demasiado grande para convertir.');
+    }
 
     // Convierte las partes a palabras
     const dolaresEnLetras = convertirNumeroALetras(dolares);
@@ -889,11 +821,56 @@ const EditBill = () => {
     let resultado = `${dolaresEnLetras} DÓLARES`;
 
     if (centavos > 0) {
-      resultado += ` CON ${centavosEnLetras} CENTAVOS`;
+        resultado += ` CON ${centavosEnLetras} CENTAVOS`;
     }
 
     return resultado;
-  };
+};
+
+const convertirNumeroALetras = (numero) => {
+  const unidades = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE"];
+  const especiales = ["DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE"];
+  const decenas = ["", "", "VEINTE", "TREINTA", "CUARENTA", "CINCUENTA", "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
+  const centenas = ["", "CIEN", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
+
+  if (numero === 0) return "CERO";
+
+  if (numero < 10) return unidades[numero];
+
+  if (numero < 16) return especiales[numero - 10];
+
+  if (numero < 20) return "DIECI" + unidades[numero - 10];
+
+  if (numero < 30) return numero === 20 ? "VEINTE" : "VEINTI" + unidades[numero - 20];
+
+  if (numero < 100) {
+      const decena = Math.floor(numero / 10);
+      const unidad = numero % 10;
+      return decenas[decena] + (unidad > 0 ? " Y " + unidades[unidad] : "");
+  }
+
+  if (numero < 1000) {
+      const centena = Math.floor(numero / 100);
+      const resto = numero % 100;
+      return (centena === 1 && resto > 0 ? "CIENTO" : centenas[centena]) + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
+  }
+
+  if (numero < 1000000) {
+      const miles = Math.floor(numero / 1000);
+      const resto = numero % 1000;
+      return (miles === 1 ? "MIL" : convertirNumeroALetras(miles) + " MIL") + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
+  }
+
+  if (numero < 1000000000) {
+      const millones = Math.floor(numero / 1000000);
+      const resto = numero % 1000000;
+      return (millones === 1 ? "UN MILLÓN" : convertirNumeroALetras(millones) + " MILLONES") + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
+  }
+
+  throw new Error("Número demasiado grande para convertir.");
+};
+
+
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">

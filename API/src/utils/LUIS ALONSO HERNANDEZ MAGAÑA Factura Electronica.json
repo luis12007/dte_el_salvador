@@ -1,14 +1,14 @@
 {
   "identificacion": {
-    "version": 3,
+    "version": 1,
     "ambiente": "00",
-    "tipoDte": "03",
-    "numeroControl": "DTE-03-00000030-000000000000219",
-    "codigoGeneracion": "50E70697-0E8C-4459-A024-42F13A11C678",
+    "tipoDte": "01",
+    "numeroControl": "DTE-01-00000000-000000000000221",
+    "codigoGeneracion": "F11E5D3A-0E51-4990-8D4D-3CBCCE14765B",
     "tipoModelo": 1,
     "tipoOperacion": 1,
-    "fecEmi": "2024-12-04",
-    "horEmi": "17:41:57",
+    "fecEmi": "2025-01-02",
+    "horEmi": "11:05:07",
     "tipoMoneda": "USD",
     "tipoContingencia": null,
     "motivoContin": null
@@ -35,106 +35,75 @@
     "codPuntoVenta": null
   },
   "receptor": {
-    "codActividad": "86203",
-    "direccion": {
-      "municipio": "16",
-      "departamento": "2",
-      "complemento": "mi direccion"
-    },
-    "nrc": "2952950",
-    "descActividad": "Servicios de medicos",
+    "codActividad": "10005",
+    "direccion": null,
+    "nrc": null,
+    "descActividad": "Otros",
     "correo": "luishdezmtz12@gmail.com",
-    "nit": "2952950",
-    "nombre": "AVILES MARTINEZ, CAMILO JOSE",
-    "telefono": "2952950",
-    "nombreComercial": null
+    "tipoDocumento": "13",
+    "nombre": "hello",
+    "telefono": null,
+    "numDocumento": "06384275-4"
   },
   "otrosDocumentos": null,
   "ventaTercero": null,
   "cuerpoDocumento": [
     {
       "codTributo": null,
-      "descripcion": "cosa 2",
+      "descripcion": "asdf",
       "uniMedida": 99,
       "codigo": null,
-      "cantidad": 50,
+      "cantidad": 1,
       "numItem": 1,
-      "tributos": [
-        "20"
-      ],
+      "tributos": null,
+      "ivaItem": 0,
       "noGravado": 0,
       "psv": 0,
       "montoDescu": 0,
       "numeroDocumento": null,
-      "precioUni": 10,
-      "ventaGravada": 500,
-      "ventaExenta": 0,
-      "ventaNoSuj": 0,
-      "tipoItem": 1
-    },
-    {
-      "codTributo": null,
-      "descripcion": "cosa 2",
-      "uniMedida": 99,
-      "codigo": null,
-      "cantidad": 50,
-      "numItem": 2,
-      "tributos": [
-        "20"
-      ],
-      "noGravado": 0,
-      "psv": 0,
-      "montoDescu": 0,
-      "numeroDocumento": null,
-      "precioUni": 1,
-      "ventaGravada": 50,
-      "ventaExenta": 0,
+      "precioUni": 562432.3,
+      "ventaGravada": 0,
+      "ventaExenta": 562432.3,
       "ventaNoSuj": 0,
       "tipoItem": 1
     }
   ],
   "resumen": {
     "condicionOperacion": 1,
+    "totalIva": 0,
     "saldoFavor": 0,
     "numPagoElectronico": null,
     "pagos": [
       {
         "periodo": null,
         "plazo": null,
-        "montoPago": 621.5,
+        "montoPago": 562432.3,
         "codigo": "01",
         "referencia": null
       }
     ],
     "totalNoSuj": 0,
-    "tributos": [
-      {
-        "codigo": "20",
-        "descripcion": "Impuesto al Valor Agregado 13%",
-        "valor": 71.5
-      }
-    ],
-    "totalLetras": "SEISCIENTOS VEINTE Y undefined",
-    "totalExenta": 0,
-    "subTotalVentas": 550,
+    "tributos": null,
+    "totalLetras": "QUINIENTOS SESENTA Y DOS MIL CUATROCIENTOS TREINTA Y DOS DÓLARES CON TREINTA CENTAVOS",
+    "totalExenta": 562432.3,
+    "subTotalVentas": 562432.3,
     "totalGravada": null,
-    "montoTotalOperacion": 621.5,
+    "montoTotalOperacion": 562432.3,
     "descuNoSuj": 0,
     "descuExenta": 0,
     "descuGravada": 0,
     "porcentajeDescuento": 0,
     "totalDescu": 0,
-    "subTotal": 550,
-    "ivaRete1": 0,
-    "reteRenta": 0,
+    "subTotal": 562432.3,
+    "ivaRete1": "0",
+    "reteRenta": "0",
     "totalNoGravado": 0,
-    "totalPagar": 621.5,
-    "ivaPerci1": 0
+    "totalPagar": 562432.3
   },
   "extension": {
     "docuEntrega": null,
     "nombRecibe": null,
-    "observaciones": "",
+    "observaciones": "sdf",
     "placaVehiculo": null,
     "nombEntrega": null,
     "docuRecibe": null

@@ -1,7 +1,7 @@
-const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-//const BASE_URL = "http://localhost:3000";
+//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+const BASE_URL = "http://localhost:3000";
 
-function downloadPDF(id_emisor, codigo_de_generacion, token) {
+function downloadPDF(data, id_emisor, codigo_de_generacion, token) {
     fetch(`${BASE_URL}/mail/bill/${id_emisor}`, {
             method: 'POST',
             headers: {
@@ -24,7 +24,7 @@ function downloadPDF(id_emisor, codigo_de_generacion, token) {
             // Set the link's href to the blob URL
             link.href = url;
             // Set the download attribute with a filename
-            link.download = 'factura.pdf';
+            link.download = `factura de ${data.receptor.nombre} - $ ${data.resumen.totalPagar} .pdf`;
             // Append the link to the body
             document.body.appendChild(link);
             // Programmatically click the link to trigger the download

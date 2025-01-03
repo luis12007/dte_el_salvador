@@ -85,7 +85,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) =>
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
               <span className="text-black">{`Nombre `}</span>
-              {/* <span className="text-tomato">*</span> */}
+              <span className="text-tomato">*</span>
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
