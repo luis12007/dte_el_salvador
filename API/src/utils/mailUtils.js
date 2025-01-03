@@ -745,6 +745,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         // Example usage
         funcenter(plantillaDB.observaciones, y + 55, 30);
         var ivaC = plantillaDB.subtotalventas * 0.13
+        var ivaper = Number(plantillaDB.iva_percibido)
 
         if (plantillaDB.tipo === "03") {
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
@@ -752,7 +753,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${plantillaDB.iva_percibido.toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $${ivaper.toFixed(2)}`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
                 .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })

@@ -331,7 +331,7 @@ itemsdata();
       passwordPri: user.passwordpri ,
       dteJson: data,
     };
-    downloadPDF(id_emisor, data.identificacion.codigoGeneracion , token);
+    downloadPDF(data,id_emisor, data.identificacion.codigoGeneracion , token);
 
     /* Calling the API to send the email */
 
@@ -342,262 +342,270 @@ itemsdata();
 
   const ValidateBillHandler = async () => { /* Firm DTE */
 /* -----------------CONST DATA--------------------------- */
+try {
+  if (content.tipo === "01") {
+    var data = {
+      identificacion: {
+        version: parseInt(content.version), 
+        ambiente: content.ambiente, 
+        tipoDte: content.tipo, 
+        numeroControl: content.numero_de_control, 
+        codigoGeneracion: content.codigo_de_generacion,
+        tipoModelo: parseInt(content.modelo_de_factura), 
+        tipoOperacion: parseInt(content.tipo_de_transmision), 
+        fecEmi: content.fecha_y_hora_de_generacion,
+        horEmi: content.horemi,
+        tipoMoneda: content.tipomoneda, 
+        tipoContingencia: content.tipocontingencia, 
+        motivoContin: content.motivocontin, 
+      },
+      documentoRelacionado: content.documentorelacionado,
+      emisor: {
+        direccion: {
+          municipio: user.municipio, 
+          departamento: user.departamento, 
+          complemento: user.direccion 
+        },
+        nit: user.nit,
+        nrc: user.nrc ,
+        nombre: user.name ,
+        codActividad: user.codactividad,
+        descActividad: user.descactividad, 
+        telefono: user.numero_de_telefono, 
+        correo: user.correo_electronico, 
+        nombreComercial: user.nombre_comercial,
+        tipoEstablecimiento: user.tipoestablecimiento,
+    
+        /* TODO: Just in case establecimiento  */
+        codEstableMH: content.codestablemh,
+        codEstable: content.codestable, 
+        codPuntoVentaMH: content.codpuntoventamh, 
+        codPuntoVenta: content.codpuntoventa 
+      },
+      receptor: {
+        codActividad: content.re_codactividad,
+        direccion: null, 
+        nrc: content.re_nrc, 
+        descActividad: content.re_actividad_economica,
+        correo: content.re_correo_electronico,
+        tipoDocumento: content.re_tipodocumento,
+        nombre: content.re_name, 
+        telefono: content.re_numero_telefono, 
+        numDocumento: content.re_numdocumento
+      },
+      otrosDocumentos: content.otrosdocumentos, 
+      ventaTercero: content.ventatercero, 
+      cuerpoDocumento: Listitems ,
+      resumen: {
+        condicionOperacion: content.condicionoperacion, 
+        totalIva: parseFloat(content.iva_percibido),/* pending */   
+        saldoFavor: content.saldofavor,   
+        numPagoElectronico: content.numpagoelectronico,  
+        pagos: [
+          {/* TODO: ADD MORE PAYMENTS */
+            periodo: content.periodo, 
+            plazo: content.plazo,  
+            montoPago: content.montopago, 
+            codigo: content.codigo,        
+            referencia: content.referencia
+          }
+        ],
+        totalNoSuj: content.totalnosuj,
+        tributos: content.tributos, 
+        totalLetras: content.cantidad_en_letras,  
+        totalExenta: content.totalexenta,  
+        subTotalVentas: content.subtotalventas, 
+        totalGravada: parseFloat(content.total_agravada),
+        montoTotalOperacion: content.montototaloperacion, 
+        descuNoSuj: content.descunosuj,
+        descuExenta: content.descuexenta,
+        descuGravada: content.descugravada,
+        porcentajeDescuento: content.porcentajedescuento,
+        totalDescu: parseFloat(content.monto_global_de_descuento), 
+        subTotal: parseFloat(content.subtotal), 
+        ivaRete1: parseFloat(content.iva_retenido),
+        reteRenta: parseFloat(content.retencion_de_renta),
+        totalNoGravado: content.totalnogravado,
+        totalPagar: parseFloat(content.total_a_pagar)
+      },
+      extension: {
+        docuEntrega: content.documento_e,
+        nombRecibe: content.documento_r,
+        observaciones: content.observaciones,
+        placaVehiculo: content.placavehiculo,
+        nombEntrega: content.responsable_emisor, 
+        docuRecibe: content.documento_receptor, 
+      },
+      apendice: content.apendice,
+    };
 
-if (content.tipo === "01") {
-  var data = {
-    identificacion: {
-      version: parseInt(content.version), 
-      ambiente: content.ambiente, 
-      tipoDte: content.tipo, 
-      numeroControl: content.numero_de_control, 
-      codigoGeneracion: content.codigo_de_generacion,
-      tipoModelo: parseInt(content.modelo_de_factura), 
-      tipoOperacion: parseInt(content.tipo_de_transmision), 
-      fecEmi: content.fecha_y_hora_de_generacion,
-      horEmi: content.horemi,
-      tipoMoneda: content.tipomoneda, 
-      tipoContingencia: content.tipocontingencia, 
-      motivoContin: content.motivocontin, 
-    },
-    documentoRelacionado: content.documentorelacionado,
-    emisor: {
-      direccion: {
-        municipio: user.municipio, 
-        departamento: user.departamento, 
-        complemento: user.direccion 
-      },
-      nit: user.nit,
-      nrc: user.nrc ,
-      nombre: user.name ,
-      codActividad: user.codactividad,
-      descActividad: user.descactividad, 
-      telefono: user.numero_de_telefono, 
-      correo: user.correo_electronico, 
-      nombreComercial: user.nombre_comercial,
-      tipoEstablecimiento: user.tipoestablecimiento,
+    data.receptor.direccion = null;
+  } else if (content.tipo === "03") {
+    /* Split in this structure direccion: {
+          municipio: userinfo.municipio, 
+          departamento: userinfo.departamento, 
+          complemento: userinfo.direccion 
+        }, the string "08|08|direccion" */
   
-      /* TODO: Just in case establecimiento  */
-      codEstableMH: content.codestablemh,
-      codEstable: content.codestable, 
-      codPuntoVentaMH: content.codpuntoventamh, 
-      codPuntoVenta: content.codpuntoventa 
-    },
-    receptor: {
-      codActividad: content.re_codactividad,
-      direccion: content.re_direccion, 
-      nrc: content.re_nrc, 
-      descActividad: content.re_actividad_economica,
-      correo: content.re_correo_electronico,
-      tipoDocumento: content.re_tipodocumento,
-      nombre: content.re_name, 
-      telefono: content.re_numero_telefono, 
-      numDocumento: content.re_numdocumento
-    },
-    otrosDocumentos: content.otrosdocumentos, 
-    ventaTercero: content.ventatercero, 
-    cuerpoDocumento: Listitems ,
-    resumen: {
-      condicionOperacion: content.condicionoperacion, 
-      totalIva: parseFloat(content.iva_percibido),/* pending */   
-      saldoFavor: content.saldofavor,   
-      numPagoElectronico: content.numpagoelectronico,  
-      pagos: [
-        {/* TODO: ADD MORE PAYMENTS */
-          periodo: content.periodo, 
-          plazo: content.plazo,  
-          montoPago: content.montopago, 
-          codigo: content.codigo,        
-          referencia: content.referencia
-        }
-      ],
-      totalNoSuj: content.totalnosuj,
-      tributos: content.tributos, 
-      totalLetras: content.cantidad_en_letras,  
-      totalExenta: content.totalexenta,  
-      subTotalVentas: content.subtotalventas, 
-      totalGravada: parseFloat(content.total_agravada),
-      montoTotalOperacion: content.montototaloperacion, 
-      descuNoSuj: content.descunosuj,
-      descuExenta: content.descuexenta,
-      descuGravada: content.descugravada,
-      porcentajeDescuento: content.porcentajedescuento,
-      totalDescu: parseFloat(content.monto_global_de_descuento), 
-      subTotal: parseFloat(content.subtotal), 
-      ivaRete1: parseFloat(content.iva_retenido),
-      reteRenta: parseFloat(content.retencion_de_renta),
-      totalNoGravado: content.totalnogravado,
-      totalPagar: parseFloat(content.total_a_pagar)
-    },
-    extension: {
-      docuEntrega: content.documento_e,
-      nombRecibe: content.documento_r,
-      observaciones: content.observaciones,
-      placaVehiculo: content.placavehiculo,
-      nombEntrega: content.responsable_emisor, 
-      docuRecibe: content.documento_receptor, 
-    },
-    apendice: content.apendice,
-  };
-} else if (content.tipo === "03") {
-  /* Split in this structure direccion: {
-        municipio: userinfo.municipio, 
-        departamento: userinfo.departamento, 
-        complemento: userinfo.direccion 
-      }, the string "08|08|direccion" */
-
-  const address = content.re_direccion.split("|");
-  const tributocf = content.tributocf.split("|");
-  var data = {
-    identificacion: {
-      version: parseInt(content.version), 
-      ambiente: content.ambiente, 
-      tipoDte: content.tipo, 
-      numeroControl: content.numero_de_control, 
-      codigoGeneracion: content.codigo_de_generacion,
-      tipoModelo: parseInt(content.modelo_de_factura), 
-      tipoOperacion: parseInt(content.tipo_de_transmision), 
-      fecEmi: content.fecha_y_hora_de_generacion,
-      horEmi: content.horemi,
-      tipoMoneda: content.tipomoneda, 
-      tipoContingencia: content.tipocontingencia, 
-      motivoContin: content.motivocontin, 
-    },
-    documentoRelacionado: content.documentorelacionado,
-    emisor: {
-      direccion: {
-        municipio: user.municipio, 
-        departamento: user.departamento, 
-        complemento: user.direccion 
+    const address = content.re_direccion.split("|");
+    const tributocf = content.tributocf.split("|");
+    var data = {
+      identificacion: {
+        version: parseInt(content.version), 
+        ambiente: content.ambiente, 
+        tipoDte: content.tipo, 
+        numeroControl: content.numero_de_control, 
+        codigoGeneracion: content.codigo_de_generacion,
+        tipoModelo: parseInt(content.modelo_de_factura), 
+        tipoOperacion: parseInt(content.tipo_de_transmision), 
+        fecEmi: content.fecha_y_hora_de_generacion,
+        horEmi: content.horemi,
+        tipoMoneda: content.tipomoneda, 
+        tipoContingencia: content.tipocontingencia, 
+        motivoContin: content.motivocontin, 
       },
-      nit: user.nit,
-      nrc: user.nrc ,
-      nombre: user.name ,
-      codActividad: user.codactividad,
-      descActividad: user.descactividad, 
-      telefono: user.numero_de_telefono, 
-      correo: user.correo_electronico, 
-      nombreComercial: user.nombre_comercial,
-      tipoEstablecimiento: user.tipoestablecimiento,
+      documentoRelacionado: content.documentorelacionado,
+      emisor: {
+        direccion: {
+          municipio: user.municipio, 
+          departamento: user.departamento, 
+          complemento: user.direccion 
+        },
+        nit: user.nit,
+        nrc: user.nrc ,
+        nombre: user.name ,
+        codActividad: user.codactividad,
+        descActividad: user.descactividad, 
+        telefono: user.numero_de_telefono, 
+        correo: user.correo_electronico, 
+        nombreComercial: user.nombre_comercial,
+        tipoEstablecimiento: user.tipoestablecimiento,
+    
+        /* TODO: Just in case establecimiento  */
+        codEstableMH: content.codestablemh,
+        codEstable: content.codestable, 
+        codPuntoVentaMH: content.codpuntoventamh, 
+        codPuntoVenta: content.codpuntoventa 
+      },
+      receptor: {
+        codActividad: content.re_codactividad,
+        direccion: {
+          municipio: address[1], 
+          departamento: address[0], 
+          complemento: address[2] 
+        },
+        nrc: content.re_nrc, 
+        descActividad: content.re_actividad_economica,
+        correo: content.re_correo_electronico,
+        nombre: content.re_name, 
+        telefono: content.re_numero_telefono, 
+        nombreComercial: content.re_numdocumento,
+        nit: content.re_nit
+      },
+      otrosDocumentos: content.otrosdocumentos, 
+      ventaTercero: content.ventatercero, 
+      cuerpoDocumento: Listitems ,
+      resumen: {
+        condicionOperacion: content.condicionoperacion, 
+        saldoFavor: content.saldofavor,   
+        numPagoElectronico: content.numpagoelectronico,  
+        pagos: [
+          {/* TODO: ADD MORE PAYMENTS */
+            periodo: content.periodo, 
+            plazo: content.plazo,  
+            montoPago: content.montopago, 
+            codigo: content.codigo,        
+            referencia: content.referencia
+          }
+        ],
+        totalNoSuj: content.totalnosuj,
+        tributos: [{
+          codigo: tributocf[0],
+          descripcion: tributocf[1],
+          valor: parseFloat(tributocf[2])
+      }], 
+        totalLetras: content.cantidad_en_letras,  
+        totalExenta: content.totalexenta,  
+        subTotalVentas: content.subtotalventas, 
+        totalGravada: parseFloat(content.total_agravada),
+        montoTotalOperacion: content.montototaloperacion, 
+        descuNoSuj: content.descunosuj,
+        descuExenta: content.descuexenta,
+        descuGravada: content.descugravada,
+        porcentajeDescuento: content.porcentajedescuento,
+        totalDescu: parseFloat(content.monto_global_de_descuento), 
+        subTotal: parseFloat(content.subtotal), 
+        ivaRete1: parseFloat(content.iva_retenido),
+        reteRenta: parseFloat(content.retencion_de_renta),
+        totalNoGravado: content.totalnogravado,
+        totalPagar: parseFloat(content.total_a_pagar),
+        ivaPerci1: parseFloat(content.iva_percibido),
+      },
+      extension: {
+        docuEntrega: content.documento_e,
+        nombRecibe: content.documento_r,
+        observaciones: content.observaciones,
+        placaVehiculo: content.placavehiculo,
+        nombEntrega: content.responsable_emisor, 
+        docuRecibe: content.documento_receptor, 
+      },
+      apendice: content.apendice,
+    };
+  }
   
-      /* TODO: Just in case establecimiento  */
-      codEstableMH: content.codestablemh,
-      codEstable: content.codestable, 
-      codPuntoVentaMH: content.codpuntoventamh, 
-      codPuntoVenta: content.codpuntoventa 
-    },
-    receptor: {
-      codActividad: content.re_codactividad,
-      direccion: {
-        municipio: address[1], 
-        departamento: address[0], 
-        complemento: address[2] 
-      },
-      nrc: content.re_nrc, 
-      descActividad: content.re_actividad_economica,
-      correo: content.re_correo_electronico,
-      nombre: content.re_name, 
-      telefono: content.re_numero_telefono, 
-      nombreComercial: content.re_numdocumento,
-      nit: content.re_nit
-    },
-    otrosDocumentos: content.otrosdocumentos, 
-    ventaTercero: content.ventatercero, 
-    cuerpoDocumento: Listitems ,
-    resumen: {
-      condicionOperacion: content.condicionoperacion, 
-      saldoFavor: content.saldofavor,   
-      numPagoElectronico: content.numpagoelectronico,  
-      pagos: [
-        {/* TODO: ADD MORE PAYMENTS */
-          periodo: content.periodo, 
-          plazo: content.plazo,  
-          montoPago: content.montopago, 
-          codigo: content.codigo,        
-          referencia: content.referencia
-        }
-      ],
-      totalNoSuj: content.totalnosuj,
-      tributos: [{
-        codigo: tributocf[0],
-        descripcion: tributocf[1],
-        valor: parseFloat(tributocf[2])
-    }], 
-      totalLetras: content.cantidad_en_letras,  
-      totalExenta: content.totalexenta,  
-      subTotalVentas: content.subtotalventas, 
-      totalGravada: parseFloat(content.total_agravada),
-      montoTotalOperacion: content.montototaloperacion, 
-      descuNoSuj: content.descunosuj,
-      descuExenta: content.descuexenta,
-      descuGravada: content.descugravada,
-      porcentajeDescuento: content.porcentajedescuento,
-      totalDescu: parseFloat(content.monto_global_de_descuento), 
-      subTotal: parseFloat(content.subtotal), 
-      ivaRete1: parseFloat(content.iva_retenido),
-      reteRenta: parseFloat(content.retencion_de_renta),
-      totalNoGravado: content.totalnogravado,
-      totalPagar: parseFloat(content.total_a_pagar),
-      ivaPerci1: parseFloat(content.iva_percibido),
-    },
-    extension: {
-      docuEntrega: content.documento_e,
-      nombRecibe: content.documento_r,
-      observaciones: content.observaciones,
-      placaVehiculo: content.placavehiculo,
-      nombEntrega: content.responsable_emisor, 
-      docuRecibe: content.documento_receptor, 
-    },
-    apendice: content.apendice,
-  };
+  
+      console.log("---------------resultado--------------");
+      console.log(data);
+      console.log("---------------resultado--------------");
+  
+  /* -------------------------------------------- */
+      const Firm = {
+        nit: user.nit ,
+        activo: true,
+        passwordPri: user.passwordpri ,
+        dteJson: data,
+      };
+      const responseFirm = await Firmservice.create(Firm);
+      console.log(responseFirm);
+  
+      data.firma = responseFirm.body;
+      data.sellado = content.sellado;
+      data.sello = content.sello;
+      data.receptor.direccion = content.re_direccion;
+  
+      console.log("---------------resultado of firm server--------------");
+      console.log(responseFirm);
+      // update the bill without the items 
+      const response = await PlantillaAPI.updateNoItems(
+        id_emisor,
+        data,
+        token,
+        data.identificacion.codigoGeneracion
+      );
+      console.log("edited");
+      console.log(response); 
+  
+      if (response.message === "plantilla actualizado") {
+        toast.success("Factura firmada");
+  
+        /* wait 5 seconds */
+        setTimeout(() => {
+        window.location.reload();
+  
+        }, 3000);
+  
+  
+  
+  
+      }else {
+        toast.error("Error al actualizar factura");
+      }
+      /*  window.location.reload();  */
+} catch (error) {
+  console.log(error)
+  toast.error("Dispositivo no autorizado para firmar")
 }
 
-
-    console.log("---------------resultado--------------");
-    console.log(data);
-    console.log("---------------resultado--------------");
-
-/* -------------------------------------------- */
-    const Firm = {
-      nit: user.nit ,
-      activo: true,
-      passwordPri: user.passwordpri ,
-      dteJson: data,
-    };
-    const responseFirm = await Firmservice.create(Firm);
-    console.log(responseFirm);
-
-    data.firma = responseFirm.body;
-    data.sellado = content.sellado;
-    data.sello = content.sello;
-
-    console.log("---------------resultado of firm server--------------");
-    console.log(responseFirm);
-    // update the bill without the items 
-    const response = await PlantillaAPI.updateNoItems(
-      id_emisor,
-      data,
-      token,
-      data.identificacion.codigoGeneracion
-    );
-    console.log("edited");
-    console.log(response); 
-
-    if (response.message === "plantilla actualizado") {
-      toast.success("Factura firmada");
-
-      /* wait 5 seconds */
-      setTimeout(() => {
-      window.location.reload();
-
-      }, 3000);
-
-
-
-
-    }else {
-      toast.error("Error al actualizar factura");
-    }
-    /*  window.location.reload();  */
   };
 
 
