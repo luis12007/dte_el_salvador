@@ -12,6 +12,7 @@ const Login = () => {
 
   const HomeHandler = async (props) => {
     /* navigate("/principal"); */
+    try {
     const result = await LoginAPI.login(props);
     console.log(result);
     
@@ -20,11 +21,18 @@ const Login = () => {
       localStorage.setItem("user_id", result.user_id);
       localStorage.setItem("username", result.username);
       navigate("/principal");
+      return
 
     }else{
       toast.error("Credenciales incorrectas");
-console.log("Credenciales incorrectas");
+      console.log("Credenciales incorrectas");
+      return
     }
+
+  } catch (error) {
+    console.log(error);
+    toast.error("Conexión no disponible");
+  }
   }
 
   return (
