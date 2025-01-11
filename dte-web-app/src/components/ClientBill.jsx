@@ -149,10 +149,10 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) =>
             </div>
           </div>
         </div>
-        <div className="self-stretch px-3">
+        {/* <div className="self-stretch px-3">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
               <span className="text-black">{`Tipo de documento de identificación `}</span>
-              {/* <span className="text-tomato">*</span> */}
+              <span className="text-tomato">*</span> 
             </div>
             <div className="self-stretch h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100 px-3">
               <select
@@ -169,7 +169,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) =>
               </select>
               <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
             </div>
-            </div>
+            </div>  */}
       </div>
     </section>
   );

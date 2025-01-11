@@ -14,6 +14,7 @@ import AddItem from "./pages/AddItem";
 import EditBill from "./pages/EditBill";
 import EditCF from "./pages/EditCF";
 import Private from './pages/Private'
+import Invalidate from './pages/Invalidate'
 
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/principal" element={<Private> <Home/></Private>}/>
 
         <Route path="/facturas" element={<Private><HomeFacturas/></Private>}/> 
+        <Route path="/invalidar" element={<Private><Invalidate/></Private>}/> 
         <Route path="/detalles/:id" element={<Private><DetallesFactura/></Private>}/>
         <Route path="/facturas/:id" element={<Private><HomeFacturas/></Private>}/>
         <Route path="/editar/factura/:codigo_de_generacion" element={<Private><EditBill/></Private>}/>

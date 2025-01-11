@@ -3,12 +3,12 @@
     "version": 1,
     "ambiente": "00",
     "tipoDte": "01",
-    "numeroControl": "DTE-01-00000000-000000000000221",
-    "codigoGeneracion": "F11E5D3A-0E51-4990-8D4D-3CBCCE14765B",
+    "numeroControl": "DTE-01-00000000-000000000000228",
+    "codigoGeneracion": "D82B7352-6500-4EA9-A562-930F51BE8162",
     "tipoModelo": 1,
     "tipoOperacion": 1,
-    "fecEmi": "2025-01-02",
-    "horEmi": "11:05:07",
+    "fecEmi": "2025-01-11",
+    "horEmi": "10:05:45",
     "tipoMoneda": "USD",
     "tipoContingencia": null,
     "motivoContin": null
@@ -39,10 +39,10 @@
     "direccion": null,
     "nrc": null,
     "descActividad": "Otros",
-    "correo": "luishdezmtz12@gmail.com",
+    "correo": "Luishdezmtssz12@gmail.com",
     "tipoDocumento": "13",
-    "nombre": "hello",
-    "telefono": null,
+    "nombre": "Luis Hernandez",
+    "telefono": "64319239",
     "numDocumento": "06384275-4"
   },
   "otrosDocumentos": null,
@@ -50,7 +50,7 @@
   "cuerpoDocumento": [
     {
       "codTributo": null,
-      "descripcion": "asdf",
+      "descripcion": "produccion",
       "uniMedida": 99,
       "codigo": null,
       "cantidad": 1,
@@ -61,9 +61,9 @@
       "psv": 0,
       "montoDescu": 0,
       "numeroDocumento": null,
-      "precioUni": 562432.3,
+      "precioUni": 10,
       "ventaGravada": 0,
-      "ventaExenta": 562432.3,
+      "ventaExenta": 10,
       "ventaNoSuj": 0,
       "tipoItem": 1
     }
@@ -77,33 +77,33 @@
       {
         "periodo": null,
         "plazo": null,
-        "montoPago": 562432.3,
+        "montoPago": 10,
         "codigo": "01",
         "referencia": null
       }
     ],
     "totalNoSuj": 0,
     "tributos": null,
-    "totalLetras": "QUINIENTOS SESENTA Y DOS MIL CUATROCIENTOS TREINTA Y DOS DÓLARES CON TREINTA CENTAVOS",
-    "totalExenta": 562432.3,
-    "subTotalVentas": 562432.3,
+    "totalLetras": "DIEZ DÓLARES",
+    "totalExenta": 10,
+    "subTotalVentas": 10,
     "totalGravada": null,
-    "montoTotalOperacion": 562432.3,
+    "montoTotalOperacion": 10,
     "descuNoSuj": 0,
     "descuExenta": 0,
     "descuGravada": 0,
     "porcentajeDescuento": 0,
     "totalDescu": 0,
-    "subTotal": 562432.3,
+    "subTotal": 10,
     "ivaRete1": "0",
     "reteRenta": "0",
     "totalNoGravado": 0,
-    "totalPagar": 562432.3
+    "totalPagar": 10
   },
   "extension": {
     "docuEntrega": null,
     "nombRecibe": null,
-    "observaciones": "sdf",
+    "observaciones": "",
     "placaVehiculo": null,
     "nombEntrega": null,
     "docuRecibe": null

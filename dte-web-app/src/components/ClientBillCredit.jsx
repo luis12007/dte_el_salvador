@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 const ClietnBillCredit = ({
-  handleSelectChangeCFClient,
   setClient,
   client,
   departmentsAndMunicipalities,
