@@ -588,8 +588,9 @@ const EditBill = () => {
   /* navigate and fu */
 
   /* ---------------------------------------------------------- */
-  const addBillHandler = async () => {
+  const addBillHandler = async (event) => {
     /* Counting the sentences*/
+    event.preventDefault();
 
     const conditionoperationint = parseInt(payment.paymentType);
 

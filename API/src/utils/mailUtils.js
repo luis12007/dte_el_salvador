@@ -460,6 +460,61 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         pdfDoc.pipe(fs.createWriteStream(pdfPath))
             .on('finish', async() => {
                 // Email configuration
+                if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3) {
+                    const mailOptions = {
+                        from: 'mysoftwaresv@gmail.com',
+                        to: plantillaDB.re_correo_electronico,
+                        subject: `DTE de parte de ${user.name}`,
+                        html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
+                        attachments: [{
+                                filename: 'DTE.pdf',
+                                path: pdfPath,
+                                encoding: 'base64'
+                            },
+                            {
+                                filename: 'DTE.json', // Name of the JSON file
+                                path: jsonPath, // Path to the JSON file
+                                encoding: 'base64'
+                            }
+                        ]
+                    };
+                } else if (userDB.id === 5 || userDB.id === 7) {
+                    const mailOptions = {
+                        from: 'mysoftwaresv@gmail.com',
+                        to: plantillaDB.re_correo_electronico,
+                        subject: `DTE de parte de ${user.name}`,
+                        html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
+                        attachments: [{
+                                filename: 'DTE.pdf',
+                                path: pdfPath,
+                                encoding: 'base64'
+                            },
+                            {
+                                filename: 'DTE.json', // Name of the JSON file
+                                path: jsonPath, // Path to the JSON file
+                                encoding: 'base64'
+                            }
+                        ]
+                    };
+                } else {
+                    const mailOptions = {
+                        from: 'mysoftwaresv@gmail.com',
+                        to: plantillaDB.re_correo_electronico,
+                        subject: `DTE de parte de ${user.name}`,
+                        html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
+                        attachments: [{
+                                filename: 'DTE.pdf',
+                                path: pdfPath,
+                                encoding: 'base64'
+                            },
+                            {
+                                filename: 'DTE.json', // Name of the JSON file
+                                path: jsonPath, // Path to the JSON file
+                                encoding: 'base64'
+                            }
+                        ]
+                    };
+                }
                 const mailOptions = {
                     from: 'mysoftwaresv@gmail.com',
                     to: plantillaDB.re_correo_electronico,
@@ -477,7 +532,6 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         }
                     ]
                 };
-
                 const transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
@@ -515,14 +569,26 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add Doctor's information
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        pdfDoc.fontSize(18).fillColor('#1E3256')
-            .text('Dr. Luis Alonso Hernández Magaña', 30, yscale, { align: 'left' })
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 7) {
+            pdfDoc.fontSize(18).fillColor('#1E3256')
+                .text(`Dr. ${userDB.name}`, 30, yscale, { align: 'left' })
+        } else {
+            /* align in the middle of the left and center */
+            pdfDoc.fontSize(18).fillColor('#1E3256')
+                .text(`${userDB.name}`, 0, yscale, { align: 'center', width: 300, continued: false })
+        }
 
-        pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
-            .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
-            .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' })
-            .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
-
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3) {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+                .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' })
+                .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
+        } else {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+                /* .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' }) 
+                .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });*/
+        }
         // QR code and codes section (mock content for simplicity)
         /* BORDER BLACK */
         /* pdfDoc.rect(1300, 80, 150, 150).stroke('#000'); */

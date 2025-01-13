@@ -41,13 +41,28 @@ const sendPDF = async(req, res) => {
         const yscale = 70;
 
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        pdfDoc.fontSize(18).fillColor('#1E3256')
-            .text('Dr. Luis Alonso Hernández Magaña', 30, yscale, { align: 'left' })
+        console.log(userDB)
 
-        pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
-            .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
-            .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' })
-            .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 7) {
+            pdfDoc.fontSize(18).fillColor('#1E3256')
+                .text(`Dr. ${userDB.name}`, 30, yscale, { align: 'left' })
+        } else {
+            /* align in the middle of the left and center */
+            pdfDoc.fontSize(18).fillColor('#1E3256')
+                .text(`${userDB.name}`, 0, yscale, { align: 'center', width: 300, continued: false })
+        }
+
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3) {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+                .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' })
+                .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
+        } else {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+                /* .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' }) 
+                .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });*/
+        }
 
         const generateQRCodeImage = async(text, outputPath) => {
             try {
@@ -64,7 +79,8 @@ const sendPDF = async(req, res) => {
 
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         const qrCodePath = path.join(__dirname, '../../qrcode.png');
-        await generateQRCodeImage(`https://admin.factura.gob.sv/consultaPublica?ambiente=${userDB.ambiente}&codGen=${plantillaDB.codigo_de_generacion}&fechaEmi=${plantillaDB.fecha_y_hora_de_generacion}`, qrCodePath);
+        await generateQRCodeImage(`
+                        https: //admin.factura.gob.sv/consultaPublica?ambiente=${userDB.ambiente}&codGen=${plantillaDB.codigo_de_generacion}&fechaEmi=${plantillaDB.fecha_y_hora_de_generacion}`, qrCodePath);
         await delay(3000);
 
         pdfDoc.rect(280, yscale, 100, 100).stroke('#000');

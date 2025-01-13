@@ -16,7 +16,6 @@ const ListaDeServicioOClientes = () => {
             <HamburguerComponent sidebar={sidebar} visible={visible}/>
             <SidebarComponent visible={visible} setVisible={setVisible}/>
 <div className="w-full flex flex-col items-start mt-20 justify-start gap-[22px_0px]">
-
       <InnerFrame />
       </div>
     </div>

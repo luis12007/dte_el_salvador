@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import receipt from "../assets/imgs/receipt.png";
+import customers from "../assets/imgs/customers.png";
 const GroupComponent = ({visible, setVisible}) => {
   const navigate = useNavigate();
   if (visible === true) {
@@ -37,6 +39,10 @@ const GoClientsHandler = () => {
 
 const GoAddServiceHandler = () => {
   navigate("/items");
+}
+
+const GoCancelBill = () => {
+  navigate("/invalidar");
 }
 
 const CloseHandler = () => {
@@ -84,19 +90,7 @@ const CloseHandler = () => {
                 </div>
               </div>
             </button>
-            <button onClick={GoProfileHandler} className="flex flex-row w-full bg-white items-start justify-start py-0 px-0.5">
-              <div className="flex flex-row items-start justify-start gap-[0px_14px]">
-                <img
-                  className="h-[30px] w-[30px] relative object-cover z-[1]"
-                  loading="lazy"
-                  alt=""
-                  src="/usuario-1@2x.png"
-                />
-                <div className="flex flex-col items-start justify-start pt-[3px] px-0 pb-0">
-                  <div className="relative z-[1]  pt-0.5">Perfil</div>
-                </div>
-              </div>
-            </button>
+            
             <button onClick={GoAddBillsHandler} className="flex flex-row w-full bg-white items-start justify-start py-0 pr-0 pl-[3px]">
               <div className="flex flex-row items-start justify-start gap-[0px_13px]">
                 <img
@@ -134,6 +128,45 @@ const CloseHandler = () => {
                 </div>
               </div>
             </button> */}
+            <button onClick={GoCancelBill} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
+              <div className="flex  flex-row items-start justify-start gap-[0px_9px]">
+                <img
+                  className="h-[30px] w-[30px] relative object-cover z-[1]"
+                  loading="lazy"
+                  alt=""
+                  src={receipt}
+                />
+                <div className="flex flex-col items-start justify-start  pt-2 px-0 pb-0">
+                  <div className="relative z-[1]">Invalidar factura</div>
+                </div>
+              </div>
+            </button>
+            <button onClick={GoClientsHandler} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
+              <div className="flex  flex-row items-start justify-start gap-[0px_9px]">
+                <img
+                  className="h-[30px] w-[30px] relative object-cover z-[1]"
+                  loading="lazy"
+                  alt=""
+                  src={customers}
+                />
+                <div className="flex flex-col items-start justify-start  pt-2 px-0 pb-0">
+                  <div className="relative z-[1]">Clientes</div>
+                </div>
+              </div>
+            </button>
+            <button onClick={GoProfileHandler} className="flex flex-row w-full bg-white items-start justify-start py-0 px-0.5">
+              <div className="flex flex-row items-start justify-start gap-[0px_14px]">
+                <img
+                  className="h-[30px] w-[30px] relative object-cover z-[1]"
+                  loading="lazy"
+                  alt=""
+                  src="/usuario-1@2x.png"
+                />
+                <div className="flex flex-col items-start justify-start pt-[3px] px-0 pb-0">
+                  <div className="relative z-[1]  pt-0.5">Perfil</div>
+                </div>
+              </div>
+            </button>
           </nav>
         </div>
       </div>

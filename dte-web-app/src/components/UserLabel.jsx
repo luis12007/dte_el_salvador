@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-const UserLabel = ({ correoLuisAlexanderContaiPadding }) => {
+const UserLabel = ({ correoLuisAlexanderContaiPadding , client }) => {
   const userLabelStyle = useMemo(() => {
     return {
       padding: correoLuisAlexanderContaiPadding,
@@ -24,15 +24,15 @@ const UserLabel = ({ correoLuisAlexanderContaiPadding }) => {
         <div className="flex flex-col items-start justify-start gap-[9px_0px]">
           <div className="relative z-[1]">
             <b>Nombre:</b>
-            <span> Luis Alexander hernandez Martinez</span>
+            <span> {client.name}</span>
           </div>
           <div className="relative z-[1]">
             <b>Correo:</b>
-            <span> Luis Alexander Hernández Martínez</span>
+            <span> {client.email}</span>
           </div>
           <div className="relative z-[1]">
-            <b>NIT:</b>
-            <span> 123124123123121241</span>
+            <b>Numero de teléfono:</b>
+            <span> {client.phone}</span>
           </div>
         </div>
       </div>

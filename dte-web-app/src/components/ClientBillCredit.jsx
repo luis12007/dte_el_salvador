@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 const ClietnBillCredit = ({
-  handleSelectChangeCFClient,
   setClient,
   client,
   departmentsAndMunicipalities,
@@ -80,7 +79,7 @@ const ClietnBillCredit = ({
                   <input
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                     placeholder="######"
-                    type="text"
+                    type="Number"
                     value={client.nit}
                     onChange={(e) => handleChange("nit", e.target.value)}
                   />
@@ -97,7 +96,7 @@ const ClietnBillCredit = ({
                   <input
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                     placeholder="######"
-                    type="text"
+                    type="Number"
                     value={client.nrc}
                     onChange={(e) => handleChange("nrc", e.target.value)}
                   />
@@ -133,7 +132,7 @@ const ClietnBillCredit = ({
               <input
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="######"
-                type="text"
+                type="Number"
                 value={client.phone}
                 onChange={(e) => handleChange("phone", e.target.value)}
               />
