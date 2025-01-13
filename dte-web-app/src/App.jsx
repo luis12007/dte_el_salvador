@@ -1,5 +1,6 @@
 import React from 'react';
 import Login from './pages/Logins';
+import Login_LH from './pages/Logins_LH';
 import Home from './pages/Home';
 import HomeFacturas from './pages/HomeFacturas';
 import DetallesFactura from './pages/DetallesFactura';
@@ -27,6 +28,7 @@ export default function App() {
         {/* public*/}
         <Route path="/*" element={<Login/>}/>
         <Route path="/ingresar" element={<Login/>}/>
+        <Route path="/ingresar/LH" element={<Login_LH/>}/>
         <Route path="/ingresar/HM" element={<Login/>}/>
         <Route path="/ingresar/DR" element={<Login/>}/>
         <Route path="/ingresar/ND" element={<Login/>}/>

@@ -15,7 +15,7 @@ const authenticateToken = require('../middleware/verifyToken.js');
 
 
 // Define la ruta POST
-router.post('/create', authenticateToken, createClient);
+router.post('/create/:id', authenticateToken, createClient);
 //------------------------------------------------------------
 router.get('/get/:id', authenticateToken, getClientByUserId);
 router.put('/put/:id', authenticateToken, putClients);
