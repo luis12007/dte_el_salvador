@@ -592,7 +592,19 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
       }
-      if (id_emisor > 4) {
+      if (id_emisor == 5) {
+        const responseFirm = await Firmservice.DR_julio_HM(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        data.receptor.direccion = content.re_direccion;
+
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+      }
+      if (id_emisor > 5) {
         const responseFirm = null;
         toast.error("No se encontró firmador");
         return
@@ -799,7 +811,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
         console.log(senddata.observaciones);
         for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          toast.error(`Observación ${i + 1} ${senddata.observaciones[i]}`);
         }
 
         console.log("---------------resultado--------------");

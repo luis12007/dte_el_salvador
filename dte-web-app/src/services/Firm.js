@@ -1,4 +1,4 @@
-const BASE_URL_Firm = "https://174.138.54.64:443";
+const BASE_URL_Firm = "https://174.138.54.64:444";
 
 
 const Firm = {
@@ -25,7 +25,19 @@ const Firm = {
     // calling other endpoints for other clients
 
     HM_Clinic: async(firm) => {
-        const res = await fetch(`http://174.138.54.64:8113/firmardocumento/`, {
+        const res = await fetch(`https://174.138.54.64:8446/firmardocumento/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    DR_julio_HM: async(firm) => {
+        const res = await fetch(`https://174.138.54.64:8448/firmardocumento/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
