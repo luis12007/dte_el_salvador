@@ -32,11 +32,6 @@ const CardOfClientAndAddClient = () => {
     const AddClientHandler = async () => {
         client.departament = selectedDepartment;
         client.municipio = selectedMunicipality;
-        console.log('AddClientHandler')
-
-        const response = await ReceptorService.Add(id_emisor, token, client);
-        console.log(response)
-        console.log(client)
 
         if (client.actividad_economica === null) {
             toast.error("Seleccione una actividad económica")
@@ -60,14 +55,19 @@ const CardOfClientAndAddClient = () => {
             return;
         }
 
-        if (client.phone === null) {
-            toast.error("Ingrese un número de teléfono")
-            return;
-        }
+
         if (client.address === null) {
             toast.error("Ingrese una dirección")
             return;
         }
+
+        console.log('AddClientHandler')
+
+        const response = await ReceptorService.Add(id_emisor, token, client);
+        console.log(response)
+        console.log(client)
+
+        
 
         if (response.message == "Creado") {
             toast.success("Cliente agregado exitosamente")

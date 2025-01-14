@@ -43,7 +43,6 @@ const InnerFrame = () => {
               <UserLabel correoLuisAlexanderContaiPadding="0px 3px" client={client} />
               <div className="self-stretch h-0 flex flex-row items-start justify-start max-w-full">
                 <div className="h-px flex-1 relative box-border max-w-full z-[1] border-t-[1px] border-solid border-black" />
-                <div className="h-px flex-1 relative box-border max-w-full z-[2] ml-[-349px] border-t-[1px] border-solid border-black" />
               </div>
             </React.Fragment>
           ))}

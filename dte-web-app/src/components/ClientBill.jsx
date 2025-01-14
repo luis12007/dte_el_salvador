@@ -1,6 +1,8 @@
 import FrameComponent3 from "./SwitchOFF";
 import { useState } from "react";
-const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) => {
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleClient, onSelectClient}) => {
   // Extended list of departments and their corresponding municipalities
   const handleChange = (field, value) => {
 
@@ -36,10 +38,10 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) =>
   };
   return (
     <section className="self-stretch flex flex-row items-start justify-start py-0 px-2.5 box-border max-w-full text-left text-xs text-black font-inria-sans">
-      <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0.5 px-0 pb-[29px] box-border gap-[14px] max-w-full">
+      <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start px-0 pb-[29px] box-border gap-[14px] max-w-full">
         <div className="self-stretch h-[532px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <FrameComponent3
-          handleSelectChangeCFClient={handleSelectChangeCFClient}
+          handleSelectClient={handleSelectClient} isVisibleClient={isVisibleClient} onSelectClient={onSelectClient}
         />
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
@@ -53,8 +55,8 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) =>
                 onChange={(e) => handleChange("documentType", e.target.value)}
                 className="w-full relative  bg-white border-2 max-w-full"
               >
-                <option value="36">NIT</option>
-                <option value="13">DUI </option>
+                <option value="13">DUI</option>
+                <option value="36">NIT </option>
                 <option value="03">Pasaporte</option>
                 <option value="02">Carnet de residencia</option>
                 <option value="37">Otro</option>
@@ -96,6 +98,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) =>
                 onChange={(e) => handleChange("name", e.target.value)}
               />
             </div>
+            
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
@@ -171,6 +174,7 @@ const DocumentTypeFrame = ({ handleSelectChangeCFClient, setClient , client}) =>
             </div>
             </div>  */}
       </div>
+      
     </section>
   );
 };
