@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import personas from '../assets/imgs/personas.png';
+import ListReceptores from '../components/ListReceptores';
 
 const ClietnBillCredit = ({
   setClient,
@@ -9,7 +11,10 @@ const ClietnBillCredit = ({
   selectedMunicipality,
   getMunicipalityNumber,
   selectedDepartment,
-  visible
+  visible,
+  handleSelectClient,
+  isVisibleClient,
+  onSelectClient
 }) => {
   // Extended list of departments and their corresponding municipalities
 
@@ -49,20 +54,28 @@ const ClietnBillCredit = ({
   };
   return (
     <section className="self-stretch flex flex-row items-start justify-start py-0 px-2.5 box-border max-w-full text-left text-xs text-black font-inria-sans">
-      <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0.5 px-0 pb-[29px] box-border gap-[14px] max-w-full">
+      <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start  px-0 pb-[29px] box-border gap-[14px] max-w-full">
         <div className="self-stretch h-[532px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch flex flex-col items-start justify-start gap-[9.5px_0px] max-w-full text-left text-xs text-black font-inria-sans">
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
             <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
-            <b className="relative z-[2]">CLIENTE</b>
-            <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
-              <img
-                className="w-[18px] h-4 relative object-contain z-[2]"
-                alt=""
-                src="/atras-1@2x.png"
-              />
+          <b className="relative z-[2] text-lg w-2 pt-1" >Receptor</b>
+            <button className='bg-lightgray-200 rounded-lg flex flex-row items-center justify-center px-3 py-1 w-1/3 h-9 'onClick={handleSelectClient}>
+          <div className="flex items-start justify-start pt-px px-0 pb-0">
+            <h1 className='text-xs'>Receptores</h1>
+            <img
+              className="w-4 h-4  z-[2] place-self-center pl-2"
+              alt=""
+              src={personas}
+            />
             </div>
+          </button>
           </div>
+          {isVisibleClient && (
+        <div className="modal">
+          <ListReceptores onSelectClient={onSelectClient} handleSelectClient={handleSelectClient} />
+        </div>
+      )}
           <div className="flex flex-row items-start justify-start py-0 px-3.5">
             <div className="flex flex-row items-start justify-start gap-[0px_4px]"></div>
           </div>

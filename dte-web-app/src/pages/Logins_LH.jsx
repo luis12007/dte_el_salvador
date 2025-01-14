@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import LoginAPI from "../services/Loginservices";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import mysoftlogo from "../assets/imgs/mysoftlogo.png";
+import guitar1 from "../assets/imgs/guitar1.png";
+import guitar2 from "../assets/imgs/guitar2.png";
 
-const Login = () => {
+const Login_LH = () => {
 
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const Login = () => {
           className="h-[150px] w-[150px] relative object-cover"
           loading="lazy"
           alt=""
-          src={mysoftlogo}
+          src={guitar1}
         />
       </div>
       <main className="self-center items-center justify-center flex w-full mr-10 ml-10 relative max-w-full">
@@ -70,4 +71,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login_LH;

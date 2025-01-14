@@ -1,9 +1,14 @@
 import { useState } from "react";
+import AutocompleteInput from "./AutocompleteInput";
 const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
     const [type, setType] = useState("");
     const [cuantity, setcuantity] = useState("");
     const [description, setdescription] = useState("");
     const [price, setPrice] = useState("");
+    const suggestionsList = [
+    'servicios de anestesia',
+    'servicios de psirugia'
+    ];
 
     /* TODO: do */
     const handleUpdateAllAttributes = (event) => {
@@ -19,6 +24,9 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
         }
         console.log(newData);
         itemshandleAdd(newData);
+        setcuantity("");
+        setdescription("");
+        setPrice("");
     };
   
     return (
@@ -60,6 +68,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                                 placeholder="###"
                                 type="number"
+                                value={cuantity}
                             />
 
                         </div>
@@ -74,6 +83,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                                     placeholder="Producto o servicio"
                                     type="text"
+                                    value={description}
                                 />
                             </div>
                         </div>
@@ -88,6 +98,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                                     placeholder="###"
                                     type="number"
+                                    value={price}
                                 />
                             </div>
                         </div>

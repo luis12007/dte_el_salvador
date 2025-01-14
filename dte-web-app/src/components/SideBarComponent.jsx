@@ -78,21 +78,21 @@ const CloseHandler = () => {
               </div>
             </button>
             <button onClick={GoHomeFacturasHandler} className="flex flex-row items-start bg-white w-full justify-start py-0 px-[3px]">
-              <div className="flex flex-row items-start justify-start gap-[0px_13px]">
+              <div className="flex flex-row items-start justify-start gap-[0px_9px]">
                 <img
                   className="h-[30px] w-[30px] relative object-cover z-[1]"
                   loading="lazy"
                   alt=""
                   src="/facturasdepapel-1@2x.png"
                 />
-                <div className="flex flex-col items-start justify-start pt-2 px-0 pb-0">
+                <div className="flex flex-col  items-start justify-start pt-2 px-0 pb-0 ">
                   <div className="relative z-[1]">Facturas</div>
                 </div>
               </div>
             </button>
             
             <button onClick={GoAddBillsHandler} className="flex flex-row w-full bg-white items-start justify-start py-0 pr-0 pl-[3px]">
-              <div className="flex flex-row items-start justify-start gap-[0px_13px]">
+              <div className="flex flex-row items-start justify-start gap-[0px_9px]">
                 <img
                   className="h-[30px] w-[30px] relative object-cover z-[1]"
                   loading="lazy"
@@ -155,14 +155,14 @@ const CloseHandler = () => {
               </div>
             </button>
             <button onClick={GoProfileHandler} className="flex flex-row w-full bg-white items-start justify-start py-0 px-0.5">
-              <div className="flex flex-row items-start justify-start gap-[0px_14px]">
+              <div className="flex flex-row items-start justify-start gap-[0px_9px]">
                 <img
                   className="h-[30px] w-[30px] relative object-cover z-[1]"
                   loading="lazy"
                   alt=""
                   src="/usuario-1@2x.png"
                 />
-                <div className="flex flex-col items-start justify-start pt-[3px] px-0 pb-0">
+                <div className="flex flex-col items-start justify-start pt-2 px-0 pb-0">
                   <div className="relative z-[1]  pt-0.5">Perfil</div>
                 </div>
               </div>
@@ -171,9 +171,9 @@ const CloseHandler = () => {
         </div>
       </div>
       <button onClick={CloseHandler} className="flex w-full bg-white flex-row items-start justify-start py-0 px-[3px]">
-        <div className="flex flex-row items-start justify-start gap-[0px_5px]">
+        <div className="flex flex-row items-start justify-start gap-[0px_9px]">
           <img
-            className="h-[25px] w-[25px] relative object-cover z-[1]"
+            className="h-[27px] w-[27px] relative object-cover z-[1]"
             loading="lazy"
             alt=""
             src="/salida-1@2x.png"

@@ -1,5 +1,5 @@
-import React from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import React from "react";
+import { v4 as uuidv4 } from "uuid";
 import BillnoCF from "../components/ClientBill";
 import BillCF from "../components/ClientBillCF";
 import TreeNode from "../components/TreeNode";
@@ -11,15 +11,17 @@ import AdvanceItemsComponent from "../components/AdvanceNoItemsComponent";
 import TableOfContentsNew from "../components/TableOfContentsNew";
 import Firmservice from "../services/Firm";
 import PlantillaService from "../services/PlantillaService";
-import PlantillaAPI from '../services/PlantillaService';
-import UserService from '../services/UserServices';
-import EmisorService from '../services/emisor';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
+import PlantillaAPI from "../services/PlantillaService";
+import UserService from "../services/UserServices";
+import EmisorService from "../services/emisor";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { isVisible } from "@testing-library/user-event/dist/utils";
+import "./style.css";
 
 const Clientes = () => {
   const [selectedOption, setSelectedOption] = useState("");
+  const [isVisibleClient, setIsVisibleClient] = useState(false);
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
   const token = localStorage.getItem("token");
@@ -30,7 +32,6 @@ const Clientes = () => {
   const [iva, setiva] = useState(0);
   const navigate = useNavigate();
 
-
   /* useefect */
   useEffect(() => {
     const fetchData = async () => {
@@ -38,34 +39,32 @@ const Clientes = () => {
       console.log("User Data");
       console.log(response);
       setUserinfo(response);
-    }
+    };
     fetchData();
   }, []);
   /* Data of the DTE ------------------------------------ */
 
   const [observaciones, setObservaciones] = useState("");
 
-
   /* Call to the info of user */
   // Get the current date
   const now = new Date();
 
   // Get hours, minutes, and seconds
-  const hours = String(now.getHours()).padStart(2, '0'); // Ensure 2 digits with leading zero
-  const minutes = String(now.getMinutes()).padStart(2, '0'); // Ensure 2 digits
-  const seconds = String(now.getSeconds()).padStart(2, '0'); // Ensure 2 digits
+  const hours = String(now.getHours()).padStart(2, "0"); // Ensure 2 digits with leading zero
+  const minutes = String(now.getMinutes()).padStart(2, "0"); // Ensure 2 digits
+  const seconds = String(now.getSeconds()).padStart(2, "0"); // Ensure 2 digits
 
   // Format the time in HH:MM:SS
   const time24Hour = `${hours}:${minutes}:${seconds}`;
 
-
   const [time, setTime] = useState({
     date: "",
     time: time24Hour.toString(),
-  })
+  });
   /* Cliente array */
   var [client, setClient] = useState({
-    documentType: "36",
+    documentType: "13",
     name: "",
     document: "",
     address: "",
@@ -74,48 +73,41 @@ const Clientes = () => {
     codActividad: "10005",
     nrc: null,
     descActividad: "Otros",
-  }
-  );
+  });
 
   var [payment, setpayment] = useState({
     paymentType: "1",
     paymentmethod: "01",
     numberdoc: "",
     mount: "",
-  }
-  );
+  });
 
-  const [Listitems, setListitems] = useState([
-  ]);
+  const [Listitems, setListitems] = useState([]);
 
-  const [items, setitems] = useState([])
-
-
+  const [items, setitems] = useState([]);
 
   /* Const Condiciones Operaciones array op op */
 
-  const [contents, setContents] = useState([
-
-  ]);
+  const [contents, setContents] = useState([]);
 
   const handleRemove = (index) => {
-    setContents((prevContents) =>
-      prevContents.filter((_, i) => i !== index)
-    );
+    setContents((prevContents) => prevContents.filter((_, i) => i !== index));
   };
 
   const handleAdd = (newContents) => {
     setContents((prevContents) => [
       ...prevContents,
-      { type: newContents.type, pay: newContents.pay, mount: newContents.mount, Doc: newContents.Doc },
+      {
+        type: newContents.type,
+        pay: newContents.pay,
+        mount: newContents.mount,
+        Doc: newContents.Doc,
+      },
     ]);
   };
 
-
   /* Services Add */
-  const [itemsAdvance, setitemsAdvance] = useState([
-
-  ]);
+  const [itemsAdvance, setitemsAdvance] = useState([]);
 
   /* Set Data ----------------------------------------------- */
 
@@ -125,22 +117,25 @@ const Clientes = () => {
       ...prevClient,
       [field]: value,
     }));
-  }
-
+  };
 
   const itemshandleRemove = (index) => {
-    setitems((prevContents) =>
-      prevContents.filter((_, i) => i !== index)
-    );
+    setitems((prevContents) => prevContents.filter((_, i) => i !== index));
 
-        Listitems.splice(index, 1);
-        setListitems(Listitems);
+    Listitems.splice(index, 1);
+    setListitems(Listitems);
 
-        console.log("Listitems", Listitems);
+    console.log("Listitems", Listitems);
     /* map all newitems and sum the  precioUni*cantidad */
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
-    const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-    const rawiva = Listitems.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
+    const rawSubtotal = Listitems.reduce(
+      (total, item) => total + item.precioUni * item.cantidad,
+      0
+    );
+    const rawiva = Listitems.reduce(
+      (total, item) => total + item.ivaItem * item.cantidad,
+      0
+    );
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
@@ -153,7 +148,7 @@ const Clientes = () => {
     console.log("Total", total);
   };
 
- /* before with IVA
+  /* before with IVA
  const itemshandleAdd = (newContents) => {
 
     var type = "bienes"
@@ -224,23 +219,63 @@ const Clientes = () => {
   /* Adding factura without IVA */
   const itemshandleAdd = (newContents) => {
 
-    var type = "bienes"
+    if (newContents.price === "") {
+      toast.error("Item no tiene precio!", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+        style: { zIndex: 200000 } // Correct way to set z-index
+      });
+      return
+    }
+
+    if (newContents.cuantity === "") {
+      toast.error("Item no tiene cantidad!", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+        style: { zIndex: 200000 } // Correct way to set z-index
+      });
+      return
+    }
+
+    if (newContents.description === "") {
+      toast.error("Item sin descripción!", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+        style: { zIndex: 200000 } // Correct way to set z-index
+      });
+      return
+    }
+
+
+    var type = "bienes";
     if (newContents.type === "1") {
       type = "Bienes";
     } else if (newContents.type === "2") {
       type = "Servicios";
-    }
-    else if (newContents.type === "3") {
+    } else if (newContents.type === "3") {
       type = "Bienes y Servicios";
-    }
-    else if (newContents.type === "4") {
+    } else if (newContents.type === "4") {
       type = "Otro";
     }
 
     /* add items*/
     setitems((prevContents) => [
       ...prevContents,
-      { type: type, cuantity: newContents.cuantity, description: newContents.description, price: newContents.price },
+      {
+        type: type,
+        cuantity: newContents.cuantity,
+        description: newContents.description,
+        price: newContents.price,
+      },
     ]);
 
     const cuantityint = parseInt(newContents.cuantity);
@@ -252,22 +287,22 @@ const Clientes = () => {
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
     const newItem = {
       codTributo: null,
-      descripcion: newContents.description, 
+      descripcion: newContents.description,
       uniMedida: 99,
       codigo: null,
-      cantidad: cuantityint, 
-      numItem: Listitems.length + 1, 
+      cantidad: cuantityint,
+      numItem: Listitems.length + 1,
       tributos: null,
-      ivaItem: 0, 
+      ivaItem: 0,
       noGravado: 0,
-      psv: 0, 
-      montoDescu: 0, 
-      numeroDocumento: null, 
-      precioUni: pricefloat, 
-      ventaGravada: 0, 
-      ventaExenta: pricefloat*cuantityint, 
-      ventaNoSuj: 0, 
-      tipoItem: typeitem, 
+      psv: 0,
+      montoDescu: 0,
+      numeroDocumento: null,
+      precioUni: pricefloat,
+      ventaGravada: 0,
+      ventaExenta: pricefloat * cuantityint,
+      ventaNoSuj: 0,
+      tipoItem: typeitem,
     };
     // Update the list with the new item
     setListitems((prevListitems) => [...prevListitems, newItem]);
@@ -276,8 +311,14 @@ const Clientes = () => {
 
     /* map all newitems and sum the  precioUni*cantidad */
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
-    const rawSubtotal = Listitemstrack.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-    const rawiva = Listitemstrack.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
+    const rawSubtotal = Listitemstrack.reduce(
+      (total, item) => total + item.precioUni * item.cantidad,
+      0
+    );
+    const rawiva = Listitemstrack.reduce(
+      (total, item) => total + item.ivaItem * item.cantidad,
+      0
+    );
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
@@ -290,7 +331,6 @@ const Clientes = () => {
     console.log("Total", total);
   };
 
-
   const itemsAdvancehandleRemove = (index) => {
     setitemsAdvance((prevContents) =>
       prevContents.filter((_, i) => i !== index)
@@ -300,26 +340,33 @@ const Clientes = () => {
   const itemsAdvancehandleAdd = (newContents) => {
     setitemsAdvance((prevContents) => [
       ...prevContents,
-      { type: newContents.type, quantity: newContents.quantity, code: newContents.code, units: newContents.units, description: newContents.description, saleType: newContents.saleType, price: newContents.price, taxes: newContents.taxes },
+      {
+        type: newContents.type,
+        quantity: newContents.quantity,
+        code: newContents.code,
+        units: newContents.units,
+        description: newContents.description,
+        saleType: newContents.saleType,
+        price: newContents.price,
+        taxes: newContents.taxes,
+      },
     ]);
   };
 
-
   /* navigate and fu */
 
+  const testbill = async () => {
+    // add a json mock with the structure of the data
+    /* const count = await PlantillaAPI.count(id_emisor, "01", token) */
 
-const testbill = async () => {
-// add a json mock with the structure of the data
-/* const count = await PlantillaAPI.count(id_emisor, "01", token) */
-
-try {
-  /* EmisorService */
-  const response = await EmisorService.count_factura(id_emisor, token);
-  console.log("Count Factura");
-  console.log(response);
-} catch (error) {
-  console.log(error);
-}
+    try {
+      /* EmisorService */
+      const response = await EmisorService.count_factura(id_emisor, token);
+      console.log("Count Factura");
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
 
     const myUuid = uuidv4().toUpperCase().toString();
 
@@ -327,129 +374,132 @@ try {
 
     var data = {
       identificacion: {
-        version: 1, 
-        ambiente: "00", 
-        tipoDte: "01", 
-        numeroControl: userinfo.id_emisor + 1, 
+        version: 1,
+        ambiente: "00",
+        tipoDte: "01",
+        numeroControl: userinfo.id_emisor + 1,
         codigoGeneracion: myUuid,
-        tipoModelo: 1, 
-        tipoOperacion: 1, 
+        tipoModelo: 1,
+        tipoOperacion: 1,
         fecEmi: "2024-02-02",
         horEmi: time.time,
-        tipoMoneda: "USD", 
-        tipoContingencia: null, 
-        motivoContin: null 
+        tipoMoneda: "USD",
+        tipoContingencia: null,
+        motivoContin: null,
       },
       documentoRelacionado: null,
       emisor: {
         direccion: {
-          municipio: 1, 
-          departamento: 1, 
-          complemento: "userinfo.direccion" 
+          municipio: 1,
+          departamento: 1,
+          complemento: "userinfo.direccion",
         },
         nit: "userinfo.nit",
-        nrc: "userinfo.nrc" ,
-        nombre: "userinfo.name" ,
+        nrc: "userinfo.nrc",
+        nombre: "userinfo.name",
         codActividad: "userinfo.codactividad",
-        descActividad: "userinfo.descactividad", 
-        telefono: "userinfo.numero_de_telefono", 
-        correo: "userinfo.correo_electronico", 
+        descActividad: "userinfo.descactividad",
+        telefono: "userinfo.numero_de_telefono",
+        correo: "userinfo.correo_electronico",
         nombreComercial: "userinfo.nombre_comercial",
         tipoEstablecimiento: "userinfo.tipoestablecimiento",
 
         /* TODO: Just in case establecimiento  */
         codEstableMH: null,
-        codEstable: null, 
-        codPuntoVentaMH: null, 
-        codPuntoVenta: null 
+        codEstable: null,
+        codPuntoVentaMH: null,
+        codPuntoVenta: null,
       },
-      receptor: { /* TODO ADDRES */
-        codActividad: "client.codActividad",
-        direccion: /* client.address */null, 
-        nrc: "client.nrc", 
+      receptor: {
+        /* TODO ADDRES */ codActividad: "client.codActividad",
+        direccion: /* client.address */ null,
+        nrc: "client.nrc",
         descActividad: "client.descActividad",
         correo: "client.email",
         tipoDocumento: "client.documentType",
-        nombre: "client.name", 
-        telefono: "client.phone", 
-        numDocumento:" client.document"
+        nombre: "client.name",
+        telefono: "client.phone",
+        numDocumento: " client.document",
       },
-      otrosDocumentos: null, 
-      ventaTercero: null, 
-      cuerpoDocumento: [{
-        codTributo: null,
-        descripcion: "newContents.description", 
-        uniMedida: 99,
-        codigo: null,
-        cantidad: 1, 
-        numItem: 1, 
-        tributos: null,
-        ivaItem: 20.2, 
-        noGravado: 0,
-        psv: 0, 
-        montoDescu: 0, 
-        numeroDocumento: null, 
-        precioUni: 20.2, 
-        ventaGravada: 20.2, 
-        ventaExenta: 0, 
-        ventaNoSuj: 0, 
-        tipoItem: 1, 
-      }] ,
+      otrosDocumentos: null,
+      ventaTercero: null,
+      cuerpoDocumento: [
+        {
+          codTributo: null,
+          descripcion: "newContents.description",
+          uniMedida: 99,
+          codigo: null,
+          cantidad: 1,
+          numItem: 1,
+          tributos: null,
+          ivaItem: 20.2,
+          noGravado: 0,
+          psv: 0,
+          montoDescu: 0,
+          numeroDocumento: null,
+          precioUni: 20.2,
+          ventaGravada: 20.2,
+          ventaExenta: 0,
+          ventaNoSuj: 0,
+          tipoItem: 1,
+        },
+      ],
       resumen: {
-        condicionOperacion: 20, 
-        totalIva: 0.1154,   /* IVA 0.1154 percent -----------------*/
-        saldoFavor: 0,   
-        numPagoElectronico: null,  
+        condicionOperacion: 20,
+        totalIva: 0.1154 /* IVA 0.1154 percent -----------------*/,
+        saldoFavor: 0,
+        numPagoElectronico: null,
         pagos: [
-          {/* TODO: ADD MORE PAYMENTS */
-            periodo: null, 
-            plazo: null,  
-            montoPago: 200,  
-            codigo: "CODIGO DE PRODUCTO", 
-            referencia: null 
-          }
+          {
+            /* TODO: ADD MORE PAYMENTS */ periodo: null,
+            plazo: null,
+            montoPago: 200,
+            codigo: "CODIGO DE PRODUCTO",
+            referencia: null,
+          },
         ],
         totalNoSuj: 0,
-        tributos: null, 
-        totalLetras: "DOSCIENTOS DOLARES",  
-        totalExenta: 0,  
-        subTotalVentas: 200, 
+        tributos: null,
+        totalLetras: "DOSCIENTOS DOLARES",
+        totalExenta: 0,
+        subTotalVentas: 200,
         totalGravada: 200,
-        montoTotalOperacion: 200, 
+        montoTotalOperacion: 200,
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
         porcentajeDescuento: 0,
-        totalDescu: 0, 
-        subTotal: subtotal, 
+        totalDescu: 0,
+        subTotal: subtotal,
         ivaRete1: 0,
         reteRenta: 0,
         totalNoGravado: 0,
-        totalPagar: 200
+        totalPagar: 200,
       },
       extension: {
         docuEntrega: null,
         nombRecibe: null,
         observaciones: "observaciones",
         placaVehiculo: null,
-        nombEntrega: null, 
-        docuRecibe: null 
+        nombEntrega: null,
+        docuRecibe: null,
       },
       apendice: null,
     };
 
-    
     console.log("Data");
     console.log(data);
 
-    const responsePlantilla = await PlantillaService.create(data, token, id_emisor);
+    const responsePlantilla = await PlantillaService.create(
+      data,
+      token,
+      id_emisor
+    );
 
     console.log("PlantillaService - Create");
     console.log(responsePlantilla);
     /*  */
-
-
-}
+  };
   /* ---------------------------------------------------------- */
   const addBillHandler = async (event) => {
     event.preventDefault();
@@ -459,28 +509,40 @@ try {
       if (Listitems.length === 0) {
         toast.error("Factura no items en factura!", {
           position: "top-center",
-          autoClose: 3000,  // Auto close after 3 seconds
-          hideProgressBar: false,  // Display the progress bar
-          closeOnClick: true,  // Close the toast when clicked
-          draggable: true,  // Allow dragging the toast
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Display the progress bar
+          closeOnClick: true, // Close the toast when clicked
+          draggable: true, // Allow dragging the toast,
+          style: { zIndex: 200000 } // Correct way to set z-index
         });
-        return
+        return;
       }
 
       if (client.document === "") {
         toast.error("Factura no cliente!", {
           position: "top-center",
-          autoClose: 3000,  // Auto close after 3 seconds
-          hideProgressBar: false,  // Display the progress bar
-          closeOnClick: true,  // Close the toast when clicked
-          draggable: true,  // Allow dragging the toast
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Display the progress bar
+          closeOnClick: true, // Close the toast when clicked
+          draggable: true, // Allow dragging the toast,
+          style: { zIndex: 200000 } // Correct way to set z-index
+
         });
-        return
+        return;
       }
+      if (time.date === "") {
+        toast.error("Factura no fecha!", {
+          position: "top-center",
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Display the progress bar
+          closeOnClick: true, // Close the toast when clicked
+          draggable: true, // Allow dragging the toast
+          style: { zIndex: 200000 } // Correct way to set z-index
 
-
-
-
+        });
+        return;
+        
+      }
 
       const response = await EmisorService.count_factura(id_emisor, token);
       console.log("Count Factura");
@@ -489,126 +551,123 @@ try {
       console.log(error);
     }
 
-
     /* Counting the sentences*/
     /* const count = await PlantillaAPI.count(id_emisor, "01", token) */
 
     try {
-      
+      const myUuid = uuidv4().toUpperCase().toString();
 
-    const myUuid = uuidv4().toUpperCase().toString();
+      const conditionoperationint = parseInt(payment.paymentType);
 
-    const conditionoperationint = parseInt(payment.paymentType);
-
-    var data = {
-      identificacion: {
-        version: 1, 
-        ambiente: userinfo.ambiente, 
-        tipoDte: "01", 
-        numeroControl: getNextFormattedNumber(userinfo.count_factura + 1), 
-        codigoGeneracion: myUuid,
-        tipoModelo: 1, 
-        tipoOperacion: 1, 
-        fecEmi: time.date.toString(),
-        horEmi: time.time,
-        tipoMoneda: "USD", 
-        tipoContingencia: null, 
-        motivoContin: null 
-      },
-      documentoRelacionado: null,
-      emisor: {
-        direccion: {
-          municipio: userinfo.municipio, 
-          departamento: userinfo.departamento, 
-          complemento: userinfo.direccion 
+      var data = {
+        identificacion: {
+          version: 1,
+          ambiente: userinfo.ambiente,
+          tipoDte: "01",
+          numeroControl: getNextFormattedNumber(userinfo.count_factura + 1),
+          codigoGeneracion: myUuid,
+          tipoModelo: 1,
+          tipoOperacion: 1,
+          fecEmi: time.date.toString(),
+          horEmi: time.time,
+          tipoMoneda: "USD",
+          tipoContingencia: null,
+          motivoContin: null,
         },
-        nit: userinfo.nit,
-        nrc: userinfo.nrc ,
-        nombre: userinfo.name ,
-        codActividad: userinfo.codactividad,
-        descActividad: userinfo.descactividad, 
-        telefono: userinfo.numero_de_telefono, 
-        correo: userinfo.correo_electronico, 
-        nombreComercial: userinfo.nombre_comercial,
-        tipoEstablecimiento: userinfo.tipoestablecimiento,
+        documentoRelacionado: null,
+        emisor: {
+          direccion: {
+            municipio: userinfo.municipio,
+            departamento: userinfo.departamento,
+            complemento: userinfo.direccion,
+          },
+          nit: userinfo.nit,
+          nrc: userinfo.nrc,
+          nombre: userinfo.name,
+          codActividad: userinfo.codactividad,
+          descActividad: userinfo.descactividad,
+          telefono: userinfo.numero_de_telefono,
+          correo: userinfo.correo_electronico,
+          nombreComercial: userinfo.nombre_comercial,
+          tipoEstablecimiento: userinfo.tipoestablecimiento,
 
-        /* TODO: Just in case establecimiento  */
-        codEstableMH: null,
-        codEstable: null, 
-        codPuntoVentaMH: null, 
-        codPuntoVenta: null 
-      },
-      receptor: { /* TODO ADDRES */
-        codActividad: client.codActividad,
-        direccion: client.address, 
-        nrc: client.nrc, 
-        descActividad: client.descActividad,
-        correo: client.email,
-        tipoDocumento: client.documentType,
-        nombre: client.name, 
-        telefono: client.phone, 
-        numDocumento: client.document
-      },
-      otrosDocumentos: null, 
-      ventaTercero: null, 
-      cuerpoDocumento: Listitems ,
-      resumen: {
-        condicionOperacion: conditionoperationint, 
-        totalIva: 0,   /* totalIva: iva, IVA 0.1154 percent ----------------- Eliminated here*/
-        saldoFavor: 0,   
-        numPagoElectronico: null,  
-        pagos: [
-          {/* TODO: ADD MORE PAYMENTS */
-            periodo: null, 
-            plazo: null,  
-            montoPago: total,  
-            codigo: payment.paymentmethod, 
-            referencia: null 
-          }
-        ],
-        /* Changing the agravada for exenta */
-        totalNoSuj: 0,
-        tributos: null, 
-        totalLetras: convertirDineroALetras(total),  
-        totalExenta: total,  
-        subTotalVentas: total, 
-        totalGravada: 0,
-        montoTotalOperacion: total, 
-        descuNoSuj: 0,
-        descuExenta: 0,
-        descuGravada: 0,
-        porcentajeDescuento: 0,
-        totalDescu: 0, 
-        subTotal: subtotal, 
-        ivaRete1: 0,
-        reteRenta: 0,
-        totalNoGravado: 0,
-        totalPagar: total 
-      },
-      extension: {
-        docuEntrega: null,
-        nombRecibe: null,
-        observaciones: observaciones,
-        placaVehiculo: null,
-        nombEntrega: null, 
-        docuRecibe: null 
-      },
-      apendice: null,
-    };
+          /* TODO: Just in case establecimiento  */
+          codEstableMH: null,
+          codEstable: null,
+          codPuntoVentaMH: null,
+          codPuntoVenta: null,
+        },
+        receptor: {
+          /* TODO ADDRES */ codActividad: client.codActividad,
+          direccion: client.address,
+          nrc: client.nrc,
+          descActividad: client.descActividad,
+          correo: client.email,
+          tipoDocumento: client.documentType,
+          nombre: client.name,
+          telefono: client.phone,
+          numDocumento: client.document,
+        },
+        otrosDocumentos: null,
+        ventaTercero: null,
+        cuerpoDocumento: Listitems,
+        resumen: {
+          condicionOperacion: conditionoperationint,
+          totalIva: 0 /* totalIva: iva, IVA 0.1154 percent ----------------- Eliminated here*/,
+          saldoFavor: 0,
+          numPagoElectronico: null,
+          pagos: [
+            {
+              /* TODO: ADD MORE PAYMENTS */ periodo: null,
+              plazo: null,
+              montoPago: total,
+              codigo: payment.paymentmethod,
+              referencia: null,
+            },
+          ],
+          /* Changing the agravada for exenta */
+          totalNoSuj: 0,
+          tributos: null,
+          totalLetras: convertirDineroALetras(total),
+          totalExenta: total,
+          subTotalVentas: total,
+          totalGravada: 0,
+          montoTotalOperacion: total,
+          descuNoSuj: 0,
+          descuExenta: 0,
+          descuGravada: 0,
+          porcentajeDescuento: 0,
+          totalDescu: 0,
+          subTotal: subtotal,
+          ivaRete1: 0,
+          reteRenta: 0,
+          totalNoGravado: 0,
+          totalPagar: total,
+        },
+        extension: {
+          docuEntrega: null,
+          nombRecibe: null,
+          observaciones: observaciones,
+          placaVehiculo: null,
+          nombEntrega: null,
+          docuRecibe: null,
+        },
+        apendice: null,
+      };
 
-    if (client.name === "") {
-      toast.error("Factura no tiene nombre de cliente!")
-      return
-    }
+      if (client.name === "") {
+        toast.error("Factura no tiene nombre de cliente!");
+        return;
+      }
 
-    if (client.phone === "") {
-      data.receptor.telefono = null;
-    }
-    
-    console.log("Data");
-    console.log(data);
+      if (client.phone === "") {
+        data.receptor.telefono = null;
+      }
 
-    /* 
+      console.log("Data");
+      console.log(data);
+
+      /* 
     TODO CHANGE THIS THE OTHER SIDE console.log(data);
      const Firm = {
        nit: userinfo.nit, 
@@ -617,54 +676,51 @@ try {
        dteJson: data
      } */
 
-    const responsePlantilla = await PlantillaService.create(data, token, id_emisor);
+      const responsePlantilla = await PlantillaService.create(
+        data,
+        token,
+        id_emisor
+      );
 
-    console.log("PlantillaService - Create");
-    console.log(responsePlantilla.message);
-    if (responsePlantilla.message === "Error en el servidor") {
+      console.log("PlantillaService - Create");
+      console.log(responsePlantilla.message);
+      if (responsePlantilla.message === "Error en el servidor") {
         toast.error("Factura no creada!", {
-        position: "top-center",
-        autoClose: 3000,  // Auto close after 3 seconds
-        hideProgressBar: false,  // Display the progress bar
-        closeOnClick: true,  // Close the toast when clicked
-        draggable: true,  // Allow dragging the toast
-      });
-      return
-    } 
+          position: "top-center",
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Display the progress bar
+          closeOnClick: true, // Close the toast when clicked
+          draggable: true, // Allow dragging the toast
+        });
+        return;
+      }
 
-    if (responsePlantilla.message != "Error en el servidor") {
-      toast.success("Factura creada!", {
-        position: "top-center",
-        autoClose: 3000,  // Auto close after 3 seconds
-        hideProgressBar: false,  // Display the progress bar
-        closeOnClick: true,  // Close the toast when clicked
-        draggable: true,  // Allow dragging the toast
-      });
+      if (responsePlantilla.message != "Error en el servidor") {
+        toast.success("Factura creada!", {
+          position: "top-center",
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Display the progress bar
+          closeOnClick: true, // Close the toast when clicked
+          draggable: true, // Allow dragging the toast
+        });
 
-      return
-    }
+        return;
+      }
 
-/* 
+      /* 
     navigate("/facturas");  */
-
-  } catch (error) {
-    toast.error("Factura no creada!", {
-      position: "top-center",
-      autoClose: 3000,  // Auto close after 3 seconds
-      hideProgressBar: false,  // Display the progress bar
-      closeOnClick: true,  // Close the toast when clicked
-      draggable: true,  // Allow dragging the toast
-    });
-
-  }
-
+    } catch (error) {
+      toast.error("Factura no creada!", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+      });
+    }
   };
 
   /* ---------------------------------------------------------- */
-
-
-
-
 
   const goBackHandler = () => {
     navigate("/Principal");
@@ -684,9 +740,37 @@ try {
   };
 
   /* Logic of renderize CF or NotCF */
-  const handleSelectChangeCFClient = () => {
-    setCF(!CF);
-    console.log(client);
+  const handleSelectClient = () => {
+    setIsVisibleClient(!isVisibleClient);
+  };
+
+  const onSelectClient = (clientset) => {
+    if (client.documentType == "36") {
+      setClient({
+        documentType: "36",
+        name: clientset.name || "",
+        document: clientset.nit || "",
+        address: clientset.direccion || "",
+        email: clientset.correo_electronico || "",
+        phone: clientset.numero_telefono || "",
+        codActividad: clientset.actividad_economica || "",
+        nrc: null,
+        descActividad: "Otros",
+      });
+    } else {
+      setClient({
+        documentType: "13",
+        name: clientset.name,
+        document: clientset.dui,
+        address: clientset.direccion,
+        email: clientset.correo_electronico,
+        phone: clientset.numero_telefono,
+        codActividad: clientset.actividad_economica,
+        nrc: null,
+        descActividad: "Otros",
+      });
+    }
+    console.log(clientset);
   };
 
   /* Logic of items */
@@ -694,17 +778,15 @@ try {
     setItems(!Items);
   };
 
-
-
   /* utils ----------------------------------- */
 
   /**
- * Increments a number and returns it in the specified format.
- * 
- * @param {number} currentNumber - The current number to increment.
- * @param {number} totalDigits - The total number of digits for the output.
- * @returns {string} The incremented number in the desired format.
- */
+   * Increments a number and returns it in the specified format.
+   *
+   * @param {number} currentNumber - The current number to increment.
+   * @param {number} totalDigits - The total number of digits for the output.
+   * @returns {string} The incremented number in the desired format.
+   */
   function getNextFormattedNumber(currentNumber, totalDigits = 15) {
     // Increment the number by 1
     const incrementedNumber = currentNumber;
@@ -713,7 +795,7 @@ try {
     let incrementedString = incrementedNumber.toString();
 
     // Pad with leading zeros to ensure the correct number of digits
-    incrementedString = incrementedString.padStart(totalDigits, '0');
+    incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
     const formattedOutput = `DTE-01-00000${userinfo.ambiente}0-${incrementedString}`;
@@ -721,20 +803,22 @@ try {
     return formattedOutput;
   }
 
-const convertirDineroALetras = (cantidad) => {
-    if (typeof cantidad !== 'number' || isNaN(cantidad)) {
-        throw new Error('La cantidad debe ser un número válido.');
+  const convertirDineroALetras = (cantidad) => {
+    if (typeof cantidad !== "number" || isNaN(cantidad)) {
+      throw new Error("La cantidad debe ser un número válido.");
     }
 
     // Asegurarse de que la cantidad tenga como máximo dos decimales
     const cantidadRedondeada = Math.round(cantidad * 100) / 100;
-    const partes = cantidadRedondeada.toFixed(2).split('.'); // Divide la parte entera de los decimales
+    const partes = cantidadRedondeada.toFixed(2).split("."); // Divide la parte entera de los decimales
 
     const dolares = parseInt(partes[0], 10); // Parte entera
     const centavos = parseInt(partes[1], 10); // Parte decimal
 
     if (dolares > Number.MAX_SAFE_INTEGER) {
-        throw new Error('La cantidad en dólares es demasiado grande para convertir.');
+      throw new Error(
+        "La cantidad en dólares es demasiado grande para convertir."
+      );
     }
 
     // Convierte las partes a palabras
@@ -745,59 +829,100 @@ const convertirDineroALetras = (cantidad) => {
     let resultado = `${dolaresEnLetras} DÓLARES`;
 
     if (centavos > 0) {
-        resultado += ` CON ${centavosEnLetras} CENTAVOS`;
+      resultado += ` CON ${centavosEnLetras} CENTAVOS`;
     }
 
     return resultado;
-};
+  };
 
+  const convertirNumeroALetras = (numero) => {
+    const unidades = [
+      "",
+      "UNO",
+      "DOS",
+      "TRES",
+      "CUATRO",
+      "CINCO",
+      "SEIS",
+      "SIETE",
+      "OCHO",
+      "NUEVE",
+    ];
+    const especiales = ["DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE"];
+    const decenas = [
+      "",
+      "",
+      "VEINTE",
+      "TREINTA",
+      "CUARENTA",
+      "CINCUENTA",
+      "SESENTA",
+      "SETENTA",
+      "OCHENTA",
+      "NOVENTA",
+    ];
+    const centenas = [
+      "",
+      "CIEN",
+      "DOSCIENTOS",
+      "TRESCIENTOS",
+      "CUATROCIENTOS",
+      "QUINIENTOS",
+      "SEISCIENTOS",
+      "SETECIENTOS",
+      "OCHOCIENTOS",
+      "NOVECIENTOS",
+    ];
 
-const convertirNumeroALetras = (numero) => {
-  const unidades = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE"];
-  const especiales = ["DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE"];
-  const decenas = ["", "", "VEINTE", "TREINTA", "CUARENTA", "CINCUENTA", "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
-  const centenas = ["", "CIEN", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
+    if (numero === 0) return "CERO";
 
-  if (numero === 0) return "CERO";
+    if (numero < 10) return unidades[numero];
 
-  if (numero < 10) return unidades[numero];
+    if (numero < 16) return especiales[numero - 10];
 
-  if (numero < 16) return especiales[numero - 10];
+    if (numero < 20) return "DIECI" + unidades[numero - 10];
 
-  if (numero < 20) return "DIECI" + unidades[numero - 10];
+    if (numero < 30)
+      return numero === 20 ? "VEINTE" : "VEINTI" + unidades[numero - 20];
 
-  if (numero < 30) return numero === 20 ? "VEINTE" : "VEINTI" + unidades[numero - 20];
-
-  if (numero < 100) {
+    if (numero < 100) {
       const decena = Math.floor(numero / 10);
       const unidad = numero % 10;
       return decenas[decena] + (unidad > 0 ? " Y " + unidades[unidad] : "");
-  }
+    }
 
-  if (numero < 1000) {
+    if (numero < 1000) {
       const centena = Math.floor(numero / 100);
       const resto = numero % 100;
-      return (centena === 1 && resto > 0 ? "CIENTO" : centenas[centena]) + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
-  }
+      return (
+        (centena === 1 && resto > 0 ? "CIENTO" : centenas[centena]) +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
 
-  if (numero < 1000000) {
+    if (numero < 1000000) {
       const miles = Math.floor(numero / 1000);
       const resto = numero % 1000;
-      return (miles === 1 ? "MIL" : convertirNumeroALetras(miles) + " MIL") + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
-  }
+      return (
+        (miles === 1 ? "MIL" : convertirNumeroALetras(miles) + " MIL") +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
 
-  if (numero < 1000000000) {
+    if (numero < 1000000000) {
       const millones = Math.floor(numero / 1000000);
       const resto = numero % 1000000;
-      return (millones === 1 ? "UN MILLÓN" : convertirNumeroALetras(millones) + " MILLONES") + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
-  }
+      return (
+        (millones === 1
+          ? "UN MILLÓN"
+          : convertirNumeroALetras(millones) + " MILLONES") +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
 
-  throw new Error("Número demasiado grande para convertir.");
-};
+    throw new Error("Número demasiado grande para convertir.");
+  };
 
-
-
-  
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">
@@ -828,17 +953,14 @@ const convertirNumeroALetras = (numero) => {
             />
           </div>
         </div>
-        <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-2.5 box-border max-w-full">
-
-        </div>
+        <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-2.5 box-border max-w-full"></div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
               <div className="flex flex-row items-start justify-start py-0 px-[3px]">
-                Fecha 
-                <span className="text-tomato pl-1"> *</span> 
+                Fecha
+                <span className="text-tomato pl-1"> *</span>
               </div>
-              
             </div>
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
@@ -853,11 +975,23 @@ const convertirNumeroALetras = (numero) => {
           </div>
         </div>
       </section>
+
       {CF ? (
-        <BillCF handleSelectChangeCFClient={handleSelectChangeCFClient} setClient={setClient}  client={client}/>
+        <BillCF
+          handleSelectClient={handleSelectClient}
+          setClient={setClient}
+          client={client}
+        />
       ) : (
-        <BillnoCF handleSelectChangeCFClient={handleSelectChangeCFClient} setClient={setClient} client={client} />
+        <BillnoCF
+          handleSelectClient={handleSelectClient}
+          setClient={setClient}
+          client={client}
+          isVisibleClient={isVisibleClient}
+          onSelectClient={onSelectClient}
+        />
       )}
+      <ToastContainer className={"toast-notification"} />
 
       {Items ? (
         <AdvanceItemsComponentOnComponent
@@ -956,7 +1090,6 @@ const convertirNumeroALetras = (numero) => {
             onClick={addBillHandler}
             className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
           >
-
             <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
             <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
               Añadir Factura
@@ -974,7 +1107,6 @@ const convertirNumeroALetras = (numero) => {
             </b>
           </button> */}
 
-
           <button
             onClick={goBackHandler}
             className="cursor-pointer [border:none] pt-3 pb-[13px] pr-11 pl-[49px] bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-indianred-100"
@@ -986,7 +1118,6 @@ const convertirNumeroALetras = (numero) => {
           </button>
         </div>
       </footer>
-      <ToastContainer />
     </form>
   );
 };
