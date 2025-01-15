@@ -14,60 +14,61 @@ const Home = () => {
 
   const SupportHandler = () => {
     /* window.open("https://wa.link/h382bz", "_blank"); */
-  navigate("/facturas");
+    navigate("/facturas");
 
   }
 
   const CreateBillHandler = () => {
 
-  navigate("/crear/factura");
+    navigate("/crear/factura");
 
   }
 
-    const sidebar = () => {
-        setVisible(!visible);
-    }
+  const sidebar = () => {
+    setVisible(!visible);
+  }
 
   return (
     <div className="w-full relative bg-steelblue-300 flex flex-col items-center justify-center  box-border gap-[47px_0px] ">
-      <HamburguerComponent sidebar={sidebar} visible={visible}/>
+      <HamburguerComponent sidebar={sidebar} visible={visible} />
 
-      <section className="self-stretch  flex flex-row items-start pt-8  justify-start  pb-[420px] pr-[31px] pl-0">
 
-      <SidebarComponent visible={visible} setVisible={setVisible}/>
-        <header className="flex-1 flex flex-col items-start   justify-start gap-[10px_0px] text-left text-xs text-black font-inter">
-          <div className="self-center pt-6 left-4   flex flex-row items-start  justify-end">
-            <div className="h-[54px] w-[294px]  relative">
+      <section className="self-stretch pt-8 flex flex-row items-start  justify-start  pb-[420px] pr-[31px] pl-0">
+
+        <SidebarComponent visible={visible} setVisible={setVisible}  />
+        <header className="flex-1 flex  pt-8 flex-col items-center   justify-center gap-[10px_0px] text-left text-xs text-black font-inter">
+          <div className="self-center  left-4   flex flex-row items-center  justify-center">
+            <div className="h-[54px] w-[294px] items-center  justify-center  relative">
               <img
                 className="absolute rounded-mini  h-8"
                 loading="lazy"
                 alt=""
                 src="/rectangle-4.svg"
               />
-              
+
               <div className="relative top-[5px]  ml-3 font-light inline-block  [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO!`}</div>
-        <img className='h-96 top-20 relative' src={Homeimg} alt='Homeimg'/>
+              <img className='h-[350px] top-20 relative' src={Homeimg} alt='Homeimg' />
 
             </div>
 
           </div>
-        </header> 
+        </header>
       </section >
       <div className="w-[303px]  flex flex-row items-start justify-start py-0 px-[15px] box-border">
         <button className="cursor-pointer [border:none] p-0 bg-[transparent] flex-1 flex flex-row items-start justify-start gap-[0px_15px] mq328:flex-wrap" onClick={CreateBillHandler}>
           <img
-            className="h-[63px] bottom-2 w-[65px]  relative object-cover z-[1]"
+            className="h-[63px] left-5 bottom-2 w-[65px]  relative object-cover z-[1]"
             alt=""
             src="/factura-2@2x.png"
           />
-          <div className="flex-1 flex flex-col items-start justify-start pt-5 pb-0 pr-2 pl-0 box-border min-w-[125px] min-h-[51px] mq328:min-h-[auto]">
-            <div className="self-stretch h-[16.5px] flex flex-row items-start justify-start relative">
+          <div className="flex-1 flex flex-col  items-start justify-start pt-5 pb-0 pr-2 pl-0 box-border min-w-[125px] min-h-[51px] mq328:min-h-[auto]">
+            <div className="self-stretch h-[16.5px]  flex flex-row items-start justify-start relative">
               <img
-                className="h-[97px] w-[309px] absolute !m-[0] bottom-[-41.7px] left-[-101.4px] rounded-mini"
+                className="h-[97px] w-[315px]  absolute !m-[0] bottom-[-41.7px] left-[-101.4px] rounded-mini"
                 alt=""
                 src="/rectangle-5.svg"
               />
-              <div className="h-[31px] bottom-4 relative text-3xl font-light font-inter text-black text-left inline-block [-webkit-text-stroke:1px_#000] z-[1]">
+              <div className=" bottom-5  left-5 relative text-3xl font-light font-inter text-black text-left inline-block [-webkit-text-stroke:1px_#000] z-[1]">
                 Crear Una Factura
               </div>
             </div>
@@ -89,7 +90,7 @@ const Home = () => {
             />
           </div>
           <div className="flex-1 flex flex-col items-start justify-start pt-[26px] px-0 pb-0 box-border min-w-[125px]">
-            <div className="self-stretch   h-[31px] relative text-3xl font-light font-inter text-black text-left inline-block shrink-0 [-webkit-text-stroke:1px_#000] z-[1]">
+            <div className="self-stretch h-[31px] relative text-3xl font-light font-inter text-black text-left inline-block shrink-0 [-webkit-text-stroke:1px_#000] z-[1]">
               Lista de Facturas
             </div>
           </div>

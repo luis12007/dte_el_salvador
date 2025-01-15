@@ -19,7 +19,7 @@ const SistemaDTE = (props) => {
   }
 
   return (
-    <form className="m-0 absolute mt-2 items-center justify-center self-center top-[0px] rounded-mini  w-11/12 bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col  pt-[19px] pb-[51px] pr-6 pl-5 box-border gap-[31.5px_0px] max-w-full z-[1]">
+    <form className=" absolute mt-2 items-center justify-center self-center top-[0px] rounded-mini px-3 max-w-1/2 bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col  pt-[19px] pb-[51px]  box-border gap-[31.5px_0px]  z-[1]">
       <div className="w-[390px] h-[341px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
       <div className="w-[325px] flex flex-row items-start justify-center max-w-full">
         <b className="relative text-3xl font-inria-sans text-black text-left z-[2]">
@@ -63,7 +63,8 @@ const SistemaDTE = (props) => {
         <div className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-6">
           <button className="cursor-pointer [border:none] pt-3 pb-[13px] pr-10 pl-[31px] bg-steelblue-300 rounded-3xs
           shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start z-[2]
-            hover:bg-slategray" onClick={LoginHandler}>
+            hover:bg-slategray
+            focus:ring-blue" onClick={LoginHandler}>
             <div className="h-[47px] w-[138px] relative rounded-3xs bg-steelblue-300 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
             <b className="relative text-lg font-inria-sans text-white text-left z-[1]">
               Ingresar

@@ -874,10 +874,12 @@ const convertirNumeroALetras = (numero) => {
 
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
-      <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full">
-         <h1>factura de {namereceptor}</h1>
+      <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
+         <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">factura</h1>
+         <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
+         <h2 className="">{namereceptor}</h2>
       </header>
-      <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full">
+      <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
           <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
@@ -951,7 +953,7 @@ const convertirNumeroALetras = (numero) => {
       <TreeNode text="Subtotal" data={total} />
       <TreeNode text="IVA" data={0} />
       <TreeNode text="Total a Pagar" data={total} />
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full ch:w-1/3 ch:self-center">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
           <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-3 px-[9px] pb-[11px] box-border relative whitespace-nowrap max-w-full z-[1]">
@@ -965,7 +967,7 @@ const convertirNumeroALetras = (numero) => {
               Condiciones de la Operación
             </b>
           </div>
-          <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
+          <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full ">
             <div className="flex-1 flex flex-col items-start justify-start gap-[23.5px_0px] max-w-full">
               <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px] max-w-full">
                 <div className="self-stretch flex flex-col items-start justify-start gap-[10px_0px] max-w-full">
@@ -1017,7 +1019,7 @@ const convertirNumeroALetras = (numero) => {
           </div>
         </form>
       </section>
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full">
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
           placeholder="Observaciones"
@@ -1027,8 +1029,8 @@ const convertirNumeroALetras = (numero) => {
           onChange={(e) => setObservaciones(e.target.value)}
         />
       </section>
-      <footer className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[27px]">
-        <div className="flex flex-col items-start justify-start gap-[13px_0px]">
+      <footer className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[27px] ">
+        <div className="flex flex-col items-start justify-start gap-[13px_0px] ">
           <button
             onClick={addBillHandler}
             className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
@@ -1041,9 +1043,9 @@ const convertirNumeroALetras = (numero) => {
 
           <button
             onClick={goBackHandler}
-            className="cursor-pointer [border:none] pt-3 pb-[13px] pr-11 pl-[49px] bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-indianred-100"
+            className="cursor-pointer h-12 w-[143px] justify-center [border:none] pt-3 pb-[13px] text-center  bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start  hover:bg-indianred-100"
           >
-            <div className="h-12 w-[158px] relative rounded-3xs bg-indianred-500 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+            <div className="h-11 w-[120px] relative rounded-3xs bg-indianred-500 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
             <b className="relative text-mini font-inria-sans text-white text-left z-[1]">
               Regresar
             </b>

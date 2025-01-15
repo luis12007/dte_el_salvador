@@ -4,7 +4,7 @@ import customers from "../assets/imgs/customers.png";
 const GroupComponent = ({visible, setVisible}) => {
   const navigate = useNavigate();
   if (visible === true) {
-    var sidebar = "visible invisible ";
+    var sidebar = "visible invisible ch:visible ch:self-start ";
     var w = "mc:w-0";
     var img = "md:visible mc:invisible ";
     
@@ -51,7 +51,7 @@ const CloseHandler = () => {
 
 
   return (
-    <div className={`absolute w-[202px] mt-6 ml-2 z-50 rounded-11xl bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start py-[19px] pr-[23px]
+    <div className={`absolute w-[202px] mt-6 ml-2  z-50 rounded-11xl bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start py-[19px] pr-[23px]
     pl-[18px] box-border gap-[55px] text-left text-xs text-black font-inter ${sidebar} ${w}`}>
       <div className="w-[202px] h-[396px] relative rounded-11xl bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
       <div className="self-stretch flex flex-col items-end justify-start gap-[26px_0px]">
