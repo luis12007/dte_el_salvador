@@ -442,7 +442,7 @@ const CardOfClientAndAddClient = () => {
 
     return (
         <div className="w-full relative pt-20 bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start  px-5 pb-[215px] box-border gap-[23px_0px] tracking-[normal]">
-            <main className="self-stretch flex flex-col items-start justify-start gap-[35px_0px] max-w-full mq390:gap-[17px_0px]">
+            <main className="self-stretch flex flex-col items-start justify-start gap-[35px_0px] max-w-full mq390:gap-[17px_0px] ch:w-1/3 ch:self-center">
                 <BillnoCF setClient={setClient} client={client} departmentsAndMunicipalities={departmentsAndMunicipalities} handleDepartmentChange={handleDepartmentChange} handleMunicipalityChange={handleMunicipalityChange} selectedMunicipality={selectedMunicipality} getMunicipalityNumber={getMunicipalityNumber} selectedDepartment={selectedDepartment} visible={true} />
                 <FrameComponent2 goBackHandler={goBackHandler} AddClientHandler={AddClientHandler} />
                 <ToastContainer

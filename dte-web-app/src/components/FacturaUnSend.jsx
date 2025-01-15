@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import imgx from "../assets/imgs/x.png";
 import LoginAPI from "../services/Loginservices";
 import mailimg from "../assets/imgs/correo.png";
+import cross from "../assets/imgs/cross.png";
 
 
 const FrameComponent1 = ({ key, content, user }) => {
@@ -332,7 +333,7 @@ const FrameComponent1 = ({ key, content, user }) => {
       dteJson: data,
     };
     downloadPDF(data, id_emisor, data.identificacion.codigoGeneracion, token);
-
+    toast.success("Descargando factura");
     /* Calling the API to send the email */
 
 
@@ -1009,10 +1010,32 @@ const FrameComponent1 = ({ key, content, user }) => {
     }
   };
 
+  const [isActivedownload, setIsActivedownload] = useState(false);
+  const [isActivecross, setIsActivecross] = useState(false);
+  const [isActiveedit, setIsActiveedit] = useState(false);
+  const [isActivefirm, setIsActivefirm] = useState(false);
+  const [isActivesend, setIsActivesend] = useState(false);
+  const [isActivemail, setIsActivemail] = useState(false);
+
+  const handleClickdownload = () => {
+    setIsActivedownload(true);
+    DownloadBillHandler();
+    setTimeout(() => {
+      setIsActivedownload(false);
+    }, 1000);
+  };
+
+  const handelrisActivecross = () => {
+    setIsActivecross(true);
+    DeleteBillHandler();
+    setTimeout(() => {
+      setIsActivecross(false);
+    }, 1000);
+  }
 
   return (
-    <div className="flex w-full self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-center  px-0 pb-3 box-border my-6  text-black font-inria-sans ">
-      <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-1 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans">
+    <div className="flex w-full self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-center ml-2 pb-3 box-border my-6  text-black font-inria-sans ">
+      <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-1 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans ">
         <div className="flex flex-col  items-start justify-start pt-1 px-0 pb-0">
 
           <h1 className="m-0 relative text-inherit font-bold z-[3]">{tipo}</h1>
@@ -1032,21 +1055,30 @@ const FrameComponent1 = ({ key, content, user }) => {
             alt=""
             src="/editar@2x.png"
           />
-          <img
-            className="h-[33px] w-[30px] relative object-cover z-[3] rounded-lg px-2  my-1 focus:pointer-events-auto hover:bg-white "
-            onClick={DownloadBillHandler}
-            loading="lazy"
-            alt=""
-            src="/descargar@2x.png"
-          />
-          <img
+          <button
+            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivedownload ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
+            onClick={handleClickdownload}
+          >
+            <img
+              className="h-[30px] w-[30px]"
+              loading="lazy"
+              alt=""
+              src="/descargar@2x.png"
+            />
+          </button>
+          <button
+            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivecross ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
+            onClick={handelrisActivecross}
+          >
+            <img
             className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
-            onClick={DeleteBillHandler}
             loading="lazy"
             alt=""
             /* import the img x.png from assets/img */
             src={imgx}
           />
+          </button>
+          
 
 
         </div>

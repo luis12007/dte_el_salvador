@@ -47,11 +47,11 @@ const Login = () => {
       <main className="self-center items-center justify-center flex w-full mr-10 ml-10 relative max-w-full">
         <SistemaDTE goin={HomeHandler}/>
         <section className="absolute top-[170px]  left-[0px] w-[430px] h-[583px]">
-          <img
-            className="absolute top-[0px] left-[-185px] w-[811px] h-[827px] object-cover"
-            alt=""
-            src="/image-6@2x.png"
-          />
+        <img
+  className="absolute top-[0px] left-[-185px] w-[811px] h-[827px] object-cover mb:hidden"
+  alt=""
+  src="/image-6@2x.png"
+/>
         </section>
       </main>
       <ToastContainer

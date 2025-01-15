@@ -60,7 +60,7 @@ const FrameComponent2 = ({
             className="h-[47px] w-[138px] relative rounded-3xs bg-indianred-300 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden"
             style={rectangleDivStyle}
           />
-          <b className="relative text-lg font-inria-sans text-white text-left z-[1]">
+          <b className="relative text-lg pt-1 font-inria-sans text-white text-left z-[1]">
             Regresar
           </b>
         </button>

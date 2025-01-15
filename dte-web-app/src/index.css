@@ -4,10 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 body {
-  @apply leading-[normal] m-0;
+    @apply leading-[normal] m-0;
 }
+
 *,
 ::before,
 ::after {
-  border-width: 0;
+    border-width: 0;
+}
+
+html,
+body,
+#root {
+    height: 100%;
 }

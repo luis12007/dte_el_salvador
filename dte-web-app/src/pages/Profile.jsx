@@ -90,8 +90,8 @@ const Perfil = () => {
 
 
   return (
-    <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-[42px] px-5 pb-[182px] box-border gap-[25px_0px] tracking-[normal]">
-      <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[15px] max-w-full">
+    <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-[42px] px-5 pb-[182px] box-border gap-[25px_0px] tracking-[normal] ">
+      <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[15px] max-w-full ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[575px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch flex flex-col items-start justify-start gap-[6px_0px] max-w-full">
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
