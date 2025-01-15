@@ -988,6 +988,69 @@ const updatePlantillaNoItems = async(req, res) => {
         res.status(500).json({ message: 'Error en el servidor' });
     }
 }
+
+
+
+const getPlantillasByUserIdAndName = async(req, res) => {
+    console.log("getPlantillasByUserIdAndName");
+    const usuarioid = req.params.id;
+    const namesearch = req.params.name;
+    console.log(namesearch);
+    console.log(usuarioid);
+    try {
+        //return all plantillas by user id cotains name
+        const plantilla = await db("plantilla").where({ id_emisor: usuarioid }).where("re_name", "like", `%${namesearch}%`);
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        console.log(plantilla);
+        res.status(200).json(plantilla);
+    } catch (error) {
+        console.error("Error al obtener plantilla por ID", error);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
+};
+
+const getPlantillasByUserIdAndDateRamge = async(req, res) => {
+    console.log("getPlantillasByUserIdAndDateRamge");
+    const usuarioid = req.params.id;
+    const start = req.params.start;
+    const end = req.params.end;
+    try {
+        //return all plantillas by user id
+        const plantilla = await db("plantilla").where({ id_emisor: usuarioid }).whereBetween('fecha_y_hora_de_generacion', [start, end]);
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        console.log(plantilla);
+        res.status(200).json(plantilla);
+    } catch (error) {
+        console.error("Error al obtener plantilla por ID", error);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
+};
+
+const getPlantillasByUserIdAndType = async(req, res) => {
+    console.log("getPlantillasByUserIdAndType");
+    const usuarioid = req.params.id;
+    const type = req.params.type;
+    try {
+        //return all plantillas by user id
+        const plantilla = await db("plantilla").where({ id_emisor: usuarioid, tipo: type });
+        if (!plantilla) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
+        console.log(plantilla);
+        res.status(200).json(plantilla);
+    } catch (error) {
+        console.error("Error al obtener plantilla por ID", error);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
+};
+
+
+
+
 module.exports = {
     plantillacreate,
     getPlantillasByUserId,
@@ -996,5 +1059,9 @@ module.exports = {
     updatePlantillasend,
     getplantilla,
     DeletePlantillaById,
-    updatePlantillaNoItems
+    updatePlantillaNoItems,
+
+    getPlantillasByUserIdAndName,
+    getPlantillasByUserIdAndDateRamge,
+    getPlantillasByUserIdAndType,
 };

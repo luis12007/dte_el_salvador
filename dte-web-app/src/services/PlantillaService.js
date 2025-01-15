@@ -1,5 +1,5 @@
-const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-//const BASE_URL = "http://localhost:3000";
+//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+const BASE_URL = "http://localhost:3000";
 
 const PlantillaAPI = {
     /* create and get */
@@ -32,6 +32,52 @@ const PlantillaAPI = {
             console.log(error);
         }
     },
+
+    /* get by id and filter by contains name */
+    getByUserIdAndName: async(id, token, name) => {
+        try {
+            const res = await fetch(`${BASE_URL}/plantillas/get/name/${id}/${name}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    /* get by range of dates */
+    getByUserIdAndRange: async(id, token, start, end) => {
+        try {
+            const res = await fetch(`${BASE_URL}/plantillas/get/range/${id}/${start}/${end}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
+    /* Get by type wheader is type 0 or 1 */
+    getByUserIdAndType: async(id, token, type) => {
+        try {
+            const res = await fetch(`${BASE_URL}/plantillas/get/type/${id}/${type}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
 
     /* get plantilla by id */
 
@@ -137,6 +183,9 @@ const PlantillaAPI = {
         });
         const data = await res.json();
         return data;
+
+
+
 
     }
 }

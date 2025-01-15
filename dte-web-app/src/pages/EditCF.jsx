@@ -1039,6 +1039,9 @@ const departmentsAndMunicipalities = {
       data.emisor.telefono = null;
     }
 
+    if (client.email === "") {
+      data.receptor.correo = null;
+    }
     
 
     console.log("Data");

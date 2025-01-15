@@ -11,15 +11,20 @@ const Firm = {
      */
 
     create: async(firm) => {
-        const res = await fetch(`${BASE_URL_Firm}/firmardocumento/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(firm)
-        });
-        const data = await res.json();
-        return data;
+        try {
+
+            const res = await fetch(`${BASE_URL_Firm}/firmardocumento/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(firm)
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
     },
 
     // calling other endpoints for other clients
