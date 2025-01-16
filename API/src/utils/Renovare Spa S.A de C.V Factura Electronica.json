@@ -4,11 +4,11 @@
     "ambiente": "00",
     "tipoDte": "01",
     "numeroControl": "DTE-01-00000000-000000000000001",
-    "codigoGeneracion": "6A1643B3-6E44-44F9-958F-B4164517EC2E",
+    "codigoGeneracion": "AB400882-1953-4FA2-A967-9F75979F66A4",
     "tipoModelo": 1,
     "tipoOperacion": 1,
-    "fecEmi": "2025-01-10",
-    "horEmi": "18:09:45",
+    "fecEmi": "2025-01-15",
+    "horEmi": "21:35:38",
     "tipoMoneda": "USD",
     "tipoContingencia": null,
     "motivoContin": null
@@ -18,16 +18,16 @@
     "direccion": {
       "municipio": "14",
       "departamento": "06",
-      "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+      "complemento": "13 calle Pnte entre 79 y 81 av norte # 4122, col escalón"
     },
-    "nit": "06140107211045",
-    "nrc": "3042583",
-    "nombre": "HM Clínic S.A de C.V",
+    "nit": "06140604191015",
+    "nrc": "2790601",
+    "nombre": "Renovare Spa S.A de C.V",
     "codActividad": "86201",
-    "descActividad": "Clínicas médicas",
-    "telefono": "60605939",
-    "correo": "administracion@hmclinicsv.com",
-    "nombreComercial": "Centro de cirugía ambulatoria.",
+    "descActividad": "Clínicas médicas",
+    "telefono": "61111104",
+    "correo": "cplastica7@gmail.com",
+    "nombreComercial": "clínicas médicas, Spa ",
     "tipoEstablecimiento": "02",
     "codEstableMH": null,
     "codEstable": null,
@@ -36,12 +36,12 @@
   },
   "receptor": {
     "codActividad": "10005",
-    "direccion": null,
+    "direccion": "",
     "nrc": null,
     "descActividad": "Otros",
     "correo": "luishdezmtz12@gmail.com",
     "tipoDocumento": "13",
-    "nombre": "Luis Hernandez",
+    "nombre": "Luis",
     "telefono": null,
     "numDocumento": "06384275-4"
   },
@@ -50,7 +50,7 @@
   "cuerpoDocumento": [
     {
       "codTributo": null,
-      "descripcion": "producto1",
+      "descripcion": "1",
       "uniMedida": 99,
       "codigo": null,
       "cantidad": 1,
@@ -61,11 +61,11 @@
       "psv": 0,
       "montoDescu": 0,
       "numeroDocumento": null,
-      "precioUni": 10,
+      "precioUni": 1,
       "ventaGravada": 0,
-      "ventaExenta": 10,
+      "ventaExenta": 1,
       "ventaNoSuj": 0,
-      "tipoItem": 1
+      "tipoItem": 3
     }
   ],
   "resumen": {
@@ -77,33 +77,33 @@
       {
         "periodo": null,
         "plazo": null,
-        "montoPago": 10,
+        "montoPago": 1,
         "codigo": "01",
         "referencia": null
       }
     ],
     "totalNoSuj": 0,
     "tributos": null,
-    "totalLetras": "DIEZ DÓLARES",
-    "totalExenta": 10,
-    "subTotalVentas": 10,
+    "totalLetras": "UNO DÓLARES",
+    "totalExenta": 1,
+    "subTotalVentas": 1,
     "totalGravada": null,
-    "montoTotalOperacion": 10,
+    "montoTotalOperacion": 1,
     "descuNoSuj": 0,
     "descuExenta": 0,
     "descuGravada": 0,
     "porcentajeDescuento": 0,
     "totalDescu": 0,
-    "subTotal": 10,
+    "subTotal": 1,
     "ivaRete1": "0",
     "reteRenta": "0",
     "totalNoGravado": 0,
-    "totalPagar": 10
+    "totalPagar": 1
   },
   "extension": {
     "docuEntrega": null,
     "nombRecibe": null,
-    "observaciones": "asdf",
+    "observaciones": "",
     "placaVehiculo": null,
     "nombEntrega": null,
     "docuRecibe": null

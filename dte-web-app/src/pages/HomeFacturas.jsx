@@ -9,6 +9,7 @@ import LoginAPI from "../services/Loginservices";
 import * as XLSX from "xlsx";
 import filterimg from "../assets/imgs/filter.png";
 import filterwhite from "../assets/imgs/filterwhite.png";
+import FilterModal from "../components/FilterModal";
 
 const HomeFacturas = () => {
   const token = localStorage.getItem("token");
@@ -19,6 +20,8 @@ const HomeFacturas = () => {
   const [showModal, setShowModal] = useState(false);
   const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [filterByc, setFilterBy] = useState('');
 
   // Sidebar visibility toggle
   const [visible, setVisible] = useState(true);
@@ -123,6 +126,40 @@ const HomeFacturas = () => {
     return `${day} de ${monthNames[parseInt(month) - 1]} de ${year}`;
   }
 
+  const openModal = (event,filter) => {
+    event.preventDefault();
+    setFilterBy(filter);
+    setIsModalVisible(true);
+    setShowModal(false);
+
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleSearch = async (filterData) => {
+    console.log('Search data:', filterData);
+    setLoading(true);
+    let newItems = [];
+
+    try {
+      if (filterData.filterByc === 'name') {
+        newItems = await PlantillaAPI.getByUserIdAndName(user_id, token, filterData.value);
+      } else if (filterData.filterByc === 'date') {
+        newItems = await PlantillaAPI.getByUserIdAndRange(user_id, token, filterData.fromDate, filterData.toDate);
+      } else if (filterData.filterByc === 'type') {
+        newItems = await PlantillaAPI.getByUserIdAndType(user_id, token, filterData.value);
+      }
+    } catch (error) {
+      console.error('Error fetching filtered items:', error);
+    }
+    console.log('Filtered items:', newItems);
+    setItems(newItems);
+    setLoading(false);
+  };
+
+
   const filterBy = async (event,criteria) => {
     event.preventDefault();
     setFilter(criteria);
@@ -146,6 +183,7 @@ const HomeFacturas = () => {
 
   };
 
+
   return (
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-[33px] pr-[22px] box-border ch:items-center">
       <SidebarComponent visible={visible} />
@@ -157,13 +195,13 @@ const HomeFacturas = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
             <h2 className="text-2xl font-bold mb-6">Filtrar Por</h2>
-            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => filterBy(event,'name')}>
+            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event,'name')}>
               Nombre
             </button>
-            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => filterBy(event,'date')}>
+            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event,'date')}>
               Fecha
             </button>
-            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => filterBy(event,'type')}>
+            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event,'type')}>
               Tipo
             </button>
             <button className="bg-lightcoral text-white py-3 px-6 rounded-lg shadow-md text-lg" onClick={() => setShowModal(false)}>
@@ -172,6 +210,14 @@ const HomeFacturas = () => {
           </div>
         </div>
       )}
+
+<FilterModal
+        isVisible={isModalVisible}
+        filterByc={filterByc}
+        onClose={closeModal}
+        onSearch={handleSearch}
+      />
+      
 
       <section className="pl-2 ch:w-1/3 ">
         {loading ? (

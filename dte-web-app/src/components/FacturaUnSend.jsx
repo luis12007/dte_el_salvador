@@ -619,7 +619,18 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
       }
-      if (id_emisor > 5) {
+
+      if (id_emisor == 6 || id_emisor == 7) {
+        const responseFirm = await Firmservice.DR_VIDES(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        data.receptor.direccion = content.re_direccion;
+      }
+
+      if (id_emisor > 7) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return
