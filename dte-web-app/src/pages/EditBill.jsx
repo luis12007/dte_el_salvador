@@ -706,6 +706,10 @@ const EditBill = () => {
     if (client.phone === "") {
       data.receptor.telefono = null;
     }
+
+    if (client.email === "") {
+      data.receptor.correo = null;
+    }
     
     console.log("Data");
     console.log(data);

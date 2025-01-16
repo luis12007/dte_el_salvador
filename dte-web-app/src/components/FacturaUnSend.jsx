@@ -13,6 +13,8 @@ import imgx from "../assets/imgs/x.png";
 import LoginAPI from "../services/Loginservices";
 import mailimg from "../assets/imgs/correo.png";
 import cross from "../assets/imgs/cross.png";
+import direct from "../assets/imgs/direct.png";
+import signature from "../assets/imgs/signature.png";
 
 
 const FrameComponent1 = ({ key, content, user }) => {
@@ -23,11 +25,18 @@ const FrameComponent1 = ({ key, content, user }) => {
   const [Listitems, setItems] = useState([]);
   const navigate = useNavigate();
   const [usuario, setUser] = useState([]);
+  const [mailchecker, setMailChecker] = useState(true);
   useEffect(() => {
     if (content.tipo === "01") {
       setTipo("Factura");
     } else if (content.tipo === "03") {
       setTipo("Credito Fiscal");
+    }
+    
+    if (content.re_correo_electronico === "" 
+    || content.re_correo_electronico === null) {
+      console.log("no email");
+      setMailChecker(false);
     }
 
     /* Find service per factura */
@@ -573,6 +582,11 @@ const FrameComponent1 = ({ key, content, user }) => {
         const responseFirm = await Firmservice.create(Firm);
         console.log("firm response")
         console.log(responseFirm);
+
+        if (responseFirm === undefined) {
+          toast.error("No se encontró firmador activo");
+          return
+        }
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
@@ -605,9 +619,20 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
       }
-      if (id_emisor > 5) {
+
+      if (id_emisor == 6 || id_emisor == 7) {
+        const responseFirm = await Firmservice.DR_VIDES(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        data.receptor.direccion = content.re_direccion;
+      }
+
+      if (id_emisor > 7) {
         const responseFirm = null;
-        toast.error("No se encontró firmador");
+        toast.error("No se encontró firmador registrado");
         return
       }
 
@@ -652,6 +677,12 @@ const FrameComponent1 = ({ key, content, user }) => {
 
 
   const testmail = async () => {
+
+  if (content.re_correo_electronico === null || content.re_correo_electronico === "") {
+      toast.error("el receptor no tiene correo electronico");
+      return
+      
+    }
     console.log("testmail");
     console.log("SendBillHandler");
     console.log("---------------content--------------");
@@ -908,87 +939,72 @@ const FrameComponent1 = ({ key, content, user }) => {
   };
 
   // Determine the button color and additional content based on `content.firm`
-  const buttonStyle = content.firm ? "bg-lightgreen" : "bg-whitesmoke";
-  const firmbutton = content.firm ? (
-    <div className=" flex flex-row">
-      <button
-        onClick={ValidateBillHandler}
-        className={`cursor-pointer h-12 [border:none]  pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
-      >
-        <div className="relative text-xs pt-1.5 font-light font-inter text-black text-left z-[3]">
-          Firmar
-        </div>
-        <img src={checkimg} alt="Tick" className="w-[30px] ml-1 h-[30px]" />
-      </button>
-    </div>
-  ) : (
-    <div className=" flex flex-row">
-      <button
-        onClick={ValidateBillHandler}
-        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
-      >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-          Firmar
-        </div>
-      </button>
-    </div>
-  );
+  const buttonStyle = content.firm ? "bg-stone-200" : " bg-lightgreen";
 
-  const sendedebutton = content.sellado ? (
-    <div className=" flex flex-row">
-      <button
-        onClick={SendBillHandler}
-        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
-      >
-        <div className="relative pt-1.5 text-xs font-light font-inter text-black text-left z-[3]">
-          Enviar
-        </div>
-        <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
-      </button>
+const firmbutton = content.firm ? (
+  <div className="flex w-1/5  self-start flex-row">
+    <button
+      onClick={ValidateBillHandler}
+      className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 w-full justify-center pr-3  ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+    >
+      <img src={checkimg} alt="Tick" className="w-7 ml-1 h-7" />
+    </button>
+  </div>
+) : (
+  <div className="flex w-1/5 flex-row">
+    <button
+      onClick={ValidateBillHandler}
+      className={`cursor-pointer h-12  [border:none] pt-[10.5px] w-full justify-center pr-1 ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+    >
+      <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+        <img src={signature} className="h-7" alt="" />
+      </div>
+    </button>
+  </div>
+);
 
+const sendedebutton = content.sellado ? (
+  <div className="self-center flex w-full flex-row">
+    <button
+      onClick={SendBillHandler}
+      className={`cursor-pointer h-12 [border:none] w-full pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-lg flex flex-row items-center justify-center z-[2] hover:bg-lightgray-100`}
+    >
 
+      <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
+    </button>
+  </div>
+) : (
+  <div className="self-center flex  w-full flex-row">
+    <button
+      onClick={SendBillHandler}
+      className={`cursor-pointer h-12 w-full [border:none] justify-center items-center ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+    >
+      <img src={direct} className="h-7" alt="" />
+    </button>
+  </div>
+);
 
-    </div>
-  ) : (
-    <div className=" flex flex-row">
-      <button
-        onClick={SendBillHandler}
-        className={`cursor-pointer h-12 [border:none] pt-[11px]  pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
-      >
-        <div className="relative pt-1.5 text-xs font-light font-inter text-black text-left z-[3]">
-          Enviar
-        </div>
-      </button>
-    </div>
-  );
-
-  const testbutton = content.sellado ? (
-    <div className=" flex flex-row">
-      <button
-        onClick={testmail}
-        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
-      >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-          mail
-        </div>
-        <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
-      </button>
-
-
-
-    </div>
-  ) : (
-    <div className=" flex flex-row">
-      <button
-        onClick={testmail}
-        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-11xl flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100 `}
-      >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-          <img src={mailimg} className="h-5 w-5" alt="" />
-        </div>
-      </button>
-    </div>
-  );
+const testbutton = content.sellado ? (
+  <div className="flex  w-1/5 flex-row">
+    <button
+      onClick={testmail}
+      className={`cursor-pointer h-12 [border:none] pt-[10px] w-full justify-center pr-2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
+    >
+      <img src={mailchecker ? checkimg : cross} alt={mailchecker ? "Tick" : "Cross"} className="w-[30px] h-[30px]" />
+    </button>
+  </div>
+) : (
+  <div className="flex w-1/5   flex-row">
+    <button
+      onClick={testmail}
+      className={`cursor-pointer h-12  [border:none] pt-[8px] w-full justify-center pr-2.2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
+    >
+      <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+        <img src={mailimg} className="h-8 w-8" alt="" />
+      </div>
+    </button>
+  </div>
+);
 
 
   /* Delete bill handler using the services */
@@ -1071,14 +1087,14 @@ const FrameComponent1 = ({ key, content, user }) => {
             onClick={handelrisActivecross}
           >
             <img
-            className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
-            loading="lazy"
-            alt=""
-            /* import the img x.png from assets/img */
-            src={imgx}
-          />
+              className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
+              loading="lazy"
+              alt=""
+              /* import the img x.png from assets/img */
+              src={imgx}
+            />
           </button>
-          
+
 
 
         </div>
@@ -1089,8 +1105,8 @@ const FrameComponent1 = ({ key, content, user }) => {
         <div className=""></div>
       </div>
       <div className="self-stretch flex flex-row items-center justify-center  py-0 px-[10px] box-border">
-        <div className="flex flex-col justify-center self-center">
-          <div className="flex-1 flex flex-col items-center justify-center  pt-[7px] px-0 pb-0">
+        <div className="flex flex-col justify-center self-center w-full">
+          <div className="flex-1 flex px-4 flex-col items-center justify-center  pt-[7px]  pb-0">
             <div className="self-stretch  flex flex-col items-start justify-start gap-[7px_0px]">
               <div className="relative  whitespace-nowrap z-[1]">
                 {content.re_name}
@@ -1108,17 +1124,20 @@ const FrameComponent1 = ({ key, content, user }) => {
               </div>
             </div>
           </div>
-          <div className="flex-1 flex w-full pt-4 flex-col items-center justify-center gap-[8px_0px]">
-            <button className="cursor-pointer [border:none] px-2 pb-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
+          <div className="flex-1 flex w-full  pt-4 flex-col items-center justify-center gap-[8px_0px]">
+            <button
+            className="cursor-pointer [border:none] px-3 py-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
               <b className="relative text-11xl font-inria-sans text-black text-left whitespace-nowrap z-[2]">
                 TOTAL: ${content.total_a_pagar}
               </b>
             </button>
-            <div className="self-center justify-center flex py-2 p-6 gap-[0px_8px]">
-              {firmbutton}
-              {sendedebutton} {/* Additional content if `firm` is not null */}
-              {testbutton} {/* Additional content if `firm` is not null */}
-            </div>
+            <div className="w-full  flex pt-4 gap-[0px_12px]">
+    {firmbutton}
+    <div className="flex-grow flex justify-center">
+      {sendedebutton}
+    </div>
+    {testbutton}
+  </div>
           </div>
         </div>
       </div>

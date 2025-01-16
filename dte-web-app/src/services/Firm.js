@@ -11,15 +11,20 @@ const Firm = {
      */
 
     create: async(firm) => {
-        const res = await fetch(`${BASE_URL_Firm}/firmardocumento/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(firm)
-        });
-        const data = await res.json();
-        return data;
+        try {
+
+            const res = await fetch(`${BASE_URL_Firm}/firmardocumento/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(firm)
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
     },
 
     // calling other endpoints for other clients
@@ -38,6 +43,18 @@ const Firm = {
 
     DR_julio_HM: async(firm) => {
         const res = await fetch(`https://174.138.54.64:8448/firmardocumento/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    DR_VIDES: async(firm) => {
+        const res = await fetch(`https://174.138.54.64:8451/firmardocumento/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
