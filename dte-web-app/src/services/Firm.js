@@ -52,6 +52,18 @@ const Firm = {
         const data = await res.json();
         return data;
     },
+
+    DR_VIDES: async(firm) => {
+        const res = await fetch(`https://174.138.54.64:8451/firmardocumento/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
 }
 
 export default Firm;
