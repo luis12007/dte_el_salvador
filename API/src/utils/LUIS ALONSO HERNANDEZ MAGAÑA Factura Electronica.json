@@ -1,0 +1,112 @@
+{
+  "identificacion": {
+    "version": 1,
+    "ambiente": "00",
+    "tipoDte": "01",
+    "numeroControl": "DTE-01-00000000-000000000000239",
+    "codigoGeneracion": "CED0C0BD-7AEA-48BA-BE7D-FF61335BECF3",
+    "tipoModelo": 1,
+    "tipoOperacion": 1,
+    "fecEmi": "2025-01-15",
+    "horEmi": "14:44:59",
+    "tipoMoneda": "USD",
+    "tipoContingencia": null,
+    "motivoContin": null
+  },
+  "documentoRelacionado": null,
+  "emisor": {
+    "direccion": {
+      "municipio": "08",
+      "departamento": "06",
+      "complemento": "Residencial san gabriel 2, calle al volcan casa #3, San Salvador Mejicanos"
+    },
+    "nit": "02101601741065",
+    "nrc": "1837811",
+    "nombre": "LUIS ALONSO HERNANDEZ MAGAÑA",
+    "codActividad": "86203",
+    "descActividad": "Servicios médicos ",
+    "telefono": "64319239",
+    "correo": "luishdezmtz12@gmail.com",
+    "nombreComercial": "Servicios de anestesia",
+    "tipoEstablecimiento": "20",
+    "codEstableMH": null,
+    "codEstable": null,
+    "codPuntoVentaMH": null,
+    "codPuntoVenta": null
+  },
+  "receptor": {
+    "codActividad": "10005",
+    "direccion": null,
+    "nrc": null,
+    "descActividad": "Otros",
+    "correo": "luishdezmtz12@gmail.com",
+    "tipoDocumento": "36",
+    "nombre": "julio",
+    "telefono": null,
+    "numDocumento": "02102609781135"
+  },
+  "otrosDocumentos": null,
+  "ventaTercero": null,
+  "cuerpoDocumento": [
+    {
+      "codTributo": null,
+      "descripcion": "1",
+      "uniMedida": 99,
+      "codigo": null,
+      "cantidad": 1,
+      "numItem": 1,
+      "tributos": null,
+      "ivaItem": 0,
+      "noGravado": 0,
+      "psv": 0,
+      "montoDescu": 0,
+      "numeroDocumento": null,
+      "precioUni": 1,
+      "ventaGravada": 0,
+      "ventaExenta": 1,
+      "ventaNoSuj": 0,
+      "tipoItem": 1
+    }
+  ],
+  "resumen": {
+    "condicionOperacion": 1,
+    "totalIva": 0,
+    "saldoFavor": 0,
+    "numPagoElectronico": null,
+    "pagos": [
+      {
+        "periodo": null,
+        "plazo": null,
+        "montoPago": 1,
+        "codigo": "01",
+        "referencia": null
+      }
+    ],
+    "totalNoSuj": 0,
+    "tributos": null,
+    "totalLetras": "UNO DÓLARES",
+    "totalExenta": 1,
+    "subTotalVentas": 1,
+    "totalGravada": null,
+    "montoTotalOperacion": 1,
+    "descuNoSuj": 0,
+    "descuExenta": 0,
+    "descuGravada": 0,
+    "porcentajeDescuento": 0,
+    "totalDescu": 0,
+    "subTotal": 1,
+    "ivaRete1": "0",
+    "reteRenta": "0",
+    "totalNoGravado": 0,
+    "totalPagar": 1
+  },
+  "extension": {
+    "docuEntrega": null,
+    "nombRecibe": null,
+    "observaciones": "",
+    "placaVehiculo": null,
+    "nombEntrega": null,
+    "docuRecibe": null
+  },
+  "apendice": null
+}

@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { isVisible } from "@testing-library/user-event/dist/utils";
 import "./style.css";
 
-const Clientes = () => {
+const Testbill = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [isVisibleClient, setIsVisibleClient] = useState(false);
   const [CF, setCF] = useState(false);
@@ -1168,4 +1168,4 @@ const Clientes = () => {
     );
   };
 
-  export default Clientes;
+  export default Testbill;

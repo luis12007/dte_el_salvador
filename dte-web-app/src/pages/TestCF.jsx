@@ -13,7 +13,7 @@ import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const CrearCreditoFiscal = () => {
+const TestCF = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
@@ -1374,4 +1374,4 @@ const CrearCreditoFiscal = () => {
   );
 };
 
-export default CrearCreditoFiscal;
+export default TestCF;

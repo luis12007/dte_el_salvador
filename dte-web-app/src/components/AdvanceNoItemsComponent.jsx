@@ -12,12 +12,12 @@ const AdvanceItemsComponent = ({
       <div className="flex-1 w-full rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-center justify-center pt-0 px-0 pb-[20px] box-border gap-[9px] max-w-full mq408:box-border">
         <div className="self-stretch h-[816px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-[11px] px-[17px] pb-3 box-border relative whitespace-nowrap max-w-full z-[1]">
-          <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full z-[0]" />
+          {/* <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full z-[0]" />
           <img
             className="h-4 w-[18px] absolute !m-[0] right-[20px] bottom-[9px] object-contain z-[2]"
             alt=""
             src="/atras-1@2x.png"
-          />
+          /> */}
           <b className="relative text-xs font-inria-sans text-black text-left z-[2]">
             Datos del producto / Servicio
           </b>
