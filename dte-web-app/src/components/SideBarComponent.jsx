@@ -104,31 +104,8 @@ const CloseHandler = () => {
                 </div>
               </div>
             </button>
-            {/* <button onClick={GoClientsHandler} className="flex w-full bg-white flex-row items-start justify-start gap-[0px_14px]">
-              <img
-                className="h-8 w-8 relative object-cover z-[1]"
-                loading="lazy"
-                alt=""
-                src="/personas-1@2x.png"
-              />
-              <div className="flex flex-col items-start justify-start pt-[9px] px-0 pb-0">
-                <div className="relative z-[1]">Clientes</div>
-              </div>
-            </button>
-            <button onClick={GoAddServiceHandler} className="flex w-full bg-white flex-row items-start justify-start py-0 px-[3px]">
-              <div className="flex flex-row items-start justify-start gap-[0px_9px]">
-                <img
-                  className="h-[30px] w-[30px] relative object-cover z-[1]"
-                  loading="lazy"
-                  alt=""
-                  src="/articulo-1@2x.png"
-                />
-                <div className="flex flex-col items-start justify-start pt-2 px-0 pb-0">
-                  <div className="relative z-[1]">Añadir servicio</div>
-                </div>
-              </div>
-            </button> */}
-            <button onClick={GoCancelBill} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
+            
+            {/* <button onClick={GoCancelBill} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
               <div className="flex  flex-row items-start justify-start gap-[0px_9px]">
                 <img
                   className="h-[30px] w-[30px] relative object-cover z-[1]"
@@ -140,7 +117,7 @@ const CloseHandler = () => {
                   <div className="relative z-[1]">Invalidar factura</div>
                 </div>
               </div>
-            </button>
+            </button> */}
             <button onClick={GoClientsHandler} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
               <div className="flex  flex-row items-start justify-start gap-[0px_9px]">
                 <img

@@ -670,7 +670,16 @@ const CrearCreditoFiscal = () => {
     );
 
     Listitems.splice(indexToRemove, 1);
-    setListitems(Listitems);
+
+        /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
+        const Listitemsmap = Listitems.map((item, index) => {
+          return {
+              ...item,
+              numItem: index + 1,
+          };
+      });
+      console.log("Listitemsmap", Listitemsmap);
+    setListitems(Listitemsmap);
 
     console.log("Listitems", Listitems);
 
@@ -842,13 +851,7 @@ const CrearCreditoFiscal = () => {
           apendice: null,
         }; */
 
-    try {
-      const responsesum = await EmisorService.count_fiscal(id_emisor, token);
-      console.log("Count Fiscal");
-      console.log(responsesum);
-    } catch (error) {
-      console.log(error);
-    }
+
 
     var selectedDepartmentnum = selectedDepartment;
     /* if num is only 1 digit will be 0(digit) or if it is 9 it will be 09, it id 12 will be 12 */
@@ -978,7 +981,12 @@ const CrearCreditoFiscal = () => {
         docuRecibe: null,
       },
       apendice: null,
+      id_envio: userinfo.id_envio,
     };
+
+    if (client.phone === "") {
+      data.receptor.telefono = null;
+    }
 
     if (client.phone === "") {
       data.receptor.telefono = null;
@@ -1014,6 +1022,18 @@ const CrearCreditoFiscal = () => {
     } else if (time.date === "" || time.date === null) {
       toast.error("Fecha no puede estar vacio");
       return;
+    }
+
+    try {
+      const responsesum = await EmisorService.count_fiscal(id_emisor, token);
+      console.log("Count Fiscal");
+      console.log(responsesum);
+
+      const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+        console.log("incremented");
+        console.log(responseincrement);
+    } catch (error) {
+      console.log(error);
     }
 
     console.log("Data");

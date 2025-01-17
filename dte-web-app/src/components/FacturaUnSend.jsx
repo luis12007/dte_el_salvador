@@ -15,6 +15,7 @@ import mailimg from "../assets/imgs/correo.png";
 import cross from "../assets/imgs/cross.png";
 import direct from "../assets/imgs/direct.png";
 import signature from "../assets/imgs/signature.png";
+import UserService from "../services/UserServices";
 
 
 const FrameComponent1 = ({ key, content, user }) => {
@@ -768,7 +769,7 @@ const FrameComponent1 = ({ key, content, user }) => {
       const dataSend = { /* TODO: SEND */
         tipoDte: content.tipo,
         ambiente: content.ambiente,
-        idEnvio: content.id,
+        idEnvio: content.id_envio,
         version: parseintversion,
         codigoGeneracion: content.codigo_de_generacion,
         documento: content.firm,
@@ -800,6 +801,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
           console.log("edited");
           console.log(response);
+
 
           toast.success("Factura enviada al ministerio");
 
@@ -861,7 +863,7 @@ const FrameComponent1 = ({ key, content, user }) => {
       const dataSend = { /* TODO: SEND */
         tipoDte: content.tipo,
         ambiente: content.ambiente,
-        idEnvio: content.id,
+        idEnvio: content.id_envio,
         version: parseintversion,
         codigoGeneracion: content.codigo_de_generacion,
         documento: content.firm,
@@ -887,6 +889,10 @@ const FrameComponent1 = ({ key, content, user }) => {
           const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
           console.log("edited");
           console.log(response);
+
+          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          console.log("incremented");
+          console.log(responseincrement);
 
           toast.success("Factura enviada al ministerio");
 

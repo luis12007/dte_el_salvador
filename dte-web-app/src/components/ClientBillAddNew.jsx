@@ -55,13 +55,7 @@ const ClientBillAddNew = ({
                     <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
                         <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
                         <b className="relative z-[2]">CLIENTE</b>
-                        <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
-                            <img
-                                className="w-[18px] h-4 relative object-contain z-[2]"
-                                alt=""
-                                src="/atras-1@2x.png"
-                            />
-                        </div>
+                        
                     </div>
                     <div className="flex flex-row items-start justify-start py-0 px-3.5">
                         <div className="flex flex-row items-start justify-start gap-[0px_4px]"></div>
@@ -73,7 +67,7 @@ const ClientBillAddNew = ({
                             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                                 <div className="relative text-xs font-inria-sans text-left z-[1]">
                                     <span className="text-black">{`Nit`}</span>
-                                    <span className="text-tomato">*</span>
+                                    {/* <span className="text-tomato">*</span> */}
                                 </div>
                                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                                     <input
@@ -91,7 +85,7 @@ const ClientBillAddNew = ({
                             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                                 <div className="relative text-xs font-inria-sans text-left z-[1]">
                                     <span className="text-black">{`NRC `}</span>
-                                    <span className="text-tomato">*</span>
+                                    {/* <span className="text-tomato">*</span> */}
                                 </div>
                                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                                     <input
@@ -108,13 +102,13 @@ const ClientBillAddNew = ({
                             <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                                 <div className="relative text-xs font-inria-sans text-left z-[1]">
                                     <span className="text-black">{`DUI `}</span>
-                                    <span className="text-tomato">*</span>
+                                    {/* <span className="text-tomato">*</span> */}
                                 </div>
                                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                                     <input
                                         className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                        placeholder="DUI con guion"
-                                        type="text"
+                                        placeholder="DUI sin guion"
+                                        type="Number"
                                         value={client.dui}
                                         onChange={(e) => handleChange("dui", e.target.value)}
                                     />

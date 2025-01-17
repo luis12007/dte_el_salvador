@@ -12,6 +12,9 @@ import PlantillaService from "../services/PlantillaService";
 import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LoginAPI from "../services/Loginservices";
+import SendAPI from "../services/SendService";
+import Firmservice from "../services/Firm";
 
 const TestCF = () => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -29,6 +32,8 @@ const TestCF = () => {
   const [items, setitems] = useState([]);
   const [contents, setContents] = useState([]);
   const [isVisibleClient, setIsVisibleClient] = useState(false);
+  var numidentification = 0
+  var idenvio = 0
   
 
   /* data for municipalities ------------------------------------ */
@@ -742,6 +747,7 @@ const TestCF = () => {
   /* --------------------------SEND DATA-------------------------------- */
   const addBillHandler = async (event) => {
     event.preventDefault();
+    for (let index = 100; index < 200; index++) {
 
     const myUuid = uuidv4().toUpperCase().toString();
 
@@ -842,13 +848,7 @@ const TestCF = () => {
           apendice: null,
         }; */
 
-    try {
-      const responsesum = await EmisorService.count_fiscal(id_emisor, token);
-      console.log("Count Fiscal");
-      console.log(responsesum);
-    } catch (error) {
-      console.log(error);
-    }
+
 
     var selectedDepartmentnum = selectedDepartment;
     /* if num is only 1 digit will be 0(digit) or if it is 9 it will be 09, it id 12 will be 12 */
@@ -879,7 +879,7 @@ const TestCF = () => {
         version: 3,
         ambiente: userinfo.ambiente,
         tipoDte: "03",
-        numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),
+        numeroControl: getNextFormattedNumber(numidentification),
         codigoGeneracion: myUuid,
         tipoModelo: 1,
         tipoOperacion: 1,
@@ -949,7 +949,7 @@ const TestCF = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: iva /* TODO CHANGE */,
+            valor: iva ,
           },
         ],
         totalLetras: convertirDineroALetras(total),
@@ -1019,36 +1019,135 @@ const TestCF = () => {
     console.log("Data");
     console.log(data);
 
-    const responsePlantilla = await PlantillaService.create(
-      data,
-      token,
-      id_emisor
-    );
-    console.log("PlantillaService - Create");
-    console.log(responsePlantilla);
+    console.log("Data to send-------------");
+      console.log(data);
 
-    if (responsePlantilla.message === "Inserción exitosa") {
-      toast.success("Credito Fiscal creado con exito");
+      const Firm = {
+        nit: userinfo.nit,
+        activo: true,
+        passwordPri: userinfo.passwordpri,
+        dteJson: data,
+      };
+      var firmsend = "";
+      if (id_emisor == 1 || id_emisor == 2 || id_emisor == 3) {
+        const responseFirm = await Firmservice.create(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
 
-      /* wait 5 second and navigate to /facturas */
-      setTimeout(() => {
-        navigate("/facturas");
-      }, 5000);
-    } else {
-      toast.error("CF no creado intentar de nuevo");
+        if (responseFirm === undefined) {
+          toast.error("No se encontró firmador activo");
+          return
+        }
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+        firmsend = responseFirm.body;
+
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+      }
+      if (id_emisor == 4) {
+        const responseFirm = await Firmservice.HM_Clinic(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        firmsend = responseFirm.body;
+
+
+
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+      }
+      if (id_emisor == 5) {
+        const responseFirm = await Firmservice.DR_julio_HM(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        firmsend = responseFirm.body;
+
+
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+      }
+
+      if (id_emisor == 6 || id_emisor == 7) {
+        const responseFirm = await Firmservice.DR_VIDES(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        firmsend = responseFirm.body;
+
+      }
+
+      if (id_emisor > 7) {
+        const responseFirm = null;
+        toast.error("No se encontró firmador registrado");
+        return
+      }
+
+      const dataSend = { /* TODO: SEND */
+        tipoDte: data.identificacion.tipoDte,
+        ambiente: data.identificacion.ambiente,
+        idEnvio: idenvio,
+        version: data.identificacion.version,
+        codigoGeneracion: data.identificacion.codigoGeneracion,
+        documento: firmsend,
+      };
+
+      try {
+        console.log("---------------dataSend to minis--------------");
+        console.log(dataSend);
+
+        /* ADD token minis */
+        const resultAuthminis = await LoginAPI.loginMinis(
+          userinfo.nit,
+          userinfo.codigo_hacienda,
+          "MysoftwareSv"
+        );
+        console.log(resultAuthminis);
+        if (resultAuthminis.status != "OK") {
+          toast.success("Error eb ek nubusterui vuelve a intentar");
+          return
+        }
+
+
+
+
+        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        console.log(senddata);
+
+
+
+
+        if (senddata.estado === "PROCESADO") {
+          toast.success("Factura enviada al ministerio");
+
+
+
+
+
+        }
+
+        if (senddata.estado === "RECHAZADO")
+          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+        console.log(senddata.observaciones);
+        for (let i = 0; i < senddata.observaciones.length; i++) {
+          toast.error(`Observación ${i + 1} ${senddata.observaciones[i]}`);
+        }
+
+        console.log("---------------resultado--------------");
+        console.log(senddata.estado);
+
+
+
+      } catch (error) {
+        console.log(error)
+        toast.error("Error al enviar la factura no autorizado");
+
+
+      }
+
+      
+      numidentification = numidentification + 1;
+      idenvio = idenvio + 1;
     }
 
-    /* 
-        TODO CHANGE THIS THE OTHER SIDE console.log(data);
-         const Firm = {
-           nit: userinfo.nit, 
-           activo: true,
-           passwordPri: userinfo.passwordPri, 
-           dteJson: data
-         } */
-
-    /* 
-            navigate("/facturas");  */
   };
 
   /* ---------------------------------------------------------- */

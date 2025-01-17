@@ -61,6 +61,20 @@ const CardOfClientAndAddClient = () => {
             return;
         }
 
+        if (client.email !== null) {
+                if (!validateEmail(client.email)) {
+                  toast.error("Formato de correo electrónico no válido!", {
+                    position: "top-center",
+                    autoClose: 3000, // Auto close after 3 seconds
+                    hideProgressBar: false, // Display the progress bar
+                    closeOnClick: true, // Close the toast when clicked
+                    draggable: true, // Allow dragging the toast
+                    style: { zIndex: 200000 } // Correct way to set z-index
+                  });
+                  return;
+                }
+              }
+
         console.log('AddClientHandler')
 
         const response = await ReceptorService.Add(id_emisor, token, client);
@@ -71,6 +85,10 @@ const CardOfClientAndAddClient = () => {
 
         if (response.message == "Creado") {
             toast.success("Cliente agregado exitosamente")
+            /* wait 3 seconds and navigate to /clientes */
+            setTimeout(() => {
+                navigate("/clientes");
+            }, 3000);
         }else{
             toast.error("Error al agregar cliente")
         }
@@ -79,6 +97,12 @@ const CardOfClientAndAddClient = () => {
     const goBackHandler = () => {
         navigate("/clientes");
     }
+
+    const validateEmail = (email) => {
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+      };
+
 
     const departmentsAndMunicipalities = {
         /* 0: {

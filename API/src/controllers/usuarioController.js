@@ -109,6 +109,22 @@ const count_fiscal = async(req, res) => {
     }
 };
 
+const id_envioplus = async(req, res) => {
+    try {
+        const userid = req.params.id;
+
+        const response = await knex('emisor')
+            .where('id', userid)
+            .increment('id_envio', 1);
+
+        res.status(200).json({ message: 'Id envioplus incrementado correctamente' });
+    } catch (error) {
+        console.error('Error al incrementar id envioplus', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+}
+
+
 
 
 
@@ -118,6 +134,7 @@ module.exports = {
     putUserInfo,
     createUser,
     count_factura,
-    count_fiscal
+    count_fiscal,
+    id_envioplus
 
 };
