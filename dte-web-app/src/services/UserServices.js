@@ -67,7 +67,18 @@ const UserService = {
         });
         const data = await res.json();
         return data;
-    }
+    },
+
+    id_enviopus1: async(id, token) => {
+        const res = await fetch(`${BASE_URL}/emisor/update/enviopus1/${id}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        return data;
+    },
 }
 
 

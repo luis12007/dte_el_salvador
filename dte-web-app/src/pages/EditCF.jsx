@@ -570,7 +570,8 @@ const departmentsAndMunicipalities = {
               type: item.tipoitem.toString(), // Assuming type is returned as a number and needs to be converted to a string
               cuantity: item.cantidad.toString(), // Assuming cantidad is returned as a number
               description: item.descripcion,
-              price: item.preciouni.toString(), // Assuming preciouni is returned as a number
+              price: item.preciouni.toString(),
+              numitem: item.numitem // Assuming preciouni is returned as a number
             };
             // Call itemshandleAdd with each item
             inicializeitems(newContents , responsePlantilla);
@@ -729,7 +730,7 @@ const departmentsAndMunicipalities = {
     setiva(roundediva); // Set the rounded subtotal
     setSubtotal(rawSubtotal); // Set the rounded subtotal
     setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
-    
+
     console.log("Subtotal", subtotal);
     console.log("Total", total);
 };
@@ -756,6 +757,7 @@ const departmentsAndMunicipalities = {
     const cuantityint = parseInt(newContents.cuantity);
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
+    const numitem = parseInt(newContents.numitem);
 
     /* const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
@@ -766,7 +768,7 @@ const departmentsAndMunicipalities = {
         uniMedida: 99,
         codigo: null,
         cantidad: cuantityint,
-        numItem: setListitems.length + 1,
+        numItem: numitem,
         tributos: ["20"],
         noGravado: 0,
         psv: 0,
@@ -843,7 +845,16 @@ const departmentsAndMunicipalities = {
 
 
     Listitems.splice(indexToRemove, 1);
-    setListitems(Listitems);
+
+        /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
+        const Listitemsmap = Listitems.map((item, index) => {
+          return {
+              ...item,
+              numItem: index + 1,
+          };
+      });
+      console.log("Listitemsmap", Listitemsmap);
+    setListitems(Listitemsmap);
 
     console.log("Listitems", Listitems);
 
@@ -1005,8 +1016,8 @@ const departmentsAndMunicipalities = {
         ],
         totalLetras: convertirDineroALetras(total),
         totalExenta: 0,
-        subTotalVentas: total,
-        totalGravada: total,
+        subTotalVentas: subtotal,
+        totalGravada: subtotal,
         montoTotalOperacion: total,
         descuNoSuj: 0,
         descuExenta: 0,
@@ -1033,10 +1044,10 @@ const departmentsAndMunicipalities = {
     };
 
     if (client.phone === ""){
-      data.emisor.telefono = null;
+      data.receptor.telefono = null;
     }
     if (client.name === ""){
-      data.emisor.telefono = null;
+      data.receptor.name = null;
     }
 
     if (client.email === "") {
@@ -1058,7 +1069,7 @@ const departmentsAndMunicipalities = {
     console.log("PlantillaService - update?");
     console.log(responsePlantilla);
     if (responsePlantilla.message === "plantilla actualizado") {
-      toast.success("Factura actualizada con éxito");
+      toast.success("Credito Fiscal actualizado con éxito");
       setTimeout(() => {
         navigate("/facturas");
       }, 5000);

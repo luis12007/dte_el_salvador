@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import FacturaUnSend from "../components/FacturaUnSend";
-import FacturaInvalidate from "../components/FacturaInvalidate";
+import FacturaSend from "../components/FacturaSend";
 import HamburguerComponent from "../components/HamburguerComponent";
 import SidebarComponent from "../components/SideBarComponent";
 import PlantillaAPI from "../services/PlantillaService";
 import UserService from "../services/UserServices";
 import LoginAPI from "../services/Loginservices";
 import * as XLSX from "xlsx";
+import filterimg from "../assets/imgs/filter.png";
+import filterwhite from "../assets/imgs/filterwhite.png";
+import FilterModal from "../components/FilterModal";
+import FacturaInvalidate from "../components/FacturaInvalidate";
 
 const Invalidate = () => {
     const token = localStorage.getItem("token");
@@ -14,6 +18,11 @@ const Invalidate = () => {
     const [items, setItems] = useState([]);
     const tokenminis = localStorage.getItem("tokenminis");
     const [user, setUser] = useState({});
+    const [showModal, setShowModal] = useState(false);
+    const [filter, setFilter] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [filterByc, setFilterBy] = useState('');
 
     // Sidebar visibility toggle
     const [visible, setVisible] = useState(true);
@@ -38,7 +47,6 @@ const Invalidate = () => {
                 setItems(result || []); // Default to empty array
 
                 if (tokenminis === "undefined" || tokenminis === null) {
-
                     const resultAuthminis = await LoginAPI.loginMinis(
                         resultusers.nit,
                         resultusers.codigo_hacienda,
@@ -55,10 +63,18 @@ const Invalidate = () => {
         };
 
         fetchData(); // Call the async function
+
+        // Simulate loading for 5 seconds
+        const timer = setTimeout(() => {
+            setLoading(false);
+            // Fetch or set your items here
+            // setItems(fetchedItems);
+        }, 2000);
+
+        return () => clearTimeout(timer);
     }, []); // Ensure this runs only once on mount
 
     const excelHandler = () => {
-
         const now = new Date();
         const dateString = now.toLocaleDateString('en-GB').replace(/\//g, '-'); // Format as DD-MM-YYYY
 
@@ -88,29 +104,171 @@ const Invalidate = () => {
 
     const groupedItems = groupItemsByDate(items);
 
-    return (
-        <div className="w-screen  bg-steelblue-300  flex flex-col  pt-[66px] pb-[33px] pr-[22px] box-border gap-[495px_0px] ">
-            <SidebarComponent visible={visible} />
-            <section className=" pl-2">
+    /* function to transform format date in text separete by year moth and day in spanish  input 2025-01-02 output 1 de agosto de 2025*/
+    const transformDate = (date) => {
+        const dateArray = date.split("-");
+        const year = dateArray[0];
+        const month = dateArray[1];
+        const day = dateArray[2];
+        const monthNames = [
+            "enero",
+            "febrero",
+            "marzo",
+            "abril",
+            "mayo",
+            "junio",
+            "julio",
+            "agosto",
+            "septiembre",
+            "octubre",
+            "noviembre",
+            "diciembre",
+        ];
+        return `${day} de ${monthNames[parseInt(month) - 1]} de ${year}`;
+    }
 
-                {/* show the date of the bills if the bill is in the same date just stack them */}
-                {Array.isArray(items) && items.length > 0 ? (
-                    Object.keys(groupedItems).map((date) => (
-                        <div key={date}>
-                            <div className="flex items-center  justify-center my-4">
-                                <div className="flex-grow border-t  border-gray-300"></div>
-                                <span className="mx-4 text-xl  font-thin">{date}</span>
-                                <div className="flex-grow border-t  border-gray-300"></div>
-                            </div>
-                            {groupedItems[date].map((content, index) => (
-                                <FacturaInvalidate key={index} content={content} user={user} />
-                            ))}
+    const openModal = (event, filter) => {
+        event.preventDefault();
+        setFilterBy(filter);
+        setIsModalVisible(true);
+        setShowModal(false);
+
+    };
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleSearch = async (filterData) => {
+        console.log('Search data:', filterData);
+        setLoading(true);
+        let newItems = [];
+
+        try {
+            if (filterData.filterByc === 'name') {
+                newItems = await PlantillaAPI.getByUserIdAndName(user_id, token, filterData.value);
+            } else if (filterData.filterByc === 'date') {
+                newItems = await PlantillaAPI.getByUserIdAndRange(user_id, token, filterData.fromDate, filterData.toDate);
+            } else if (filterData.filterByc === 'type') {
+                newItems = await PlantillaAPI.getByUserIdAndType(user_id, token, filterData.value);
+            }
+        } catch (error) {
+            console.error('Error fetching filtered items:', error);
+        }
+        console.log('Filtered items:', newItems);
+        setItems(newItems);
+        setLoading(false);
+    };
+
+
+    const filterBy = async (event, criteria) => {
+        event.preventDefault();
+        setFilter(criteria);
+        setShowModal(false);
+        var newitems = items;
+        if (criteria == "type") {
+            newitems = await PlantillaAPI.getByUserIdAndType(user_id, token, "03");
+        }
+
+        if (criteria == "date") {
+            newitems = await PlantillaAPI.getByUserIdAndRange(user_id, token, "2025-01-15", "2025-01-16");
+        }
+
+        if (criteria == "name") {
+            newitems = await PlantillaAPI.getByUserIdAndName(user_id, token, "ju");
+        }
+        /* filtered items */
+        console.log("----------------newitems----------------");
+        console.log(newitems);
+        console.log("----------------newitems----------------");
+
+    };
+
+
+    return (
+        <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-[33px] pr-[22px] box-border ch:items-center">
+            <SidebarComponent visible={visible} />
+            
+            <div className="relative flex flex-row items-center justify-between w-full">
+  <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xs">Se permite invalidar luego de enviar:</h1>
+  <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xs mt-12">Credito fiscal 24h</h1>
+  <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xs mt-20">Facturas 3 Meses</h1>
+  <div className="flex-grow"></div>
+  <button className="bg-gray-300 w-2/12 self-end h-12 border-black rounded-lg drop-shadow-lg" onClick={() => setShowModal(true)}>
+    <img src={filterwhite} className="h-9 pl-3 self-center mr-3" alt="" />
+  </button>
+</div>
+
+            {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+                        <h2 className="text-2xl font-bold mb-6">Filtrar Por</h2>
+                        <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event, 'name')}>
+                            Nombre
+                        </button>
+                        <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event, 'date')}>
+                            Fecha
+                        </button>
+                        <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event, 'type')}>
+                            Tipo
+                        </button>
+                        <button className="bg-lightcoral text-white py-3 px-6 rounded-lg shadow-md text-lg" onClick={() => setShowModal(false)}>
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <FilterModal
+                isVisible={isModalVisible}
+                filterByc={filterByc}
+                onClose={closeModal}
+                onSearch={handleSearch}
+            />
+
+
+            <section className="pl-2 ch:w-1/3 mt-5 ">
+                {loading ? (
+                    <div className="flex items-center justify-center my-4 rounded-lg">
+                        <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
+                            <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">Loading...</span>
                         </div>
-                    ))
+                    </div>
                 ) : (
-                    <p>No facturas para mostrar</p>
+                    <>
+                        {Array.isArray(items) && items.length > 0 ? (
+                            Object.keys(groupedItems).map((date) => (
+                                <div key={date}>
+                                    <div className="flex items-center justify-center my-4 rounded-lg">
+                                        <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
+                                            <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">{date}</span>
+                                            <div>{transformDate(date)}</div>
+                                        </div>
+                                    </div>
+                                    {groupedItems[date].map((content, index) => (
+                                        <FacturaInvalidate key={index} content={content} user={user} />
+                                    ))}
+                                </div>
+                            ))
+                        ) : (
+                            <div className="flex items-center justify-center my-4 rounded-lg">
+                                <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
+                                    <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">No facturas para mostrar</span>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
             </section>
+
+            <button
+                onClick={excelHandler}
+                className="cursor-pointer self-center mt-16 [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center hover:bg-seagreen-100"
+            >
+                <b className="relative self-center text-lg font-inria-sans text-white text-left z-[1]">
+                    Excel
+                </b>
+            </button>
 
             <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
         </div>

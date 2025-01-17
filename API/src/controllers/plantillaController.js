@@ -112,6 +112,7 @@ const plantillacreate = async(req, res) => {
             firm: null,
             sellado: false,
             sello_de_recepcion: null,
+            id_envio: plantilla.id_envio,
         };
 
 
@@ -269,6 +270,7 @@ const plantillacreate = async(req, res) => {
             firm: null,
             sellado: false,
             sello_de_recepcion: null,
+            id_envio: plantilla.id_envio,
         };
 
         try {
@@ -559,6 +561,7 @@ const updatePlantilla = async(req, res) => {
             firm: plantilla.firma,
             sellado: plantilla.sellado,
             sello_de_recepcion: plantilla.sello,
+
         };
     }
 

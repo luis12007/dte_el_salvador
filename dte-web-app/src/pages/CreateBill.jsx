@@ -123,7 +123,16 @@ const Clientes = () => {
     setitems((prevContents) => prevContents.filter((_, i) => i !== index));
 
     Listitems.splice(index, 1);
-    setListitems(Listitems);
+
+        /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
+        const Listitemsmap = Listitems.map((item, index) => {
+          return {
+              ...item,
+              numItem: index + 1,
+          };
+      });
+      console.log("Listitemsmap", Listitemsmap);
+    setListitems(Listitemsmap);
 
     console.log("Listitems", Listitems);
     /* map all newitems and sum the  precioUni*cantidad */
@@ -364,6 +373,8 @@ const Clientes = () => {
       const response = await EmisorService.count_factura(id_emisor, token);
       console.log("Count Factura");
       console.log(response);
+
+      
     } catch (error) {
       console.log(error);
     }
@@ -544,9 +555,6 @@ const Clientes = () => {
 
       }
 
-      const response = await EmisorService.count_factura(id_emisor, token);
-      console.log("Count Factura");
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -672,6 +680,7 @@ const Clientes = () => {
             docuRecibe: null,
           },
           apendice: null,
+          id_envio: userinfo.id_envio,
         };
 
         if (client.name === "") {
@@ -686,6 +695,14 @@ const Clientes = () => {
         if (client.address === "") {
           data.receptor.direccion = null;
         }
+
+        const response = await EmisorService.count_factura(id_emisor, token);
+        console.log("Count Factura");
+        console.log(response);
+
+        const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+        console.log("incremented");
+        console.log(responseincrement);
 
         console.log("Data");
         console.log(data);
