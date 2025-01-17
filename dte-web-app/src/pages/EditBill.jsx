@@ -33,7 +33,7 @@ const EditBill = () => {
   const [plantilla, setPlantilla] = useState({});
   const navigate = useNavigate();
   const [flag, setFlag] = useState(false);
-  const [namereceptor , setNamereceptor] = useState("");
+  const [namereceptor, setNamereceptor] = useState("");
   /* get codegeneration in the url http://localhost:3001/#/editar/factura/BC9241F4-058C-4490-AE32-1D5C5A294FB7 */
   const { codigo_de_generacion } = useParams();
   /* Call to the info of user */
@@ -110,10 +110,10 @@ const EditBill = () => {
         }
       };
 
-    if (Listitems.length === 0) {
-              // Call initializeItems to initiate the process when needed
-      initializeItems();
-    }
+      if (Listitems.length === 0) {
+        // Call initializeItems to initiate the process when needed
+        initializeItems();
+      }
 
 
       /* initialize the observations */
@@ -129,9 +129,25 @@ const EditBill = () => {
           );
 
           // Map the response data to the client state
+
+          if(responsePlantilla.plantilla[0].re_tipodocumento === "13"){
+            setClient({
+            documentType:
+              responsePlantilla.plantilla[0].re_tipodocumento || "13",
+            name: responsePlantilla.plantilla[0].re_name || "",
+            document: removeDashes(responsePlantilla.plantilla[0].re_numdocumento) || "",
+            address: responsePlantilla.plantilla[0].re_direccion || "",
+            email: responsePlantilla.plantilla[0].re_correo_electronico || null,
+            phone: responsePlantilla.plantilla[0].re_numero_telefono || "",
+            codActividad:
+              responsePlantilla.plantilla[0].re_codactividad || "10005",
+            nrc: responsePlantilla.plantilla[0].re_nrc || null,
+            descActividad:
+              responsePlantilla.plantilla[0].re_actividad_economica || "Otros"});
+          }else{
           setClient({
             documentType:
-              responsePlantilla.plantilla[0].re_tipodocumento || "36",
+              responsePlantilla.plantilla[0].re_tipodocumento || "13",
             name: responsePlantilla.plantilla[0].re_name || "",
             document: responsePlantilla.plantilla[0].re_numdocumento || "",
             address: responsePlantilla.plantilla[0].re_direccion || "",
@@ -142,7 +158,7 @@ const EditBill = () => {
             nrc: responsePlantilla.plantilla[0].re_nrc || null,
             descActividad:
               responsePlantilla.plantilla[0].re_actividad_economica || "Otros",
-          });
+          })};
 
         } catch (error) {
           console.error("Failed to fetch client data", error);
@@ -304,39 +320,39 @@ const EditBill = () => {
     const ivaperitemfinal = ivaperitem * 0.13;
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
     const newItem = {
-        codTributo: null,
-        descripcion: newContents.description,
-        uniMedida: 99,
-        codigo: null,
-        cantidad: cuantityint,
-        numItem: setListitems.length + 1,
-        tributos: null,
-        ivaItem: 0,
-        noGravado: 0,
-        psv: 0,
-        montoDescu: 0,
-        numeroDocumento: null,
-        precioUni: pricefloat,
-        ventaGravada: 0,
-        ventaExenta: pricefloat * cuantityint,
-        ventaNoSuj: 0,
-        tipoItem: typeitem,
-      };
-      
-      // Update the list with the new item
-      setListitems((prevListitems) => {
-        const updatedList = [...prevListitems, newItem];
-      
-        // Set `setitems` with the content from `updatedList`
-        setitems(updatedList.map(item => ({
-          type: item.tipoItem,
-          cuantity: item.cantidad,
-          description: item.descripcion,
-          price: item.precioUni,
-        })));
-      
-        return updatedList;
-      });
+      codTributo: null,
+      descripcion: newContents.description,
+      uniMedida: 99,
+      codigo: null,
+      cantidad: cuantityint,
+      numItem: setListitems.length + 1,
+      tributos: null,
+      ivaItem: 0,
+      noGravado: 0,
+      psv: 0,
+      montoDescu: 0,
+      numeroDocumento: null,
+      precioUni: pricefloat,
+      ventaGravada: 0,
+      ventaExenta: pricefloat * cuantityint,
+      ventaNoSuj: 0,
+      tipoItem: typeitem,
+    };
+
+    // Update the list with the new item
+    setListitems((prevListitems) => {
+      const updatedList = [...prevListitems, newItem];
+
+      // Set `setitems` with the content from `updatedList`
+      setitems(updatedList.map(item => ({
+        type: item.tipoItem,
+        cuantity: item.cantidad,
+        description: item.descripcion,
+        price: item.precioUni,
+      })));
+
+      return updatedList;
+    });
 
     const Listitemstrack = [...Listitems, newItem];
 
@@ -392,96 +408,96 @@ const EditBill = () => {
     });
     /* delete that item in ListItem */
     setListitems((prevListitems) => {
-        const updatedList = prevListitems.filter((_, i) => i !== index);
-        return updatedList;
-        });
-    
-  console.log("ListitemsAddafter")
-  console.log(Listitems)
+      const updatedList = prevListitems.filter((_, i) => i !== index);
+      return updatedList;
+    });
 
-
-
-  };
-
-/*   const itemshandleAdd = (newContents) => {
-    var type = "bienes";
-    if (newContents.type === "1") {
-      type = "Bienes";
-    } else if (newContents.type === "2") {
-      type = "Servicios";
-    } else if (newContents.type === "3") {
-      type = "Bienes y Servicios";
-    } else if (newContents.type === "4") {
-      type = "Otro";
-    }
-
-
-
-    const cuantityint = parseInt(newContents.cuantity);
-    const pricefloat = parseFloat(newContents.price);
-    const typeitem = parseInt(newContents.type);
-
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
-    const newItem = {
-      codTributo: null,
-      descripcion: newContents.description,
-      uniMedida: 99,
-      codigo: null,
-      cantidad: cuantityint,
-      numItem: Listitems.length + 1,
-      tributos: null,
-      ivaItem: ivarounded,
-      noGravado: 0,
-      psv: 0,
-      montoDescu: 0,
-      numeroDocumento: null,
-      precioUni: pricefloat,
-      ventaGravada: pricefloat * cuantityint + ivarounded * cuantityint,
-      ventaExenta: 0,
-      ventaNoSuj: 0,
-      tipoItem: typeitem,
-    };
-    // Update the list with the new item
-    setListitems((prevListitems) => [...prevListitems, newItem]);
-
-
-
-    setitems((prevContents) => [
-        ...prevContents,
-        {
-          type: type,
-          cuantity: newContents.cuantity,
-          description: newContents.description,
-          price: newContents.price,
-        },
-      ]);
-
-    const Listitemstrack = [...Listitems, newItem];
-
-
-    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
-    const rawSubtotal = Listitemstrack.reduce(
-      (total, item) => total + item.precioUni * item.cantidad,
-      0
-    );
-    const rawiva = Listitemstrack.reduce(
-      (total, item) => total + item.ivaItem * item.cantidad,
-      0
-    );
-    // Round to two decimal places
-    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-    const roundediva = Math.round(rawiva * 100) / 100;
-
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(roundedSubtotal); // Set the rounded subtotal
-    console.log("ListitemsAddAfter")
+    console.log("ListitemsAddafter")
     console.log(Listitems)
+
+
+
   };
 
- */
+  /*   const itemshandleAdd = (newContents) => {
+      var type = "bienes";
+      if (newContents.type === "1") {
+        type = "Bienes";
+      } else if (newContents.type === "2") {
+        type = "Servicios";
+      } else if (newContents.type === "3") {
+        type = "Bienes y Servicios";
+      } else if (newContents.type === "4") {
+        type = "Otro";
+      }
+  
+  
+  
+      const cuantityint = parseInt(newContents.cuantity);
+      const pricefloat = parseFloat(newContents.price);
+      const typeitem = parseInt(newContents.type);
+  
+      const ivaperitem = pricefloat / 1.13;
+      const ivaperitemfinal = ivaperitem * 0.13;
+      const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+      const newItem = {
+        codTributo: null,
+        descripcion: newContents.description,
+        uniMedida: 99,
+        codigo: null,
+        cantidad: cuantityint,
+        numItem: Listitems.length + 1,
+        tributos: null,
+        ivaItem: ivarounded,
+        noGravado: 0,
+        psv: 0,
+        montoDescu: 0,
+        numeroDocumento: null,
+        precioUni: pricefloat,
+        ventaGravada: pricefloat * cuantityint + ivarounded * cuantityint,
+        ventaExenta: 0,
+        ventaNoSuj: 0,
+        tipoItem: typeitem,
+      };
+      // Update the list with the new item
+      setListitems((prevListitems) => [...prevListitems, newItem]);
+  
+  
+  
+      setitems((prevContents) => [
+          ...prevContents,
+          {
+            type: type,
+            cuantity: newContents.cuantity,
+            description: newContents.description,
+            price: newContents.price,
+          },
+        ]);
+  
+      const Listitemstrack = [...Listitems, newItem];
+  
+  
+      // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+      const rawSubtotal = Listitemstrack.reduce(
+        (total, item) => total + item.precioUni * item.cantidad,
+        0
+      );
+      const rawiva = Listitemstrack.reduce(
+        (total, item) => total + item.ivaItem * item.cantidad,
+        0
+      );
+      // Round to two decimal places
+      const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
+  
+      setiva(roundediva); // Set the rounded subtotal
+      setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
+      setTotal(roundedSubtotal); // Set the rounded subtotal
+      console.log("ListitemsAddAfter")
+      console.log(Listitems)
+    };
+  
+   */
 
   const itemshandleAdd = (newContents) => {
     var type = "bienes";
@@ -519,7 +535,7 @@ const EditBill = () => {
       numeroDocumento: null,
       precioUni: pricefloat,
       ventaGravada: 0,
-      ventaExenta:  pricefloat * cuantityint,
+      ventaExenta: pricefloat * cuantityint,
       ventaNoSuj: 0,
       tipoItem: typeitem,
     };
@@ -529,14 +545,14 @@ const EditBill = () => {
     /* add items*/
 
     setitems((prevContents) => [
-        ...prevContents,
-        {
-          type: type,
-          cuantity: newContents.cuantity,
-          description: newContents.description,
-          price: newContents.price,
-        },
-      ]);
+      ...prevContents,
+      {
+        type: type,
+        cuantity: newContents.cuantity,
+        description: newContents.description,
+        price: newContents.price,
+      },
+    ]);
 
     const Listitemstrack = [...Listitems, newItem];
 
@@ -562,7 +578,7 @@ const EditBill = () => {
   };
 
 
-  
+
   const itemsAdvancehandleRemove = (index) => {
     setitemsAdvance((prevContents) =>
       prevContents.filter((_, i) => i !== index)
@@ -597,6 +613,11 @@ const EditBill = () => {
     console.log("codes");
     console.log(plantilla.plantilla[0].numero_de_control);
     console.log(plantilla.plantilla[0].codigo_de_generacion);
+
+    if (client.documentType === "13") {
+      client.document = formatDUI(client.document);
+  }
+  
     const data = {
       identificacion: {
         version: 1,
@@ -710,7 +731,11 @@ const EditBill = () => {
     if (client.email === "") {
       data.receptor.correo = null;
     }
-    
+
+    if (client.address === "") {
+      data.receptor.direccion = null;
+    }
+
     console.log("Data");
     console.log(data);
     /* 
@@ -733,18 +758,18 @@ const EditBill = () => {
     console.log("PlantillaService - update?");
     console.log(responsePlantilla);
 
-  if (responsePlantilla.message === "plantilla actualizado") {
-    toast.success("Factura editada con éxito");
+    if (responsePlantilla.message === "plantilla actualizado") {
+      toast.success("Factura editada con éxito");
 
-        /* wait 5 seconds */
-        setTimeout(() => {
-            navigate("/facturas");
-        }, 5000);
+      /* wait 5 seconds */
+      setTimeout(() => {
+        navigate("/facturas");
+      }, 5000);
 
-           /*  navigate("/facturas");  */
-  } else {
-    toast.error("Error al editar la factura");
-  }
+      /*  navigate("/facturas");  */
+    } else {
+      toast.error("Error al editar la factura");
+    }
   };
 
   /* ---------------------------------------------------------- */
@@ -804,7 +829,7 @@ const EditBill = () => {
 
   const convertirDineroALetras = (cantidad) => {
     if (typeof cantidad !== 'number' || isNaN(cantidad)) {
-        throw new Error('La cantidad debe ser un número válido.');
+      throw new Error('La cantidad debe ser un número válido.');
     }
 
     // Asegurarse de que la cantidad tenga como máximo dos decimales
@@ -815,7 +840,7 @@ const EditBill = () => {
     const centavos = parseInt(partes[1], 10); // Parte decimal
 
     if (dolares > Number.MAX_SAFE_INTEGER) {
-        throw new Error('La cantidad en dólares es demasiado grande para convertir.');
+      throw new Error('La cantidad en dólares es demasiado grande para convertir.');
     }
 
     // Convierte las partes a palabras
@@ -826,62 +851,70 @@ const EditBill = () => {
     let resultado = `${dolaresEnLetras} DÓLARES`;
 
     if (centavos > 0) {
-        resultado += ` CON ${centavosEnLetras} CENTAVOS`;
+      resultado += ` CON ${centavosEnLetras} CENTAVOS`;
     }
 
     return resultado;
-};
+  };
 
-const convertirNumeroALetras = (numero) => {
-  const unidades = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE"];
-  const especiales = ["DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE"];
-  const decenas = ["", "", "VEINTE", "TREINTA", "CUARENTA", "CINCUENTA", "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
-  const centenas = ["", "CIEN", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
+  const convertirNumeroALetras = (numero) => {
+    const unidades = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE"];
+    const especiales = ["DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE"];
+    const decenas = ["", "", "VEINTE", "TREINTA", "CUARENTA", "CINCUENTA", "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
+    const centenas = ["", "CIEN", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
 
-  if (numero === 0) return "CERO";
+    if (numero === 0) return "CERO";
 
-  if (numero < 10) return unidades[numero];
+    if (numero < 10) return unidades[numero];
 
-  if (numero < 16) return especiales[numero - 10];
+    if (numero < 16) return especiales[numero - 10];
 
-  if (numero < 20) return "DIECI" + unidades[numero - 10];
+    if (numero < 20) return "DIECI" + unidades[numero - 10];
 
-  if (numero < 30) return numero === 20 ? "VEINTE" : "VEINTI" + unidades[numero - 20];
+    if (numero < 30) return numero === 20 ? "VEINTE" : "VEINTI" + unidades[numero - 20];
 
-  if (numero < 100) {
+    if (numero < 100) {
       const decena = Math.floor(numero / 10);
       const unidad = numero % 10;
       return decenas[decena] + (unidad > 0 ? " Y " + unidades[unidad] : "");
-  }
+    }
 
-  if (numero < 1000) {
+    if (numero < 1000) {
       const centena = Math.floor(numero / 100);
       const resto = numero % 100;
       return (centena === 1 && resto > 0 ? "CIENTO" : centenas[centena]) + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
-  }
+    }
 
-  if (numero < 1000000) {
+    if (numero < 1000000) {
       const miles = Math.floor(numero / 1000);
       const resto = numero % 1000;
       return (miles === 1 ? "MIL" : convertirNumeroALetras(miles) + " MIL") + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
-  }
+    }
 
-  if (numero < 1000000000) {
+    if (numero < 1000000000) {
       const millones = Math.floor(numero / 1000000);
       const resto = numero % 1000000;
       return (millones === 1 ? "UN MILLÓN" : convertirNumeroALetras(millones) + " MILLONES") + (resto > 0 ? " " + convertirNumeroALetras(resto) : "");
+    }
+
+    throw new Error("Número demasiado grande para convertir.");
+  };
+
+
+  function formatDUI(num) {
+    const str = num.toString();
+    return str.slice(0, -1) + "-" + str.slice(-1);
   }
 
-  throw new Error("Número demasiado grande para convertir.");
-};
-
-
+  function removeDashes(str) {
+    return str.replace(/-/g, "");
+  }
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
-         <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">factura</h1>
-         <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-         <h2 className="">{namereceptor}</h2>
+        <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">factura</h1>
+        <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
+        <h2 className="">{namereceptor}</h2>
       </header>
       <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
@@ -890,13 +923,13 @@ const convertirNumeroALetras = (numero) => {
           <b className="relative text-xs font-inria-sans text-black text-left z-[2]">
             General
           </b>
-          <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
+          {/* <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
             <img
               className="w-[18px] h-4 relative object-contain z-[2]"
               alt=""
               src="/atras-1@2x.png"
             />
-          </div>
+          </div> */}
         </div>
         <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-2.5 box-border max-w-full"></div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
@@ -957,7 +990,7 @@ const convertirNumeroALetras = (numero) => {
       <TreeNode text="Subtotal" data={total} />
       <TreeNode text="IVA" data={0} />
       <TreeNode text="Total a Pagar" data={total} />
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full ch:w-1/3 ch:self-center">
+      {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full ch:w-1/3 ch:self-center">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
           <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-3 px-[9px] pb-[11px] box-border relative whitespace-nowrap max-w-full z-[1]">
@@ -1017,12 +1050,12 @@ const convertirNumeroALetras = (numero) => {
                   setpayment={setpayment}
                   total={total}
                 />{" "}
-                {/* TODO: Add the credit metod */}
+
               </div>
             </div>
           </div>
         </form>
-      </section>
+      </section> */}
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"

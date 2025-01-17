@@ -9,80 +9,91 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     border-radius: 10px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     max-width: 90%;
     max-height: 90%;
     overflow-y: auto;
-  }
+}
 
-
-  .modal-content2 {
+.modal-content2 {
     background: white;
     padding: 20px 20px 20px 20px;
     border-radius: 10px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     max-width: 100%;
     max-height: 100%;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    justify-content: center;
     overflow-y: auto;
-  }
+}
 
-  .toast-notification {
-    z-index: 1100; /* Higher than modal (1000) */
+.toast-notification {
+    z-index: 1100;
+    /* Higher than modal (1000) */
 }
 
 .autocomplete-container {
-  position: relative;
-  width: 100%;
+    position: relative;
+    width: 100%;
 }
 
 .suggestions-list {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  z-index: 1000;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  max-height: 150px;
-  overflow-y: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    z-index: 1000;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 150px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .suggestion-item {
-  padding: 10px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .suggestion-item:hover {
-  background-color: #f0f0f0;
+    background-color: #f0f0f0;
 }
-
 
 .input-field {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-.search-button, .close-button {
-  padding: 10px 20px;
-  margin: 5px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.search-button,
+.close-button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 
+/* Hide the spinner controls in number input fields */
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    /* Firefox */
+}

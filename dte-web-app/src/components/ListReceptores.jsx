@@ -45,14 +45,17 @@ const ListReceptores = ({onSelectClient, handleSelectClient}) => {
             {Array.isArray(clients) && clients.map((client, index) => (
               <React.Fragment key={index}>
                 <UserReceptorComponent correoLuisAlexanderContaiPadding="0px 3px" client={client} onSelectClient={onSelectClient} handleSelectClient={handleSelectClient} />
-                <div className="self-stretch h-0 flex flex-row items-start justify-start max-w-full">
-                  <div className="h-px flex-1 relative box-border max-w-full z-[1] border-t-[1px] border-solid border-black" />
+                <div className="self-stretch  h-0 flex flex-row items-start justify-start max-w-full">
+                  <div className="h-px flex-1  relative box-border max-w-full z-[1] border-t-[1px] border-solid border-black" />
                 </div>
               </React.Fragment>
             ))}
           </div>
+          <button className="bg-lightcoral mt-2 self-center text-white py-3 px-6 rounded-lg shadow-md text-lg" onClick={(event) => handleSelectClient(event)}>
+              Cerrar
+            </button>
         </div>
-        
+
       </section>
     </div>
   );

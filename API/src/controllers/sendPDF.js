@@ -44,8 +44,15 @@ const sendPDF = async(req, res) => {
         console.log(userDB)
 
         if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 7) {
+            /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
+
+            const name = userDB.name.split(" ");
+            const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
+            const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
+            const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
+            const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
             pdfDoc.fontSize(18).fillColor('#1E3256')
-                .text(`Dr. ${userDB.name}`, 30, yscale, { align: 'left' })
+                .text(`Dr. ${name1} ${name2} ${name3} ${name4}`, 30, yscale, { align: 'left' })
         } else {
             /* align in the middle of the left and center */
             pdfDoc.fontSize(18).fillColor('#1E3256')
@@ -120,8 +127,28 @@ const sendPDF = async(req, res) => {
             return text;
         };
 
-        const truncatedNombreORazonSocial = truncateText(userDB.name, 20);
+        const name = userDB.name.split(" ");
+        const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
+        const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
+        const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
+        const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
+        const newname = `${name1} ${name2} ${name3} ${name4}`;
+
+        const truncatedNombreORazonSocial = truncateText(newname, 20);
         const truncatedDireccion = truncateText(userDB.direccion, 37);
+
+        if (userDB.tipoestablecimiento === "20") {
+            userDB.tipoestablecimiento = "Otro";
+        } else if (userDB.tipoestablecimiento === "01") {
+            userDB.tipoestablecimiento = "Sucursal / Agencia";
+        } else if (userDB.tipoestablecimiento === "02") {
+            userDB.tipoestablecimiento = "Casa matriz";
+        } else if (userDB.tipoestablecimiento === "04") {
+            userDB.tipoestablecimiento = "Bodega";
+        } else if (userDB.tipoestablecimiento === "07") {
+            userDB.tipoestablecimiento = "Predio y/o patio";
+        }
+
 
         pdfDoc.fontSize(10).fillColor('#1E3256')
             .font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
