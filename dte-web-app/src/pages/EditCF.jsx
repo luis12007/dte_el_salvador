@@ -35,6 +35,8 @@ const EditCF = () => {
   const [plantilla, setPlantilla] = useState({});
   const { codigo_de_generacion } = useParams();
   const [namereceptor , setNamereceptor] = useState("");
+    const [percentage, setPercentage] = useState(0);
+    const [rentvalue, setRentvalue] = useState(0);
 
   /* data for municipalities ------------------------------------ */
   /* const departmentsAndMunicipalities = {
@@ -626,6 +628,19 @@ const departmentsAndMunicipalities = {
           ) {
             setCF(true);
           }
+
+
+          const retencionDeRenta = Number(responsePlantilla.plantilla[0].retencion_de_renta);
+          setRentvalue(retencionDeRenta)
+          const montototaloperacion = Number(responsePlantilla.plantilla[0].subtotalventas);
+          /* getting the percentage */
+          const percentage = (retencionDeRenta / montototaloperacion) * 100;
+          console.log("Percentage of retencion_de_renta relative to total_a_pagar:", percentage);
+
+          // You can also set this percentage to a state if needed
+          setPercentage(percentage.toFixed(0));
+
+
         } catch (error) {
           console.error("Failed to fetch client data", error);
         }
@@ -729,7 +744,12 @@ const departmentsAndMunicipalities = {
 
     setiva(roundediva); // Set the rounded subtotal
     setSubtotal(rawSubtotal); // Set the rounded subtotal
-    setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+
+    const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
+  console.log(value_rent);
+  setRentvalue(value_rent)
+    const totalwithiva = roundedSubtotal + roundediva
+  setTotal((totalwithiva - value_rent).toFixed(2))
 
     console.log("Subtotal", subtotal);
     console.log("Total", total);
@@ -801,7 +821,12 @@ const departmentsAndMunicipalities = {
 
         setiva(roundediva); // Set the rounded subtotal
         setSubtotal(rawSubtotal); // Set the rounded subtotal
-        setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+
+        const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
+  console.log(value_rent);
+  setRentvalue(value_rent)
+    const totalwithiva = roundedSubtotal + roundediva
+  setTotal((totalwithiva - value_rent).toFixed(2))
         
         console.log("Subtotal", subtotal);
         console.log("Total", total);
@@ -833,7 +858,15 @@ const departmentsAndMunicipalities = {
     console.log(totalfinal)
     setiva(roundediva); // Set the rounded subtotal
     setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(totalfinal); // Set the rounded subtotal
+
+    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+  console.log(value_rent);
+  setRentvalue(value_rent)
+    const totalwithiva = roundedSubtotal + roundediva
+  setTotal((totalwithiva - value_rent).toFixed(2))
+    
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
 
   };
 
@@ -866,7 +899,12 @@ const departmentsAndMunicipalities = {
 
     setiva(roundediva); // Set the rounded subtotal
     setSubtotal(rawSubtotal); // Set the rounded subtotal
-    setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+
+    const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
+  console.log(value_rent);
+  setRentvalue(value_rent)
+    const totalwithiva = roundedSubtotal + roundediva
+  setTotal((totalwithiva - value_rent).toFixed(2))
     
     console.log("Subtotal", subtotal);
     console.log("Total", total);
@@ -1018,7 +1056,7 @@ const departmentsAndMunicipalities = {
         totalExenta: 0,
         subTotalVentas: subtotal,
         totalGravada: subtotal,
-        montoTotalOperacion: total,
+        montoTotalOperacion: (subtotal + iva).toFixed(2),
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
@@ -1026,7 +1064,7 @@ const departmentsAndMunicipalities = {
         totalDescu: 0,
         subTotal: subtotal,
         ivaRete1: 0,
-        reteRenta: 0,
+        reteRenta: rentvalue,
         totalNoGravado: 0,
         totalPagar: total,
         ivaPerci1: 0 /* TODO: CREATE AND FUNCTION JUST TO DO THIS VALUE */,
@@ -1152,9 +1190,7 @@ const departmentsAndMunicipalities = {
   }
 
   const convertirDineroALetras = (cantidad) => {
-    if (typeof cantidad !== 'number' || isNaN(cantidad)) {
-        throw new Error('La cantidad debe ser un número válido.');
-    }
+
 
     // Asegurarse de que la cantidad tenga como máximo dos decimales
     const cantidadRedondeada = Math.round(cantidad * 100) / 100;
@@ -1226,6 +1262,32 @@ const convertirNumeroALetras = (numero) => {
 
 
 
+const handlePercentageChange = (e) => {
+  setPercentage(e.target.value);
+  console.log("Percentage", e.target.value);
+
+  const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+    const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(rawSubtotal); // Set the rounded subtotal
+
+    const value_rent = ((rawSubtotal * e.target.value) / 100).toFixed(2);
+  console.log(value_rent);
+  setRentvalue(value_rent)
+    const totalwithiva = roundedSubtotal + roundediva
+  setTotal((totalwithiva - value_rent).toFixed(2))
+    
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
+
+
+};
+
+
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
@@ -1289,6 +1351,9 @@ const convertirNumeroALetras = (numero) => {
         itemshandleAdd={itemshandleAdd}
         setListitems={setListitems}
         items={items}
+        percentage={percentage}
+        rentvalue={rentvalue}
+        handlePercentageChange={handlePercentageChange}
       />
 
       {/*             <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
@@ -1498,6 +1563,7 @@ const convertirNumeroALetras = (numero) => {
             </section> */}
       <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
+      <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
       {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">

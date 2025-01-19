@@ -3,12 +3,12 @@
     "version": 3,
     "ambiente": "00",
     "tipoDte": "03",
-    "numeroControl": "DTE-03-00000030-000000000000235",
-    "codigoGeneracion": "7FDE1390-159C-4F0D-826F-514F1DF303B5",
+    "numeroControl": "DTE-03-00000030-000000000000240",
+    "codigoGeneracion": "E40B7FE4-474D-4890-B05F-DB9223BC0ED6",
     "tipoModelo": 1,
     "tipoOperacion": 1,
-    "fecEmi": "2025-01-18",
-    "horEmi": "13:02:01",
+    "fecEmi": "2025-01-17",
+    "horEmi": "20:18:07",
     "tipoMoneda": "USD",
     "tipoContingencia": null,
     "motivoContin": null
@@ -54,10 +54,10 @@
   "cuerpoDocumento": [
     {
       "codTributo": null,
-      "descripcion": "3",
+      "descripcion": "1",
       "uniMedida": 99,
       "codigo": null,
-      "cantidad": 3,
+      "cantidad": 1,
       "numItem": 1,
       "tributos": [
         "20"
@@ -66,18 +66,18 @@
       "psv": 0,
       "montoDescu": 0,
       "numeroDocumento": null,
-      "precioUni": 3,
-      "ventaGravada": 9,
+      "precioUni": 442.48,
+      "ventaGravada": 442.48,
       "ventaExenta": 0,
       "ventaNoSuj": 0,
       "tipoItem": 1
     },
     {
       "codTributo": null,
-      "descripcion": "3",
+      "descripcion": "1",
       "uniMedida": 99,
       "codigo": null,
-      "cantidad": 3,
+      "cantidad": 1,
       "numItem": 2,
       "tributos": [
         "20"
@@ -86,8 +86,8 @@
       "psv": 0,
       "montoDescu": 0,
       "numeroDocumento": null,
-      "precioUni": 3,
-      "ventaGravada": 9,
+      "precioUni": 1,
+      "ventaGravada": 1,
       "ventaExenta": 0,
       "ventaNoSuj": 0,
       "tipoItem": 1
@@ -101,7 +101,7 @@
       {
         "periodo": null,
         "plazo": null,
-        "montoPago": 20.34,
+        "montoPago": 456.78,
         "codigo": "01",
         "referencia": null
       }
@@ -111,30 +111,30 @@
       {
         "codigo": "20",
         "descripcion": "Impuesto al Valor Agregado 13%",
-        "valor": 2.34
+        "valor": 57.65
       }
     ],
-    "totalLetras": "VEINTE DÓLARES CON TREINTA Y CUATRO CENTAVOS",
+    "totalLetras": "CUATROCIENTOS CINCUENTA Y SEIS DÓLARES CON SETENTA Y OCHO CENTAVOS",
     "totalExenta": 0,
-    "subTotalVentas": 18,
+    "subTotalVentas": 443.48,
     "totalGravada": null,
-    "montoTotalOperacion": 20.34,
+    "montoTotalOperacion": 501.13,
     "descuNoSuj": 0,
     "descuExenta": 0,
     "descuGravada": 0,
     "porcentajeDescuento": 0,
     "totalDescu": 0,
-    "subTotal": 18,
+    "subTotal": 443.48,
     "ivaRete1": 0,
-    "reteRenta": 0,
+    "reteRenta": 44.35,
     "totalNoGravado": 0,
-    "totalPagar": 20.34,
+    "totalPagar": 456.78,
     "ivaPerci1": 0
   },
   "extension": {
     "docuEntrega": null,
     "nombRecibe": null,
-    "observaciones": "",
+    "observaciones": "asd",
     "placaVehiculo": null,
     "nombEntrega": null,
     "docuRecibe": null

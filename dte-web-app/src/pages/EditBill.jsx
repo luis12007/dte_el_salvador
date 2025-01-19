@@ -34,6 +34,8 @@ const EditBill = () => {
   const navigate = useNavigate();
   const [flag, setFlag] = useState(false);
   const [namereceptor, setNamereceptor] = useState("");
+  const [percentage, setPercentage] = useState(0);
+  const [rentvalue, setRentvalue] = useState(0);
   /* get codegeneration in the url http://localhost:3001/#/editar/factura/BC9241F4-058C-4490-AE32-1D5C5A294FB7 */
   const { codigo_de_generacion } = useParams();
   /* Call to the info of user */
@@ -128,37 +130,57 @@ const EditBill = () => {
             id_emisor
           );
 
+
           // Map the response data to the client state
 
-          if(responsePlantilla.plantilla[0].re_tipodocumento === "13"){
+          if (responsePlantilla.plantilla[0].re_tipodocumento === "13") {
             setClient({
-            documentType:
-              responsePlantilla.plantilla[0].re_tipodocumento || "13",
-            name: responsePlantilla.plantilla[0].re_name || "",
-            document: removeDashes(responsePlantilla.plantilla[0].re_numdocumento) || "",
-            address: responsePlantilla.plantilla[0].re_direccion || "",
-            email: responsePlantilla.plantilla[0].re_correo_electronico || null,
-            phone: responsePlantilla.plantilla[0].re_numero_telefono || "",
-            codActividad:
-              responsePlantilla.plantilla[0].re_codactividad || "10005",
-            nrc: responsePlantilla.plantilla[0].re_nrc || null,
-            descActividad:
-              responsePlantilla.plantilla[0].re_actividad_economica || "Otros"});
-          }else{
-          setClient({
-            documentType:
-              responsePlantilla.plantilla[0].re_tipodocumento || "13",
-            name: responsePlantilla.plantilla[0].re_name || "",
-            document: responsePlantilla.plantilla[0].re_numdocumento || "",
-            address: responsePlantilla.plantilla[0].re_direccion || "",
-            email: responsePlantilla.plantilla[0].re_correo_electronico || null,
-            phone: responsePlantilla.plantilla[0].re_numero_telefono || "",
-            codActividad:
-              responsePlantilla.plantilla[0].re_codactividad || "10005",
-            nrc: responsePlantilla.plantilla[0].re_nrc || null,
-            descActividad:
-              responsePlantilla.plantilla[0].re_actividad_economica || "Otros",
-          })};
+              documentType:
+                responsePlantilla.plantilla[0].re_tipodocumento || "13",
+              name: responsePlantilla.plantilla[0].re_name || "",
+              document: removeDashes(responsePlantilla.plantilla[0].re_numdocumento) || "",
+              address: responsePlantilla.plantilla[0].re_direccion || "",
+              email: responsePlantilla.plantilla[0].re_correo_electronico || null,
+              phone: responsePlantilla.plantilla[0].re_numero_telefono || "",
+              codActividad:
+                responsePlantilla.plantilla[0].re_codactividad || "10005",
+              nrc: responsePlantilla.plantilla[0].re_nrc || null,
+              descActividad:
+                responsePlantilla.plantilla[0].re_actividad_economica || "Otros"
+            });
+          } else {
+            setClient({
+              documentType:
+                responsePlantilla.plantilla[0].re_tipodocumento || "13",
+              name: responsePlantilla.plantilla[0].re_name || "",
+              document: responsePlantilla.plantilla[0].re_numdocumento || "",
+              address: responsePlantilla.plantilla[0].re_direccion || "",
+              email: responsePlantilla.plantilla[0].re_correo_electronico || null,
+              phone: responsePlantilla.plantilla[0].re_numero_telefono || "",
+              codActividad:
+                responsePlantilla.plantilla[0].re_codactividad || "10005",
+              nrc: responsePlantilla.plantilla[0].re_nrc || null,
+              descActividad:
+                responsePlantilla.plantilla[0].re_actividad_economica || "Otros",
+            })
+          };
+          const retencionDeRenta = Number(responsePlantilla.plantilla[0].retencion_de_renta);
+          setRentvalue(retencionDeRenta)
+          const montototaloperacion = Number(responsePlantilla.plantilla[0].montototaloperacion);
+          /* getting the percentage */
+          const percentage = (retencionDeRenta / montototaloperacion) * 100;
+          console.log("Percentage of retencion_de_renta relative to total_a_pagar:", percentage);
+
+          // You can also set this percentage to a state if needed
+          setPercentage(percentage.toFixed(0));
+
+          /* setting subtotal */
+          var subtotalaux = 0
+          responsePlantilla.items.forEach(item => {
+            subtotalaux += Number(item.preciouni); // Assuming each item has a 'preciouni' property
+          });
+          console.log(subtotalaux)
+          setSubtotal(subtotalaux)
 
         } catch (error) {
           console.error("Failed to fetch client data", error);
@@ -174,83 +196,6 @@ const EditBill = () => {
     };
     fetchData();
   }, []);
-
-  /* EDit fuctions */
-
-  /* Data of the DTE ------------------------------------ */
-  /* {
-    "id": 103,
-    "tipo": "01",
-    "codigo_de_generacion": "BC9241F4-058C-4490-AE32-1D5C5A294FB7",
-    "sellado": false,
-    "numero_de_control": "DTE-01-00000030-000000000000010",
-    "sello_de_recepcion": null,
-    "modelo_de_factura": "1",
-    "tipo_de_transmision": "1",
-    "fecha_y_hora_de_generacion": "2024-07-27",
-    "id_emisor": 1,
-    "id_receptor": null,
-    "qr": null,
-    "total_agravada": "200",
-    "subtotal": "177",
-    "monto_global_de_descuento": "0",
-    "iva_percibido": "23",
-    "iva_retenido": "0",
-    "retencion_de_renta": "0",
-    "total_a_pagar": "200",
-    "cantidad_en_letras": "DOSCIENTOS DÓLARES",
-    "observaciones": "Observaciones a ver factura para no se quien vamos a ver que sale Observaciones a ver factura para no se quien vamos a ver que sale Observaciones a ver factura para no se quien vamos a ver que sale Observaciones a ver factura para no se quien vamos a ver que sale Observaciones a ver factura para no se quien vamos a ver que sale",
-    "responsable_emisor": null,
-    "documento_e": null,
-    "documento_r": null,
-    "documento_receptor": null,
-    "firm": "eyJhbGciOiJSUzUxMiJ9.ewogICJpZGVudGlmaWNhY2lvbiIgOiB7CiAgICAidmVyc2lvbiIgOiAxLAogICAgImFtYmllbnRlIiA6ICIwMCIsCiAgICAidGlwb0R0ZSIgOiAiMDEiLAogICAgIm51bWVyb0NvbnRyb2wiIDogIkRURS0wMS0wMDAwMDAzMC0wMDAwMDAwMDAwMDAwMTAiLAogICAgImNvZGlnb0dlbmVyYWNpb24iIDogIkJDOTI0MUY0LTA1OEMtNDQ5MC1BRTMyLTFENUM1QTI5NEZCNyIsCiAgICAidGlwb01vZGVsbyIgOiAxLAogICAgInRpcG9PcGVyYWNpb24iIDogMSwKICAgICJmZWNFbWkiIDogIjIwMjQtMDctMjciLAogICAgImhvckVtaSIgOiAiMTc6MjQ6NTIiLAogICAgInRpcG9Nb25lZGEiIDogIlVTRCIsCiAgICAidGlwb0NvbnRpbmdlbmNpYSIgOiBudWxsLAogICAgIm1vdGl2b0NvbnRpbiIgOiBudWxsCiAgfSwKICAiZG9jdW1lbnRvUmVsYWNpb25hZG8iIDogbnVsbCwKICAiZW1pc29yIiA6IHsKICAgICJkaXJlY2Npb24iIDogewogICAgICAibXVuaWNpcGlvIiA6ICIwOCIsCiAgICAgICJkZXBhcnRhbWVudG8iIDogIjA2IiwKICAgICAgImNvbXBsZW1lbnRvIiA6ICJSZXNpZGVuY2lhbCBzYW4gZ2FicmllbCAyLCBjYWxsZSBhbCB2b2xjYW4gY2FzYSAjMywgU2FuIFNhbHZhZG9yIE1lamljYW5vcyIKICAgIH0sCiAgICAibml0IiA6ICIwMjEwMTYwMTc0MTA2NSIsCiAgICAibnJjIiA6ICIxODM3ODExIiwKICAgICJub21icmUiIDogIkxVSVMgQUxPTlNPIEhFUk5BTkRFWiBNQUdBw5FBIiwKICAgICJjb2RBY3RpdmlkYWQiIDogIjg2MjAzIiwKICAgICJkZXNjQWN0aXZpZGFkIiA6ICJTZXJ2aWNpb3MgbcOpZGljb3MgIiwKICAgICJ0ZWxlZm9ubyIgOiAiNjQzMTkyMzkiLAogICAgImNvcnJlbyIgOiAibHVpc2hkZXptdHoxMkBnbWFpbC5jb20iLAogICAgIm5vbWJyZUNvbWVyY2lhbCIgOiAibm9tYnJlIGNvbWVyY2lhbCIsCiAgICAidGlwb0VzdGFibGVjaW1pZW50byIgOiAiMjAiLAogICAgImNvZEVzdGFibGVNSCIgOiBudWxsLAogICAgImNvZEVzdGFibGUiIDogbnVsbCwKICAgICJjb2RQdW50b1ZlbnRhTUgiIDogbnVsbCwKICAgICJjb2RQdW50b1ZlbnRhIiA6IG51bGwKICB9LAogICJyZWNlcHRvciIgOiB7CiAgICAiY29kQWN0aXZpZGFkIiA6ICIxMDAwNSIsCiAgICAiZGlyZWNjaW9uIiA6IG51bGwsCiAgICAibnJjIiA6IG51bGwsCiAgICAiZGVzY0FjdGl2aWRhZCIgOiAiT3Ryb3MiLAogICAgImNvcnJlbyIgOiAibHVpc2hkZXptdHoxMkBnbWFpbC5jb20iLAogICAgInRpcG9Eb2N1bWVudG8iIDogIjEzIiwKICAgICJub21icmUiIDogIkx1aXMgSGVyYW4iLAogICAgInRlbGVmb25vIiA6ICI2NDMxOTIzOSIsCiAgICAibnVtRG9jdW1lbnRvIiA6ICIwNjM4NDI3NS00IgogIH0sCiAgIm90cm9zRG9jdW1lbnRvcyIgOiBudWxsLAogICJ2ZW50YVRlcmNlcm8iIDogbnVsbCwKICAiY3VlcnBvRG9jdW1lbnRvIiA6IFsgewogICAgImNvZFRyaWJ1dG8iIDogbnVsbCwKICAgICJkZXNjcmlwY2lvbiIgOiAiZGVzY3Jpb2Nvb24gZGUgcHJvZHVjdG8gcHJldWFiYSBhIHZlciBzaSBlcyBkZW1hc2lhZG8gbG9hcmdvIHNpIHNlIHBlZ2EgbyBxdWUgcGFzYSB2ZXJkYWRhc2Rhc2Rhc2Rhc2RhIiwKICAgICJ1bmlNZWRpZGEiIDogOTksCiAgICAiY29kaWdvIiA6IG51bGwsCiAgICAiY2FudGlkYWQiIDogMiwKICAgICJudW1JdGVtIiA6IDEsCiAgICAidHJpYnV0b3MiIDogbnVsbCwKICAgICJpdmFJdGVtIiA6IDExLjUsCiAgICAibm9HcmF2YWRvIiA6IDAsCiAgICAicHN2IiA6IDAsCiAgICAibW9udG9EZXNjdSIgOiAwLAogICAgIm51bWVyb0RvY3VtZW50byIgOiBudWxsLAogICAgInByZWNpb1VuaSIgOiAxMDAsCiAgICAidmVudGFHcmF2YWRhIiA6IDIyMywKICAgICJ2ZW50YUV4ZW50YSIgOiAwLAogICAgInZlbnRhTm9TdWoiIDogMCwKICAgICJ0aXBvSXRlbSIgOiAzCiAgfSBdLAogICJyZXN1bWVuIiA6IHsKICAgICJjb25kaWNpb25PcGVyYWNpb24iIDogMSwKICAgICJ0b3RhbEl2YSIgOiAyMywKICAgICJzYWxkb0Zhdm9yIiA6IDAsCiAgICAibnVtUGFnb0VsZWN0cm9uaWNvIiA6IG51bGwsCiAgICAicGFnb3MiIDogWyB7CiAgICAgICJwZXJpb2RvIiA6IG51bGwsCiAgICAgICJwbGF6byIgOiBudWxsLAogICAgICAibW9udG9QYWdvIiA6IDIwMCwKICAgICAgImNvZGlnbyIgOiAiMDEiLAogICAgICAicmVmZXJlbmNpYSIgOiBudWxsCiAgICB9IF0sCiAgICAidG90YWxOb1N1aiIgOiAwLAogICAgInRyaWJ1dG9zIiA6IG51bGwsCiAgICAidG90YWxMZXRyYXMiIDogIkRPU0NJRU5UT1MgRMOTTEFSRVMiLAogICAgInRvdGFsRXhlbnRhIiA6IDAsCiAgICAic3ViVG90YWxWZW50YXMiIDogMjAwLAogICAgInRvdGFsR3JhdmFkYSIgOiAyMDAsCiAgICAibW9udG9Ub3RhbE9wZXJhY2lvbiIgOiAyMDAsCiAgICAiZGVzY3VOb1N1aiIgOiAwLAogICAgImRlc2N1RXhlbnRhIiA6IDAsCiAgICAiZGVzY3VHcmF2YWRhIiA6IDAsCiAgICAicG9yY2VudGFqZURlc2N1ZW50byIgOiAwLAogICAgInRvdGFsRGVzY3UiIDogMCwKICAgICJzdWJUb3RhbCIgOiAxNzcsCiAgICAiaXZhUmV0ZTEiIDogMCwKICAgICJyZXRlUmVudGEiIDogMCwKICAgICJ0b3RhbE5vR3JhdmFkbyIgOiAwLAogICAgInRvdGFsUGFnYXIiIDogMjAwCiAgfSwKICAiZXh0ZW5zaW9uIiA6IHsKICAgICJkb2N1RW50cmVnYSIgOiBudWxsLAogICAgIm5vbWJSZWNpYmUiIDogbnVsbCwKICAgICJvYnNlcnZhY2lvbmVzIiA6ICJPYnNlcnZhY2lvbmVzIGEgdmVyIGZhY3R1cmEgcGFyYSBubyBzZSBxdWllbiB2YW1vcyBhIHZlciBxdWUgc2FsZSBPYnNlcnZhY2lvbmVzIGEgdmVyIGZhY3R1cmEgcGFyYSBubyBzZSBxdWllbiB2YW1vcyBhIHZlciBxdWUgc2FsZSBPYnNlcnZhY2lvbmVzIGEgdmVyIGZhY3R1cmEgcGFyYSBubyBzZSBxdWllbiB2YW1vcyBhIHZlciBxdWUgc2FsZSBPYnNlcnZhY2lvbmVzIGEgdmVyIGZhY3R1cmEgcGFyYSBubyBzZSBxdWllbiB2YW1vcyBhIHZlciBxdWUgc2FsZSBPYnNlcnZhY2lvbmVzIGEgdmVyIGZhY3R1cmEgcGFyYSBubyBzZSBxdWllbiB2YW1vcyBhIHZlciBxdWUgc2FsZSIsCiAgICAicGxhY2FWZWhpY3VsbyIgOiBudWxsLAogICAgIm5vbWJFbnRyZWdhIiA6IG51bGwsCiAgICAiZG9jdVJlY2liZSIgOiBudWxsCiAgfSwKICAiYXBlbmRpY2UiIDogbnVsbAp9.SPlEp8-KBl9gi-uwBHASVPNbH1IJ2dW2Efo_zDpp4Zp1Xb2AEZMCZuP3o61R0QAmO1D67sVmLE78OliMbHrwPxsXkqBiLcw9Yp36peMPycEr5vD6jPlTWXQLs0dx_pxDWQPH6rSF9ImuG9ViP2EcG0SXMhcJ_rSDk1gCAP3Z_Y8R-ME4_BQM00OGN5jB8XvAvyJIosktRc8bIPj72_c9oJN2YceGDZTOvLDH5ILKZ7mqE2dMHuW5Buq0AR4N98k1N5gefPwE2aEsi_VnlwKwTuvDFolVgGu1cCl51nAht-n5f0wtLddxFApIX_iN8Ix3Dy0xq_OZsCvaz_iSFVo-bQ",
-    "re_nit": null,
-    "re_nrc": null,
-    "re_actividad_economica": "Otros",
-    "re_direccion": null,
-    "re_correo_electronico": "luishdezmtz12@gmail.com",
-    "re_nombre_comercial": null,
-    "re_name": "Luis Heran",
-    "re_numero_telefono": "64319239",
-    "re_tipo_establecimiento": null,
-    "version": "1",
-    "ambiente": "00",
-    "tipomoneda": "USD",
-    "tipocontingencia": null,
-    "motivocontin": null,
-    "documentorelacionado": null,
-    "codestablemh": null,
-    "codestable": null,
-    "codpuntoventamh": null,
-    "codpuntoventa": null,
-    "re_codactividad": "10005",
-    "re_tipodocumento": "13",
-    "re_numdocumento": "06384275-4",
-    "otrosdocumentos": null,
-    "ventatercero": null,
-    "condicionoperacion": 1,
-    "saldofavor": 0,
-    "numpagoelectronico": null,
-    "periodo": null,
-    "montopago": 200,
-    "codigo": "01",
-    "referencia": null,
-    "totalnosuj": 0,
-    "tributos": null,
-    "totalexenta": 0,
-    "subtotalventas": 200,
-    "montototaloperacion": 200,
-    "descunosuj": 0,
-    "descuexenta": 0,
-    "descugravada": 0,
-    "porcentajedescuento": 0,
-    "totalnogravado": 0,
-    "placavehiculo": null,
-    "apendice": null,
-    "horemi": "17:24:52",
-    "plazo": null
-} */
 
   const [observaciones, setObservaciones] = useState("");
 
@@ -371,8 +316,13 @@ const EditBill = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(roundedSubtotal); // Set the rounded subtotal
+    console.log(roundedSubtotal)
+    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+
+    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+    setRentvalue(value_rent)
+
+    setTotal((roundedSubtotal - value_rent).toFixed(2))
     console.log("ListitemsAdd")
     console.log(Listitems)
   };
@@ -391,18 +341,24 @@ const EditBill = () => {
         (total, item) => total + item.price * item.cuantity,
         0
       );
-      const rawIva = updatedItems.reduce(
-        (total, item) => total + (item.price / 1.13) * 0.13 * item.cuantity,
+      const rawiva = Listitems.reduce(
+        (total, item) => total + item.ivaItem * item.cantidad,
         0
       );
 
       const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      const roundedIva = Math.round(rawIva * 100) / 100;
+      const roundedIva = Math.round(rawiva * 100) / 100;
 
       // Update the state with the new totals
       setiva(roundedIva);
-      setSubtotal(roundedSubtotal - roundedIva);
-      setTotal(roundedSubtotal);
+      console.log(roundedIva)
+      console.log(roundedIva)
+      setSubtotal((roundedSubtotal - roundedIva).toFixed(2));
+
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      setRentvalue(value_rent)
+
+    setTotal((roundedSubtotal - value_rent).toFixed(2))
 
       return updatedItems;
     });
@@ -511,6 +467,41 @@ const EditBill = () => {
       type = "Otro";
     }
 
+    if (newContents.price === "") {
+          toast.error("Item no tiene precio!", {
+            position: "top-center",
+            autoClose: 3000, // Auto close after 3 seconds
+            hideProgressBar: false, // Display the progress bar
+            closeOnClick: true, // Close the toast when clicked
+            draggable: true, // Allow dragging the toast
+            style: { zIndex: 200000 } // Correct way to set z-index
+          });
+          return
+        }
+    
+        if (newContents.cuantity === "") {
+          toast.error("Item no tiene cantidad!", {
+            position: "top-center",
+            autoClose: 3000, // Auto close after 3 seconds
+            hideProgressBar: false, // Display the progress bar
+            closeOnClick: true, // Close the toast when clicked
+            draggable: true, // Allow dragging the toast
+            style: { zIndex: 200000 } // Correct way to set z-index
+          });
+          return
+        }
+    
+        if (newContents.description === "") {
+          toast.error("Item sin descripción!", {
+            position: "top-center",
+            autoClose: 3000, // Auto close after 3 seconds
+            hideProgressBar: false, // Display the progress bar
+            closeOnClick: true, // Close the toast when clicked
+            draggable: true, // Allow dragging the toast
+            style: { zIndex: 200000 } // Correct way to set z-index
+          });
+          return
+        }
 
 
     const cuantityint = parseInt(newContents.cuantity);
@@ -571,8 +562,14 @@ const EditBill = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(roundedSubtotal); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+
+    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+    setRentvalue(value_rent)
+
+    setTotal((roundedSubtotal - value_rent).toFixed(2))
+
+
     console.log("ListitemsAddAfter")
     console.log(Listitems)
   };
@@ -616,8 +613,9 @@ const EditBill = () => {
 
     if (client.documentType === "13") {
       client.document = formatDUI(client.document);
-  }
-  
+    }
+    console.log("TOTAL")
+    console.log(total)
     const data = {
       identificacion: {
         version: 1,
@@ -686,19 +684,19 @@ const EditBill = () => {
         ],
         totalNoSuj: 0,
         tributos: null,
-        totalLetras: convertirDineroALetras(total),
-        totalExenta: total,
-        subTotalVentas: total,
+        totalLetras: convertirDineroALetras(Number(total).toFixed(2)),
+        totalExenta: subtotal,
+        subTotalVentas: subtotal,
         totalGravada: 0,
-        montoTotalOperacion: total,
+        montoTotalOperacion: subtotal,
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
         porcentajeDescuento: 0,
         totalDescu: 0,
-        subTotal: total, /* subtotal */
+        subTotal: subtotal, 
         ivaRete1: 0,
-        reteRenta: 0,
+        reteRenta: rentvalue,
         totalNoGravado: 0,
         totalPagar: total,
       },
@@ -828,9 +826,7 @@ const EditBill = () => {
   }
 
   const convertirDineroALetras = (cantidad) => {
-    if (typeof cantidad !== 'number' || isNaN(cantidad)) {
-      throw new Error('La cantidad debe ser un número válido.');
-    }
+
 
     // Asegurarse de que la cantidad tenga como máximo dos decimales
     const cantidadRedondeada = Math.round(cantidad * 100) / 100;
@@ -909,6 +905,20 @@ const EditBill = () => {
   function removeDashes(str) {
     return str.replace(/-/g, "");
   }
+
+  const handlePercentageChange = (e) => {
+    setPercentage(e.target.value);
+    console.log("Percentage", e.target.value);
+
+    const value_rent = ((subtotal * e.target.value) / 100).toFixed(2);
+    console.log(value_rent);
+    setRentvalue(value_rent)
+
+    setTotal((subtotal - value_rent).toFixed(2))
+
+  };
+
+
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
@@ -981,14 +991,18 @@ const EditBill = () => {
           itemshandleAdd={itemshandleAdd}
           setListitems={setListitems}
           items={items}
+          percentage={percentage}
+          rentvalue={rentvalue}
+          handlePercentageChange={handlePercentageChange}
         />
       )}
 
       {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Total a Pagar" data={total} /> */}
-      <TreeNode text="Subtotal" data={total} />
+      <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={0} />
+      <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
       {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full ch:w-1/3 ch:self-center">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">

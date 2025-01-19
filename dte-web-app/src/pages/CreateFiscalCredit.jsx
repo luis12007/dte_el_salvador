@@ -29,6 +29,8 @@ const CrearCreditoFiscal = () => {
   const [items, setitems] = useState([]);
   const [contents, setContents] = useState([]);
   const [isVisibleClient, setIsVisibleClient] = useState(false);
+    const [percentage, setPercentage] = useState(0);
+    const [rentvalue, setRentvalue] = useState(0);
   
 
   /* data for municipalities ------------------------------------ */
@@ -658,7 +660,12 @@ const CrearCreditoFiscal = () => {
 
     setiva(roundediva); // Set the rounded subtotal
     setSubtotal(rawSubtotal); // Set the rounded subtotal
-    setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+
+    const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
+    console.log(value_rent);
+    setRentvalue(value_rent)
+      const totalwithiva = roundedSubtotal + roundediva
+    setTotal((totalwithiva - value_rent).toFixed(2))
 
     console.log("Subtotal", subtotal);
     console.log("Total", total);
@@ -697,7 +704,12 @@ const CrearCreditoFiscal = () => {
 
     setiva(roundediva); // Set the rounded subtotal
     setSubtotal(rawSubtotal); // Set the rounded subtotal
-    setTotal(roundedSubtotal + roundediva); // Set the rounded subtotal
+
+    const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
+    console.log(value_rent);
+    setRentvalue(value_rent)
+      const totalwithiva = roundedSubtotal + roundediva
+    setTotal((totalwithiva - value_rent).toFixed(2))
 
     console.log("Subtotal", subtotal);
     console.log("Total", total);
@@ -959,7 +971,7 @@ const CrearCreditoFiscal = () => {
         totalExenta: 0,
         subTotalVentas: subtotal,
         totalGravada: subtotal,
-        montoTotalOperacion: total,
+        montoTotalOperacion: (subtotal + iva).toFixed(2), /* TODO */
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
@@ -967,7 +979,7 @@ const CrearCreditoFiscal = () => {
         totalDescu: 0,
         subTotal: subtotal,
         ivaRete1: 0,
-        reteRenta: 0,
+        reteRenta: rentvalue,
         totalNoGravado: 0,
         totalPagar: total,
         ivaPerci1: 0,
@@ -1124,9 +1136,6 @@ const CrearCreditoFiscal = () => {
   }
 
   const convertirDineroALetras = (cantidad) => {
-    if (typeof cantidad !== "number" || isNaN(cantidad)) {
-      throw new Error("La cantidad debe ser un número válido.");
-    }
 
     // Asegurarse de que la cantidad tenga como máximo dos decimales
     const cantidadRedondeada = Math.round(cantidad * 100) / 100;
@@ -1274,6 +1283,34 @@ const CrearCreditoFiscal = () => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
+
+
+  const handlePercentageChange = (e) => {
+    setPercentage(e.target.value);
+    console.log("Percentage", e.target.value);
+  
+    const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
+      const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+      // Round to two decimal places
+      const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
+  
+      setiva(roundediva); // Set the rounded subtotal
+      setSubtotal(rawSubtotal); // Set the rounded subtotal
+  
+      const value_rent = ((rawSubtotal * e.target.value) / 100).toFixed(2);
+    console.log(value_rent);
+    setRentvalue(value_rent)
+      const totalwithiva = roundedSubtotal + roundediva
+    setTotal((totalwithiva - value_rent).toFixed(2))
+      
+      console.log("Subtotal", subtotal);
+      console.log("Total", total);
+  
+  
+  };
+
+
   
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
@@ -1351,11 +1388,15 @@ const CrearCreditoFiscal = () => {
         itemshandleAdd={itemshandleAdd}
         setListitems={setListitems}
         items={items}
+        percentage={percentage}
+        rentvalue={rentvalue}
+        handlePercentageChange={handlePercentageChange}
       />
 
       
       <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
+      <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
       
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">

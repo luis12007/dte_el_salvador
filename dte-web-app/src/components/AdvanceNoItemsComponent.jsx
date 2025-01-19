@@ -1,14 +1,20 @@
 import DataProductNoAdvanceComponent from "./DataProuctNoAdvanceComponent";
 import DataProductNoAdvanceComponentNew from "./DataProuctNoAdvanceComponentNew";
+import { useState } from "react";
 const AdvanceItemsComponent = ({
   items,
   itemshandleRemove,
   handleSelectChangeItemsClient,
   itemshandleAdd,
   setListitems,
+  percentage,
+  handlePercentageChange,
+  rentvalue
 }) => {
+
+
   return (
-    <section className="self-stretch flex flex-row items-start justify-start pt-0  pr-[5px] pl-0 box-border max-w-full ch:w-1/3 ch:self-center">
+    <section className="self-stretch flex flex-col items-start justify-start pt-0  pr-[5px] pl-0 box-border max-w-full ch:w-1/3 ch:self-center">
       <div className="flex-1 w-full rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-center justify-center pt-0 px-0 pb-[20px] box-border gap-[9px] max-w-full mq408:box-border">
         <div className="self-stretch h-[816px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-[11px] px-[17px] pb-3 box-border relative whitespace-nowrap max-w-full z-[1]">
@@ -18,7 +24,7 @@ const AdvanceItemsComponent = ({
             alt=""
             src="/atras-1@2x.png"
           /> */}
-          <b className="relative text-xs font-inria-sans text-black text-left z-[2]">
+          <b className="relative text-md font-inria-sans text-black text-left z-[2]">
             Datos del producto / Servicio
           </b>
         </div>
@@ -46,7 +52,38 @@ const AdvanceItemsComponent = ({
 
         <DataProductNoAdvanceComponentNew itemshandleAdd={itemshandleAdd} />
       </div>
+
+
+
+      <section className="self-stretch flex flex-col items-start justify-start pt-0   pl-0 box-border mt-5 max-w-full ch:w-full ch:self-center">
+        <div className="flex-1 w-full rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-center justify-center pt-0 px-0 pb-[20px] box-border gap-[9px] max-w-full mq408:box-border">
+          <div className="self-stretch h-[816px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-[11px] px-[17px] pb-3 box-border relative whitespace-nowrap max-w-full z-[1]">
+
+            <b className="relative text-md font-inria-sans text-black text-left z-[2]">
+              Renta
+            </b>
+          </div>
+
+          <select
+            value={percentage}
+            onChange={handlePercentageChange}
+            className="self-stretch p-2 mx-3 border rounded-lg border-gray-300"
+          >
+            {Array.from({ length: 31 }, (_, i) => (
+              <option key={i} value={i}>
+                {i}%
+              </option>
+            ))}
+          </select>
+        </div>
+
+
+      </section>
+
+
     </section>
+
   );
 };
 export default AdvanceItemsComponent;
