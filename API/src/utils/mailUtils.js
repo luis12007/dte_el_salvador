@@ -434,12 +434,139 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 },
                 apendice: plantillaDB.apendice
             };
+        } else if (plantillaDB.tipo === "14") {
+
+            const Listitems = itemsDB.map((item, index) => {
+                const newItem = {
+                    codTributo: item.codtributo,
+                    descripcion: item.descripcion,
+                    uniMedida: item.unimedida,
+                    codigo: item.codigo,
+                    cantidad: item.cantidad,
+                    numItem: index + 1, // Using the index for numbering
+                    tributos: null,
+                    noGravado: item.nogravado,
+                    psv: item.psv,
+                    montoDescu: item.montodescu,
+                    numeroDocumento: item.numerodocumento,
+                    precioUni: item.preciouni,
+                    ventaGravada: item.ventagravada,
+                    ventaExenta: item.ventaexenta,
+                    ventaNoSuj: item.ventanosuj,
+                    tipoItem: item.tipoitem,
+                };
+                return newItem;
+            });
+
+
+            const address = plantillaDB.re_direccion.split("|");
+            const tributocf = plantillaDB.tributocf.split("|");
+            var json = {
+                identificacion: {
+                    version: parseInt(plantillaDB.version),
+                    ambiente: plantillaDB.ambiente,
+                    tipoDte: plantillaDB.tipo,
+                    numeroControl: plantillaDB.numero_de_control,
+                    codigoGeneracion: plantillaDB.codigo_de_generacion,
+                    tipoModelo: parseInt(plantillaDB.modelo_de_factura),
+                    tipoOperacion: parseInt(plantillaDB.tipo_de_transmision),
+                    fecEmi: plantillaDB.fecha_y_hora_de_generacion, // Extracting date
+                    horEmi: plantillaDB.horemi,
+                    tipoMoneda: plantillaDB.tipomoneda,
+                    tipoContingencia: plantillaDB.tipocontingencia,
+                    motivoContin: plantillaDB.motivocontin
+                },
+                documentoRelacionado: plantillaDB.documentorelacionado,
+                emisor: {
+                    direccion: {
+                        municipio: userDB.municipio,
+                        departamento: userDB.departamento,
+                        complemento: userDB.direccion
+                    },
+                    nit: userDB.nit,
+                    nrc: userDB.nrc,
+                    nombre: userDB.name,
+                    codActividad: userDB.codactividad,
+                    descActividad: userDB.descactividad,
+                    telefono: userDB.numero_de_telefono,
+                    correo: userDB.correo_electronico,
+                    nombreComercial: userDB.nombre_comercial,
+                    tipoEstablecimiento: userDB.tipoestablecimiento,
+                    codEstableMH: plantillaDB.codestablemh,
+                    codEstable: plantillaDB.codestable,
+                    codPuntoVentaMH: plantillaDB.codpuntoventamh,
+                    codPuntoVenta: plantillaDB.codpuntoventa
+                },
+                receptor: {
+                    codActividad: plantillaDB.re_codactividad,
+                    direccion: {
+                        municipio: address[1],
+                        departamento: address[0],
+                        complemento: address[2]
+                    },
+                    nrc: plantillaDB.re_nrc,
+                    descActividad: plantillaDB.re_actividad_economica,
+                    correo: plantillaDB.re_correo_electronico,
+                    nit: plantillaDB.re_nit,
+                    nombre: plantillaDB.re_name,
+                    telefono: plantillaDB.re_numero_telefono,
+                    nombreComercial: plantillaDB.re_numdocumento
+                },
+                otrosDocumentos: plantillaDB.otrosdocumentos,
+                ventaTercero: plantillaDB.ventatercero,
+                cuerpoDocumento: Listitems,
+                resumen: {
+                    condicionOperacion: plantillaDB.condicionoperacion,
+                    saldoFavor: plantillaDB.saldofavor,
+                    numPagoElectronico: plantillaDB.numpagoelectronico,
+                    pagos: [{
+                        periodo: plantillaDB.periodo,
+                        plazo: plantillaDB.plazo,
+                        montoPago: parseFloat(plantillaDB.montopago),
+                        codigo: plantillaDB.codigo,
+                        referencia: plantillaDB.referencia
+                    }],
+                    totalNoSuj: plantillaDB.totalnosuj,
+                    tributos: [{
+                        codigo: tributocf[0],
+                        descripcion: tributocf[1],
+                        valor: parseFloat(tributocf[2])
+                    }],
+                    totalLetras: plantillaDB.cantidad_en_letras,
+                    totalExenta: plantillaDB.totalexenta,
+                    subTotalVentas: parseFloat(plantillaDB.subtotalventas),
+                    totalGravada: parseFloat(plantillaDB.totalagravada),
+                    montoTotalOperacion: parseFloat(plantillaDB.montototaloperacion),
+                    descuNoSuj: plantillaDB.descunosuj,
+                    descuExenta: plantillaDB.descuexenta,
+                    descuGravada: plantillaDB.descugravada,
+                    porcentajeDescuento: plantillaDB.porcentajedescuento,
+                    totalDescu: parseFloat(plantillaDB.totalnogravado),
+                    subTotal: parseFloat(plantillaDB.subtotal),
+                    ivaRete1: parseFloat(plantillaDB.iva_retenido),
+                    reteRenta: parseFloat(plantillaDB.retencion_de_renta),
+                    totalNoGravado: plantillaDB.totalnogravado,
+                    totalPagar: parseFloat(plantillaDB.total_a_pagar),
+                    ivaPerci1: parseFloat(plantillaDB.iva_percibido),
+
+                },
+                extension: {
+                    docuEntrega: plantillaDB.documento_e,
+                    nombRecibe: plantillaDB.documento_receptor,
+                    observaciones: plantillaDB.observaciones,
+                    placaVehiculo: plantillaDB.placavehiculo,
+                    nombEntrega: plantillaDB.documento_r,
+                    docuRecibe: plantillaDB.documento_receptor
+                },
+                apendice: plantillaDB.apendice
+            };
         }
 
         /* CREATING THE JSON TO SEND */
         // Example user and plantillaDB data
         const user = { name: userDB.name };
         const plantilla = { re_name: 'Factura Electronica' };
+
         /* Vars for the json */
         const jsonContent = JSON.stringify(json, null, 2); // Replace `yourJsonObject` with the actual JSON data you want to send
         const jsonPath = path.join(__dirname, `${user.name} ${plantilla.re_name}.json`);
@@ -564,7 +691,10 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         } else if (plantillaDB.tipo === "01") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA', { align: 'center' });
 
+        } else if (plantillaDB.tipo === "14") {
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA SUJETO EXCLUIDO', { align: 'center' });
         }
+
         const yscale = 70;
 
         // Add Doctor's information
@@ -745,6 +875,23 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
+        } else if (plantillaDB.tipo === "14") {
+            let re_numdocumentostring = 'DOC';
+            /* i have my address like 01  02|08|direccion and i just need direccion*/
+            const UserAddress = plantillaDB.re_direccion.split("|");
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+
+
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
+                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`: ${plantillaDB.re_numdocumento}`, infoX + 303, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text(' ', infoX + 307, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text(' ', infoX + 385, infoY + 70)
+                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
+
         }
         // Add services section
         pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, infoY + 160, { underline: true });
@@ -858,6 +1005,24 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 90, { align: 'right' })
                 .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
+                .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
+                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+        } else if (plantillaDB.tipo === "14") {
+            if (plantillaDB.total_agravada === null) {
+                plantillaDB.total_agravada = 0;
+            }
+            if (plantillaDB.porcentajedescuento === null) {
+                plantillaDB.porcentajedescuento = 0;
+
+            }
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotal}`, 300, y + 10, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`Total gravado: $${plantillaDB.total_agravada }`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${plantillaDB.subtotal}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 90, { align: 'right' })
+                .text(`IVA recibido: $${ivaC.toFixed(2)}`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
                 .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })

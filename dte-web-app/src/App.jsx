@@ -19,6 +19,7 @@ import Invalidate from './pages/Invalidate'
 import Testbill from './pages/testbill';
 import TestCF from './pages/TestCF';
 import CreateSubEx from './pages/CreateSubEx';
+import EditSujEx from './pages/EditSujEx';
 
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -53,6 +54,9 @@ export default function App() {
         <Route path="/crear/sujeto_excluido" element={<Private><CreateSubEx/></Private>}/> 
         <Route path="/crear/nota_credito" element={<Private><CreateSubEx/></Private>}/> 
         <Route path="/crear/Nota_debito" element={<Private><CreateSubEx/></Private>}/> 
+
+        <Route path="/editar/sujEx/:codigo_de_generacion" element={<Private><EditSujEx/></Private>}/>
+
 
 
 

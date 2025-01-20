@@ -198,54 +198,7 @@ const ClientSubEx = ({
             
                 {/* Municipality */}
 {/* Department selection */}
-{visible && (
-  <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-    <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
-      <span className="text-black">Departamento</span>
-      <span className="text-tomato">*</span>
-    </div>
-    <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-      <select
-        className="w-full h-full relative border-white bg-white border-2 max-w-full"
-        value={selectedDepartment}
-        onChange={handleDepartmentChange}
-      >
-        <option value="">Select a department</option>
-        {Object.keys(departmentsAndMunicipalities).map((key) => (
-          <option key={key} value={key}>
-            {departmentsAndMunicipalities[key].departmentName}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-)}
-{visible && (
-  <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full mt-4">
-    <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
-      <span className="text-black">Municipio</span>
-      <span className="text-tomato">*</span>
-    </div>
-    <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-      <select
-        className="w-full h-full relative border-white bg-white border-2 max-w-full"
-        value={selectedMunicipality}
-        onChange={handleMunicipalityChange}
-        disabled={!selectedDepartment} // Disable if no department is selected
-      >
-        <option value="">Select a municipality</option>
-        {selectedDepartment &&
-          departmentsAndMunicipalities[selectedDepartment].municipalities.map(
-            (municipality, index) => (
-              <option key={index} value={municipality.index}>
-                {municipality.name}
-              </option>
-            )
-          )}
-      </select>
-    </div>
-  </div>
-)}
+
 
 {/* End Municipality */}
 

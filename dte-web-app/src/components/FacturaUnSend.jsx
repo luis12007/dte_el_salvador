@@ -254,6 +254,8 @@ const FrameComponent1 = ({ key, content, user }) => {
 
     } else if (content.tipo === "03") {
       navigate(`/editar/CreditoFiscal/${content.codigo_de_generacion}`);
+    } else if (content.tipo === "14") {
+      navigate(`/editar/SujEx/${content.codigo_de_generacion}`);
     }
 
   };

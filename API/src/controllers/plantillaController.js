@@ -455,8 +455,10 @@ const plantillacreate = async(req, res) => {
 
 
                 // Insertar en 'items' y obtener IDs
-
+                console.log("itemsDB");
                 const insertedItems = await insertarItems(itemsDB);
+                console.log("itemsDB2");
+
                 // Crear objetos para insertar en 'facturasxitems'
                 const facturasxitems = insertedItems.map((item, index) => ({
                     id_facturas: plantilla.identificacion.codigoGeneracion,
@@ -481,6 +483,8 @@ const plantillacreate = async(req, res) => {
 
 const insertarItems = async(items) => {
     // Inserta los items y devuelve el ID para cada uno
+    console.log("insertarItems");
+    console.log(items);
     const insertedItems = await db("items").returning("id").insert(items);
     return insertedItems; // Devuelve el array de IDs insertados
 };
@@ -712,6 +716,98 @@ const updatePlantilla = async(req, res) => {
             sello_de_recepcion: plantilla.sello,
 
         };
+    } else if (plantilla.identificacion.tipoDte === "14") {
+        var JsontoDB = {
+            /* identification */
+            version: plantilla.identificacion.version,
+            ambiente: plantilla.identificacion.ambiente,
+            tipo: plantilla.identificacion.tipoDte,
+            numero_de_control: plantilla.identificacion.numeroControl,
+            codigo_de_generacion: plantilla.identificacion.codigoGeneracion,
+            modelo_de_factura: plantilla.identificacion.tipoModelo,
+            tipo_de_transmision: plantilla.identificacion.tipoOperacion,
+            fecha_y_hora_de_generacion: plantilla.identificacion.fecEmi,
+            horemi: plantilla.identificacion.horEmi,
+            tipomoneda: plantilla.identificacion.tipoMoneda,
+            tipocontingencia: plantilla.identificacion.tipoContingencia,
+            motivocontin: plantilla.identificacion.motivoContin,
+            /* --------------------------------------------------------- */
+            /* DOCUMENTO RELACIONADOS */
+            documentorelacionado: plantilla.documentoRelacionado,
+            /* --------------------------------------------------------- */
+            /* EMISOR INFO IN TABLE USERS*/
+            codestablemh: plantilla.emisor.codEstableMH,
+            codestable: plantilla.emisor.codEstable,
+            codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
+            codpuntoventa: plantilla.emisor.codPuntoVenta,
+            /* --------------------------------------------------------- */
+            /* RECEPTOR */
+
+            re_codactividad: null,
+            re_direccion: plantilla.sujetoExcluido.direccion.departamento + "|" + plantilla.sujetoExcluido.direccion.municipio + "|" + plantilla.sujetoExcluido.direccion.complemento,
+            re_nit: plantilla.sujetoExcluido.nit,
+            re_nrc: plantilla.sujetoExcluido.nrc,
+            re_actividad_economica: null,
+            re_correo_electronico: plantilla.sujetoExcluido.correo,
+            re_tipodocumento: plantilla.sujetoExcluido.tipoDocumento,
+            re_name: plantilla.sujetoExcluido.nombre,
+            re_numero_telefono: plantilla.sujetoExcluido.telefono,
+            re_numdocumento: plantilla.sujetoExcluido.numeroDocumento,
+
+            /* --------------------------------------------------------- */
+            /* OTROS DOCUMENTOS */
+            otrosdocumentos: plantilla.otrosDocumentos,
+            /* --------------------------------------------------------- */
+            ventatercero: plantilla.ventaTercero,
+            /* --------------------------------------------------------- */
+            /* ITEMS */
+            /* --------------------------------------------------------- */
+            /* RESUMEN */
+            condicionoperacion: plantilla.resumen.condicionOperacion,
+            iva_percibido: plantilla.resumen.totalIva,
+            saldofavor: plantilla.resumen.saldoFavor,
+            numpagoelectronico: plantilla.resumen.numPagoElectronico,
+            /* pagos */
+            periodo: plantilla.resumen.pagos[0].periodo,
+            montopago: plantilla.resumen.pagos[0].montoPago,
+            codigo: plantilla.resumen.pagos[0].codigo,
+            referencia: plantilla.resumen.pagos[0].referencia,
+            plazo: plantilla.resumen.pagos[0].plazo,
+
+            totalnosuj: plantilla.resumen.totalNoSuj,
+            tributos: plantilla.resumen.tributos,
+            cantidad_en_letras: plantilla.resumen.totalLetras,
+            totalexenta: plantilla.resumen.totalExenta,
+            subtotalventas: plantilla.resumen.subTotalVentas,
+            total_agravada: plantilla.resumen.totalGravada,
+            montototaloperacion: plantilla.resumen.montoTotalOperacion,
+            descunosuj: plantilla.resumen.descuNoSuj,
+            descuexenta: plantilla.resumen.descuExenta,
+            descugravada: plantilla.resumen.descuGravada,
+            porcentajedescuento: plantilla.resumen.porcentajeDescuento,
+            monto_global_de_descuento: plantilla.resumen.totalDescu,
+            subtotal: plantilla.resumen.subTotal,
+            iva_retenido: plantilla.resumen.ivaRete1,
+            retencion_de_renta: plantilla.resumen.reteRenta,
+            totalnogravado: plantilla.resumen.totalNoGravado,
+            total_a_pagar: plantilla.resumen.totalPagar,
+            /* -------------------------------------------- */
+            /* EXTENSION now RESUMEN */
+            observaciones: plantilla.resumen.observaciones,
+
+            /* -------------------------------------------- */
+            /* APENDICE */
+            apendice: plantilla.apendice,
+            /* -------------------------------------------- */
+            /* INFO OF DTE */
+            id_emisor: id_emisor,
+            qr: null,
+            id_receptor: null,
+            firm: null,
+            sellado: false,
+            sello_de_recepcion: null,
+            id_envio: plantilla.id_envio,
+        };
     }
 
 
@@ -725,10 +821,10 @@ const updatePlantilla = async(req, res) => {
             const deleteAll = await trx("facturasxitems").where({ id_facturas: codigo_de_generacion }).del();
             console.log("Deleted rows:", deleteAll);
         });
-
         itemsdel.forEach(element => {
             db("items").where({ id: element.id }).del();
         });
+
     } catch (error) {
         res.status(500).json({ message: "Error en el servidor" });
     }
@@ -777,6 +873,26 @@ const updatePlantilla = async(req, res) => {
                 ventanosuj: item.ventaNoSuj,
                 tipoitem: item.tipoItem,
             }));
+        } else if (plantilla.identificacion.tipoDte === "14") {
+            var itemsDB = items.map((item) => ({
+                codtributo: item.codTributo,
+                descripcion: item.descripcion,
+                unimedida: item.uniMedida,
+                codigo: item.codigo,
+                cantidad: item.cantidad,
+                numitem: item.numItem,
+                tributos: item.tributos,
+                ivaitem: item.ivaItem,
+                nogravado: item.noGravado,
+                psv: item.psv,
+                montodescu: item.montoDescu,
+                numerodocumento: item.numeroDocumento,
+                preciouni: item.precioUni,
+                ventagravada: item.ventaGravada,
+                ventaexenta: item.ventaExenta,
+                ventanosuj: item.ventaNoSuj,
+                tipoitem: item.tipoItem,
+            }));
         }
         // Crear objetos para insertar en la tabla 'items'
 
@@ -784,8 +900,11 @@ const updatePlantilla = async(req, res) => {
         console.log("-------------------------------")
         console.log(itemsDB);
         console.log("-------------------------------")
+        console.log("im here")
             // Insertar en 'items' y obtener IDs
         const insertedItems = await insertarItems(itemsDB);
+        console.log("but not here")
+
         // Crear objetos para insertar en 'facturasxitems'
         const facturasxitems = insertedItems.map((item, index) => ({
             id_facturas: plantilla.identificacion.codigoGeneracion,

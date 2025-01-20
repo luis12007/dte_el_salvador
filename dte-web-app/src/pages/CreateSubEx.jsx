@@ -814,8 +814,6 @@ const CreateSubEx = () => {
             otrosDocumentos: null,
             ventaTercero: null,
             cuerpoDocumento: Listitems,
-
-
             resumen: {
 
                 montoTotalOperacion: (subtotal + iva).toFixed(2), /* TODO */
@@ -858,7 +856,7 @@ const CreateSubEx = () => {
         } else if (client.email === "" || client.email === null) {
             toast.error("Correo no puede estar vacio");
             return;
-        }else if (selectedDepartment === "" || selectedDepartment === null) {
+        } else if (selectedDepartment === "" || selectedDepartment === null) {
             toast.error("Departamento no puede estar vacio");
             return;
         } else if (selectedMunicipality === "" || selectedMunicipality === null) {
@@ -899,14 +897,14 @@ const CreateSubEx = () => {
             console.log(responsePlantilla);
 
             if (responsePlantilla.message === "Inserción exitosa") {
-                toast.success("Credito Fiscal creado con exito");
+                toast.success("Sujeto excluido creado con exito");
 
                 /* wait 5 second and navigate to /facturas */
                 setTimeout(() => {
                     navigate("/facturas");
                 }, 5000);
             } else {
-                toast.error("CF no creado intentar de nuevo");
+                toast.error("Sujeto excluido no creado intentar de nuevo");
             }
 
             /* 
@@ -1194,6 +1192,10 @@ const CreateSubEx = () => {
 
 
 
+    function formatDUI(num) {
+        const str = num.toString();
+        return str.slice(0, -1) + "-" + str.slice(-1);
+    }
     return (
         <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
             <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full self-stretch ch:w-1/3 ch:self-center">

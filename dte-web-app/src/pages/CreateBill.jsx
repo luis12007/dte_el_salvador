@@ -562,6 +562,7 @@ const Clientes = () => {
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast
         });
+        console.log(error);
       }
     };
 
@@ -661,9 +662,7 @@ const Clientes = () => {
     }
 
     const convertirDineroALetras = (cantidad) => {
-      if (typeof cantidad !== "number" || isNaN(cantidad)) {
-        throw new Error("La cantidad debe ser un número válido.");
-      }
+
 
       // Asegurarse de que la cantidad tenga como máximo dos decimales
       const cantidadRedondeada = Math.round(cantidad * 100) / 100;

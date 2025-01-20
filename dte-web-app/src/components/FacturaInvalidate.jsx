@@ -149,7 +149,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
 
     var invalidation_obj = {
       identificacion: {
-        version: 1, /* no es de los permitidos en el camp */
+        version: 2, /* no es de los permitidos en el camp */
         ambiente: content.ambiente,
         codigoGeneracion: myUuid,
         fecAnula: fecAnula,
@@ -166,14 +166,6 @@ const FacturaInvalidate = ({ key, content, user }) => {
         codEstablecimiento: user.codigo_establecimiento,
         puntoVenta: null,
         codEstablecimiento: user.tipoestablecimiento,
-      },
-      receptor: {
-        tipoDocumento: content.re_tipodocumento,
-        numDocumento: content.re_numdocumento,
-        numFacturador: null,
-        nombre: content.re_name,
-        telefono: content.re_numero_telefono,
-        correo: content.re_correo_electronico,
       },
       documento: {
         tipoDte: content.tipo,

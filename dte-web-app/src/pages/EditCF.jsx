@@ -694,6 +694,11 @@ const departmentsAndMunicipalities = {
         type = "Otro";
     }
 
+    if (newContents.type === "" || newContents.cuantity === "" || newContents.description === "" || newContents.price === "") {
+      toast.error("Por favor llene todos los campos");
+      return;
+  }
+
     /* add items*/
     setitems((prevContents) => [
         ...prevContents,
