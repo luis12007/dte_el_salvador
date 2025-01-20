@@ -18,6 +18,7 @@ import Private from './pages/Private'
 import Invalidate from './pages/Invalidate'
 import Testbill from './pages/testbill';
 import TestCF from './pages/TestCF';
+import CreateSubEx from './pages/CreateSubEx';
 
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -41,11 +42,18 @@ export default function App() {
 
         <Route path="/facturas" element={<Private><HomeFacturas/></Private>}/> 
 
-        <Route path="/crear/factura" element={<Private><ClientesFacturaToFiscalProcess/></Private>}/> {/* Create FActura */}
+{/* BILL AND CF */}
+        <Route path="/crear/factura" element={<Private><ClientesFacturaToFiscalProcess/></Private>}/> 
         <Route path="/crear/creditofiscal" element={<Private><CreateCF/></Private>}/>
 
         <Route path="/editar/factura/:codigo_de_generacion" element={<Private><EditBill/></Private>}/>
         <Route path="/editar/CreditoFiscal/:codigo_de_generacion" element={<Private><EditCF/></Private>}/>
+
+{/* Others */}
+        <Route path="/crear/sujeto_excluido" element={<Private><CreateSubEx/></Private>}/> 
+        <Route path="/crear/nota_credito" element={<Private><CreateSubEx/></Private>}/> 
+        <Route path="/crear/Nota_debito" element={<Private><CreateSubEx/></Private>}/> 
+
 
 
         <Route path="/clientes" element={<Private><ListClients/></Private>}/>

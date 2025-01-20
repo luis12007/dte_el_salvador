@@ -582,6 +582,12 @@ const Clientes = () => {
         console.log("Factura");
       } else if (selectedValue === "CF") {
         navigate("/crear/creditofiscal");
+      }else if (selectedValue === "SU") {
+        navigate("/crear/sujeto_excluido");
+      }else if (selectedValue === "NC") {
+        navigate("/crear/nota_credito");
+      }else if (selectedValue === "ND") {
+        navigate("/crear/Nota_debito");
       }
     };
 

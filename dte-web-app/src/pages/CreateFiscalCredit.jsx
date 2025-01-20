@@ -1102,6 +1102,12 @@ const CrearCreditoFiscal = () => {
       navigate("/crear/factura");
     } else if (selectedValue === "CF") {
       console.log("CF");
+    }else if (selectedValue === "SU") {
+      navigate("/crear/sujeto_excluido");
+    }else if (selectedValue === "NC") {
+      navigate("/crear/nota_credito");
+    }else if (selectedValue === "ND") {
+      navigate("/crear/Nota_debito");
     }
   };
 
@@ -1314,19 +1320,22 @@ const CrearCreditoFiscal = () => {
   
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
-      <header className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full ch:w-1/3 ch:self-center">
-        <div className="h-full w-full relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
-        <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white">
-          <select
-            onChange={handleSelectChange}
-            className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
-          >
-            <option value="CF">Comprobante Credito Fiscal</option>
-            <option value="Factura">Factura</option>
-          </select>
-          {/* Your other elements */}
-        </div>
-      </header>
+      <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
+          <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
+          <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white ">
+            <select
+              onChange={handleSelectChange}
+              className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
+            >
+              <option value="CF">Comprobante Crédito Fiscal</option>
+              <option value="Factura">Factura</option>
+              <option value="SU">Factura de Sujeto Excluido</option>
+              <option value="NC">Nota de Crédito</option>
+              <option value="ND">Nota de Débito</option>
+            </select>
+            {/* Your other elements */}
+          </div>
+        </header>
       <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">

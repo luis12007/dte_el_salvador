@@ -32,7 +32,7 @@ const sendPDF = async(req, res) => {
 
         pdfDoc.fontSize(15).fillColor('#1E3256').text('DOCUMENTO TRIBUTARIO ELECTRONICO', { align: 'center' });
         if (plantillaDB.tipo === "03") {
-            pdfDoc.fontSize(17).fillColor('#1E3256').text('CREDITO FISCAL', { align: 'center' });
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('CRÉDITO FISCAL', { align: 'center' });
 
         } else if (plantillaDB.tipo === "01") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA', { align: 'center' });

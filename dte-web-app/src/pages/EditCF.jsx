@@ -1291,7 +1291,7 @@ const handlePercentageChange = (e) => {
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
-         <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Credito Fiscal</h1>
+         <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Crédito Fiscal</h1>
          <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
          <h2 className="">{namereceptor}</h2>
       </header>
