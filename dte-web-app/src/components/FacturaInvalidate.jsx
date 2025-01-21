@@ -39,7 +39,13 @@ const FacturaInvalidate = ({ key, content, user }) => {
     if (content.tipo === "01") {
       setTipo("Factura");
     } else if (content.tipo === "03") {
-      setTipo("Credito Fiscal");
+      setTipo("Crédito Fiscal");
+    } else if (content.tipo === "14") {
+      setTipo("Sujeto Excluido");
+    }else if (content.tipo === "05") {
+      setTipo("Nota de Credito");
+    } else if (content.tipo === "06") {
+      setTipo("Nota de Debito");
     }
 
     if (content.re_correo_electronico === ""
