@@ -34,6 +34,10 @@ const FrameComponent1 = ({ key, content, user }) => {
       setTipo("Crédito Fiscal");
     } else if (content.tipo === "14") {
       setTipo("Sujeto Excluido");
+    }else if (content.tipo === "05") {
+      setTipo("Nota de Credito");
+    } else if (content.tipo === "06") {
+      setTipo("Nota de Debito");
     }
     
     if (content.re_correo_electronico === "" 
@@ -670,6 +674,128 @@ const FrameComponent1 = ({ key, content, user }) => {
             ],
             observaciones: content.observaciones,
 
+          },
+          apendice: content.apendice,
+        };
+      }
+
+      if (content.tipo == "05") {
+        /* in content.documentorelacionado is 
+         [{
+    "tipoDocumento": "03",
+    "tipoGeneracion": 1,
+    "numeroDocumento": "DTE-03-12345678-000000000000001",
+    "fechaEmision": "2025-01-19"
+  }],
+  but i will have to split it with  | */
+
+        const tipodedocumento = content.documentorelacionado.split("|");
+        const tipoDocumento = tipodedocumento[0];
+        const tipoGeneracion = tipodedocumento[1];
+        const numeroDocumento = tipodedocumento[2];
+        const fechaEmision = tipodedocumento[3];
+
+        const address = content.re_direccion.split("|");
+        const tributocf = content.tributocf.split("|");
+        var data = {
+          identificacion: {
+            version: parseInt(content.version),
+            ambiente: content.ambiente,
+            tipoDte: content.tipo,
+            numeroControl: content.numero_de_control,
+            codigoGeneracion: content.codigo_de_generacion,
+            tipoModelo: parseInt(content.modelo_de_factura),
+            tipoOperacion: parseInt(content.tipo_de_transmision),
+            fecEmi: content.fecha_y_hora_de_generacion,
+            horEmi: content.horemi,
+            tipoMoneda: content.tipomoneda,
+            tipoContingencia: content.tipocontingencia,
+            motivoContin: content.motivocontin,
+          },
+          documentoRelacionado: [{
+            tipoDocumento: tipoDocumento,
+            tipoGeneracion: tipoGeneracion,
+            numeroDocumento: numeroDocumento,
+            fechaEmision: fechaEmision
+          }],
+          emisor: {
+            
+            nit: user.nit,
+            nrc: user.nrc,
+            nombre: user.name,
+            codActividad: user.codactividad,
+            descActividad: user.descactividad,
+            nombreComercial: user.nombre_comercial,
+            tipoEstablecimiento: user.tipoestablecimiento,
+            direccion: {
+              municipio: user.municipio,
+              departamento: user.departamento,
+              complemento: user.direccion
+            },
+            telefono: user.numero_de_telefono,
+            correo: user.correo_electronico,
+          },
+          receptor: {
+            nit: content.re_nit,
+            nrc: content.re_nrc,
+            nombre: content.re_name,
+            codActividad: content.re_codactividad,
+            descActividad: content.re_actividad_economica,
+            nombreComercial: content.re_numdocumento,
+            direccion: {
+              municipio: address[1],
+              departamento: address[0],
+              complemento: address[2]
+            },
+            correo: content.re_correo_electronico,
+            telefono: content.re_numero_telefono,
+          },
+          ventaTercero: content.ventatercero,
+          cuerpoDocumento: Listitems,
+          resumen: {
+            totalNoSuj: content.totalnosuj,
+            totalExenta: content.totalexenta,
+            totalGravada: parseFloat(content.total_agravada),
+            subTotalVentas: content.subtotalventas,
+            descuNoSuj: content.descunosuj,
+            descuExenta: content.descuexenta,
+            totalDescu: parseFloat(content.monto_global_de_descuento),
+            tributos: [{
+              codigo: tributocf[0],
+              descripcion: tributocf[1],
+              valor: parseFloat(tributocf[2])
+            }],
+            subTotal: parseFloat(content.subtotal),
+            ivaPerci1: parseFloat(content.iva_percibido),
+            ivaRete1: parseFloat(content.iva_retenido),
+            reteRenta: parseFloat(content.retencion_de_renta),
+            montoTotalOperacion: content.montototaloperacion,
+            totalLetras: content.cantidad_en_letras,
+            condicionOperacion: content.condicionoperacion,
+
+            /* saldoFavor: content.saldofavor,
+            numPagoElectronico: content.numpagoelectronico,
+            pagos: [
+              {TODO: ADD MORE PAYMENTS
+                periodo: content.periodo,
+                plazo: content.plazo,
+                montoPago: content.montopago,
+                codigo: content.codigo,
+                referencia: content.referencia
+              }
+            ],
+
+            descuGravada: content.descugravada,
+            porcentajeDescuento: content.porcentajedescuento,
+            totalNoGravado: content.totalnogravado,
+            totalPagar: parseFloat(content.total_a_pagar), */
+          },
+          extension: {
+            docuEntrega: content.documento_e,
+            nombRecibe: content.documento_r,
+            observaciones: content.observaciones,
+            nombEntrega: content.responsable_emisor,
+            docuRecibe: content.documento_receptor,
           },
           apendice: content.apendice,
         };

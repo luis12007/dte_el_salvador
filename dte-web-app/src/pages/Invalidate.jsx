@@ -261,14 +261,6 @@ const Invalidate = () => {
                 )}
             </section>
 
-            <button
-                onClick={excelHandler}
-                className="cursor-pointer self-center mt-16 [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center hover:bg-seagreen-100"
-            >
-                <b className="relative self-center text-lg font-inria-sans text-white text-left z-[1]">
-                    Excel
-                </b>
-            </button>
 
             <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
         </div>

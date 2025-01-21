@@ -13,7 +13,7 @@ import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const CrearCreditoFiscal = () => {
+const CreateNC = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
@@ -31,6 +31,7 @@ const CrearCreditoFiscal = () => {
   const [isVisibleClient, setIsVisibleClient] = useState(false);
     const [percentage, setPercentage] = useState(0);
     const [rentvalue, setRentvalue] = useState(0);
+    const [numDTErefe, setNumDTErefe] = useState("reference");
   
 
   /* data for municipalities ------------------------------------ */
@@ -893,7 +894,7 @@ const CrearCreditoFiscal = () => {
       identificacion: {
         version: 3,
         ambiente: userinfo.ambiente,
-        tipoDte: "03",
+        tipoDte: "05",
         numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),
         codigoGeneracion: myUuid,
         tipoModelo: 1,
@@ -904,7 +905,7 @@ const CrearCreditoFiscal = () => {
         tipoContingencia: null,
         motivoContin: null,
       },
-      documentoRelacionado: null,
+      documentoRelacionado: numDTErefe,
       emisor: {
         direccion: {
           municipio: userinfo.municipio,
@@ -1136,7 +1137,7 @@ const CrearCreditoFiscal = () => {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-03-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-05-00000030-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -1445,4 +1446,4 @@ const CrearCreditoFiscal = () => {
   );
 };
 
-export default CrearCreditoFiscal;
+export default CreateNC;

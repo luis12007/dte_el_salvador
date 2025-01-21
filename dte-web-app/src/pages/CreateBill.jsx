@@ -593,6 +593,7 @@ const Clientes = () => {
     };
 
     const handleSelectChange = (event) => {
+      event.preventDefault();
       setSelectedOption(event.target.value);
       ChangeHandler(event.target.value);
     };
@@ -602,7 +603,9 @@ const Clientes = () => {
       setIsVisibleClient(!isVisibleClient);
     };
 
-    const onSelectClient = (clientset) => {
+    const onSelectClient = (event, clientset) => {
+      event.preventDefault();
+
       if (client.documentType == "36") {
         setClient({
           documentType: "36",

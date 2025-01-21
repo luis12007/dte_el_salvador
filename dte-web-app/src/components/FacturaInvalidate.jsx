@@ -167,6 +167,14 @@ const FacturaInvalidate = ({ key, content, user }) => {
         puntoVenta: null,
         codEstablecimiento: user.tipoestablecimiento,
       },
+      receptor: {
+        tipoDocumento: content.re_tipodocumento,
+        numDocumento: content.re_numdocumento,
+        numFacturador: null,
+        nombre: content.re_name,
+        telefono: content.re_numero_telefono,
+        correo: content.re_correo_electronico,
+      },
       documento: {
         tipoDte: content.tipo,
         codigoGeneracion: content.codigo_de_generacion,
@@ -179,11 +187,11 @@ const FacturaInvalidate = ({ key, content, user }) => {
         tipoAnulacion: 2,
         motivoAnulacion: "Error en los datos del documento",
         nombreResponsable: user.name,
-        tipDocResponsable: "13", /* contiene un valor inválid Valor ingresado no es de los permitidos en el campo */
-        numDocResponsable: "06384275-4",
+        tipDocResponsable: 13, /* contiene un valor inválid Valor ingresado no es de los permitidos en el campo */
+        numDocResponsable: Number("063842754"),
         nombreSolicita: user.name,
-        tipDocSolicita: "13", /* Valor ingresado no es de los permitidos en el campo */
-        numDocSolicita: "06384275-4"
+        tipDocSolicita: 13, /* Valor ingresado no es de los permitidos en el campo */
+        numDocSolicita: Number("063842754")
       }
     };
 

@@ -1104,7 +1104,8 @@ const CreateSubEx = () => {
         setIsVisibleClient(!isVisibleClient);
     };
 
-    const onSelectClient = (clientset) => {
+    const onSelectClient = (event, clientset) => {
+        event.preventDefault();
         if (client.documentType == "36") {
             setClient({
                 name: clientset.name,
