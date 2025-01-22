@@ -496,7 +496,7 @@ const plantillacreate = async(req, res) => {
             motivocontin: plantilla.identificacion.motivoContin,
             /* --------------------------------------------------------- */
             /* DOCUMENTO RELACIONADOS */
-            documentorelacionado: plantilla.documentorelacionado,
+            documentorelacionado: plantilla.documentoRelacionado,
             /* --------------------------------------------------------- */
             /* EMISOR INFO IN TABLE USERS*/
             codestablemh: plantilla.emisor.codEstableMH,
@@ -593,6 +593,12 @@ const plantillacreate = async(req, res) => {
             try {
                 const plantilla = req.body;
                 const items = plantilla.cuerpoDocumento;
+                var docunum2 = null;
+                if (plantilla.documentoRelacionado !== null) {
+                    const docunum = plantilla.documentoRelacionado.split("|");
+                    docunum2 = docunum[2]
+                }
+
 
                 // Crear objetos para insertar en la tabla 'items'
                 const itemsDB = items.map((item) => ({
@@ -607,7 +613,7 @@ const plantillacreate = async(req, res) => {
                     nogravado: item.noGravado,
                     psv: item.psv,
                     montodescu: item.montoDescu,
-                    numerodocumento: item.numeroDocumento,
+                    numerodocumento: docunum2,
                     preciouni: item.precioUni,
                     ventagravada: item.ventaGravada,
                     ventaexenta: item.ventaExenta,
@@ -1465,6 +1471,98 @@ const updatePlantillaNoItems = async(req, res) => {
 
             totalnosuj: plantilla.resumen.totalNoSuj,
             tributos: plantilla.resumen.tributos,
+            cantidad_en_letras: plantilla.resumen.totalLetras,
+            totalexenta: plantilla.resumen.totalExenta,
+            subtotalventas: plantilla.resumen.subTotalVentas,
+            total_agravada: plantilla.resumen.totalGravada,
+            montototaloperacion: plantilla.resumen.montoTotalOperacion,
+            descunosuj: plantilla.resumen.descuNoSuj,
+            descuexenta: plantilla.resumen.descuExenta,
+            descugravada: plantilla.resumen.descuGravada,
+            porcentajedescuento: plantilla.resumen.porcentajeDescuento,
+            monto_global_de_descuento: plantilla.resumen.totalDescu,
+            subtotal: plantilla.resumen.subTotal,
+            iva_retenido: plantilla.resumen.ivaRete1,
+            retencion_de_renta: plantilla.resumen.reteRenta,
+            totalnogravado: plantilla.resumen.totalNoGravado,
+            total_a_pagar: plantilla.resumen.totalPagar,
+            /* -------------------------------------------- */
+            /* EXTENSION */
+            observaciones: plantilla.resumen.observaciones,
+            /* -------------------------------------------- */
+            /* APENDICE */
+            apendice: plantilla.apendice,
+            /* -------------------------------------------- */
+            /* INFO OF DTE */
+            id_emisor: id_emisor,
+            qr: null,
+            id_receptor: null,
+            firm: plantilla.firma,
+            sellado: plantilla.sellado,
+            sello_de_recepcion: plantilla.sello,
+        };
+    } else if (plantilla.identificacion.tipoDte === "05") {
+
+
+        var JsontoDB = {
+            /* identification */
+            version: plantilla.identificacion.version,
+            ambiente: plantilla.identificacion.ambiente,
+            tipo: plantilla.identificacion.tipoDte,
+            numero_de_control: plantilla.identificacion.numeroControl,
+            codigo_de_generacion: plantilla.identificacion.codigoGeneracion,
+            modelo_de_factura: plantilla.identificacion.tipoModelo,
+            tipo_de_transmision: plantilla.identificacion.tipoOperacion,
+            fecha_y_hora_de_generacion: plantilla.identificacion.fecEmi,
+            horemi: plantilla.identificacion.horEmi,
+            tipomoneda: plantilla.identificacion.tipoMoneda,
+            tipocontingencia: plantilla.identificacion.tipoContingencia,
+            motivocontin: plantilla.identificacion.motivoContin,
+            /* --------------------------------------------------------- */
+            /* DOCUMENTO RELACIONADOS */
+            documentorelacionado: plantilla.documentoRelacionado.tipoDocumento + "|" + plantilla.documentoRelacionado.tipoGeneracion + "|" + plantilla.documentoRelacionado.numeroDocumento + "|" + plantilla.documentoRelacionado.fechaEmision,
+            /* --------------------------------------------------------- */
+            /* EMISOR INFO IN TABLE USERS*/
+            codestablemh: plantilla.emisor.codEstableMH,
+            codestable: plantilla.emisor.codEstable,
+            codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
+            codpuntoventa: plantilla.emisor.codPuntoVenta,
+            /* --------------------------------------------------------- */
+            /* RECEPTOR */
+            re_codactividad: plantilla.receptor.codActividad,
+            re_direccion: plantilla.receptor.direccion.departamento + "|" + plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.complemento,
+            re_nit: plantilla.receptor.nit,
+            re_nrc: plantilla.receptor.nrc,
+            re_actividad_economica: plantilla.receptor.descActividad,
+            re_correo_electronico: plantilla.receptor.correo,
+            re_tipodocumento: plantilla.receptor.tipoDocumento,
+            re_name: plantilla.receptor.nombre,
+            re_numero_telefono: plantilla.receptor.telefono,
+            re_numdocumento: plantilla.receptor.nombreComercial,
+
+            /* --------------------------------------------------------- */
+            /* OTROS DOCUMENTOS */
+            otrosdocumentos: plantilla.otrosDocumentos,
+            /* --------------------------------------------------------- */
+            ventatercero: plantilla.ventaTercero,
+            /* --------------------------------------------------------- */
+            /* ITEMS */
+            /* --------------------------------------------------------- */
+            /* RESUMEN */
+            condicionoperacion: plantilla.resumen.condicionOperacion,
+            iva_percibido: plantilla.resumen.totalIva,
+            saldofavor: plantilla.resumen.saldoFavor,
+            numpagoelectronico: plantilla.resumen.numPagoElectronico,
+            /* pagos */
+            periodo: null,
+            montopago: null,
+            codigo: null,
+            referencia: null,
+            plazo: null,
+
+            totalnosuj: plantilla.resumen.totalNoSuj,
+            tributos: null,
+            tributocf: plantilla.resumen.tributos[0].codigo + "|" + plantilla.resumen.tributos[0].descripcion + "|" + plantilla.resumen.tributos[0].valor,
             cantidad_en_letras: plantilla.resumen.totalLetras,
             totalexenta: plantilla.resumen.totalExenta,
             subtotalventas: plantilla.resumen.subTotalVentas,

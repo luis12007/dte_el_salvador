@@ -105,7 +105,7 @@ const CloseHandler = () => {
               </div>
             </button>
             
-            <button onClick={GoCancelBill} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
+            {/* <button onClick={GoCancelBill} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
               <div className="flex  flex-row items-start justify-start gap-[0px_9px]">
                 <img
                   className="h-[30px] w-[30px] relative object-cover z-[1]"
@@ -117,7 +117,7 @@ const CloseHandler = () => {
                   <div className="relative z-[1]">Invalidar factura</div>
                 </div>
               </div>
-            </button>
+            </button> */}
             <button onClick={GoClientsHandler} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
               <div className="flex  flex-row items-start justify-start gap-[0px_9px]">
                 <img

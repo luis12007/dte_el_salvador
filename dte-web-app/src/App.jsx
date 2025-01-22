@@ -57,6 +57,7 @@ export default function App() {
         <Route path="/crear/Nota_debito" element={<Private><CreateNC/></Private>}/> 
 
         <Route path="/editar/sujEx/:codigo_de_generacion" element={<Private><EditSujEx/></Private>}/>
+        <Route path="/editar/NC/:codigo_de_generacion" element={<Private><EditCF/></Private>}/>
 
 
 

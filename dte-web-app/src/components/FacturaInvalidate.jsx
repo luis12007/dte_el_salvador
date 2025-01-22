@@ -153,9 +153,9 @@ const FacturaInvalidate = ({ key, content, user }) => {
     const myUuid = uuidv4().toUpperCase().toString();
     /* setting data */
 
-    var invalidation_obj = {
+   /*  var invalidation_obj = {
       identificacion: {
-        version: 2, /* no es de los permitidos en el camp */
+        version: 2, 
         ambiente: content.ambiente,
         codigoGeneracion: myUuid,
         fecAnula: fecAnula,
@@ -164,7 +164,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
       emisor: {
         nit: user.nit,
         nombre: user.name,
-        tipoEstablecimiento: user.nombre_comercial, /* invalid number  no es de los permitidos en el campo */
+        tipoEstablecimiento: user.nombre_comercial,
         nomEstablecimiento: user.nombre_comercial,
         telefono: user.numero_de_telefono,
         correo: user.correo_electronico,
@@ -185,7 +185,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
         tipoDte: content.tipo,
         codigoGeneracion: content.codigo_de_generacion,
         selloRecibido: content.sello_de_recepcion,
-        numeroControl: content.numero_de_control, /* Format excede el tamaño permitido */
+        numeroControl: content.numero_de_control, 
         fecEmi: content.fecha_y_hora_de_generacion,
         montoIva: parseFloat(content.iva_percibido),
       },
@@ -193,14 +193,60 @@ const FacturaInvalidate = ({ key, content, user }) => {
         tipoAnulacion: 2,
         motivoAnulacion: "Error en los datos del documento",
         nombreResponsable: user.name,
-        tipDocResponsable: 13, /* contiene un valor inválid Valor ingresado no es de los permitidos en el campo */
+        tipDocResponsable: 13, 
         numDocResponsable: Number("063842754"),
         nombreSolicita: user.name,
-        tipDocSolicita: 13, /* Valor ingresado no es de los permitidos en el campo */
+        tipDocSolicita: 13, 
         numDocSolicita: Number("063842754")
       }
     };
-
+ */
+    var invalidation_obj = {
+      identificacion: {
+        version: 2,
+        ambiente: "00",
+        codigoGeneracion: "D7212258-BCA5-4D05-964E-516D5D0B3C50",
+        fecAnula: "2025-01-20",
+        horAnula: "17:39:29"
+      },
+      emisor: {
+        nit: "02101601741065",
+        nombre: "LUIS ALONSO HERNANDEZ MAGAÑA",
+        tipoEstablecimiento: "20",
+        nomEstablecimiento: "Servicios de anestesia",
+        telefono: "64319239",
+        correo: "luishdezmtz12@gmail.com",
+        codEstableMH: "1234",
+        codEstable: "20",
+        codPuntoVentaMH: null,
+        codPuntoVenta: null
+      },
+      documento: {
+        tipoDte: "14",
+        codigoGeneracion: "B07477D3-EAC8-43F1-899F-93852794D993",
+        selloRecibido: "202578680BFC090F471987960DE22DCCE812H5TB",
+        numeroControl: "DTE-01-00000000-000000000000002",
+        fecEmi: "2025-01-20",
+        montoIva: 0.0,
+        codigoGeneracionR: null,
+        tipoDocumento: "13",
+        numDocumento: "063842754",
+        nombre: "Luis hernandez",
+        telefono: null,
+        correo: "luishdezmtz12@gmail.com"
+      },
+      motivo: {
+        tipoAnulacion: 2,
+        motivoAnulacion: "Error en los datos del documento",
+        nombreResponsable: "LUIS ALONSO HERNANDEZ MAGAÑA",
+        tipDocResponsable: "13",
+        numDocResponsable: "063842754",
+        nombreSolicita: "LUIS ALONSO HERNANDEZ MAGAÑA",
+        tipDocSolicita: "13",
+        numDocSolicita: "063842754"
+      }
+    };
+    
     console.log("invalidation_obj");
     console.log(invalidation_obj);
 

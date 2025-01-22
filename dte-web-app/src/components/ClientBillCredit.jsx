@@ -251,6 +251,8 @@ const ClietnBillCredit = ({
     </div>
   </div>
 )}
+
+
 {visible && (
   <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full mt-4">
     <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">

@@ -35,7 +35,7 @@ const FrameComponent1 = ({ key, content, user }) => {
     } else if (content.tipo === "14") {
       setTipo("Sujeto Excluido");
     }else if (content.tipo === "05") {
-      setTipo("Nota de Credito");
+      setTipo("Nota de Crédito");
     } else if (content.tipo === "06") {
       setTipo("Nota de Debito");
     }
@@ -125,6 +125,58 @@ const FrameComponent1 = ({ key, content, user }) => {
             cantidad: item.cantidad,
             tipoItem: item.tipoitem,
           } ;
+          return newItem;
+        });
+
+
+        console.log(newItems);
+        setItems(newItems);
+      } else if (content.tipo === "05") {
+
+
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+
+
+        console.log(newItems);
+        setItems(newItems);
+      } else if (content.tipo === "06") {
+
+
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
           return newItem;
         });
 
@@ -260,6 +312,10 @@ const FrameComponent1 = ({ key, content, user }) => {
       navigate(`/editar/CreditoFiscal/${content.codigo_de_generacion}`);
     } else if (content.tipo === "14") {
       navigate(`/editar/SujEx/${content.codigo_de_generacion}`);
+    }else if (content.tipo === "05") {
+      navigate(`/editar/NC/${content.codigo_de_generacion}`);
+    }else if (content.tipo === "06") {
+      navigate(`/editar/NC/${content.codigo_de_generacion}`);
     }
 
   };
@@ -680,15 +736,6 @@ const FrameComponent1 = ({ key, content, user }) => {
       }
 
       if (content.tipo == "05") {
-        /* in content.documentorelacionado is 
-         [{
-    "tipoDocumento": "03",
-    "tipoGeneracion": 1,
-    "numeroDocumento": "DTE-03-12345678-000000000000001",
-    "fechaEmision": "2025-01-19"
-  }],
-  but i will have to split it with  | */
-
         const tipodedocumento = content.documentorelacionado.split("|");
         const tipoDocumento = tipodedocumento[0];
         const tipoGeneracion = tipodedocumento[1];
@@ -714,7 +761,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           },
           documentoRelacionado: [{
             tipoDocumento: tipoDocumento,
-            tipoGeneracion: tipoGeneracion,
+            tipoGeneracion: Number(tipoGeneracion),
             numeroDocumento: numeroDocumento,
             fechaEmision: fechaEmision
           }],
@@ -772,6 +819,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             montoTotalOperacion: content.montototaloperacion,
             totalLetras: content.cantidad_en_letras,
             condicionOperacion: content.condicionoperacion,
+            descuGravada: content.descugravada,
 
             /* saldoFavor: content.saldofavor,
             numPagoElectronico: content.numpagoelectronico,
@@ -1178,6 +1226,87 @@ const FrameComponent1 = ({ key, content, user }) => {
         toast.error("Error al enviar la factura no autorizado");
       }
     } else if (content.tipo === "14") {
+      const dataSend = { /* TODO: SEND */
+        tipoDte: content.tipo,
+        ambiente: content.ambiente,
+        idEnvio: content.id_envio,
+        version: parseintversion,
+        codigoGeneracion: content.codigo_de_generacion,
+        documento: content.firm,
+      };
+
+      try {
+        console.log(content);
+        console.log("---------------dataSend to minis--------------");
+        console.log(dataSend);
+
+        /* ADD token minis */
+        const resultAuthminis = await LoginAPI.loginMinis(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+        console.log(resultAuthminis);
+        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        console.log(senddata);
+
+
+        if (senddata.estado === "PROCESADO") {
+          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          console.log("edited");
+          console.log(response);
+
+          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          console.log("incremented");
+          console.log(responseincrement);
+
+          toast.success("Factura enviada al ministerio");
+
+          /* send email */
+
+          if (content.re_correo_electronico === null) {
+            toast.error("el receptor no tiene correo electronico");
+
+            setTimeout(() => {
+              window.location.reload();
+
+            }, 5000);
+            return
+          }
+
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          /*  window.location.reload(); */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 5000);
+        }
+
+        if (senddata.estado === "RECHAZADO")
+          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+        console.log(senddata.observaciones);
+        for (let i = 0; i < senddata.observaciones.length; i++) {
+          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+        }
+
+        console.log("---------------resultado--------------");
+        console.log(senddata.estado);
+
+
+
+      } catch (error) {
+        console.log(error)
+        toast.error("Error al enviar la factura no autorizado");
+      }
+    } else if (content.tipo === "05") {
       const dataSend = { /* TODO: SEND */
         tipoDte: content.tipo,
         ambiente: content.ambiente,
