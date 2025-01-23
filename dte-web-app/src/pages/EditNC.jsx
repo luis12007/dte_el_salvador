@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 
 
-const EditCF = () => {
+const EditNC = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
@@ -708,10 +708,7 @@ const departmentsAndMunicipalities = {
     const cuantityint = parseInt(newContents.cuantity);
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
-
-    
-
-
+    const numeroDocumento = plantilla.plantilla[0].documentorelacionado.split("|");
 
     const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
@@ -727,7 +724,7 @@ const departmentsAndMunicipalities = {
         noGravado: 0,
         psv: 0,
         montoDescu: 0,
-        numeroDocumento: null,
+        numeroDocumento: numeroDocumento[2],	
         precioUni: pricefloat,
         ventaGravada: pricefloat * cuantityint,
         ventaExenta: 0,
@@ -787,6 +784,7 @@ const departmentsAndMunicipalities = {
     /* const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100; */
+
     const newItem = {
         codTributo: null,
         descripcion: newContents.description,
@@ -798,7 +796,7 @@ const departmentsAndMunicipalities = {
         noGravado: 0,
         psv: 0,
         montoDescu: 0,
-        numeroDocumento: null,
+        numeroDocumento: newContents.numerodocumento,
         precioUni: pricefloat,
         ventaGravada: pricefloat * cuantityint,
         ventaExenta: 0,
@@ -978,12 +976,12 @@ const departmentsAndMunicipalities = {
     const conditionoperationint = parseInt(payment.paymentType);
 
     
-
+    const docrelacionado = plantilla.plantilla[0].documentorelacionado.split("|"); 
     var data = {
       identificacion: {
         version: 3,
         ambiente: userinfo.ambiente,
-        tipoDte: "03",
+        tipoDte: "05",
         numeroControl: plantilla.plantilla[0].numero_de_control,
         codigoGeneracion: plantilla.plantilla[0].codigo_de_generacion,
         tipoModelo: 1,
@@ -994,7 +992,12 @@ const departmentsAndMunicipalities = {
         tipoContingencia: null,
         motivoContin: null,
       },
-      documentoRelacionado: null,
+      documentoRelacionado: [{
+        tipoDocumento: docrelacionado[0],
+        tipoGeneracion: docrelacionado[1],
+        numeroDocumento: docrelacionado[2],
+        fechaEmision: docrelacionado[3]
+      }],
       emisor: {
         direccion: {
           municipio: userinfo.municipio,
@@ -1112,7 +1115,7 @@ const departmentsAndMunicipalities = {
     console.log("PlantillaService - update?");
     console.log(responsePlantilla);
     if (responsePlantilla.message === "plantilla actualizado") {
-      toast.success("Crédito Fiscal actualizado con éxito");
+      toast.success("Nota de Crédito actualizada con éxito");
       setTimeout(() => {
         navigate("/facturas");
       }, 5000);
@@ -1189,7 +1192,7 @@ const departmentsAndMunicipalities = {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-03-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-05-00000030-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -1296,10 +1299,11 @@ const handlePercentageChange = (e) => {
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
-         <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Crédito Fiscal</h1>
+         <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Nota de Crédito</h1>
          <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-         <h2 className="">{namereceptor}</h2>
+         <h2 className="">CF de {namereceptor}</h2>
       </header>
+      
       <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
@@ -1337,7 +1341,7 @@ const handlePercentageChange = (e) => {
         </div>
       </section>
 
-      <BillnoCF
+      {/* <BillnoCF
     handleSelectChangeCFClient={handleSelectChangeCFClient}
     setClient={setClient}
     client={client}
@@ -1348,7 +1352,7 @@ const handlePercentageChange = (e) => {
     getMunicipalityNumber={getMunicipalityNumber}
     selectedDepartment={selectedDepartment}
     visible={false}
-  />
+  /> */}
 
       <AdvanceItemsComponent
         handleSelectChangeItemsClient={handleSelectChangeItemsClient}
@@ -1687,4 +1691,4 @@ const handlePercentageChange = (e) => {
   );
 };
 
-export default EditCF;
+export default EditNC;

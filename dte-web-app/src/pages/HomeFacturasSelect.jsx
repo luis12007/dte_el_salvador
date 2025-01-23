@@ -92,14 +92,16 @@ const HomeFacturasSelect = ({GetInf}) => {
 
     const groupItemsByDate = (items) => {
         return items.reduce((acc, item) => {
+          if (item.tipo === "03") { // Filter items with type "03"
             const date = item.fecha_y_hora_de_generacion.split(" ")[0]; // Extract the date part
             if (!acc[date]) {
-                acc[date] = [];
+              acc[date] = [];
             }
             acc[date].push(item);
-            return acc;
+          }
+          return acc;
         }, {});
-    };
+      };
 
     const groupedItems = groupItemsByDate(items);
 

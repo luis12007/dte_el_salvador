@@ -21,8 +21,10 @@ import TestCF from './pages/TestCF';
 import CreateSubEx from './pages/CreateSubEx';
 import EditSujEx from './pages/EditSujEx';
 import CreateNC from './pages/CreateNC';
+import EditNC from './pages/EditNC';
 
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import CreateND from './pages/CreateND';
 
 
 /* http://localhost:3000/#/ingresar the example route */
@@ -54,11 +56,14 @@ export default function App() {
 {/* Others */}
         <Route path="/crear/sujeto_excluido" element={<Private><CreateSubEx/></Private>}/> 
         <Route path="/crear/nota_credito" element={<Private><CreateNC/></Private>}/> 
-        <Route path="/crear/Nota_debito" element={<Private><CreateNC/></Private>}/> 
+        <Route path="/crear/Nota_debito" element={<Private><CreateND/></Private>}/> 
 
         <Route path="/editar/sujEx/:codigo_de_generacion" element={<Private><EditSujEx/></Private>}/>
-        <Route path="/editar/NC/:codigo_de_generacion" element={<Private><EditCF/></Private>}/>
+        <Route path="/editar/NC/:codigo_de_generacion" element={<Private><EditNC/></Private>}/>
 
+
+{/* Books */}
+        <Route path="/facturas/libros" element={<Private><HomeFacturas/></Private>}/> 
 
 
 
