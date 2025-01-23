@@ -621,7 +621,6 @@ const CreateND = () => {
     const cuantityint = parseInt(newContents.cuantity);
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
-
     const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
@@ -636,7 +635,7 @@ const CreateND = () => {
       noGravado: 0,
       psv: 0,
       montoDescu: 0,
-      numeroDocumento: null,
+      numeroDocumento: contentcf.codigo_de_generacion,
       precioUni: pricefloat,
       ventaGravada: pricefloat * cuantityint,
       ventaExenta: 0,
@@ -1378,7 +1377,7 @@ const CreateND = () => {
           </div>
         </header>
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
-        <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Nota de credito</h1>
+        <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Nota de Debito</h1>
         <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
         <h2 className=""> para CF de: {client.name}</h2>
       </header>

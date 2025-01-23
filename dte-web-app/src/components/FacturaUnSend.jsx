@@ -315,7 +315,7 @@ const FrameComponent1 = ({ key, content, user }) => {
     }else if (content.tipo === "05") {
       navigate(`/editar/NC/${content.codigo_de_generacion}`);
     }else if (content.tipo === "06") {
-      navigate(`/editar/NC/${content.codigo_de_generacion}`);
+      navigate(`/editar/ND/${content.codigo_de_generacion}`);
     }
 
   };

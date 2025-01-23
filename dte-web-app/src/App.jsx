@@ -25,6 +25,8 @@ import EditNC from './pages/EditNC';
 
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import CreateND from './pages/CreateND';
+import EditND from './pages/EditND';
+import BooksComponent from './components/BooksComponent';
 
 
 /* http://localhost:3000/#/ingresar the example route */
@@ -60,10 +62,11 @@ export default function App() {
 
         <Route path="/editar/sujEx/:codigo_de_generacion" element={<Private><EditSujEx/></Private>}/>
         <Route path="/editar/NC/:codigo_de_generacion" element={<Private><EditNC/></Private>}/>
+        <Route path="/editar/ND/:codigo_de_generacion" element={<Private><EditND/></Private>}/>
 
 
 {/* Books */}
-        <Route path="/facturas/libros" element={<Private><HomeFacturas/></Private>}/> 
+        <Route path="/facturas/libros" element={<Private><BooksComponent/></Private>}/> 
 
 
 

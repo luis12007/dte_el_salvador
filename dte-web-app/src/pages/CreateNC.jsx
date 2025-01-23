@@ -636,7 +636,7 @@ const CreateNC = () => {
       noGravado: 0,
       psv: 0,
       montoDescu: 0,
-      numeroDocumento: null,
+      numeroDocumento: contentcf.codigo_de_generacion,
       precioUni: pricefloat,
       ventaGravada: pricefloat * cuantityint,
       ventaExenta: 0,
