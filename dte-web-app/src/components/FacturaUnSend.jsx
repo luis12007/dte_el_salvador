@@ -31,7 +31,13 @@ const FrameComponent1 = ({ key, content, user }) => {
     if (content.tipo === "01") {
       setTipo("Factura");
     } else if (content.tipo === "03") {
-      setTipo("Credito Fiscal");
+      setTipo("Crédito Fiscal");
+    } else if (content.tipo === "14") {
+      setTipo("Sujeto Excluido");
+    }else if (content.tipo === "05") {
+      setTipo("Nota de Crédito");
+    } else if (content.tipo === "06") {
+      setTipo("Nota de Debito");
     }
     
     if (content.re_correo_electronico === "" 
@@ -90,6 +96,79 @@ const FrameComponent1 = ({ key, content, user }) => {
             ivaItem: item.ivaitem,
             noGravado: item.nogravado,
             psv: item.psv,
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          } ;
+          return newItem;
+        });
+
+
+        console.log(newItems);
+        setItems(newItems);
+      } else if (content.tipo === "14") {
+
+
+        const newItems = data.map((item) => {
+          const newItem = {
+            numItem: item.numitem,
+            codigo: item.codigo,
+            uniMedida: item.unimedida,
+            precioUni: item.preciouni,
+            montoDescu: item.montodescu,
+            compra: item.ventaexenta,
+            descripcion: item.descripcion,
+            cantidad: item.cantidad,
+            tipoItem: item.tipoitem,
+          } ;
+          return newItem;
+        });
+
+
+        console.log(newItems);
+        setItems(newItems);
+      } else if (content.tipo === "05") {
+
+
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+
+
+        console.log(newItems);
+        setItems(newItems);
+      } else if (content.tipo === "06") {
+
+
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
             montoDescu: item.montodescu,
             numeroDocumento: item.numerodocumento,
             precioUni: item.preciouni,
@@ -231,6 +310,12 @@ const FrameComponent1 = ({ key, content, user }) => {
 
     } else if (content.tipo === "03") {
       navigate(`/editar/CreditoFiscal/${content.codigo_de_generacion}`);
+    } else if (content.tipo === "14") {
+      navigate(`/editar/SujEx/${content.codigo_de_generacion}`);
+    }else if (content.tipo === "05") {
+      navigate(`/editar/NC/${content.codigo_de_generacion}`);
+    }else if (content.tipo === "06") {
+      navigate(`/editar/ND/${content.codigo_de_generacion}`);
     }
 
   };
@@ -564,6 +649,322 @@ const FrameComponent1 = ({ key, content, user }) => {
         };
       }
 
+      if (content.tipo == "14") {
+        /* Split in this structure direccion: {
+              municipio: userinfo.municipio, 
+              departamento: userinfo.departamento, 
+              complemento: userinfo.direccion 
+            }, the string "08|08|direccion" */
+
+        const address = content.re_direccion.split("|");
+        const tributocf = content.tributocf.split("|");
+        var data = {
+          identificacion: {
+            version: parseInt(content.version),
+            ambiente: content.ambiente,
+            tipoDte: content.tipo,
+            numeroControl: content.numero_de_control,
+            codigoGeneracion: content.codigo_de_generacion,
+            tipoModelo: parseInt(content.modelo_de_factura),
+            tipoOperacion: parseInt(content.tipo_de_transmision),
+            fecEmi: content.fecha_y_hora_de_generacion,
+            horEmi: content.horemi,
+            tipoMoneda: content.tipomoneda,
+            tipoContingencia: content.tipocontingencia,
+            motivoContin: content.motivocontin,
+          },
+          emisor: {
+            direccion: {
+              municipio: user.municipio,
+              departamento: user.departamento,
+              complemento: user.direccion
+            },
+            nit: user.nit,
+            nrc: user.nrc,
+            nombre: user.name,
+            codActividad: user.codactividad,
+            descActividad: user.descactividad,
+            telefono: user.numero_de_telefono,
+            correo: user.correo_electronico,
+
+            /* TODO: Just in case establecimiento  */
+            codEstableMH: content.codestablemh,
+            codEstable: content.codestable,
+            codPuntoVentaMH: content.codpuntoventamh,
+            codPuntoVenta: content.codpuntoventa
+          },
+          sujetoExcluido: {
+            tipoDocumento: content.re_tipodocumento,
+            numDocumento: content.re_numdocumento,
+            nombre: content.re_name,
+            codActividad: content.re_codactividad,
+            descActividad: content.re_actividad_economica,
+            direccion: {
+              municipio: address[1],
+              departamento: address[0],
+              complemento: address[2]
+            },
+            correo: content.re_correo_electronico,
+            telefono: content.re_numero_telefono,
+          },
+          cuerpoDocumento: Listitems,
+          resumen: {
+
+            totalCompra: content.montototaloperacion,
+            descu: content.descuexenta,
+            totalDescu: parseFloat(content.monto_global_de_descuento),
+            subTotal: parseFloat(content.subtotal),
+            ivaRete1: parseFloat(content.iva_retenido),
+            reteRenta: parseFloat(content.retencion_de_renta),
+            totalPagar: parseFloat(content.total_a_pagar),
+            totalLetras: content.cantidad_en_letras,
+            condicionOperacion: Number(content.codigo),
+            pagos: [
+              {/* TODO: ADD MORE PAYMENTS */
+                periodo: content.periodo,
+                plazo: content.plazo,
+                montoPago: content.montopago,
+                codigo: content.codigo,
+                referencia: content.referencia
+              }
+            ],
+            observaciones: content.observaciones,
+
+          },
+          apendice: content.apendice,
+        };
+      }
+
+      if (content.tipo == "05") {
+        const tipodedocumento = content.documentorelacionado.split("|");
+        const tipoDocumento = tipodedocumento[0];
+        const tipoGeneracion = tipodedocumento[1];
+        const numeroDocumento = tipodedocumento[2];
+        const fechaEmision = tipodedocumento[3];
+
+        const address = content.re_direccion.split("|");
+        const tributocf = content.tributocf.split("|");
+        console.log(tipodedocumento)
+        var data = {
+          identificacion: {
+            version: parseInt(content.version),
+            ambiente: content.ambiente,
+            tipoDte: content.tipo,
+            numeroControl: content.numero_de_control,
+            codigoGeneracion: content.codigo_de_generacion,
+            tipoModelo: parseInt(content.modelo_de_factura),
+            tipoOperacion: parseInt(content.tipo_de_transmision),
+            fecEmi: content.fecha_y_hora_de_generacion,
+            horEmi: content.horemi,
+            tipoMoneda: content.tipomoneda,
+            tipoContingencia: content.tipocontingencia,
+            motivoContin: content.motivocontin,
+          },
+          documentoRelacionado: [{
+            tipoDocumento: tipoDocumento,
+            tipoGeneracion: Number(tipoGeneracion),
+            numeroDocumento: numeroDocumento,
+            fechaEmision: fechaEmision
+          }],
+          emisor: {
+            
+            nit: user.nit,
+            nrc: user.nrc,
+            nombre: user.name,
+            codActividad: user.codactividad,
+            descActividad: user.descactividad,
+            nombreComercial: user.nombre_comercial,
+            tipoEstablecimiento: user.tipoestablecimiento,
+            direccion: {
+              municipio: user.municipio,
+              departamento: user.departamento,
+              complemento: user.direccion
+            },
+            telefono: user.numero_de_telefono,
+            correo: user.correo_electronico,
+          },
+          receptor: {
+            nit: content.re_nit,
+            nrc: content.re_nrc,
+            nombre: content.re_name,
+            codActividad: content.re_codactividad,
+            descActividad: content.re_actividad_economica,
+            nombreComercial: content.re_numdocumento,
+            direccion: {
+              municipio: address[1],
+              departamento: address[0],
+              complemento: address[2]
+            },
+            correo: content.re_correo_electronico,
+            telefono: content.re_numero_telefono,
+          },
+          ventaTercero: content.ventatercero,
+          cuerpoDocumento: Listitems,
+          resumen: {
+            totalNoSuj: content.totalnosuj,
+            totalExenta: content.totalexenta,
+            totalGravada: parseFloat(content.total_agravada),
+            subTotalVentas: content.subtotalventas,
+            descuNoSuj: content.descunosuj,
+            descuExenta: content.descuexenta,
+            totalDescu: parseFloat(content.monto_global_de_descuento),
+            tributos: [{
+              codigo: tributocf[0],
+              descripcion: tributocf[1],
+              valor: parseFloat(tributocf[2])
+            }],
+            subTotal: parseFloat(content.subtotal),
+            ivaPerci1: parseFloat(content.iva_percibido),
+            ivaRete1: parseFloat(content.iva_retenido),
+            reteRenta: parseFloat(content.retencion_de_renta),
+            montoTotalOperacion: content.montototaloperacion,
+            totalLetras: content.cantidad_en_letras,
+            condicionOperacion: content.condicionoperacion,
+            descuGravada: content.descugravada,
+
+            /* saldoFavor: content.saldofavor,
+            numPagoElectronico: content.numpagoelectronico,
+            pagos: [
+              {TODO: ADD MORE PAYMENTS
+                periodo: content.periodo,
+                plazo: content.plazo,
+                montoPago: content.montopago,
+                codigo: content.codigo,
+                referencia: content.referencia
+              }
+            ],
+
+            descuGravada: content.descugravada,
+            porcentajeDescuento: content.porcentajedescuento,
+            totalNoGravado: content.totalnogravado,
+            totalPagar: parseFloat(content.total_a_pagar), */
+          },
+          extension: {
+            docuEntrega: content.documento_e,
+            nombRecibe: content.documento_r,
+            observaciones: content.observaciones,
+            nombEntrega: content.responsable_emisor,
+            docuRecibe: content.documento_receptor,
+          },
+          apendice: content.apendice,
+        };
+      }
+
+      if (content.tipo == "06") {
+        const tipodedocumento = content.documentorelacionado.split("|");
+        const tipoDocumento = tipodedocumento[0];
+        const tipoGeneracion = tipodedocumento[1];
+        const numeroDocumento = tipodedocumento[2];
+        const fechaEmision = tipodedocumento[3];
+
+        const address = content.re_direccion.split("|");
+        const tributocf = content.tributocf.split("|");
+        console.log(tipodedocumento)
+        var data = {
+          identificacion: {
+            version: parseInt(content.version),
+            ambiente: content.ambiente,
+            tipoDte: content.tipo,
+            numeroControl: content.numero_de_control,
+            codigoGeneracion: content.codigo_de_generacion,
+            tipoModelo: parseInt(content.modelo_de_factura),
+            tipoOperacion: parseInt(content.tipo_de_transmision),
+            fecEmi: content.fecha_y_hora_de_generacion,
+            horEmi: content.horemi,
+            tipoMoneda: content.tipomoneda,
+            tipoContingencia: content.tipocontingencia,
+            motivoContin: content.motivocontin,
+          },
+          documentoRelacionado: [{
+            tipoDocumento: tipoDocumento,
+            tipoGeneracion: Number(tipoGeneracion),
+            numeroDocumento: numeroDocumento,
+            fechaEmision: fechaEmision
+          }],
+          emisor: {
+            
+            nit: user.nit,
+            nrc: user.nrc,
+            nombre: user.name,
+            codActividad: user.codactividad,
+            descActividad: user.descactividad,
+            nombreComercial: user.nombre_comercial,
+            tipoEstablecimiento: user.tipoestablecimiento,
+            direccion: {
+              municipio: user.municipio,
+              departamento: user.departamento,
+              complemento: user.direccion
+            },
+            telefono: user.numero_de_telefono,
+            correo: user.correo_electronico,
+          },
+          receptor: {
+            nit: content.re_nit,
+            nrc: content.re_nrc,
+            nombre: content.re_name,
+            codActividad: content.re_codactividad,
+            descActividad: content.re_actividad_economica,
+            nombreComercial: content.re_numdocumento,
+            direccion: {
+              municipio: address[1],
+              departamento: address[0],
+              complemento: address[2]
+            },
+            correo: content.re_correo_electronico,
+            telefono: content.re_numero_telefono,
+          },
+          ventaTercero: content.ventatercero,
+          cuerpoDocumento: Listitems,
+          resumen: {
+            totalNoSuj: content.totalnosuj,
+            totalExenta: content.totalexenta,
+            totalGravada: parseFloat(content.total_agravada),
+            subTotalVentas: content.subtotalventas,
+            descuNoSuj: content.descunosuj,
+            descuExenta: content.descuexenta,
+            totalDescu: parseFloat(content.monto_global_de_descuento),
+            tributos: [{
+              codigo: tributocf[0],
+              descripcion: tributocf[1],
+              valor: parseFloat(tributocf[2])
+            }],
+            subTotal: parseFloat(content.subtotal),
+            ivaPerci1: parseFloat(content.iva_percibido),
+            ivaRete1: parseFloat(content.iva_retenido),
+            reteRenta: parseFloat(content.retencion_de_renta),
+            montoTotalOperacion: content.montototaloperacion,
+            totalLetras: content.cantidad_en_letras,
+            condicionOperacion: content.condicionoperacion,
+            descuGravada: content.descugravada,
+            numPagoElectronico: content.numpagoelectronico,
+            /* saldoFavor: content.saldofavor,
+            
+            pagos: [
+              {TODO: ADD MORE PAYMENTS
+                periodo: content.periodo,
+                plazo: content.plazo,
+                montoPago: content.montopago,
+                codigo: content.codigo,
+                referencia: content.referencia
+              }
+            ],
+
+            descuGravada: content.descugravada,
+            porcentajeDescuento: content.porcentajedescuento,
+            totalNoGravado: content.totalnogravado,
+            totalPagar: parseFloat(content.total_a_pagar), */
+          },
+          extension: {
+            docuEntrega: content.documento_e,
+            nombRecibe: content.documento_r,
+            observaciones: content.observaciones,
+            nombEntrega: content.responsable_emisor,
+            docuRecibe: content.documento_receptor,
+          },
+          apendice: content.apendice,
+        };
+      }
+
 
 
 
@@ -859,7 +1260,250 @@ const FrameComponent1 = ({ key, content, user }) => {
       }
 
 
-    } else {
+    } else if (content.tipo === "03") {
+      const dataSend = { /* TODO: SEND */
+        tipoDte: content.tipo,
+        ambiente: content.ambiente,
+        idEnvio: content.id_envio,
+        version: parseintversion,
+        codigoGeneracion: content.codigo_de_generacion,
+        documento: content.firm,
+      };
+
+      try {
+        console.log(content);
+        console.log("---------------dataSend to minis--------------");
+        console.log(dataSend);
+
+        /* ADD token minis */
+        const resultAuthminis = await LoginAPI.loginMinis(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+        console.log(resultAuthminis);
+        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        console.log(senddata);
+
+
+        if (senddata.estado === "PROCESADO") {
+          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          console.log("edited");
+          console.log(response);
+
+          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          console.log("incremented");
+          console.log(responseincrement);
+
+          toast.success("Factura enviada al ministerio");
+
+          /* send email */
+
+          if (content.re_correo_electronico === null) {
+            toast.error("el receptor no tiene correo electronico");
+
+            setTimeout(() => {
+              window.location.reload();
+
+            }, 5000);
+            return
+          }
+
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          /*  window.location.reload(); */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 5000);
+        }
+
+        if (senddata.estado === "RECHAZADO")
+          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+        console.log(senddata.observaciones);
+        for (let i = 0; i < senddata.observaciones.length; i++) {
+          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+        }
+
+        console.log("---------------resultado--------------");
+        console.log(senddata.estado);
+
+
+
+      } catch (error) {
+        console.log(error)
+        toast.error("Error al enviar la factura no autorizado");
+      }
+    } else if (content.tipo === "14") {
+      const dataSend = { /* TODO: SEND */
+        tipoDte: content.tipo,
+        ambiente: content.ambiente,
+        idEnvio: content.id_envio,
+        version: parseintversion,
+        codigoGeneracion: content.codigo_de_generacion,
+        documento: content.firm,
+      };
+
+      try {
+        console.log(content);
+        console.log("---------------dataSend to minis--------------");
+        console.log(dataSend);
+
+        /* ADD token minis */
+        const resultAuthminis = await LoginAPI.loginMinis(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+        console.log(resultAuthminis);
+        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        console.log(senddata);
+
+
+        if (senddata.estado === "PROCESADO") {
+          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          console.log("edited");
+          console.log(response);
+
+          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          console.log("incremented");
+          console.log(responseincrement);
+
+          toast.success("Factura enviada al ministerio");
+
+          /* send email */
+
+          if (content.re_correo_electronico === null) {
+            toast.error("el receptor no tiene correo electronico");
+
+            setTimeout(() => {
+              window.location.reload();
+
+            }, 5000);
+            return
+          }
+
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          /*  window.location.reload(); */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 5000);
+        }
+
+        if (senddata.estado === "RECHAZADO")
+          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+        console.log(senddata.observaciones);
+        for (let i = 0; i < senddata.observaciones.length; i++) {
+          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+        }
+
+        console.log("---------------resultado--------------");
+        console.log(senddata.estado);
+
+
+
+      } catch (error) {
+        console.log(error)
+        toast.error("Error al enviar la factura no autorizado");
+      }
+    } else if (content.tipo === "05") {
+      const dataSend = { /* TODO: SEND */
+        tipoDte: content.tipo,
+        ambiente: content.ambiente,
+        idEnvio: content.id_envio,
+        version: parseintversion,
+        codigoGeneracion: content.codigo_de_generacion,
+        documento: content.firm,
+      };
+
+      try {
+        console.log(content);
+        console.log("---------------dataSend to minis--------------");
+        console.log(dataSend);
+
+        /* ADD token minis */
+        const resultAuthminis = await LoginAPI.loginMinis(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+        console.log(resultAuthminis);
+        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        console.log(senddata);
+
+
+        if (senddata.estado === "PROCESADO") {
+          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          console.log("edited");
+          console.log(response);
+
+          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          console.log("incremented");
+          console.log(responseincrement);
+
+          toast.success("Factura enviada al ministerio");
+
+          /* send email */
+
+          if (content.re_correo_electronico === null) {
+            toast.error("el receptor no tiene correo electronico");
+
+            setTimeout(() => {
+              window.location.reload();
+
+            }, 5000);
+            return
+          }
+
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          /*  window.location.reload(); */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 5000);
+        }
+
+        if (senddata.estado === "RECHAZADO")
+          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+        console.log(senddata.observaciones);
+        for (let i = 0; i < senddata.observaciones.length; i++) {
+          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+        }
+
+        console.log("---------------resultado--------------");
+        console.log(senddata.estado);
+
+
+
+      } catch (error) {
+        console.log(error)
+        toast.error("Error al enviar la factura no autorizado");
+      }
+    } else if (content.tipo === "06") {
       const dataSend = { /* TODO: SEND */
         tipoDte: content.tipo,
         ambiente: content.ambiente,

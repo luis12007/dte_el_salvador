@@ -31,6 +31,9 @@ const Clientes = () => {
   const [subtotal, setSubtotal] = useState(0);
   const [iva, setiva] = useState(0);
   const navigate = useNavigate();
+  const [percentage, setPercentage] = useState(0);
+  const [rentvalue, setRentvalue] = useState(0);
+
 
   /* useefect */
   useEffect(() => {
@@ -150,80 +153,18 @@ const Clientes = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(roundedSubtotal); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+
+
+
+    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+    setRentvalue(value_rent)
+
+    setTotal((roundedSubtotal - value_rent).toFixed(2))
 
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
-
-  /* before with IVA
- const itemshandleAdd = (newContents) => {
-
-    var type = "bienes"
-    if (newContents.type === "1") {
-      type = "Bienes";
-    } else if (newContents.type === "2") {
-      type = "Servicios";
-    }
-    else if (newContents.type === "3") {
-      type = "Bienes y Servicios";
-    }
-    else if (newContents.type === "4") {
-      type = "Otro";
-    }
-
-    setitems((prevContents) => [
-      ...prevContents,
-      { type: type, cuantity: newContents.cuantity, description: newContents.description, price: newContents.price },
-    ]);
-
-    const cuantityint = parseInt(newContents.cuantity);
-    const pricefloat = parseFloat(newContents.price);
-    const typeitem = parseInt(newContents.type);
-
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
-    const newItem = {
-      codTributo: null,
-      descripcion: newContents.description, 
-      uniMedida: 99,
-      codigo: null,
-      cantidad: cuantityint, 
-      numItem: Listitems.length + 1, 
-      tributos: null,
-      ivaItem: ivarounded, 
-      noGravado: 0,
-      psv: 0, 
-      montoDescu: 0, 
-      numeroDocumento: null, 
-      precioUni: pricefloat, 
-      ventaGravada: (pricefloat*cuantityint) + ivarounded*cuantityint, 
-      ventaExenta: 0, 
-      ventaNoSuj: 0, 
-      tipoItem: typeitem, 
-    };
-    // Update the list with the new item
-    setListitems((prevListitems) => [...prevListitems, newItem]);
-    const Listitemstrack = [...Listitems, newItem];
-    console.log("Listitems", Listitemstrack);
-
-
-    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
-    const rawSubtotal = Listitemstrack.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-    const rawiva = Listitemstrack.reduce((total, item) => total + (item.ivaItem * item.cantidad), 0);
-    // Round to two decimal places
-    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-    const roundediva = Math.round(rawiva * 100) / 100;
-
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(roundedSubtotal); // Set the rounded subtotal
-
-    console.log("Subtotal", subtotal);
-    console.log("Total", total);
-  }; */
 
   /* Adding factura without IVA */
   const itemshandleAdd = (newContents) => {
@@ -333,9 +274,13 @@ const Clientes = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(roundedSubtotal - roundediva); // Set the rounded subtotal
-    setTotal(roundedSubtotal); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+    
+    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+    setRentvalue(value_rent)
 
+    setTotal((roundedSubtotal - value_rent).toFixed(2))
+    
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
@@ -362,155 +307,7 @@ const Clientes = () => {
     ]);
   };
 
-  /* navigate and fu */
 
-  const testbill = async () => {
-    // add a json mock with the structure of the data
-    /* const count = await PlantillaAPI.count(id_emisor, "01", token) */
-
-    try {
-      /* EmisorService */
-      const response = await EmisorService.count_factura(id_emisor, token);
-      console.log("Count Factura");
-      console.log(response);
-
-      
-    } catch (error) {
-      console.log(error);
-    }
-
-    const myUuid = uuidv4().toUpperCase().toString();
-
-    const conditionoperationint = parseInt(payment.paymentType);
-
-    var data = {
-      identificacion: {
-        version: 1,
-        ambiente: "00",
-        tipoDte: "01",
-        numeroControl: userinfo.id_emisor + 1,
-        codigoGeneracion: myUuid,
-        tipoModelo: 1,
-        tipoOperacion: 1,
-        fecEmi: "2024-02-02",
-        horEmi: time.time,
-        tipoMoneda: "USD",
-        tipoContingencia: null,
-        motivoContin: null,
-      },
-      documentoRelacionado: null,
-      emisor: {
-        direccion: {
-          municipio: 1,
-          departamento: 1,
-          complemento: "userinfo.direccion",
-        },
-        nit: "userinfo.nit",
-        nrc: "userinfo.nrc",
-        nombre: "userinfo.name",
-        codActividad: "userinfo.codactividad",
-        descActividad: "userinfo.descactividad",
-        telefono: "userinfo.numero_de_telefono",
-        correo: "userinfo.correo_electronico",
-        nombreComercial: "userinfo.nombre_comercial",
-        tipoEstablecimiento: "userinfo.tipoestablecimiento",
-
-        /* TODO: Just in case establecimiento  */
-        codEstableMH: null,
-        codEstable: null,
-        codPuntoVentaMH: null,
-        codPuntoVenta: null,
-      },
-      receptor: {
-        /* TODO ADDRES */ codActividad: "client.codActividad",
-        direccion: /* client.address */ null,
-        nrc: "client.nrc",
-        descActividad: "client.descActividad",
-        correo: "client.email",
-        tipoDocumento: "client.documentType",
-        nombre: "client.name",
-        telefono: "client.phone",
-        numDocumento: " client.document",
-      },
-      otrosDocumentos: null,
-      ventaTercero: null,
-      cuerpoDocumento: [
-        {
-          codTributo: null,
-          descripcion: "newContents.description",
-          uniMedida: 99,
-          codigo: null,
-          cantidad: 1,
-          numItem: 1,
-          tributos: null,
-          ivaItem: 20.2,
-          noGravado: 0,
-          psv: 0,
-          montoDescu: 0,
-          numeroDocumento: null,
-          precioUni: 20.2,
-          ventaGravada: 20.2,
-          ventaExenta: 0,
-          ventaNoSuj: 0,
-          tipoItem: 1,
-        },
-      ],
-      resumen: {
-        condicionOperacion: 20,
-        totalIva: 0.1154 /* IVA 0.1154 percent -----------------*/,
-        saldoFavor: 0,
-        numPagoElectronico: null,
-        pagos: [
-          {
-            /* TODO: ADD MORE PAYMENTS */ periodo: null,
-            plazo: null,
-            montoPago: 200,
-            codigo: "CODIGO DE PRODUCTO",
-            referencia: null,
-          },
-        ],
-        totalNoSuj: 0,
-        tributos: null,
-        totalLetras: "DOSCIENTOS DOLARES",
-        totalExenta: 0,
-        subTotalVentas: 200,
-        totalGravada: 200,
-        montoTotalOperacion: 200,
-        descuNoSuj: 0,
-        descuExenta: 0,
-        descuGravada: 0,
-        porcentajeDescuento: 0,
-        totalDescu: 0,
-        subTotal: subtotal,
-        ivaRete1: 0,
-        reteRenta: 0,
-        totalNoGravado: 0,
-        totalPagar: 200,
-      },
-      extension: {
-        docuEntrega: null,
-        nombRecibe: null,
-        observaciones: "observaciones",
-        placaVehiculo: null,
-        nombEntrega: null,
-        docuRecibe: null,
-      },
-      apendice: null,
-    };
-
-    console.log("Data");
-    console.log(data);
-
-    const responsePlantilla = await PlantillaService.create(
-      data,
-      token,
-      id_emisor
-    );
-
-    console.log("PlantillaService - Create");
-    console.log(responsePlantilla);
-    /*  */
-  };
   /* ---------------------------------------------------------- */
   const addBillHandler = async (event) => {
     event.preventDefault();
@@ -656,10 +453,10 @@ const Clientes = () => {
             totalNoSuj: 0,
             tributos: null,
             totalLetras: convertirDineroALetras(total),
-            totalExenta: total,
-            subTotalVentas: total,
+            totalExenta: subtotal,
+            subTotalVentas: subtotal,
             totalGravada: 0,
-            montoTotalOperacion: total,
+            montoTotalOperacion: subtotal,
             descuNoSuj: 0,
             descuExenta: 0,
             descuGravada: 0,
@@ -667,7 +464,7 @@ const Clientes = () => {
             totalDescu: 0,
             subTotal: subtotal,
             ivaRete1: 0,
-            reteRenta: 0,
+            reteRenta: rentvalue,
             totalNoGravado: 0,
             totalPagar: total,
           },
@@ -765,6 +562,7 @@ const Clientes = () => {
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast
         });
+        console.log(error);
       }
     };
 
@@ -785,10 +583,17 @@ const Clientes = () => {
         console.log("Factura");
       } else if (selectedValue === "CF") {
         navigate("/crear/creditofiscal");
+      }else if (selectedValue === "SU") {
+        navigate("/crear/sujeto_excluido");
+      }else if (selectedValue === "NC") {
+        navigate("/crear/nota_credito");
+      }else if (selectedValue === "ND") {
+        navigate("/crear/Nota_debito");
       }
     };
 
     const handleSelectChange = (event) => {
+      event.preventDefault();
       setSelectedOption(event.target.value);
       ChangeHandler(event.target.value);
     };
@@ -798,7 +603,9 @@ const Clientes = () => {
       setIsVisibleClient(!isVisibleClient);
     };
 
-    const onSelectClient = (clientset) => {
+    const onSelectClient = (event, clientset) => {
+      event.preventDefault();
+
       if (client.documentType == "36") {
         setClient({
           documentType: "36",
@@ -858,9 +665,7 @@ const Clientes = () => {
     }
 
     const convertirDineroALetras = (cantidad) => {
-      if (typeof cantidad !== "number" || isNaN(cantidad)) {
-        throw new Error("La cantidad debe ser un número válido.");
-      }
+
 
       // Asegurarse de que la cantidad tenga como máximo dos decimales
       const cantidadRedondeada = Math.round(cantidad * 100) / 100;
@@ -986,6 +791,20 @@ const Clientes = () => {
 
     /* examples of input and output */
 
+    
+
+  const handlePercentageChange = (e) => {
+    setPercentage(e.target.value);
+    console.log("Percentage", e.target.value);
+
+    const value_rent = ((subtotal * e.target.value) / 100).toFixed(2);
+    console.log(value_rent);
+    setRentvalue(value_rent)
+
+    setTotal((subtotal - value_rent).toFixed(2))
+
+  };
+
     return (
       <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-center justify-center text-center pt-[17px] pb-5 pr-[15px] pl-5 box-border gap-[22px_0px]  ">
         <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
@@ -996,7 +815,10 @@ const Clientes = () => {
               className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
             >
               <option value="Factura">Factura</option>
-              <option value="CF">Comprobante Credito Fiscal</option>
+              <option value="CF">Comprobante Crédito Fiscal</option>
+              <option value="SU">Factura de Sujeto Excluido</option>
+              <option value="NC">Nota de Crédito</option>
+              <option value="ND">Nota de Débito</option>
             </select>
             {/* Your other elements */}
           </div>
@@ -1054,7 +876,6 @@ const Clientes = () => {
             onSelectClient={onSelectClient}
           />
         )}
-        <ToastContainer className={"toast-notification"} />
 
         {Items ? (
           <AdvanceItemsComponentOnComponent
@@ -1071,14 +892,18 @@ const Clientes = () => {
             itemshandleAdd={itemshandleAdd}
             setListitems={setListitems}
             items={items}
+            percentage={percentage}
+            rentvalue={rentvalue}
+            handlePercentageChange={handlePercentageChange}
           />
         )}
 
         {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Total a Pagar" data={total} /> */}
-        <TreeNode text="Subtotal" data={total} />
+        <TreeNode text="Subtotal" data={subtotal} />
         <TreeNode text="IVA" data={0} />
+        <TreeNode text="Renta Retenida" data={rentvalue} />
         <TreeNode text="Total a Pagar" data={total} />
         {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
@@ -1181,6 +1006,7 @@ const Clientes = () => {
             </button>
           </div>
         </footer>
+        <ToastContainer className={"toast-notification"} />
       </form>
     );
   };

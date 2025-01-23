@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import FacturaUnSend from "../components/FacturaUnSend";
+import FacturaSendSelect from "../components/FacturaSendSelect";
 import FacturaSend from "../components/FacturaSend";
 import HamburguerComponent from "../components/HamburguerComponent";
 import SidebarComponent from "../components/SideBarComponent";
@@ -10,9 +10,8 @@ import * as XLSX from "xlsx";
 import filterimg from "../assets/imgs/filter.png";
 import filterwhite from "../assets/imgs/filterwhite.png";
 import FilterModal from "../components/FilterModal";
-import FacturaInvalidate from "../components/FacturaInvalidate";
 
-const Invalidate = () => {
+const HomeFacturasSelect = ({GetInf}) => {
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     const [items, setItems] = useState([]);
@@ -93,14 +92,16 @@ const Invalidate = () => {
 
     const groupItemsByDate = (items) => {
         return items.reduce((acc, item) => {
+          if (item.tipo === "03") { // Filter items with type "03"
             const date = item.fecha_y_hora_de_generacion.split(" ")[0]; // Extract the date part
             if (!acc[date]) {
-                acc[date] = [];
+              acc[date] = [];
             }
             acc[date].push(item);
-            return acc;
+          }
+          return acc;
         }, {});
-    };
+      };
 
     const groupedItems = groupItemsByDate(items);
 
@@ -136,6 +137,7 @@ const Invalidate = () => {
     };
 
     const closeModal = () => {
+        
         setIsModalVisible(false);
     };
 
@@ -187,17 +189,9 @@ const Invalidate = () => {
 
     return (
         <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-[33px] pr-[22px] box-border ch:items-center">
-            <SidebarComponent visible={visible} />
-            
-            <div className="relative flex flex-row items-center justify-between w-full">
-  <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xs">Se permite invalidar luego de enviar:</h1>
-  <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xs mt-12">Credito fiscal 24h</h1>
-  <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xs mt-20">Facturas 3 Meses</h1>
-  <div className="flex-grow"></div>
-  <button className="bg-gray-300 w-2/12 self-end h-12 border-black rounded-lg drop-shadow-lg" onClick={() => setShowModal(true)}>
-    <img src={filterwhite} className="h-9 pl-3 self-center mr-3" alt="" />
-  </button>
-</div>
+            <button className="bg-gray-300 w-2/12 self-end h-12 border-black rounded-lg drop-shadow-lg " onClick={() => setShowModal(true)}>
+                <img src={filterwhite} className="h-9 pl-0.5 self-center mr-3" alt="" />
+            </button>
 
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -227,7 +221,7 @@ const Invalidate = () => {
             />
 
 
-            <section className="pl-2 ch:w-1/3 mt-5 ">
+            <section className="pl-2  ">
                 {loading ? (
                     <div className="flex items-center justify-center my-4 rounded-lg">
                         <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
@@ -246,7 +240,7 @@ const Invalidate = () => {
                                         </div>
                                     </div>
                                     {groupedItems[date].map((content, index) => (
-                                        <FacturaInvalidate key={index} content={content} user={user} />
+                                        <FacturaSendSelect key={index} content={content} user={user} GetInf={GetInf} />
                                     ))}
                                 </div>
                             ))
@@ -262,9 +256,10 @@ const Invalidate = () => {
             </section>
 
 
+
             <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
         </div>
     );
 };
 
-export default Invalidate;
+export default HomeFacturasSelect;

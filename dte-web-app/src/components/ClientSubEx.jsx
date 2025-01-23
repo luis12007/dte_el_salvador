@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import personas from '../assets/imgs/personas.png';
 import ListReceptores from '../components/ListReceptores';
 
-const ClietnBillCredit = ({
+const ClientSubEx = ({
   setClient,
   client,
   departmentsAndMunicipalities,
@@ -76,44 +76,50 @@ const ClietnBillCredit = ({
           <ListReceptores onSelectClient={onSelectClient} handleSelectClient={handleSelectClient} />
         </div>
       )}
-          <div className="flex flex-row items-start justify-start py-0 px-3.5">
-            <div className="flex flex-row items-start justify-start gap-[0px_4px]"></div>
-          </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
               <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-                <div className="relative text-xs font-inria-sans text-left z-[1]">
-                  <span className="text-black">{`Nit`}</span>
-                  <span className="text-tomato">*</span>
-                </div>
-                <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-                  <input
-                    className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                    placeholder="######"
-                    type="Number"
-                    value={client.nit}
-                    onChange={(e) => handleChange("nit", e.target.value)}
-                  />
-                </div>
+              <div className="relative text-xs font-inria-sans text-left z-[1]">
+              <span className="text-black">{`Tipo de documento de identificación `}</span>
+              <span className="text-tomato">*</span>
+            </div>
+            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+              <select
+              value={client.documentType}
+                onChange={(e) => handleChange("documentType", e.target.value)}
+                className="w-full relative  bg-white border-2 max-w-full"
+              >
+                <option value="13">DUI</option>
+                <option value="36">NIT </option>
+                <option value="03">Pasaporte</option>
+                {/* <option value="02">Carnet de residencia</option>
+                <option value="37">Otro</option> */}
+              </select>
+              <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+            </div>
               </div>
             </div>
             <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
               <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+              <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+              <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
                 <div className="relative text-xs font-inria-sans text-left z-[1]">
-                  <span className="text-black">{`NRC `}</span>
+                  <span className="text-black">{`Documento de identificación `}</span>
                   <span className="text-tomato">*</span>
                 </div>
                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                   <input
-                    className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                    placeholder="######"
+                    className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2] no-spinner"
+                    placeholder="624863262"
                     type="Number"
-                    value={client.nrc}
-                    onChange={(e) => handleChange("nrc", e.target.value)}
+                    value={client.document}
+                    onChange={(e) => handleChange("document", e.target.value)}
                   />
                 </div>
+              </div>
+            </div>
               </div>
             </div>
           </div>
@@ -152,44 +158,7 @@ const ClietnBillCredit = ({
             </div>
           </div>
         </div>
-
-        <div className="self-stretch flex flex-row items-start justify-start pl-4 py-1 pr-3 box-border max-w-full">
-          <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-            <div className="relative text-xs font-inria-sans text-left z-[1]">
-              <span className="text-black">{`Nombre Comercial. `}</span>
-              {/* <span className="text-tomato">*</span> */}
-            </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-              <input
-                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="Nombre Comercial"
-                type="text"
-                value={client.nombreComercial}
-                onChange={(e) =>
-                  handleChange("nombreComercial", e.target.value)
-                }
-              />
-            </div>
-          </div>
-        </div>
-        <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
-          <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-            <div className="relative text-xs font-inria-sans text-left z-[1]">
-              <span className="text-black">{`Actividad economica`}</span>
-              <span className="text-tomato pl-1">*</span>
-            </div>
-            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-              <input
-                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales"
-                type="text"
-                value={"Servicios de médicos"}
-                readOnly={true}
-                onChange={(e) => handleChange("codActividad", e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
+        
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
             <div className="relative text-xs font-inria-sans text-left z-[1]">
@@ -229,56 +198,7 @@ const ClietnBillCredit = ({
             
                 {/* Municipality */}
 {/* Department selection */}
-{visible && (
-  <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-    <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
-      <span className="text-black">Departamento</span>
-      <span className="text-tomato">*</span>
-    </div>
-    <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-      <select
-        className="w-full h-full relative border-white bg-white border-2 max-w-full"
-        value={selectedDepartment}
-        onChange={handleDepartmentChange}
-      >
-        <option value="">Select a department</option>
-        {Object.keys(departmentsAndMunicipalities).map((key) => (
-          <option key={key} value={key}>
-            {departmentsAndMunicipalities[key].departmentName}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-)}
 
-
-{visible && (
-  <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full mt-4">
-    <div className="relative text-xs font-inria-sans text-left z-[1] mb-2">
-      <span className="text-black">Municipio</span>
-      <span className="text-tomato">*</span>
-    </div>
-    <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-      <select
-        className="w-full h-full relative border-white bg-white border-2 max-w-full"
-        value={selectedMunicipality}
-        onChange={handleMunicipalityChange}
-        disabled={!selectedDepartment} // Disable if no department is selected
-      >
-        <option value="">Select a municipality</option>
-        {selectedDepartment &&
-          departmentsAndMunicipalities[selectedDepartment].municipalities.map(
-            (municipality, index) => (
-              <option key={index} value={municipality.index}>
-                {municipality.name}
-              </option>
-            )
-          )}
-      </select>
-    </div>
-  </div>
-)}
 
 {/* End Municipality */}
 
@@ -290,4 +210,4 @@ const ClietnBillCredit = ({
   );
 };
 
-export default ClietnBillCredit;
+export default ClientSubEx;

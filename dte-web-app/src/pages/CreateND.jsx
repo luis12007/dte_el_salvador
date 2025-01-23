@@ -12,8 +12,9 @@ import PlantillaService from "../services/PlantillaService";
 import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import HomeFacturasSelect from "./HomeFacturasSelect";
 
-const CrearCreditoFiscal = () => {
+const CreateND = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
@@ -31,6 +32,9 @@ const CrearCreditoFiscal = () => {
   const [isVisibleClient, setIsVisibleClient] = useState(false);
     const [percentage, setPercentage] = useState(0);
     const [rentvalue, setRentvalue] = useState(0);
+    const [numDTErefe, setNumDTErefe] = useState("reference");
+    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [contentcf, setcontentcf] = useState("");
   
 
   /* data for municipalities ------------------------------------ */
@@ -617,7 +621,6 @@ const CrearCreditoFiscal = () => {
     const cuantityint = parseInt(newContents.cuantity);
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
-
     const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
@@ -632,7 +635,7 @@ const CrearCreditoFiscal = () => {
       noGravado: 0,
       psv: 0,
       montoDescu: 0,
-      numeroDocumento: null,
+      numeroDocumento: contentcf.codigo_de_generacion,
       precioUni: pricefloat,
       ventaGravada: pricefloat * cuantityint,
       ventaExenta: 0,
@@ -867,13 +870,13 @@ const CrearCreditoFiscal = () => {
 
     var selectedDepartmentnum = selectedDepartment;
     /* if num is only 1 digit will be 0(digit) or if it is 9 it will be 09, it id 12 will be 12 */
-    if (selectedDepartmentnum < 10) {
+/*     if (selectedDepartmentnum < 10) {
       selectedDepartmentnum = "0" + selectedDepartmentnum;
-    }
+    } */
     var selectedMunicipalitynum = selectedMunicipality;
-    if (selectedMunicipalitynum < 10) {
+/*     if (selectedMunicipalitynum < 10) {
       selectedMunicipalitynum = "0" + selectedMunicipalitynum;
-    }
+    } */
 
     if (client.email !== null) {
             if (!validateEmail(client.email)) {
@@ -889,11 +892,16 @@ const CrearCreditoFiscal = () => {
             }
           }
 
+    const tipodocumento = "03"
+    const tipoGeneracion = 1
+    const numDocumento = contentcf.codigo_de_generacion
+    const fecha = contentcf.fecha_y_hora_de_generacion
+    const merge_data = "03" + "|" + tipoGeneracion + "|" + numDocumento+ "|" + fecha
     var data = {
       identificacion: {
         version: 3,
         ambiente: userinfo.ambiente,
-        tipoDte: "03",
+        tipoDte: "06",
         numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),
         codigoGeneracion: myUuid,
         tipoModelo: 1,
@@ -904,7 +912,7 @@ const CrearCreditoFiscal = () => {
         tipoContingencia: null,
         motivoContin: null,
       },
-      documentoRelacionado: null,
+      documentoRelacionado: merge_data,
       emisor: {
         direccion: {
           municipio: userinfo.municipio,
@@ -1036,6 +1044,8 @@ const CrearCreditoFiscal = () => {
       return;
     }
 
+    console.log("Data");
+    console.log(data);  
     try {
       const responsesum = await EmisorService.count_fiscal(id_emisor, token);
       console.log("Count Fiscal");
@@ -1060,14 +1070,14 @@ const CrearCreditoFiscal = () => {
     console.log(responsePlantilla);
 
     if (responsePlantilla.message === "Inserción exitosa") {
-      toast.success("Credito Fiscal creado con exito");
+      toast.success("Nota de crédito creado con exito");
 
       /* wait 5 second and navigate to /facturas */
       setTimeout(() => {
         navigate("/facturas");
       }, 5000);
     } else {
-      toast.error("CF no creado intentar de nuevo");
+      toast.error("NC no creado intentar de nuevo");
     }
 
     /* 
@@ -1136,7 +1146,7 @@ const CrearCreditoFiscal = () => {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-03-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-06-00000030-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -1263,27 +1273,7 @@ const CrearCreditoFiscal = () => {
     setIsVisibleClient(!isVisibleClient);
   };
 
-  const onSelectClient = (event,clientset) => {
-    event.preventDefault();
-    setClient({
-        name: clientset.name,
-        document: clientset.dui,
-        address: clientset.direccion,
-        email: clientset.correo_electronico,
-        phone: clientset.numero_telefono,
-        codActividad: clientset.actividad_economica,
-        nrc: clientset.nrc,
-        descActividad: "Servicios de medicos",
-        nit: clientset.nit,
-        nombreComercial: clientset.nombre_comercial,
-        departamento: clientset.departament,
-        municipio: clientset.municipio,
-      });
 
-    setSelectedDepartment(clientset.departament);
-    setSelectedMunicipality(clientset.municipio);   
-    console.log(clientset);
-  };
 
 
   const validateEmail = (email) => {
@@ -1317,26 +1307,80 @@ const CrearCreditoFiscal = () => {
   
   };
 
+  const onSelectClient = (event,clientset) => {
+    event.preventDefault();
+    setClient({
+        name: clientset.name,
+        document: clientset.dui,
+        address: clientset.direccion,
+        email: clientset.correo_electronico,
+        phone: clientset.numero_telefono,
+        codActividad: clientset.actividad_economica,
+        nrc: clientset.nrc,
+        descActividad: "Servicios de medicos",
+        nit: clientset.nit,
+        nombreComercial: clientset.nombre_comercial,
+        departamento: clientset.departament,
+        municipio: clientset.municipio,
+      });
 
+    setSelectedDepartment(clientset.departament);
+    setSelectedMunicipality(clientset.municipio);   
+    console.log(clientset);
+  };
+
+  const GetInf = (content) => {
+    console.log(content);
+
+    /* spliting address */
+    const address = content.re_direccion.split("|");
+    setClient({
+      name: content.re_name,
+      document: content.re_numdocumento,
+      address: address[2],
+      email: content.re_correo_electronico,
+      phone: content.re_numero_telefono,
+      codActividad: content.re_codactividad,
+      nrc: content.re_nrc,
+      descActividad: "Servicios de medicos",
+      nit: content.re_nit,
+      nombreComercial: content.re_nombre_comercial,
+      departamento: address[0],
+      municipio: address[1],
+    });
+    
+    setSelectedDepartment(address[0]);
+    setSelectedMunicipality(address[1]);  
+    setcontentcf(content);
+    console.log(client)
+    setIsModalOpen(false);
+
+  }
   
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
-      <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
+      <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0]  sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
           <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
           <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white ">
             <select
               onChange={handleSelectChange}
               className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
             >
-              <option value="CF">Comprobante Crédito Fiscal</option>
+              <option value="ND">Nota de Débito</option>
               <option value="Factura">Factura</option>
+              <option value="CF">Comprobante Crédito Fiscal</option>
               <option value="SU">Factura de Sujeto Excluido</option>
               <option value="NC">Nota de Crédito</option>
-              <option value="ND">Nota de Débito</option>
+
             </select>
             {/* Your other elements */}
           </div>
         </header>
+      <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
+        <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Nota de Debito</h1>
+        <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
+        <h2 className=""> para CF de: {client.name}</h2>
+      </header>
       <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
@@ -1374,23 +1418,13 @@ const CrearCreditoFiscal = () => {
           </div>
         </div>
       </section>
-
-      <BillnoCF
-        handleSelectChangeCFClient={handleSelectChangeCFClient}
-        setClient={setClient}
-        client={client}
-        departmentsAndMunicipalities={departmentsAndMunicipalities}
-        handleDepartmentChange={handleDepartmentChange}
-        handleMunicipalityChange={handleMunicipalityChange}
-        selectedMunicipality={selectedMunicipality}
-        getMunicipalityNumber={getMunicipalityNumber}
-        selectedDepartment={selectedDepartment}
-        visible={true}
-        handleSelectClient={handleSelectClient}
-        isVisibleClient={isVisibleClient}
-        onSelectClient={onSelectClient}
-
-      />
+{isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
+            <HomeFacturasSelect GetInf={GetInf} />
+          </div>
+        </div>
+      )}
 
       <AdvanceItemsComponent
         handleSelectChangeItemsClient={handleSelectChangeItemsClient}
@@ -1445,4 +1479,4 @@ const CrearCreditoFiscal = () => {
   );
 };
 
-export default CrearCreditoFiscal;
+export default CreateND;

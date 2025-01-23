@@ -18,8 +18,15 @@ import Private from './pages/Private'
 import Invalidate from './pages/Invalidate'
 import Testbill from './pages/testbill';
 import TestCF from './pages/TestCF';
+import CreateSubEx from './pages/CreateSubEx';
+import EditSujEx from './pages/EditSujEx';
+import CreateNC from './pages/CreateNC';
+import EditNC from './pages/EditNC';
 
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import CreateND from './pages/CreateND';
+import EditND from './pages/EditND';
+import BooksComponent from './components/BooksComponent';
 
 
 /* http://localhost:3000/#/ingresar the example route */
@@ -41,11 +48,26 @@ export default function App() {
 
         <Route path="/facturas" element={<Private><HomeFacturas/></Private>}/> 
 
-        <Route path="/crear/factura" element={<Private><ClientesFacturaToFiscalProcess/></Private>}/> {/* Create FActura */}
+{/* BILL AND CF */}
+        <Route path="/crear/factura" element={<Private><ClientesFacturaToFiscalProcess/></Private>}/> 
         <Route path="/crear/creditofiscal" element={<Private><CreateCF/></Private>}/>
 
         <Route path="/editar/factura/:codigo_de_generacion" element={<Private><EditBill/></Private>}/>
         <Route path="/editar/CreditoFiscal/:codigo_de_generacion" element={<Private><EditCF/></Private>}/>
+
+{/* Others */}
+        <Route path="/crear/sujeto_excluido" element={<Private><CreateSubEx/></Private>}/> 
+        <Route path="/crear/nota_credito" element={<Private><CreateNC/></Private>}/> 
+        <Route path="/crear/Nota_debito" element={<Private><CreateND/></Private>}/> 
+
+        <Route path="/editar/sujEx/:codigo_de_generacion" element={<Private><EditSujEx/></Private>}/>
+        <Route path="/editar/NC/:codigo_de_generacion" element={<Private><EditNC/></Private>}/>
+        <Route path="/editar/ND/:codigo_de_generacion" element={<Private><EditND/></Private>}/>
+
+
+{/* Books */}
+        <Route path="/facturas/libros" element={<Private><BooksComponent/></Private>}/> 
+
 
 
         <Route path="/clientes" element={<Private><ListClients/></Private>}/>

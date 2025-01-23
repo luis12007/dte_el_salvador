@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import receipt from "../assets/imgs/receipt.png";
+import book from "../assets/imgs/book.png";
 import customers from "../assets/imgs/customers.png";
 const GroupComponent = ({visible, setVisible}) => {
   const navigate = useNavigate();
@@ -43,6 +44,10 @@ const GoAddServiceHandler = () => {
 
 const GoCancelBill = () => {
   navigate("/invalidar");
+}
+
+const GoBooksBill = () => {
+  navigate("/facturas/libros");
 }
 
 const CloseHandler = () => {
@@ -141,6 +146,19 @@ const CloseHandler = () => {
                 />
                 <div className="flex flex-col items-start justify-start pt-2 px-0 pb-0">
                   <div className="relative z-[1]  pt-0.5">Perfil</div>
+                </div>
+              </div>
+            </button>
+            <button onClick={GoBooksBill} className="flex bg-white flex-row items-start w-full justify-start py-0 px-[3px]">
+              <div className="flex  flex-row items-start justify-start gap-[0px_9px]">
+                <img
+                  className="h-[30px] w-[30px] relative object-cover z-[1]"
+                  loading="lazy"
+                  alt=""
+                  src={book}
+                />
+                <div className="flex flex-col items-start justify-start  pt-2 px-0 pb-0">
+                  <div className="relative z-[1]">Libros</div>
                 </div>
               </div>
             </button>

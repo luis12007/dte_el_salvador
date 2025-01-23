@@ -2,18 +2,25 @@
   "identificacion": {
     "version": 3,
     "ambiente": "00",
-    "tipoDte": "03",
-    "numeroControl": "DTE-03-00000030-000000000000235",
-    "codigoGeneracion": "7FDE1390-159C-4F0D-826F-514F1DF303B5",
+    "tipoDte": "06",
+    "numeroControl": "DTE-06-00000030-000000000000302",
+    "codigoGeneracion": "7E33DF72-70ED-4C80-8155-7C23A286041C",
     "tipoModelo": 1,
     "tipoOperacion": 1,
-    "fecEmi": "2025-01-18",
-    "horEmi": "13:02:01",
+    "fecEmi": "2025-01-23",
+    "horEmi": "09:40:01",
     "tipoMoneda": "USD",
     "tipoContingencia": null,
     "motivoContin": null
   },
-  "documentoRelacionado": null,
+  "documentoRelacionado": [
+    {
+      "tipoDocumento": "03",
+      "tipoGeneracion": "1",
+      "numeroDocumento": "6B9EF46E-DEAA-405A-A047-7D1534734A91",
+      "fechaEmision": "2025-01-21"
+    }
+  ],
   "emisor": {
     "direccion": {
       "municipio": "08",
@@ -54,40 +61,18 @@
   "cuerpoDocumento": [
     {
       "codTributo": null,
-      "descripcion": "3",
+      "descripcion": "2",
       "uniMedida": 99,
       "codigo": null,
-      "cantidad": 3,
+      "cantidad": 2,
       "numItem": 1,
-      "tributos": [
-        "20"
-      ],
+      "tributos": null,
       "noGravado": 0,
       "psv": 0,
       "montoDescu": 0,
-      "numeroDocumento": null,
-      "precioUni": 3,
-      "ventaGravada": 9,
-      "ventaExenta": 0,
-      "ventaNoSuj": 0,
-      "tipoItem": 1
-    },
-    {
-      "codTributo": null,
-      "descripcion": "3",
-      "uniMedida": 99,
-      "codigo": null,
-      "cantidad": 3,
-      "numItem": 2,
-      "tributos": [
-        "20"
-      ],
-      "noGravado": 0,
-      "psv": 0,
-      "montoDescu": 0,
-      "numeroDocumento": null,
-      "precioUni": 3,
-      "ventaGravada": 9,
+      "numeroDocumento": "6B9EF46E-DEAA-405A-A047-7D1534734A91",
+      "precioUni": 2,
+      "ventaGravada": 4,
       "ventaExenta": 0,
       "ventaNoSuj": 0,
       "tipoItem": 1
@@ -101,8 +86,8 @@
       {
         "periodo": null,
         "plazo": null,
-        "montoPago": 20.34,
-        "codigo": "01",
+        "montoPago": null,
+        "codigo": null,
         "referencia": null
       }
     ],
@@ -111,24 +96,24 @@
       {
         "codigo": "20",
         "descripcion": "Impuesto al Valor Agregado 13%",
-        "valor": 2.34
+        "valor": 0.52
       }
     ],
-    "totalLetras": "VEINTE DÓLARES CON TREINTA Y CUATRO CENTAVOS",
+    "totalLetras": "CUATRO DÓLARES CON CINCUENTA Y DOS CENTAVOS",
     "totalExenta": 0,
-    "subTotalVentas": 18,
+    "subTotalVentas": 4,
     "totalGravada": null,
-    "montoTotalOperacion": 20.34,
+    "montoTotalOperacion": 4.52,
     "descuNoSuj": 0,
     "descuExenta": 0,
     "descuGravada": 0,
     "porcentajeDescuento": 0,
     "totalDescu": 0,
-    "subTotal": 18,
+    "subTotal": 4,
     "ivaRete1": 0,
     "reteRenta": 0,
     "totalNoGravado": 0,
-    "totalPagar": 20.34,
+    "totalPagar": 4.52,
     "ivaPerci1": 0
   },
   "extension": {

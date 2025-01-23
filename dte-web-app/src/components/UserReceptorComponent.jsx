@@ -30,7 +30,8 @@ const UserReceptorComponent = ({ correoLuisAlexanderContaiPadding , client , onS
   }, [correoLuisAlexanderContaiPadding]);
 
   const callfunctions = (event) => {
-    onSelectClient(client);
+    event.preventDefault();
+    onSelectClient(event,client);
     handleSelectClient(event);
   }
 

@@ -35,7 +35,7 @@ app.use('/sellar', sellarRoutes);
 app.use('/facturaxitems', facturaxitems);
 app.use('/items', itemsRoutes);
 app.use('/emisor', usuarioRoutes);
-app.use('/mail' , mailRoutes);
+app.use('/mail', mailRoutes);
 
 
 // Start the server

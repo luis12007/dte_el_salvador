@@ -32,12 +32,22 @@ const sendPDF = async(req, res) => {
 
         pdfDoc.fontSize(15).fillColor('#1E3256').text('DOCUMENTO TRIBUTARIO ELECTRONICO', { align: 'center' });
         if (plantillaDB.tipo === "03") {
-            pdfDoc.fontSize(17).fillColor('#1E3256').text('CREDITO FISCAL', { align: 'center' });
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('CRÉDITO FISCAL', { align: 'center' });
 
         } else if (plantillaDB.tipo === "01") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA', { align: 'center' });
 
+        } else if (plantillaDB.tipo === "14") {
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA SUJETO EXCLUIDO', { align: 'center' });
+
+        }else if (plantillaDB.tipo === "05") {
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE CRÉDITO', { align: 'center' });
+
+        }else if (plantillaDB.tipo === "06") {
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE DEBITO', { align: 'center' });
+
         }
+
         const yscale = 70;
 
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
@@ -201,6 +211,59 @@ const sendPDF = async(req, res) => {
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
+        } else if (plantillaDB.tipo === "14") {
+            let re_numdocumentostring = 'DOC';
+            /* i have my address like 01  02|08|direccion and i just need direccion*/
+            const UserAddress = plantillaDB.re_direccion.split("|");
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+
+
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
+                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`: ${plantillaDB.re_numdocumento}`, infoX + 303, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text(' ', infoX + 307, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text(' ', infoX + 385, infoY + 70)
+                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
+
+        }else if (plantillaDB.tipo === "05") {
+            const re_numdocumentostring = 'NIT: ';
+
+            const UserAddress = plantillaDB.re_direccion.split("|");
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
+                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
+                .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
+                .font('Helvetica').text(`${plantillaDB.re_actividad_economica}`, infoX + 385, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
+                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
+
+        }else if (plantillaDB.tipo === "06") {
+            const re_numdocumentostring = 'NIT: ';
+
+            const UserAddress = plantillaDB.re_direccion.split("|");
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
+                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
+                .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
+                .font('Helvetica').text(`${plantillaDB.re_actividad_economica}`, infoX + 385, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
+                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
+
         }
 
         // Add services section
@@ -302,7 +365,7 @@ const sendPDF = async(req, res) => {
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 90, { align: 'right' })
                 .text(`IVA recibido: $${IVAC.toFixed(2)}`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
-                .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
+                .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
 
@@ -315,7 +378,49 @@ const sendPDF = async(req, res) => {
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
                 .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
-                .text('Retención de renta: $0.00', 300, y + 150, { align: 'right' })
+                .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
+                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+        } else if (plantillaDB.tipo === "14") {
+            if (plantillaDB.total_agravada === null) {
+                plantillaDB.total_agravada = 0;
+            }
+            if (plantillaDB.porcentajedescuento === null) {
+                plantillaDB.porcentajedescuento = 0;
+
+            }
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotal}`, 300, y + 10, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${IVAC.toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`Total gravado: $${plantillaDB.total_agravada }`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${plantillaDB.subtotal}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 90, { align: 'right' })
+                .text(`IVA recibido: $${IVAC.toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
+                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+        }else if (plantillaDB.tipo === "05") {
+
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${IVAC.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
+                .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
+                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
+        }else if (plantillaDB.tipo === "06") {
+
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${IVAC.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
+                .text(`IVA recibido: $${plantillaDB.iva_percibido}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
         }
