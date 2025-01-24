@@ -1598,6 +1598,8 @@ const firmbutton = content.firm ? (
       className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 w-full justify-center pr-3  ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
     >
       <img src={checkimg} alt="Tick" className="w-7 ml-1 h-7" />
+      <img src={signature} className="h-7 absolute opacity-30" alt="" />
+
     </button>
   </div>
 ) : (
@@ -1621,6 +1623,8 @@ const sendedebutton = content.sellado ? (
     >
 
       <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
+      <img src={direct} className="h-7 absolute opacity-30" alt="" />
+
     </button>
   </div>
 ) : (
@@ -1641,6 +1645,8 @@ const testbutton = content.sellado ? (
       className={`cursor-pointer h-12 [border:none] pt-[10px] w-full justify-center pr-2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
     >
       <img src={mailchecker ? checkimg : cross} alt={mailchecker ? "Tick" : "Cross"} className="w-[30px] h-[30px]" />
+      <img src={mailimg} className="h-7 absolute opacity-30" alt="" />
+
     </button>
   </div>
 ) : (

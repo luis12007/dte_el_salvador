@@ -50,16 +50,6 @@ const CardOfClientAndAddClient = () => {
             return;
         }
 
-        if (client.name === null) {
-            toast.error("Ingrese un nombre")
-            return;
-        }
-
-
-        if (client.address === null) {
-            toast.error("Ingrese una dirección")
-            return;
-        }
 
         if (client.email !== null) {
                 if (!validateEmail(client.email)) {
