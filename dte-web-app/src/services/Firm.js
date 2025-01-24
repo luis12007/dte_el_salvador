@@ -13,7 +13,7 @@ const Firm = {
     create: async(firm) => {
         try {
 
-            const res = await fetch(`${BASE_URL_Firm}/port444/firmardocumento/`, {
+            const res = await fetch(`${BASE_URL_Firm}/port444/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ const Firm = {
     // calling other endpoints for other clients
 
     HM_Clinic: async(firm) => {
-        const res = await fetch(`${BASE_URL_Firm}/port8446/firmardocumento/`, {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ const Firm = {
     },
 
     DR_julio_HM: async(firm) => {
-        const res = await fetch(`${BASE_URL_Firm}/port8448/firmardocumento/`, {
+        const res = await fetch(`${BASE_URL_Firm}/port8448/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ const Firm = {
     },
 
     DR_VIDES: async(firm) => {
-        const res = await fetch(`${BASE_URL_Firm}/port8451/firmardocumento/`, {
+        const res = await fetch(`${BASE_URL_Firm}/port8451/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
