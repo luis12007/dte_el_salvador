@@ -1,4 +1,4 @@
-const BASE_URL_Firm = "https://cors-anywhere.herokuapp.com/https://www.myspaceai.cloud";
+const BASE_URL_Firm = "https://www.myspaceai.cloud/https://www.myspaceai.cloud";
 
 
 const Firm = {
