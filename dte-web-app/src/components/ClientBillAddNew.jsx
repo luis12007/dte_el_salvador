@@ -178,14 +178,15 @@ const ClientBillAddNew = ({
                             <span className="text-tomato pl-1">*</span>
                         </div>
                         <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-                            <input
-                                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                placeholder="datos personales"
-                                type="text"
-                                value={"Servicios de médicos"}
-                                readOnly={true}
-                                onChange={(e) => handleChange("codActividad", e.target.value)}
-                            />
+                        <select
+            className="w-full h-full relative border-white bg-white border-2 max-w-full"
+            onChange={(e) => handleChange("codActividad", e.target.value)}
+          >
+            <option value="">Seleccionar actividad</option>
+            <option value="86203">Servicios Médicos</option>
+            <option value="73100">Publicidad</option>
+            <option value="56101">Restaurantes</option>
+          </select>
                         </div>
                     </div>
                 </div>

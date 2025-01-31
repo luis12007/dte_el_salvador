@@ -27,7 +27,8 @@ import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import CreateND from './pages/CreateND';
 import EditND from './pages/EditND';
 import BooksComponent from './components/BooksComponent';
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 /* http://localhost:3000/#/ingresar the example route */
 export default function App() {
@@ -90,7 +91,6 @@ export default function App() {
 
         <Route path="/testadmin/sendfacturas" element={<Private><Testbill/></Private>}/>
         <Route path="/testadmin/sendCF" element={<Private><TestCF/></Private>}/>
-
 
       </Routes>
       </HashRouter>

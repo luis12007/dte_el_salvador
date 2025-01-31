@@ -27,6 +27,10 @@ const FrameComponent1 = ({ key, content, user }) => {
   const navigate = useNavigate();
   const [usuario, setUser] = useState([]);
   const [mailchecker, setMailChecker] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [formattedTotal, setFormattedTotal] = useState("");
+
+
   useEffect(() => {
     if (content.tipo === "01") {
       setTipo("Factura");
@@ -194,11 +198,7 @@ const FrameComponent1 = ({ key, content, user }) => {
     console.log("content");
     console.log(content);
 
-
-
-
-
-
+    setFormattedTotal(content.total_a_pagar.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")); // 1,000
 
   }, []);
 
@@ -1157,6 +1157,8 @@ const FrameComponent1 = ({ key, content, user }) => {
   }
 
   const SendBillHandler = async () => {
+    setIsLoading(true);
+    /*  */
     console.log("SendBillHandler");
     console.log(content);
     console.log("---------------resultado--------------");
@@ -1202,6 +1204,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
           console.log("edited");
           console.log(response);
+          setIsLoading(false);
 
 
           toast.success("Factura enviada al ministerio");
@@ -1217,7 +1220,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             setTimeout(() => {
               window.location.reload();
 
-            }, 5000);
+            }, 9000);
             return
           }
           console.log("---------------enviando email--------------");
@@ -1238,17 +1241,24 @@ const FrameComponent1 = ({ key, content, user }) => {
           setTimeout(() => {
             window.location.reload();
 
-          }, 5000);
+          }, 9000);
 
         }
+        setIsLoading(false);
 
+
+        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+          toast.warning(`La factura ya fue enviada`);
+        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+          toast.info(`No se encontró firma`);
+        }else{
         if (senddata.estado === "RECHAZADO")
-          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+        toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
         console.log(senddata.observaciones);
         for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.error(`Observación ${i + 1} ${senddata.observaciones[i]}`);
+          toast.warning(`Observación ${i + 1} ${senddata.observaciones[i]}`);
         }
-
+      }
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
 
@@ -1290,6 +1300,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
           console.log("edited");
           console.log(response);
+          setIsLoading(false);
 
           const responseincrement = await UserService.id_enviopus1(id_emisor, token);
           console.log("incremented");
@@ -1305,7 +1316,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             setTimeout(() => {
               window.location.reload();
 
-            }, 5000);
+            }, 9000);
             return
           }
 
@@ -1322,14 +1333,21 @@ const FrameComponent1 = ({ key, content, user }) => {
           setTimeout(() => {
             window.location.reload();
 
-          }, 5000);
+          }, 9000);
         }
+        setIsLoading(false);
 
+        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+          toast.warning(`La factura ya fue enviada`);
+        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+          toast.info(`No se encontró firma`);
+        }else{
         if (senddata.estado === "RECHAZADO")
           toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
         console.log(senddata.observaciones);
         for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+        }
         }
 
         console.log("---------------resultado--------------");
@@ -1371,6 +1389,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
           console.log("edited");
           console.log(response);
+          setIsLoading(false);
 
           const responseincrement = await UserService.id_enviopus1(id_emisor, token);
           console.log("incremented");
@@ -1386,7 +1405,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             setTimeout(() => {
               window.location.reload();
 
-            }, 5000);
+            }, 9000);
             return
           }
 
@@ -1403,15 +1422,22 @@ const FrameComponent1 = ({ key, content, user }) => {
           setTimeout(() => {
             window.location.reload();
 
-          }, 5000);
+          }, 9000);
         }
+        setIsLoading(false);
 
+        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+          toast.warning(`La factura ya fue enviada`);
+        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+          toast.info(`No se encontró firma`);
+        }else{
         if (senddata.estado === "RECHAZADO")
           toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
         console.log(senddata.observaciones);
         for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
         }
+      }
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
@@ -1452,6 +1478,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
           console.log("edited");
           console.log(response);
+          setIsLoading(false);
 
           const responseincrement = await UserService.id_enviopus1(id_emisor, token);
           console.log("incremented");
@@ -1467,7 +1494,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             setTimeout(() => {
               window.location.reload();
 
-            }, 5000);
+            }, 9000);
             return
           }
 
@@ -1484,15 +1511,23 @@ const FrameComponent1 = ({ key, content, user }) => {
           setTimeout(() => {
             window.location.reload();
 
-          }, 5000);
+          }, 9000);
         }
 
+          setIsLoading(false);
+        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+          toast.error(`La factura ya fue enviada`);
+        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+          toast.info(`No se encontró firma`);
+        }else{
         if (senddata.estado === "RECHAZADO")
+
           toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
         console.log(senddata.observaciones);
         for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
         }
+      }
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
@@ -1533,6 +1568,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
           console.log("edited");
           console.log(response);
+          setIsLoading(false);
 
           const responseincrement = await UserService.id_enviopus1(id_emisor, token);
           console.log("incremented");
@@ -1548,7 +1584,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             setTimeout(() => {
               window.location.reload();
 
-            }, 5000);
+            }, 9000);
             return
           }
 
@@ -1565,15 +1601,22 @@ const FrameComponent1 = ({ key, content, user }) => {
           setTimeout(() => {
             window.location.reload();
 
-          }, 5000);
+          }, 9000);
         }
 
+          setIsLoading(false);
+        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+          toast.error(`La factura ya fue enviada`);
+        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+          toast.info(`No se encontró firma`);
+        }else{
         if (senddata.estado === "RECHAZADO")
           toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
         console.log(senddata.observaciones);
         for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.error(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
         }
+      }
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
@@ -1625,6 +1668,8 @@ const sendedebutton = content.sellado ? (
       <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
       <img src={direct} className="h-7 absolute opacity-30" alt="" />
 
+      
+
     </button>
   </div>
 ) : (
@@ -1635,6 +1680,14 @@ const sendedebutton = content.sellado ? (
     >
       <img src={direct} className="h-7" alt="" />
     </button>
+
+    {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="loader"></div>
+        </div>
+      )}
+
+
   </div>
 );
 
@@ -1676,7 +1729,7 @@ const testbutton = content.sellado ? (
       setTimeout(() => {
         window.location.reload();
 
-      }, 3000);
+      }, 5000);
     } else {
       toast.error("Error al eliminar la plantilla recarga pagina");
     }
@@ -1784,7 +1837,7 @@ const testbutton = content.sellado ? (
             <button
             className="cursor-pointer [border:none] px-3 py-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
               <b className="relative text-11xl font-inria-sans text-black text-left whitespace-nowrap z-[2]">
-                TOTAL: ${content.total_a_pagar}
+                TOTAL: ${formattedTotal}
               </b>
             </button>
             <div className="w-full  flex pt-4 gap-[0px_12px]">
@@ -1797,18 +1850,7 @@ const testbutton = content.sellado ? (
           </div>
         </div>
       </div>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      
     </div>
   );
 };

@@ -644,7 +644,7 @@ const plantillacreate = async(req, res) => {
             res.status(500).json({ message: "Error en el servidor" });
         }
 
-    }else if (plantilla.identificacion.tipoDte === "06") {
+    } else if (plantilla.identificacion.tipoDte === "06") {
 
         const JsontoDB = {
             /* identification */
@@ -840,6 +840,44 @@ const getPlantillasByUserId = async(req, res) => {
     } catch (error) {
         console.error("Error al obtener plantilla por ID", error);
         res.status(500).json({ message: "Error en el servidor" });
+    }
+};
+
+/* i will get the plantillas by type i will send an array of
+types like "03","02" and i will recive all of 3 and all 2 by the id of the usuarioid 
+the id will be param and the types body with the json value types and key the types in array*/
+const getbytypeandid = async(req, res) => {
+    try {
+        const usuarioid = req.params.id;
+        const types = req.headers.types;
+        const stardate = req.params.startdate;
+        const enddate = req.params.enddata;
+        console.log("getbytypeandid");
+        console.log(usuarioid);
+        console.log(types);
+        console.log(stardate);
+        console.log(enddate);
+        console.log("getbytypeandid");
+
+        /* with " " instead of '' */
+        const typestoarray = types.split(",");
+        console.log(typestoarray[0]);
+
+
+        if (!usuarioid || !types || !Array.isArray(typestoarray)) {
+            return res.status(400).json({ error: "Invalid input" });
+        }
+
+        /* where usuario id finding in the array of types and between those dates  */
+        const plantillas = await db("plantilla")
+            .where("id_emisor", usuarioid)
+            .whereIn("tipo", typestoarray)
+            .whereBetween("fecha_y_hora_de_generacion", [stardate, enddate]);
+
+        res.status(200).json(plantillas);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal server error" });
     }
 };
 
@@ -1232,7 +1270,7 @@ const updatePlantilla = async(req, res) => {
             sello_de_recepcion: plantilla.sello,
         };
 
-    }  else if (plantilla.identificacion.tipoDte === "06") {
+    } else if (plantilla.identificacion.tipoDte === "06") {
         console.log("updatePlantillaCF");
         var JsontoDB = {
             /* identification */
@@ -1981,7 +2019,7 @@ const updatePlantillaNoItems = async(req, res) => {
             sellado: plantilla.sellado,
             sello_de_recepcion: plantilla.sello,
         };
-    }else if (plantilla.identificacion.tipoDte === "06") {
+    } else if (plantilla.identificacion.tipoDte === "06") {
         console.log("updatePlantillaCF");
         var JsontoDB = {
             /* identification */
@@ -2159,8 +2197,8 @@ module.exports = {
     getplantilla,
     DeletePlantillaById,
     updatePlantillaNoItems,
-
     getPlantillasByUserIdAndName,
     getPlantillasByUserIdAndDateRamge,
     getPlantillasByUserIdAndType,
+    getbytypeandid,
 };

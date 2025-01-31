@@ -13,7 +13,8 @@ const {
     updatePlantillaNoItems,
     getPlantillasByUserIdAndName,
     getPlantillasByUserIdAndDateRamge,
-    getPlantillasByUserIdAndType
+    getPlantillasByUserIdAndType,
+    getbytypeandid
 
 } = require('../controllers/plantillaController.js');
 const authenticateToken = require('../middleware/verifyToken.js');
@@ -31,5 +32,6 @@ router.delete('/delete/:codigo_de_generacion', authenticateToken, DeletePlantill
 router.get('/get/name/:id/:name', authenticateToken, getPlantillasByUserIdAndName);
 router.get('/get/range/:id/:start/:end', authenticateToken, getPlantillasByUserIdAndDateRamge);
 router.get('/get/type/:id/:type', authenticateToken, getPlantillasByUserIdAndType);
+router.get('/get/typeandid/:id/:startdate/:enddata', authenticateToken, getbytypeandid);
 
 module.exports = router;

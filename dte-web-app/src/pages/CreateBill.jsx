@@ -365,8 +365,13 @@ const Clientes = () => {
       const conditionoperationint = parseInt(payment.paymentType);
 
       if (client.documentType === "13") {
+        /* if has already - dont */
+        if (client.document.includes("-")) {
+        console.log("DUI has -");
+        }else{
         client.document = formatDUI(client.document);
       }
+    }
 
       /* validating the email form of email */
       if (client.email !== null) {
@@ -599,7 +604,8 @@ const Clientes = () => {
     };
 
     /* Logic of renderize CF or NotCF */
-    const handleSelectClient = () => {
+    const handleSelectClient = (event) => {
+      event.preventDefault();
       setIsVisibleClient(!isVisibleClient);
     };
 

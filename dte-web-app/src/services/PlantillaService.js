@@ -16,6 +16,48 @@ const PlantillaAPI = {
         const data = await res.json();
         return data;
     },
+    getbytypeandid: async(id, token, types, startdate, enddata) => {
+        const res = await fetch(`${BASE_URL}/plantillas/get/typeandid/${id}/${startdate}/${enddata}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+                'types': `${types}`,
+            },
+        });
+        const data = await res.json();
+        return data;
+    },
+
+
+    /* create     const data = PlantillaAPI.getcompras(user_id, token, ["02", "04"], startDate, endDate);
+     */
+    getcompras: async(id, token, startdate, enddata) => {
+        const res = await fetch(`${BASE_URL}/compras/getcompras/${id}/${startdate}/${enddata}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    /* Create compras */
+    createcompras: async(compra, token, id_emisor) => {
+        const res = await fetch(`${BASE_URL}/compras/create`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'id_emisor': `${id_emisor}`,
+            },
+            body: JSON.stringify(compra)
+        });
+        const data = await res.json();
+        return data;
+    },
 
     /* /get/:id */
     getByUserId: async(id, token) => {

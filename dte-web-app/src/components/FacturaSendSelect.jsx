@@ -1360,7 +1360,8 @@ const FacturaSendSelect = ({ key, content, user , GetInf }) => {
     const [isActivesend, setIsActivesend] = useState(false);
     const [isActivemail, setIsActivemail] = useState(false);
 
-    const handleClickdownload = () => {
+    const handleClickdownload = (event) => {
+        event.preventDefault();
         setIsActivedownload(true);
         DownloadBillHandler();
         setTimeout(() => {
@@ -1384,7 +1385,17 @@ const FacturaSendSelect = ({ key, content, user , GetInf }) => {
                     <h1 className="m-0 pb-2 relative text-inherit font-bold z-[3]">{tipo}</h1>
                 </div>
 
-
+                <button
+            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivedownload ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
+            onClick={(event) => handleClickdownload(event)}
+          >
+            <img
+              className="h-[30px] w-[30px]"
+              loading="lazy"
+              alt=""
+              src="/descargar@2x.png"
+            />
+          </button>
             </header>
 
             <div className="">
