@@ -1421,7 +1421,7 @@ const CreateND = () => {
 {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-4 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
-            <HomeFacturasSelect GetInf={GetInf} />
+            <HomeFacturasSelect GetInf={GetInf} setIsModalOpen={setIsModalOpen} />
           </div>
         </div>
       )}

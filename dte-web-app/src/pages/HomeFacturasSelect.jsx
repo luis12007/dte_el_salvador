@@ -10,8 +10,9 @@ import * as XLSX from "xlsx";
 import filterimg from "../assets/imgs/filter.png";
 import filterwhite from "../assets/imgs/filterwhite.png";
 import FilterModal from "../components/FilterModal";
+import x from "../assets/imgs/x.png";
 
-const HomeFacturasSelect = ({GetInf}) => {
+const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     const [items, setItems] = useState([]);
@@ -186,13 +187,22 @@ const HomeFacturasSelect = ({GetInf}) => {
 
     };
 
+    const sendfalse = async (event) => {
+        event.preventDefault();
+        setIsModalOpen(false);
+    }
 
     return (
         <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-[33px] pr-[22px] box-border ch:items-center">
+
+            <button className="bg-slate-400 w-10 ml-3 self-start h-10 rounded-lg drop-shadow-lg " onClick={(event) => sendfalse(event)}>
+                <img src={x} className="h-6  self-center " alt="" />
+            </button>
+
             <button className="bg-gray-300 w-2/12 self-end h-12 border-black rounded-lg drop-shadow-lg " onClick={() => setShowModal(true)}>
                 <img src={filterwhite} className="h-9 pl-0.5 self-center mr-3" alt="" />
             </button>
-
+            
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">

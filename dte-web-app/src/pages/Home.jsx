@@ -29,7 +29,7 @@ const Home = () => {
   }
 
   return (
-    <div className="w-screen pb-10 relative bg-steelblue-300 flex flex-col items-center justify-center  box-border gap-[47px_0px] ">
+    <div className="w-screen h-screen pb-10 relative bg-steelblue-300 flex flex-col items-center justify-center  box-border gap-[47px_0px] ">
       <HamburguerComponent sidebar={sidebar} visible={visible} />
 
 

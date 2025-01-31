@@ -10,6 +10,8 @@ import * as XLSX from "xlsx";
 import filterimg from "../assets/imgs/filter.png";
 import filterwhite from "../assets/imgs/filterwhite.png";
 import FilterModal from "../components/FilterModal";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomeFacturas = () => {
   const token = localStorage.getItem("token");
@@ -253,16 +255,28 @@ const HomeFacturas = () => {
         )}
       </section>
 
-      <button
+      {/* <button
         onClick={excelHandler}
         className="cursor-pointer self-center mt-16 [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center hover:bg-seagreen-100"
       >
         <b className="relative self-center text-lg font-inria-sans text-white text-left z-[1]">
           Excel
         </b>
-      </button>
-
+      </button> */}
+      <ToastContainer />
       <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={true}
+        pauseOnHover={true}
+        theme="light"
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ const ListaDeServicioOClientes = () => {
     setVisible(!visible);
 }
   return (
-    <div className="w-full relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-3 px-2.5 pb-[316px] box-border gap-[22px_0px] tracking-[normal]">
+    <div className="w-full h-screen relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-3 px-2.5 pb-[316px] box-border gap-[22px_0px] tracking-[normal]">
             <HamburguerComponent sidebar={sidebar} visible={visible}/>
             <SidebarComponent visible={visible} setVisible={setVisible}/>
 <div className="w-full flex flex-col items-start mt-20 justify-start gap-[22px_0px]">

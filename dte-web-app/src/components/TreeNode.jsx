@@ -1,4 +1,21 @@
+import { useState, useEffect } from "react";
+
+
 const TreeNode = ({ text, data }) => {
+  const [number, setNumber] = useState(data);
+
+  useEffect(() => {
+
+    if (typeof data == "number") {
+      setNumber(data.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")); // 1,000
+      return;
+    }
+    if (data.length > 3) {
+      setNumber(data.replace(/\B(?=(\d{3})+(?!\d))/g, ",")); // 1,000
+    } else {
+      setNumber(data);
+    }
+  }, [data]);
   
   return (
     <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full text-left text-mini text-black font-inria-sans ch:w-1/3 ch:self-center">
@@ -15,7 +32,7 @@ const TreeNode = ({ text, data }) => {
           <b className="relative z-[3]">{text}</b>
         </div>
         <div className="flex flex-row items-start justify-start py-0 px-[17px] text-6xl">
-          <div className="relative whitespace-nowrap z-[2]">${data}</div>
+          <div className="relative whitespace-nowrap z-[2]">${number}</div>
         </div>
       </div>
     </section>
