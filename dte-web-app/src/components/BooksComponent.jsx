@@ -47,14 +47,30 @@ const BooksComponent = () => {
     if(book === "LCOM") {
       console.log("Libros de Compras");
       LibroCompras();
+    }if(book === "ANEX") {
+      console.log("Anexos");
+      Anexos();
     }
 
     closeModal();
   };
 
+  const Anexos = async () => {
+    const data = await PlantillaAPI.getcompras(user_id, token, startDate, endDate);
+    console.log(data);
+
+    
+    console.log("Anexos");
+    anexoCF(data);
+    anexoCompras(data);
+    anexoSuex(data);
+    anexoBill(data);
 
 
-  const anexoSuex = () => {
+  }
+
+
+  const anexoSuex = (data) => {
     toast.success("Anexo de factura creado con éxito");
   }
 
@@ -83,13 +99,16 @@ const BooksComponent = () => {
     const data = await PlantillaAPI.createcompras(jsonData, token, user_id);
     console.log(data);
     toast.success("Compras created successfully");
+    /* wait 5 seconds and reload */
+    setTimeout(() => {
+      window.location.reload();
+    }, 5000);
   };
 
 
   const LibroCompras = async () => {
     const data = await PlantillaAPI.getcompras(user_id, token, startDate, endDate);
     console.log(data);
-    anexoCompras(data);
 
     const transformedData = data.map((item, index) => ({
       'N°': index + 1,
@@ -247,7 +266,6 @@ const BooksComponent = () => {
   const LibroContribuyentes = async ()  => {
     const data = await PlantillaAPI.getbytypeandid(user_id, token, ["03", "05", "06"] , startDate, endDate);
     console.log(data);
-    anexoCF(data);
 
     const transformedData = data.map((item, index) => ({
       'N°': index + 1,
@@ -315,6 +333,7 @@ const BooksComponent = () => {
     toast.success("Libro de contribuyentes creado con éxito");
 
   }
+
   const anexoCF = (data) => {
     const transformedData = data.map(item => ({
       'FECHA DE EMISIÓN DEL DOCUMENTO': item.fecha_y_hora_de_generacion,
@@ -358,7 +377,6 @@ const BooksComponent = () => {
   const LibroConsumidorFinal = async () => {
     const data = await PlantillaAPI.getbytypeandid(user_id, token, ["01"] , startDate, endDate);
     console.log(data);
-    anexoBill(data);
 
     const transformedData = data.map(item => {
       // Extract day from the date
@@ -470,26 +488,58 @@ const BooksComponent = () => {
 
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-steelblue-300">
-      <div className='absolute top-0 left-0 pt-10 ch:items-center'>
+    <div className="flex flex-col items-center  justify-center min-h-screen bg-steelblue-300">
+      <div className='absolute top-0 left-0  ch:items-center'>
       <HamburguerComponent sidebar={sidebar} visible={visible} />
       <SidebarComponent visible={visible}  />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 w-3/5 md:grid-cols-2 gap-4">
 
+        <div className="bg-white  p-4 rounded-lg shadow-md text-center">
+          <h2 className="text-lg font-bold mb-2">Anexos CF, FCF, CSE, Compras</h2>
+          <button onClick={() => openModal('ANEX')} className="bg-blue-500  text-white px-4 py-2 rounded">Seleccionar</button>
+        </div>
         <div className="bg-white p-4 rounded-lg shadow-md text-center">
           <h2 className="text-lg font-bold mb-2">Libros de Contribuyentes</h2>
-          <button onClick={() => openModal('LC')} className="bg-blue-500  text-white px-4 py-2 rounded">Open</button>
+          <button onClick={() => openModal('LC')} className="bg-blue-500  text-white px-4 py-2 rounded">Seleccionar</button>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md text-center">
           <h2 className="text-lg font-bold mb-2">Libros de Consumidor Final</h2>
-          <button onClick={() => openModal('LCF')} className="bg-blue-500 text-white px-4 py-2 rounded">Open</button>
+          <button onClick={() => openModal('LCF')} className="bg-blue-500 text-white px-4 py-2 rounded">Seleccionar</button>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md text-center">
           <h2 className="text-lg font-bold mb-2">Libros de Compras</h2>
-          <button onClick={() => openModal('LCOM')} className="bg-blue-500 text-white px-4 py-2 rounded">Open</button>
+          <button onClick={() => openModal('LCOM')} className="bg-blue-500 text-white px-4 py-2 rounded">Seleccionar</button>
         </div>
-        
+        <div className="mt-8  p-4 bg-white rounded-lg shadow-md">
+        <input
+          type="file"
+          lang='es'
+          accept=".json"
+          onChange={handleFileUpload}
+          className="mb-4 w-full px-3 self-stretch py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        />
+        <button
+          onClick={createcompras}
+          className="w-full bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600 transition duration-200"
+        >
+          Guardar Factura
+        </button>
+      </div>
+
+      {jsonData && (
+        <div className="mt-8 max-w-md p-4 bg-white rounded-lg shadow-md">
+          <h2 className="text-lg font-bold mb-4">JSON Información</h2>
+          <pre className="text-lg bg-gray-100 p-2 rounded-md overflow-auto max-h-64">
+          <p><strong>Emisor: </strong> {jsonData.emisor.nombre}</p>
+          <p><strong>Nombre comercial: </strong> {jsonData.emisor.nombreComercial}</p>
+          <p><strong>Receptor: </strong> {jsonData.receptor.nombre}</p>
+          <p><strong>Fecha: </strong> {jsonData.identificacion.fecEmi}</p>
+          <p><strong>Total: </strong> {jsonData.resumen.montoTotalOperacion}</p>
+
+          </pre>
+        </div>
+      )}
       </div>
 
       <Modal
@@ -499,10 +549,10 @@ const BooksComponent = () => {
         className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
         overlayClassName="fixed inset-0 bg-black bg-opacity-50"
       >
-        <div className="bg-white p-4 rounded-lg shadow-lg max-w-md w-full">
-          <h2 className="text-lg font-bold mb-4">Select Dates</h2>
+        <div className="bg-white p-4 rounded-lg shadow-lg w-3/5 ch:w-2/5">
+          <h2 className="text-lg font-bold mb-4">Selecciona las fechas</h2>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Start Date</label>
+            <label className="block text-sm font-medium text-gray-700">Fecha inicial</label>
             <input
               type="date"
               value={startDate}
@@ -511,7 +561,7 @@ const BooksComponent = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">End Date</label>
+            <label className="block text-sm font-medium text-gray-700">Fecha final</label>
             <input
               type="date"
               value={endDate}
@@ -520,15 +570,12 @@ const BooksComponent = () => {
             />
           </div>
           <div className="flex justify-end space-x-4">
-            <button onClick={closeModal} className="bg-gray-500 text-white px-4 py-2 rounded">Close</button>
-            <button onClick={handleDownload} className="bg-blue-500 text-white px-4 py-2 rounded">Download</button>
+            <button onClick={closeModal} className="bg-gray-500 text-white px-4 py-2 rounded">Cerrar</button>
+            <button onClick={handleDownload} className="bg-blue-500 text-white px-4 py-2 rounded">Descargar</button>
           </div>
         </div>
       </Modal>
-      <div className="mt-8">
-        <input type="file" accept=".json" onChange={handleFileUpload} className="mb-4" />
-        <button onClick={createcompras} className="bg-green-500 text-white px-4 py-2 rounded">Create Compras</button>
-      </div>
+
       <ToastContainer
               position="top-center"
               autoClose={5000}

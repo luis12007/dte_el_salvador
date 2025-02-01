@@ -519,9 +519,10 @@ const getcompras = async(req, res) => {
     console.log(enddata);
 
     try {
-        const compras = await db('purchases').where("id_emisor", usuarioid).whereBetween('fecha', [startdate, enddata]);
+        const compras = await db('purchases').where("id_emisor", id).whereBetween('fecha_y_hora_de_generacion', [startdate, enddata]);
         res.status(200).json(compras);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error });
     }
 };

@@ -1,14 +1,14 @@
 {
   "identificacion": {
-    "version": 3,
+    "version": 1,
     "ambiente": "00",
-    "tipoDte": "03",
-    "numeroControl": "DTE-03-00000030-000000000000326",
-    "codigoGeneracion": "41654AA3-72F1-4C7E-9ABD-04FDE521DBCC",
+    "tipoDte": "01",
+    "numeroControl": "DTE-01-00000000-000000000000291",
+    "codigoGeneracion": "2CB48970-473D-4FAB-8D6B-CCE37764FE50",
     "tipoModelo": 1,
     "tipoOperacion": 1,
     "fecEmi": "2025-01-31",
-    "horEmi": "20:03:44",
+    "horEmi": "23:00:18",
     "tipoMoneda": "USD",
     "tipoContingencia": null,
     "motivoContin": null
@@ -35,19 +35,15 @@
     "codPuntoVenta": null
   },
   "receptor": {
-    "codActividad": "56101",
-    "direccion": {
-      "municipio": "10",
-      "departamento": "02",
-      "complemento": "direccion"
-    },
-    "nrc": "2040870",
+    "codActividad": "86203",
+    "direccion": null,
+    "nrc": null,
     "descActividad": "Otros",
     "correo": "luishdezmtz12@gmail.com",
-    "nit": "02102609781135",
-    "nombre": "Julio",
-    "telefono": "64319239",
-    "nombreComercial": "comercio"
+    "tipoDocumento": "13",
+    "nombre": "Luis hernandez",
+    "telefono": null,
+    "numDocumento": "06384275-4"
   },
   "otrosDocumentos": null,
   "ventaTercero": null,
@@ -59,62 +55,55 @@
       "codigo": null,
       "cantidad": 1,
       "numItem": 1,
-      "tributos": [
-        "20"
-      ],
+      "tributos": null,
+      "ivaItem": 0,
       "noGravado": 0,
       "psv": 0,
       "montoDescu": 0,
       "numeroDocumento": null,
-      "precioUni": 0.88,
-      "ventaGravada": 0.88,
-      "ventaExenta": 0,
+      "precioUni": 1,
+      "ventaGravada": 0,
+      "ventaExenta": 1,
       "ventaNoSuj": 0,
       "tipoItem": 1
     }
   ],
   "resumen": {
     "condicionOperacion": 1,
+    "totalIva": 0,
     "saldoFavor": 0,
     "numPagoElectronico": null,
     "pagos": [
       {
         "periodo": null,
         "plazo": null,
-        "montoPago": 0.99,
+        "montoPago": 1,
         "codigo": "01",
         "referencia": null
       }
     ],
     "totalNoSuj": 0,
-    "tributos": [
-      {
-        "codigo": "20",
-        "descripcion": "Impuesto al Valor Agregado 13%",
-        "valor": 0.11
-      }
-    ],
-    "totalLetras": "CERO DÓLARES CON NOVENTA Y NUEVE CENTAVOS",
-    "totalExenta": 0,
-    "subTotalVentas": 0.88,
+    "tributos": null,
+    "totalLetras": "UNO DÓLARES",
+    "totalExenta": 1,
+    "subTotalVentas": 1,
     "totalGravada": null,
-    "montoTotalOperacion": 0.99,
+    "montoTotalOperacion": 1,
     "descuNoSuj": 0,
     "descuExenta": 0,
     "descuGravada": 0,
     "porcentajeDescuento": 0,
     "totalDescu": 0,
-    "subTotal": 0.88,
-    "ivaRete1": 0,
-    "reteRenta": 0,
+    "subTotal": 1,
+    "ivaRete1": "0",
+    "reteRenta": "0",
     "totalNoGravado": 0,
-    "totalPagar": 0.99,
-    "ivaPerci1": 0
+    "totalPagar": 1
   },
   "extension": {
     "docuEntrega": null,
     "nombRecibe": null,
-    "observaciones": "",
+    "observaciones": "asd",
     "placaVehiculo": null,
     "nombEntrega": null,
     "docuRecibe": null
