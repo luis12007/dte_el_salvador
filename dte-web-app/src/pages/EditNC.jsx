@@ -709,10 +709,9 @@ const departmentsAndMunicipalities = {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
     const numeroDocumento = plantilla.plantilla[0].documentorelacionado.split("|");
-
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    console.log("numeroDocumento", numeroDocumento[2]); 
+    const priceunit = pricefloat / 1.13;
+    const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
     const newItem = {
         codTributo: null,
         descripcion: newContents.description,
@@ -725,8 +724,8 @@ const departmentsAndMunicipalities = {
         psv: 0,
         montoDescu: 0,
         numeroDocumento: numeroDocumento[2],	
-        precioUni: pricefloat,
-        ventaGravada: pricefloat * cuantityint,
+        precioUni: priceunit.toFixed(2),
+        ventaGravada: ivaperitemfinal.toFixed(2),
         ventaExenta: 0,
         ventaNoSuj: 0,
         tipoItem: typeitem,
@@ -784,7 +783,7 @@ const departmentsAndMunicipalities = {
     /* const ivaperitem = pricefloat / 1.13;
     const ivaperitemfinal = ivaperitem * 0.13;
     const ivarounded = Math.round(ivaperitemfinal * 100) / 100; */
-
+    console.log("numeroDocumento", responsePlantilla.items[0].numerodocumento);
     const newItem = {
         codTributo: null,
         descripcion: newContents.description,
@@ -796,7 +795,7 @@ const departmentsAndMunicipalities = {
         noGravado: 0,
         psv: 0,
         montoDescu: 0,
-        numeroDocumento: newContents.numerodocumento,
+        numeroDocumento: responsePlantilla.items[0].numerodocumento,
         precioUni: pricefloat,
         ventaGravada: pricefloat * cuantityint,
         ventaExenta: 0,

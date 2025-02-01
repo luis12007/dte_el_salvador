@@ -16,7 +16,7 @@ const CardOfClientAndAddClient = () => {
         nit: null,
         dui: null,
         nrc: null,
-        actividad_economica: 86203, /* TODO: change this to dynamic */
+        actividad_economica: null, /* TODO: change this to dynamic */
         address: null,
         departament: null,
         municipio: null,

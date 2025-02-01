@@ -30,12 +30,18 @@ const ClientBillAddNew = ({
             descActividaddata2 = "Desempleado";
         } else if (value == "86203") {
             descActividaddata2 = "Servicios de medicos";
+        }else if (value == "73100") {
+            descActividaddata2 = "Publicidad";
+        }else if (value == "56101") {
+            descActividaddata2 = "Restaurantes";
         }
 
+
         if (field == "codActividad") {
+            console.log("value", value);
             setClient((prevClient) => ({
                 ...prevClient,
-                [field]: value,
+                "actividad_economica": value,
                 descActividad: descActividaddata2,
             }));
             return;

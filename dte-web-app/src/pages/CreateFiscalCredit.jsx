@@ -618,9 +618,8 @@ const CrearCreditoFiscal = () => {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const priceunit = pricefloat / 1.13;
+    const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
     const newItem = {
       codTributo: null,
       descripcion: newContents.description,
@@ -633,11 +632,12 @@ const CrearCreditoFiscal = () => {
       psv: 0,
       montoDescu: 0,
       numeroDocumento: null,
-      precioUni: pricefloat,
-      ventaGravada: pricefloat * cuantityint,
+      precioUni: priceunit.toFixed(2),
+      ventaGravada: ivaperitemfinal.toFixed(2),
       ventaExenta: 0,
       ventaNoSuj: 0,
       tipoItem: typeitem,
+      iva: cuantityint * pricefloat,
     };
     // Update the list with the new item
     setListitems((prevListitems) => [...prevListitems, newItem]);
@@ -651,9 +651,10 @@ const CrearCreditoFiscal = () => {
       0
     );
     const rawiva = Listitemstrack.reduce(
-      (total, item) => total + item.ventaGravada * 0.13,
+      (total, item) => total + (item.ventaGravada * 0.13) ,
       0
     );
+    console.log("rawiva", rawiva);
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
@@ -695,7 +696,7 @@ const CrearCreditoFiscal = () => {
       0
     );
     const rawiva = Listitems.reduce(
-      (total, item) => total + item.ventaGravada * 0.13,
+      (total, item) => total + (item.ventaGravada * 0.13) ,
       0
     );
     // Round to two decimal places
@@ -888,7 +889,7 @@ const CrearCreditoFiscal = () => {
               return;
             }
           }
-
+;
     var data = {
       identificacion: {
         version: 3,
@@ -964,7 +965,7 @@ const CrearCreditoFiscal = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: iva /* TODO CHANGE */,
+            valor: iva.toFixed(2) /* TODO CHANGE */,
           },
         ],
         totalLetras: convertirDineroALetras(total),
@@ -1297,7 +1298,10 @@ const CrearCreditoFiscal = () => {
     console.log("Percentage", e.target.value);
   
     const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-      const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+    const rawiva = Listitems.reduce(
+      (total, item) => total + (item.ventaGravada * 0.13) ,
+      0
+    );
       // Round to two decimal places
       const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
       const roundediva = Math.round(rawiva * 100) / 100;

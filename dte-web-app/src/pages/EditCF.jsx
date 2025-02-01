@@ -709,13 +709,9 @@ const departmentsAndMunicipalities = {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
+    const priceunit = pricefloat / 1.13;
+    const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
     
-
-
-
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
     const newItem = {
         codTributo: null,
         descripcion: newContents.description,
@@ -728,8 +724,8 @@ const departmentsAndMunicipalities = {
         psv: 0,
         montoDescu: 0,
         numeroDocumento: null,
-        precioUni: pricefloat,
-        ventaGravada: pricefloat * cuantityint,
+        precioUni: priceunit.toFixed(2),
+        ventaGravada: ivaperitemfinal.toFixed(2),
         ventaExenta: 0,
         ventaNoSuj: 0,
         tipoItem: typeitem,

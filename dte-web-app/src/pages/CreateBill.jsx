@@ -152,7 +152,7 @@ const Clientes = () => {
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
     setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
 
 
@@ -160,8 +160,8 @@ const Clientes = () => {
     const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
     setRentvalue(value_rent)
 
-    setTotal((roundedSubtotal - value_rent).toFixed(2))
-
+    var newtotal = (roundedSubtotal - value_rent).toFixed(2);
+    setTotal(newtotal)
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
@@ -273,14 +273,14 @@ const Clientes = () => {
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
     setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
     
     const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
     setRentvalue(value_rent)
 
-    setTotal((roundedSubtotal - value_rent).toFixed(2))
-    
+    var newtotal = (roundedSubtotal - value_rent).toFixed(2);
+    setTotal(newtotal)
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
@@ -807,7 +807,8 @@ const Clientes = () => {
     console.log(value_rent);
     setRentvalue(value_rent)
 
-    setTotal((subtotal - value_rent).toFixed(2))
+    var newtotal = (subtotal - value_rent).toFixed(2);
+    setTotal(newtotal)
 
   };
 

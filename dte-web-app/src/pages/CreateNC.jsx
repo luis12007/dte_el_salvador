@@ -622,9 +622,8 @@ const CreateNC = () => {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const priceunit = pricefloat / 1.13;
+    const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
     const newItem = {
       codTributo: null,
       descripcion: newContents.description,
@@ -637,8 +636,8 @@ const CreateNC = () => {
       psv: 0,
       montoDescu: 0,
       numeroDocumento: contentcf.codigo_de_generacion,
-      precioUni: pricefloat,
-      ventaGravada: pricefloat * cuantityint,
+      precioUni: priceunit.toFixed(2),
+      ventaGravada: ivaperitemfinal.toFixed(2),
       ventaExenta: 0,
       ventaNoSuj: 0,
       tipoItem: typeitem,
@@ -655,7 +654,7 @@ const CreateNC = () => {
       0
     );
     const rawiva = Listitemstrack.reduce(
-      (total, item) => total + item.ventaGravada * 0.13,
+      (total, item) => total + (item.ventaGravada * 0.13) ,
       0
     );
     // Round to two decimal places
