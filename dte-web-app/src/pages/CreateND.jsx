@@ -30,12 +30,12 @@ const CreateND = () => {
   const [items, setitems] = useState([]);
   const [contents, setContents] = useState([]);
   const [isVisibleClient, setIsVisibleClient] = useState(false);
-    const [percentage, setPercentage] = useState(0);
-    const [rentvalue, setRentvalue] = useState(0);
-    const [numDTErefe, setNumDTErefe] = useState("reference");
-    const [isModalOpen, setIsModalOpen] = useState(true);
-    const [contentcf, setcontentcf] = useState("");
-  
+  const [percentage, setPercentage] = useState(0);
+  const [rentvalue, setRentvalue] = useState(0);
+  const [numDTErefe, setNumDTErefe] = useState("reference");
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [contentcf, setcontentcf] = useState("");
+
 
   /* data for municipalities ------------------------------------ */
   /* TODO */
@@ -594,7 +594,7 @@ const CreateND = () => {
         progress: undefined
       });
       return;
-      
+
     }
     var type = "bienes";
     if (newContents.type === "1") {
@@ -668,7 +668,7 @@ const CreateND = () => {
     const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
     console.log(value_rent);
     setRentvalue(value_rent)
-      const totalwithiva = roundedSubtotal + roundediva
+    const totalwithiva = roundedSubtotal + roundediva
     setTotal((totalwithiva - value_rent).toFixed(2))
 
     console.log("Subtotal", subtotal);
@@ -682,14 +682,14 @@ const CreateND = () => {
 
     Listitems.splice(indexToRemove, 1);
 
-        /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
-        const Listitemsmap = Listitems.map((item, index) => {
-          return {
-              ...item,
-              numItem: index + 1,
-          };
-      });
-      console.log("Listitemsmap", Listitemsmap);
+    /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
+    const Listitemsmap = Listitems.map((item, index) => {
+      return {
+        ...item,
+        numItem: index + 1,
+      };
+    });
+    console.log("Listitemsmap", Listitemsmap);
     setListitems(Listitemsmap);
 
     console.log("Listitems", Listitems);
@@ -712,7 +712,7 @@ const CreateND = () => {
     const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
     console.log(value_rent);
     setRentvalue(value_rent)
-      const totalwithiva = roundedSubtotal + roundediva
+    const totalwithiva = roundedSubtotal + roundediva
     setTotal((totalwithiva - value_rent).toFixed(2))
 
     console.log("Subtotal", subtotal);
@@ -871,32 +871,32 @@ const CreateND = () => {
 
     var selectedDepartmentnum = selectedDepartment;
     /* if num is only 1 digit will be 0(digit) or if it is 9 it will be 09, it id 12 will be 12 */
-/*     if (selectedDepartmentnum < 10) {
-      selectedDepartmentnum = "0" + selectedDepartmentnum;
-    } */
+    /*     if (selectedDepartmentnum < 10) {
+          selectedDepartmentnum = "0" + selectedDepartmentnum;
+        } */
     var selectedMunicipalitynum = selectedMunicipality;
-/*     if (selectedMunicipalitynum < 10) {
-      selectedMunicipalitynum = "0" + selectedMunicipalitynum;
-    } */
+    /*     if (selectedMunicipalitynum < 10) {
+          selectedMunicipalitynum = "0" + selectedMunicipalitynum;
+        } */
 
     if (client.email !== null) {
-            if (!validateEmail(client.email)) {
-              toast.error("Formato de correo electrónico no válido!", {
-                position: "top-center",
-                autoClose: 3000, // Auto close after 3 seconds
-                hideProgressBar: false, // Display the progress bar
-                closeOnClick: true, // Close the toast when clicked
-                draggable: true, // Allow dragging the toast
-                style: { zIndex: 200000 } // Correct way to set z-index
-              });
-              return;
-            }
-          }
+      if (!validateEmail(client.email)) {
+        toast.error("Formato de correo electrónico no válido!", {
+          position: "top-center",
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Display the progress bar
+          closeOnClick: true, // Close the toast when clicked
+          draggable: true, // Allow dragging the toast
+          style: { zIndex: 200000 } // Correct way to set z-index
+        });
+        return;
+      }
+    }
 
-          Listitems.forEach((item) => {
-            item.precioUni = Number(item.precioUni).toFixed(2);
-            item.ventaGravada = Number(item.ventaGravada).toFixed(2);
-          });
+    Listitems.forEach((item) => {
+      item.precioUni = Number(item.precioUni).toFixed(2);
+      item.ventaGravada = Number(item.ventaGravada).toFixed(2);
+    });
 
     const totaloperation = (Number(subtotal) + Number(iva));
 
@@ -904,7 +904,7 @@ const CreateND = () => {
     const tipoGeneracion = 1
     const numDocumento = contentcf.codigo_de_generacion
     const fecha = contentcf.fecha_y_hora_de_generacion
-    const merge_data = "03" + "|" + tipoGeneracion + "|" + numDocumento+ "|" + fecha
+    const merge_data = "03" + "|" + tipoGeneracion + "|" + numDocumento + "|" + fecha
     var data = {
       identificacion: {
         version: 3,
@@ -1053,15 +1053,15 @@ const CreateND = () => {
     }
 
     console.log("Data");
-    console.log(data);  
+    console.log(data);
     try {
       const responsesum = await EmisorService.count_fiscal(id_emisor, token);
       console.log("Count Fiscal");
       console.log(responsesum);
 
       const responseincrement = await UserService.id_enviopus1(id_emisor, token);
-        console.log("incremented");
-        console.log(responseincrement);
+      console.log("incremented");
+      console.log(responseincrement);
     } catch (error) {
       console.log(error);
     }
@@ -1119,12 +1119,12 @@ const CreateND = () => {
     if (selectedValue === "Factura") {
       navigate("/crear/factura");
     } else if (selectedValue === "CF") {
-      console.log("CF");
-    }else if (selectedValue === "SU") {
+      navigate("/crear/creditofiscal");
+    } else if (selectedValue === "SU") {
       navigate("/crear/sujeto_excluido");
-    }else if (selectedValue === "NC") {
+    } else if (selectedValue === "NC") {
       navigate("/crear/nota_credito");
-    }else if (selectedValue === "ND") {
+    } else if (selectedValue === "ND") {
       navigate("/crear/Nota_debito");
     }
   };
@@ -1293,47 +1293,47 @@ const CreateND = () => {
   const handlePercentageChange = (e) => {
     setPercentage(e.target.value);
     console.log("Percentage", e.target.value);
-  
+
     const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-      const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
-      // Round to two decimal places
-      const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      const roundediva = Math.round(rawiva * 100) / 100;
-  
-      setiva(roundediva); // Set the rounded subtotal
-      setSubtotal(rawSubtotal); // Set the rounded subtotal
-  
-      const value_rent = ((rawSubtotal * e.target.value) / 100).toFixed(2);
+    const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    setSubtotal(rawSubtotal); // Set the rounded subtotal
+
+    const value_rent = ((rawSubtotal * e.target.value) / 100).toFixed(2);
     console.log(value_rent);
     setRentvalue(value_rent)
-      const totalwithiva = roundedSubtotal + roundediva
+    const totalwithiva = roundedSubtotal + roundediva
     setTotal((totalwithiva - value_rent).toFixed(2))
-      
-      console.log("Subtotal", subtotal);
-      console.log("Total", total);
-  
-  
+
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
+
+
   };
 
-  const onSelectClient = (event,clientset) => {
+  const onSelectClient = (event, clientset) => {
     event.preventDefault();
     setClient({
-        name: clientset.name,
-        document: clientset.dui,
-        address: clientset.direccion,
-        email: clientset.correo_electronico,
-        phone: clientset.numero_telefono,
-        codActividad: clientset.actividad_economica,
-        nrc: clientset.nrc,
-        descActividad: "Servicios de medicos",
-        nit: clientset.nit,
-        nombreComercial: clientset.nombre_comercial,
-        departamento: clientset.departament,
-        municipio: clientset.municipio,
-      });
+      name: clientset.name,
+      document: clientset.dui,
+      address: clientset.direccion,
+      email: clientset.correo_electronico,
+      phone: clientset.numero_telefono,
+      codActividad: clientset.actividad_economica,
+      nrc: clientset.nrc,
+      descActividad: "Servicios de medicos",
+      nit: clientset.nit,
+      nombreComercial: clientset.nombre_comercial,
+      departamento: clientset.departament,
+      municipio: clientset.municipio,
+    });
 
     setSelectedDepartment(clientset.departament);
-    setSelectedMunicipality(clientset.municipio);   
+    setSelectedMunicipality(clientset.municipio);
     console.log(clientset);
   };
 
@@ -1356,34 +1356,34 @@ const CreateND = () => {
       departamento: address[0],
       municipio: address[1],
     });
-    
+
     setSelectedDepartment(address[0]);
-    setSelectedMunicipality(address[1]);  
+    setSelectedMunicipality(address[1]);
     setcontentcf(content);
     console.log(client)
     setIsModalOpen(false);
 
   }
-  
+
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
       <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0]  sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
-          <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
-          <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white ">
-            <select
-              onChange={handleSelectChange}
-              className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
-            >
-              <option value="ND">Nota de Débito</option>
-              <option value="Factura">Factura</option>
-              <option value="CF">Comprobante Crédito Fiscal</option>
-              <option value="SU">Factura de Sujeto Excluido</option>
-              <option value="NC">Nota de Crédito</option>
+        <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
+        <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white ">
+          <select
+            onChange={handleSelectChange}
+            className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
+          >
+            <option value="ND">Nota de Débito</option>
+            <option value="Factura">Factura</option>
+            <option value="CF">Comprobante Crédito Fiscal</option>
+            <option value="SU">Factura de Sujeto Excluido</option>
+            <option value="NC">Nota de Crédito</option>
 
-            </select>
-            {/* Your other elements */}
-          </div>
-        </header>
+          </select>
+          {/* Your other elements */}
+        </div>
+      </header>
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
         <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Nota de Debito</h1>
         <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
@@ -1426,7 +1426,7 @@ const CreateND = () => {
           </div>
         </div>
       </section>
-{isModalOpen && (
+      {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-4 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
             <HomeFacturasSelect GetInf={GetInf} setIsModalOpen={setIsModalOpen} />
@@ -1445,12 +1445,12 @@ const CreateND = () => {
         handlePercentageChange={handlePercentageChange}
       />
 
-      
+
       <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
-      
+
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"

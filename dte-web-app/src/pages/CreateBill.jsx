@@ -35,6 +35,8 @@ const Clientes = () => {
   const [rentvalue, setRentvalue] = useState(0);
   const [isActivated, setIsActivated] = useState(false);
   const [valueexcenta, setValueexcenta] = useState("");
+      const [isLoading, setIsLoading] = useState(false);
+  
 
   const toggleButton = (event) => {
     event.preventDefault();
@@ -325,6 +327,8 @@ const Clientes = () => {
   /* ---------------------------------------------------------- */
   const addBillHandler = async (event) => {
     event.preventDefault();
+
+
     try {
       /* EmisorService */
 
@@ -578,6 +582,7 @@ const Clientes = () => {
 
       console.log("Data");
       console.log(data);
+      setIsLoading(true);
 
       /* 
     TODO CHANGE THIS THE OTHER SIDE console.log(data);
@@ -593,7 +598,7 @@ const Clientes = () => {
         token,
         id_emisor
       );
-
+      setIsLoading(false);
       console.log("PlantillaService - Create");
       console.log(responsePlantilla.message);
       if (responsePlantilla.message === "Error en el servidor") {
@@ -606,6 +611,7 @@ const Clientes = () => {
         });
         return;
       }
+      
 
       if (responsePlantilla.message != "Error en el servidor") {
         toast.success("Factura creada!", {
@@ -1111,6 +1117,11 @@ const Clientes = () => {
           </button>
         </div>
       </footer>
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="loader"></div>
+        </div>
+      )}
       <ToastContainer className={"toast-notification"} />
     </form>
   );
