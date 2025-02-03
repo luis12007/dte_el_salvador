@@ -637,8 +637,8 @@ const CreateND = () => {
       psv: 0,
       montoDescu: 0,
       numeroDocumento: contentcf.codigo_de_generacion,
-      precioUni: priceunit.toFixed(2),
-      ventaGravada: ivaperitemfinal.toFixed(2),
+      precioUni: priceunit,
+      ventaGravada: ivaperitemfinal,
       ventaExenta: 0,
       ventaNoSuj: 0,
       tipoItem: typeitem,
@@ -662,8 +662,8 @@ const CreateND = () => {
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(rawSubtotal); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
 
     const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
     console.log(value_rent);
@@ -893,6 +893,13 @@ const CreateND = () => {
             }
           }
 
+          Listitems.forEach((item) => {
+            item.precioUni = Number(item.precioUni).toFixed(2);
+            item.ventaGravada = Number(item.ventaGravada).toFixed(2);
+          });
+
+    const totaloperation = (Number(subtotal) + Number(iva));
+
     const tipodocumento = "03"
     const tipoGeneracion = 1
     const numDocumento = contentcf.codigo_de_generacion
@@ -973,14 +980,14 @@ const CreateND = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: iva /* TODO CHANGE */,
+            valor: Number(iva).toFixed(2) /* TODO CHANGE */,
           },
         ],
         totalLetras: convertirDineroALetras(total),
         totalExenta: 0,
         subTotalVentas: subtotal,
         totalGravada: subtotal,
-        montoTotalOperacion: (subtotal + iva).toFixed(2), /* TODO */
+        montoTotalOperacion: totaloperation.toFixed(2), /* TODO */
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,

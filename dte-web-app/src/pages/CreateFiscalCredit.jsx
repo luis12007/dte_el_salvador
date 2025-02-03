@@ -632,8 +632,8 @@ const CrearCreditoFiscal = () => {
       psv: 0,
       montoDescu: 0,
       numeroDocumento: null,
-      precioUni: priceunit.toFixed(2),
-      ventaGravada: ivaperitemfinal.toFixed(2),
+      precioUni: priceunit,
+      ventaGravada: ivaperitemfinal,
       ventaExenta: 0,
       ventaNoSuj: 0,
       tipoItem: typeitem,
@@ -659,8 +659,9 @@ const CrearCreditoFiscal = () => {
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(rawSubtotal); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
+    
 
     const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
     console.log(value_rent);
@@ -889,7 +890,27 @@ const CrearCreditoFiscal = () => {
               return;
             }
           }
-;
+
+          if (userinfo.ambiente == undefined) {
+            toast.error("No se pudo obtener la información del usuario", {
+              position: "top-center",
+              autoClose: 3000, // Auto close after 3 seconds
+              hideProgressBar: false, // Display the progress bar
+              closeOnClick: true, // Close the toast when clicked
+              draggable: true, // Allow dragging the toast
+              style: { zIndex: 200000 } // Correct way to set z-index
+            });
+            return;
+          }
+
+          
+    /* tofixed(2) to every item in values precioUni and ventaGravada*/
+    Listitems.forEach((item) => {
+      item.precioUni = Number(item.precioUni).toFixed(2);
+      item.ventaGravada = Number(item.ventaGravada).toFixed(2);
+    });
+
+    const totaloperation = (Number(subtotal) + Number(iva));
     var data = {
       identificacion: {
         version: 3,
@@ -965,14 +986,14 @@ const CrearCreditoFiscal = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: iva.toFixed(2) /* TODO CHANGE */,
+            valor: Number(iva).toFixed(2) /* TODO CHANGE */,
           },
         ],
         totalLetras: convertirDineroALetras(total),
         totalExenta: 0,
         subTotalVentas: subtotal,
         totalGravada: subtotal,
-        montoTotalOperacion: (subtotal + iva).toFixed(2), /* TODO */
+        montoTotalOperacion: totaloperation.toFixed(2), /* TODO */
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
@@ -1061,14 +1082,29 @@ const CrearCreditoFiscal = () => {
     console.log(responsePlantilla);
 
     if (responsePlantilla.message === "Inserción exitosa") {
-      toast.success("Credito Fiscal creado con exito");
+      toast.success("Credito Fiscal creado con exito", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+        progress: undefined,
+      });
+
 
       /* wait 5 second and navigate to /facturas */
       setTimeout(() => {
         navigate("/facturas");
       }, 5000);
     } else {
-      toast.error("CF no creado intentar de nuevo");
+      toast.error("CF no creado intentar de nuevo", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+        progress: undefined,
+      });
     }
 
     /* 

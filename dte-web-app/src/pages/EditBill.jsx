@@ -36,7 +36,8 @@ const EditBill = () => {
   const [namereceptor, setNamereceptor] = useState("");
   const [percentage, setPercentage] = useState(0);
   const [rentvalue, setRentvalue] = useState(0);
-  /* get codegeneration in the url http://localhost:3001/#/editar/factura/BC9241F4-058C-4490-AE32-1D5C5A294FB7 */
+    const [isActivated, setIsActivated] = useState(false);
+    const [valueexcenta, setValueexcenta] = useState("");
   const { codigo_de_generacion } = useParams();
   /* Call to the info of user */
   // Get the current date
@@ -59,7 +60,7 @@ const EditBill = () => {
   var [client, setClient] = useState({
     documentType: "36",
     name: "",
-    document: "",
+    document: null,
     address: "",
     email: null,
     phone: null,
@@ -69,6 +70,13 @@ const EditBill = () => {
   });
 
   /* ToEdit */
+  const toggleButton = (event) => {
+    event.preventDefault();
+    if(isActivated == true){
+      setValueexcenta("");
+    }
+    setIsActivated(!isActivated);
+  };
 
   /* useefect */
   useEffect(() => {
@@ -191,6 +199,8 @@ const EditBill = () => {
 
       const totalapagar = responsePlantilla.plantilla[0].montopago;
       setTotal(totalapagar);
+
+      setiva(responsePlantilla.plantilla[0].iva_percibido);
 
 
     };
@@ -328,51 +338,47 @@ const EditBill = () => {
   };
 
   const itemshandleRemove = (index) => {
-    // Remove the item from the items list
+    setitems((prevContents) => prevContents.filter((_, i) => i !== index));
 
-    console.log("ListitemsAddbefore")
-    console.log(Listitems)
+    Listitems.splice(index, 1);
 
-    setitems((prevContents) => {
-      const updatedItems = prevContents.filter((_, i) => i !== index);
-
-      // Recalculate the totals based on the remaining items
-      const rawSubtotal = updatedItems.reduce(
-        (total, item) => total + item.price * item.cuantity,
-        0
-      );
-      const rawiva = Listitems.reduce(
-        (total, item) => total + item.ivaItem * item.cantidad,
-        0
-      );
-
-      const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      const roundedIva = Math.round(rawiva * 100) / 100;
-
-      // Update the state with the new totals
-      setiva(roundedIva);
-      console.log(roundedIva)
-      console.log(roundedIva)
-      setSubtotal((roundedSubtotal - roundedIva).toFixed(2));
-
-      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
-      setRentvalue(value_rent)
-
-    setTotal((roundedSubtotal - value_rent).toFixed(2))
-
-      return updatedItems;
+    /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
+    const Listitemsmap = Listitems.map((item, index) => {
+      return {
+        ...item,
+        numItem: index + 1,
+      };
     });
-    /* delete that item in ListItem */
-    setListitems((prevListitems) => {
-      const updatedList = prevListitems.filter((_, i) => i !== index);
-      return updatedList;
-    });
+    console.log("Listitemsmap", Listitemsmap);
+    setListitems(Listitemsmap);
 
-    console.log("ListitemsAddafter")
-    console.log(Listitems)
+    console.log("Listitems", Listitems);
+    /* map all newitems and sum the  precioUni*cantidad */
+    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+    const rawSubtotal = Listitems.reduce(
+      (total, item) => total + item.precioUni * item.cantidad,
+      0
+    );
+    const rawiva = Listitems.reduce(
+      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
+      0
+    );
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
 
 
 
+    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+    setRentvalue(value_rent)
+
+    var newtotal = (roundedSubtotal - value_rent).toFixed(2);
+    setTotal(newtotal)
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
   };
 
   /*   const itemshandleAdd = (newContents) => {
@@ -554,15 +560,15 @@ const EditBill = () => {
       0
     );
     const rawiva = Listitemstrack.reduce(
-      (total, item) => total + item.ivaItem * item.cantidad,
+      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
       0
     );
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
 
     const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
     setRentvalue(value_rent)
@@ -716,6 +722,55 @@ const EditBill = () => {
     data.cuerpoDocumento.map((item, index) => {
       item.numItem = index + 1;
     });
+
+    if (valueexcenta == "" || valueexcenta == null) {
+      
+      const updatedListitems = Listitems.map(item => {
+      const priceunit = item.precioUni / 1.13;
+      const ivaperitemfinal = (item.precioUni * item.cantidad) / 1.13;
+      console.log("Priceunit", ivaperitemfinal);
+      const ivaItemcount = (ivaperitemfinal * 0.13);
+        const updatedItem = {
+          ...item,
+          ventaGravada: (item.precioUni * item.cantidad).toFixed(2),
+          ventaExenta: 0,
+          tributos: null,
+          ivaItem: ivaperitemfinal * 0.13,
+          precioUni: item.precioUni.toFixed(2),
+        };
+        return updatedItem;
+      });
+      console.log("UpdatedListitems");
+      console.log(updatedListitems);
+  
+      const rawiva = updatedListitems.reduce(
+        (total, item) => total + Number(item.ivaItem),
+        0
+      );
+  
+          const rawSubtotal = updatedListitems.reduce(
+            (total, item) => total + item.precioUni * item.cantidad,
+            0
+          );
+          console.log("Data");
+          console.log(rawiva);
+          const subtotalplusiva = rawSubtotal + rawiva;
+          const totalpagar = rawSubtotal - rentvalue;
+          data.resumen.totalIva = rawiva.toFixed(2);
+          data.resumen.totalGravada = rawSubtotal.toFixed(2);
+          data.resumen.subTotal = rawSubtotal.toFixed(2);
+          data.resumen.pagos[0].montoPago = rawSubtotal.toFixed(2);
+          data.resumen.totalExenta = 0;
+          data.resumen.montoTotalOperacion = rawSubtotal.toFixed(2);
+          data.resumen.totalPagar = totalpagar.toFixed(2);
+  
+          data.resumen.totalLetras = convertirDineroALetras(rawSubtotal.toFixed(2));
+          data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
+  
+          
+          data.cuerpoDocumento = updatedListitems;
+  
+        }
 
 
     if (client.name === "") {
@@ -1001,7 +1056,7 @@ const EditBill = () => {
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Total a Pagar" data={total} /> */}
       <TreeNode text="Subtotal" data={subtotal} />
-      <TreeNode text="IVA" data={0} />
+      <TreeNode text="IVA" data={iva} />
       <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
       {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full ch:w-1/3 ch:self-center">
@@ -1070,6 +1125,34 @@ const EditBill = () => {
           </div>
         </form>
       </section> */}
+
+<section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full text-left text-mini text-black font-inria-sans ch:w-1/3 ch:self-center">
+        <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[14px] max-w-full z-[1]">
+          <div className="self-stretch h-[101px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+          <div className="self-stretch h-[101px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-[11px] px-[17px] pb-2 box-border relative max-w-full z-[2]">
+            <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full z-[0]" />
+            {/* <img
+            className="h-4 w-[18px] absolute !m-[0] right-[20px] bottom-[9px] object-contain z-[3]"
+            alt=""
+            src="/atras-1@2x.png"
+          /> */}
+            <b className="relative z-[3]">Exento</b>
+          </div>
+          <div className="flex flex-row items-start justify-start py-0 px-[17px] text-6xl">
+            <div className="relative flex whitespace-nowrap z-[2]">
+              <button
+                onClick={(event) => toggleButton(event)}
+                className={`px-4 py-2 rounded-md text-white font-bold transition-transform duration-200 ${isActivated ? 'bg-steelblue-200' : 'bg-indianred-300'
+                  } ${isActivated ? 'transform scale-95' : 'transform scale-100'}`}
+              >
+                {isActivated ? 'Activado' : 'Desactivado'}
+              </button>
+              {isActivated && <input type="text" className="border border-black rounded-lg ml-4 pl-3 " placeholder="codigo de exento"  onChange={(e) => setValueexcenta(e.target.value)}/>}
+            </div>
+          </div>
+        </div>
+      </section>
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"

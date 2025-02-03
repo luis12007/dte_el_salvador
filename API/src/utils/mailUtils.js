@@ -560,7 +560,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 },
                 apendice: plantillaDB.apendice
             };
-        }else if (plantillaDB.tipo === "05") {
+        } else if (plantillaDB.tipo === "05") {
 
             const Listitems = itemsDB.map((item, index) => {
                 const newItem = {
@@ -603,14 +603,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     tipoContingencia: plantillaDB.tipocontingencia,
                     motivoContin: plantillaDB.motivocontin
                 },
-                documentoRelacionado: [
-                    {
-                        tipoDocumento: document[0],
-                        tipoGeneracion: document[1],
-                        numeroDocumento: document[2],
-                        fechaEmision: document[3]
-                    }
-                ],
+                documentoRelacionado: [{
+                    tipoDocumento: document[0],
+                    tipoGeneracion: document[1],
+                    numeroDocumento: document[2],
+                    fechaEmision: document[3]
+                }],
                 emisor: {
                     direccion: {
                         municipio: userDB.municipio,
@@ -694,7 +692,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 },
                 apendice: plantillaDB.apendice
             };
-        }else if (plantillaDB.tipo === "06") {
+        } else if (plantillaDB.tipo === "06") {
 
             const Listitems = itemsDB.map((item, index) => {
                 const newItem = {
@@ -738,14 +736,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     tipoContingencia: plantillaDB.tipocontingencia,
                     motivoContin: plantillaDB.motivocontin
                 },
-                documentoRelacionado: [
-                    {
-                        tipoDocumento: document[0],
-                        tipoGeneracion: document[1],
-                        numeroDocumento: document[2],
-                        fechaEmision: document[3]
-                    }
-                ],
+                documentoRelacionado: [{
+                    tipoDocumento: document[0],
+                    tipoGeneracion: document[1],
+                    numeroDocumento: document[2],
+                    fechaEmision: document[3]
+                }],
                 emisor: {
                     direccion: {
                         municipio: userDB.municipio,
@@ -942,6 +938,9 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         console.error('Error sending email:', error);
                     } else {
                         console.log('Email sent:', info.response);
+                        // Delete the files after sending the email
+                        fs.unlinkSync(jsonPath);
+                        fs.unlinkSync(pdfPath);
                     }
                 });
             })
@@ -962,10 +961,10 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         } else if (plantillaDB.tipo === "14") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA SUJETO EXCLUIDO', { align: 'center' });
-        }else if (plantillaDB.tipo === "05") {
+        } else if (plantillaDB.tipo === "05") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE CRÉDITO', { align: 'center' });
 
-        }else if (plantillaDB.tipo === "06") {
+        } else if (plantillaDB.tipo === "06") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE DEBITO', { align: 'center' });
 
         }
@@ -1167,7 +1166,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
-        }else if (plantillaDB.tipo === "05") {
+        } else if (plantillaDB.tipo === "05") {
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
@@ -1185,7 +1184,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
-        }else if (plantillaDB.tipo === "06") {
+        } else if (plantillaDB.tipo === "06") {
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
@@ -1338,7 +1337,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
-        }else if (plantillaDB.tipo === "05") {
+        } else if (plantillaDB.tipo === "05") {
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 90, { align: 'right' })
@@ -1350,7 +1349,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
-        }else if (plantillaDB.tipo === "06") {
+        } else if (plantillaDB.tipo === "06") {
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 90, { align: 'right' })
@@ -1388,6 +1387,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
 
         pdfDoc.end();
+
+
 
     } catch (error) {
         console.error('Error:', error);

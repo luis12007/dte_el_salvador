@@ -36,7 +36,8 @@ const Clientes = () => {
   const [isActivated, setIsActivated] = useState(false);
   const [valueexcenta, setValueexcenta] = useState("");
 
-  const toggleButton = () => {
+  const toggleButton = (event) => {
+    event.preventDefault();
     if(isActivated == true){
       setValueexcenta("");
     }
@@ -76,7 +77,7 @@ const Clientes = () => {
   var [client, setClient] = useState({
     documentType: "13",
     name: "",
-    document: "",
+    document: null,
     address: "",
     email: null,
     phone: null,
@@ -152,7 +153,7 @@ const Clientes = () => {
       0
     );
     const rawiva = Listitems.reduce(
-      (total, item) => total + item.ivaItem * item.cantidad,
+      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
       0
     );
     // Round to two decimal places
@@ -160,7 +161,7 @@ const Clientes = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva.toFixed(2)); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
 
 
 
@@ -173,6 +174,8 @@ const Clientes = () => {
     console.log("Total", total);
   };
 
+
+  
   /* Adding factura without IVA */
   const itemshandleAdd = (newContents) => {
 
@@ -270,7 +273,7 @@ const Clientes = () => {
       0
     );
     const rawiva = Listitemstrack.reduce(
-      (total, item) => total + (((item.precioUni * item.ventaExenta) / 1.13) * 0.13),
+      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
       0
     );
     
@@ -282,7 +285,7 @@ const Clientes = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
 
-    setiva(0); // Set the rounded subtotal
+    setiva(rawiva.toFixed(2)); // Set the rounded subtotal
     setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
 
     const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
@@ -336,9 +339,10 @@ const Clientes = () => {
         });
         return;
       }
-
+      console.log("document");
+      console.log(client.document);
       if (client.document === "") {
-        toast.error("Factura no cliente!", {
+        toast.error("El documeno no puede tener guiones!", {
           position: "top-center",
           autoClose: 3000, // Auto close after 3 seconds
           hideProgressBar: false, // Display the progress bar
@@ -377,8 +381,13 @@ const Clientes = () => {
 
       if (client.documentType === "13") {
         /* if has already - dont */
+        if (client.document === null || client.document === undefined) {
+          toast.error("Error el documento del cliente no puede estar vacío!")
+          return;
+        }
         if (client.document.includes("-")) {
-          console.log("DUI has -");
+          toast.error("Error el documento del cliente no puede tener guiones!")
+          return;
         } else {
           client.document = formatDUI(client.document);
         }
@@ -497,7 +506,7 @@ const Clientes = () => {
       };
 
       /* exento to agravado */
-/*       if (valueexcenta == "" || valueexcenta == null) {
+    if (valueexcenta == "" || valueexcenta == null) {
       
     const updatedListitems = Listitems.map(item => {
     const priceunit = item.precioUni / 1.13;
@@ -506,11 +515,11 @@ const Clientes = () => {
     const ivaItemcount = (ivaperitemfinal * 0.13);
       const updatedItem = {
         ...item,
-        ventaGravada: ivaperitemfinal.toFixed(2),
+        ventaGravada: (item.precioUni * item.cantidad).toFixed(2),
         ventaExenta: 0,
         tributos: null,
-        ivaItem: 0,
-        precioUni: priceunit.toFixed(2),
+        ivaItem: ivaperitemfinal * 0.13,
+        precioUni: item.precioUni.toFixed(2),
       };
       return updatedItem;
     });
@@ -529,22 +538,23 @@ const Clientes = () => {
         console.log("Data");
         console.log(rawiva);
         const subtotalplusiva = rawSubtotal + rawiva;
+        const totalpagar = rawSubtotal - rentvalue;
         data.resumen.totalIva = rawiva.toFixed(2);
         data.resumen.totalGravada = rawSubtotal.toFixed(2);
         data.resumen.subTotal = rawSubtotal.toFixed(2);
         data.resumen.pagos[0].montoPago = rawSubtotal.toFixed(2);
         data.resumen.totalExenta = 0;
         data.resumen.montoTotalOperacion = rawSubtotal.toFixed(2);
-        data.resumen.totalPagar = rawSubtotal.toFixed(2);
+        data.resumen.totalPagar = totalpagar.toFixed(2);
 
-        data.resumen.totalLetras = convertirDineroALetras(subtotalplusiva.toFixed(2));
+        data.resumen.totalLetras = convertirDineroALetras(rawSubtotal.toFixed(2));
         data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
 
         
         data.cuerpoDocumento = updatedListitems;
 
       }
- */
+
       if (client.name === "") {
         toast.error("Factura no tiene nombre de cliente!");
         return;
@@ -1047,13 +1057,13 @@ const Clientes = () => {
           <div className="flex flex-row items-start justify-start py-0 px-[17px] text-6xl">
             <div className="relative flex whitespace-nowrap z-[2]">
               <button
-                onClick={toggleButton}
+                onClick={(event) => toggleButton(event)}
                 className={`px-4 py-2 rounded-md text-white font-bold transition-transform duration-200 ${isActivated ? 'bg-steelblue-200' : 'bg-indianred-300'
                   } ${isActivated ? 'transform scale-95' : 'transform scale-100'}`}
               >
                 {isActivated ? 'Activado' : 'Desactivado'}
               </button>
-              {isActivated && <input type="text" className="border border-black rounded-lg ml-4 placeholder:pl-2" placeholder="codigo de exento"  onChange={(e) => setValueexcenta(e.target.value)}/>}
+              {isActivated && <input type="text" className="border border-black rounded-lg ml-4 pl-3 " placeholder="codigo de exento"  onChange={(e) => setValueexcenta(e.target.value)}/>}
             </div>
           </div>
         </div>

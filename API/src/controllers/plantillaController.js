@@ -877,7 +877,9 @@ const getbytypeandid = async(req, res) => {
         const plantillas = await db("plantilla")
             .where("id_emisor", usuarioid)
             .whereIn("tipo", typestoarray)
-            .whereBetween("fecha_y_hora_de_generacion", [stardate, enddate]);
+            .whereBetween("fecha_y_hora_de_generacion", [stardate, enddate])
+            .whereNotNull("sello_de_recepcion");
+
 
         res.status(200).json(plantillas);
     } catch (error) {

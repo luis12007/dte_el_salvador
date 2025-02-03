@@ -46,17 +46,25 @@ const PlantillaAPI = {
 
     /* Create compras */
     createcompras: async(compra, token, id_emisor) => {
-        const res = await fetch(`${BASE_URL}/compras/create`, {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'id_emisor': `${id_emisor}`,
-            },
-            body: JSON.stringify(compra)
-        });
-        const data = await res.json();
-        return data;
+        try {
+
+            const res = await fetch(`${BASE_URL}/compras/create`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'id_emisor': `${id_emisor}`,
+                },
+                body: JSON.stringify(compra)
+            });
+            const data = await res.json();
+            return data;
+
+        } catch (error) {
+
+            console.log(error);
+            return error;
+        }
     },
 
     /* /get/:id */
