@@ -730,12 +730,32 @@ const BooksComponent = () => {
 
     /* Adding the new table */
 
+    const dataCFinal = await PlantillaAPI.getbytypeandid(user_id, token, ["01"], startDate, endDate);
+    console.log("dataCFinal");
+    console.log(dataCFinal);
+
+    const datapresentation = dataCFinal.reduce((acc, item) => {
+      return {
+        totalexenta: acc.totalexenta + Number(item.totalexenta || 0),
+        total_agravada: acc.total_agravada + Number(item.total_agravada || 0),
+        iva_percibido: acc.iva_percibido + Number(item.iva_percibido || 0),
+        retencion_de_renta: acc.retencion_de_renta + Number(item.retencion_de_renta || 0),
+        montototaloperacion: acc.montototaloperacion + Number(item.montototaloperacion || 0)
+      };
+    }, {
+      totalexenta: 0,
+      total_agravada: 0,
+      iva_percibido: 0,
+      retencion_de_renta: 0,
+      montototaloperacion: 0
+    });
+
     const summarybooks = [ /* Total agravado */
       ['', '', '', '', 'No Sujetas', 'Exentas', 'Agravadas','Exportaciones','IVA','Retencion', 'Total'],
-      ['', '', '', 'Libro de Credito Fiscal', '', '', '','','','', ''],
-      ['', '', '', 'Libro de Consumidor Final', '', '', '','','','', ''],
-      ['', '', '', 'Facturas de Exportación', '', '', '','','','', ''],
-      ['', '', '', 'Total', '', '', '','','','', ''],
+      ['', '', '', 'Libro de Credito Fiscal', totals.sujetas, '0', totals.locales, totals.exportaciones, totals.iva, totals.retencion, totals.grantotal],
+      ['', '', '', 'Libro de Consumidor Final', '0', datapresentation.totalexenta, datapresentation.total_agravada,'0',datapresentation.iva_percibido,datapresentation.retencion_de_renta, datapresentation.montototaloperacion],
+      ['', '', '', 'Facturas de Exportación', '0', '0', '0','0','0','0', '0'],
+      ['', '', '', 'Total','0' , Number(datapresentation.totalexenta), totals.locales + datapresentation.total_agravada,'0',(totals.iva + datapresentation.iva_percibido),(totals.retencion + datapresentation.retencion_de_renta), (datapresentation.montototaloperacion + totals.grantotal)],
     ];
 
     const summaryStartRow = worksheet.rowCount + 1;
