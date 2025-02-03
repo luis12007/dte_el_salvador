@@ -12,6 +12,12 @@ const AdvanceItemsComponent = ({
   rentvalue
 }) => {
 
+  const itemshandleRemoves = (event, index) => {
+    event.preventDefault();
+    // Your logic to handle the removal of the item at the given index
+    itemshandleRemove(index);
+    // Update the state or perform any other necessary actions
+  };
 
   return (
     <section className="self-stretch flex flex-col items-start justify-start pt-0  pr-[5px] pl-0 box-border max-w-full ch:w-1/3 ch:self-center">
@@ -46,7 +52,7 @@ const AdvanceItemsComponent = ({
           <DataProductNoAdvanceComponent
             key={index}
             content={content}
-            onRemove={() => itemshandleRemove(index)}
+            onRemove={(event) => itemshandleRemoves(event, index)}
           />
         ))}
 

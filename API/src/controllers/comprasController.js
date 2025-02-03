@@ -4,9 +4,9 @@ const cratecompra = async(req, res) => {
     console.log('create compras');
     const id_emisor = req.headers.id_emisor;
     const plantilla = req.body;
+    console.log(plantilla.emisor.direccion.municipio);
     var JsontoDB = {};
     if (plantilla.identificacion.tipoDte === "03") {
-
         JsontoDB = {
             /* identification */
             version: plantilla.identificacion.version,
@@ -30,6 +30,18 @@ const cratecompra = async(req, res) => {
             codestable: plantilla.emisor.codEstable,
             codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
             codpuntoventa: plantilla.emisor.codPuntoVenta,
+            /* --------------------------------------------------------- */
+            /* EMISOR */
+            em_codactividad: plantilla.emisor.codActividad,
+            em_direccion: plantilla.emisor.direccion.departamento + "|" + plantilla.emisor.direccion.municipio + "|" + plantilla.emisor.direccion.complemento,
+            em_nit: plantilla.emisor.nit,
+            em_nrc: plantilla.emisor.nrc,
+            em_actividad_economica: plantilla.emisor.descActividad,
+            em_correo_electronico: plantilla.emisor.correo,
+            em_tipodocumento: plantilla.emisor.tipoDocumento,
+            em_name: plantilla.emisor.nombre,
+            em_numero_telefono: plantilla.emisor.telefono,
+            em_numdocumento: plantilla.emisor.nombreComercial,
             /* --------------------------------------------------------- */
             /* RECEPTOR */
 
@@ -129,6 +141,18 @@ const cratecompra = async(req, res) => {
             codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
             codpuntoventa: plantilla.emisor.codPuntoVenta,
             /* --------------------------------------------------------- */
+            /* EMISOR */
+            em_codactividad: plantilla.emisor.codActividad,
+            em_direccion: plantilla.emisor.direccion.departamento + "|" + plantilla.emisor.direccion.municipio + "|" + plantilla.emisor.direccion.complemento,
+            em_nit: plantilla.emisor.nit,
+            em_nrc: plantilla.emisor.nrc,
+            em_actividad_economica: plantilla.emisor.descActividad,
+            em_correo_electronico: plantilla.emisor.correo,
+            em_tipodocumento: plantilla.emisor.tipoDocumento,
+            em_name: plantilla.emisor.nombre,
+            em_numero_telefono: plantilla.emisor.telefono,
+            em_numdocumento: plantilla.emisor.nombreComercial,
+            /* --------------------------------------------------------- */
             /* RECEPTOR */
 
             re_codactividad: plantilla.receptor.codActividad,
@@ -201,100 +225,6 @@ const cratecompra = async(req, res) => {
             sello_de_recepcion: null,
             id_envio: plantilla.id_envio,
         };
-    } else if (plantilla.identificacion.tipoDte === "14") {
-
-
-        JsontoDB = {
-            /* identification */
-            version: plantilla.identificacion.version,
-            ambiente: plantilla.identificacion.ambiente,
-            tipo: plantilla.identificacion.tipoDte,
-            numero_de_control: plantilla.identificacion.numeroControl,
-            codigo_de_generacion: plantilla.identificacion.codigoGeneracion,
-            modelo_de_factura: plantilla.identificacion.tipoModelo,
-            tipo_de_transmision: plantilla.identificacion.tipoOperacion,
-            fecha_y_hora_de_generacion: plantilla.identificacion.fecEmi,
-            horemi: plantilla.identificacion.horEmi,
-            tipomoneda: plantilla.identificacion.tipoMoneda,
-            tipocontingencia: plantilla.identificacion.tipoContingencia,
-            motivocontin: plantilla.identificacion.motivoContin,
-            /* --------------------------------------------------------- */
-            /* DOCUMENTO RELACIONADOS */
-            documentorelacionado: plantilla.documentoRelacionado,
-            /* --------------------------------------------------------- */
-            /* EMISOR INFO IN TABLE USERS*/
-            codestablemh: plantilla.emisor.codEstableMH,
-            codestable: plantilla.emisor.codEstable,
-            codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
-            codpuntoventa: plantilla.emisor.codPuntoVenta,
-            /* --------------------------------------------------------- */
-            /* RECEPTOR */
-
-            re_codactividad: null,
-            re_direccion: plantilla.sujetoExcluido.direccion.departamento + "|" + plantilla.sujetoExcluido.direccion.municipio + "|" + plantilla.sujetoExcluido.direccion.complemento,
-            re_nit: plantilla.sujetoExcluido.nit,
-            re_nrc: plantilla.sujetoExcluido.nrc,
-            re_actividad_economica: null,
-            re_correo_electronico: plantilla.sujetoExcluido.correo,
-            re_tipodocumento: plantilla.sujetoExcluido.tipoDocumento,
-            re_name: plantilla.sujetoExcluido.nombre,
-            re_numero_telefono: plantilla.sujetoExcluido.telefono,
-            re_numdocumento: plantilla.sujetoExcluido.numeroDocumento,
-
-            /* --------------------------------------------------------- */
-            /* OTROS DOCUMENTOS */
-            otrosdocumentos: plantilla.otrosDocumentos,
-            /* --------------------------------------------------------- */
-            ventatercero: plantilla.ventaTercero,
-            /* --------------------------------------------------------- */
-            /* ITEMS */
-            /* --------------------------------------------------------- */
-            /* RESUMEN */
-            condicionoperacion: plantilla.resumen.condicionOperacion,
-            iva_percibido: plantilla.resumen.totalIva,
-            saldofavor: plantilla.resumen.saldoFavor,
-            numpagoelectronico: plantilla.resumen.numPagoElectronico,
-            /* pagos */
-            periodo: plantilla.resumen.pagos[0].periodo,
-            montopago: plantilla.resumen.pagos[0].montoPago,
-            codigo: plantilla.resumen.pagos[0].codigo,
-            referencia: plantilla.resumen.pagos[0].referencia,
-            plazo: plantilla.resumen.pagos[0].plazo,
-
-            totalnosuj: plantilla.resumen.totalNoSuj,
-            tributos: plantilla.resumen.tributos,
-            cantidad_en_letras: plantilla.resumen.totalLetras,
-            totalexenta: plantilla.resumen.totalExenta,
-            subtotalventas: plantilla.resumen.subTotalVentas,
-            total_agravada: plantilla.resumen.totalGravada,
-            montototaloperacion: plantilla.resumen.montoTotalOperacion,
-            descunosuj: plantilla.resumen.descuNoSuj,
-            descuexenta: plantilla.resumen.descuExenta,
-            descugravada: plantilla.resumen.descuGravada,
-            porcentajedescuento: plantilla.resumen.porcentajeDescuento,
-            monto_global_de_descuento: plantilla.resumen.totalDescu,
-            subtotal: plantilla.resumen.subTotal,
-            iva_retenido: plantilla.resumen.ivaRete1,
-            retencion_de_renta: plantilla.resumen.reteRenta,
-            totalnogravado: plantilla.resumen.totalNoGravado,
-            total_a_pagar: plantilla.resumen.totalPagar,
-            /* -------------------------------------------- */
-            /* EXTENSION now RESUMEN */
-            observaciones: plantilla.resumen.observaciones,
-
-            /* -------------------------------------------- */
-            /* APENDICE */
-            apendice: plantilla.apendice,
-            /* -------------------------------------------- */
-            /* INFO OF DTE */
-            id_emisor: id_emisor,
-            qr: null,
-            id_receptor: null,
-            firm: null,
-            sellado: false,
-            sello_de_recepcion: null,
-            id_envio: plantilla.id_envio,
-        };
     } else if (plantilla.identificacion.tipoDte === "05") {
 
         JsontoDB = {
@@ -320,6 +250,18 @@ const cratecompra = async(req, res) => {
             codestable: plantilla.emisor.codEstable,
             codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
             codpuntoventa: plantilla.emisor.codPuntoVenta,
+            /* --------------------------------------------------------- */
+            /* EMISOR */
+            em_codactividad: plantilla.emisor.codActividad,
+            em_direccion: plantilla.emisor.direccion.departamento + "|" + plantilla.emisor.direccion.municipio + "|" + plantilla.emisor.direccion.complemento,
+            em_nit: plantilla.emisor.nit,
+            em_nrc: plantilla.emisor.nrc,
+            em_actividad_economica: plantilla.emisor.descActividad,
+            em_correo_electronico: plantilla.emisor.correo,
+            em_tipodocumento: plantilla.emisor.tipoDocumento,
+            em_name: plantilla.emisor.nombre,
+            em_numero_telefono: plantilla.emisor.telefono,
+            em_numdocumento: plantilla.emisor.nombreComercial,
             /* --------------------------------------------------------- */
             /* RECEPTOR */
 
@@ -421,6 +363,18 @@ const cratecompra = async(req, res) => {
             codpuntoventamh: plantilla.emisor.codPuntoVentaMH,
             codpuntoventa: plantilla.emisor.codPuntoVenta,
             /* --------------------------------------------------------- */
+            /* EMISOR */
+            em_codactividad: plantilla.emisor.codActividad,
+            em_direccion: plantilla.emisor.direccion.departamento + "|" + plantilla.emisor.direccion.municipio + "|" + plantilla.emisor.direccion.complemento,
+            em_nit: plantilla.emisor.nit,
+            em_nrc: plantilla.emisor.nrc,
+            em_actividad_economica: plantilla.emisor.descActividad,
+            em_correo_electronico: plantilla.emisor.correo,
+            em_tipodocumento: plantilla.emisor.tipoDocumento,
+            em_name: plantilla.emisor.nombre,
+            em_numero_telefono: plantilla.emisor.telefono,
+            em_numdocumento: plantilla.emisor.nombreComercial,
+            /* --------------------------------------------------------- */
             /* RECEPTOR */
 
             re_codactividad: plantilla.receptor.codActividad,
@@ -519,9 +473,10 @@ const getcompras = async(req, res) => {
     console.log(enddata);
 
     try {
-        const compras = await db('purchases').where("id_emisor", usuarioid).whereBetween('fecha', [startdate, enddata]);
+        const compras = await db('purchases').where("id_emisor", id).whereBetween('fecha_y_hora_de_generacion', [startdate, enddata]);
         res.status(200).json(compras);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ message: error });
     }
 };

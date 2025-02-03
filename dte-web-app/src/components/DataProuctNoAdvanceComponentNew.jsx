@@ -31,7 +31,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
   
     return (
         <div className="w-full pl-3 flex flex-row items-start justify-start pt-0  pr-3.5  box-border max-w-full">
-                    <div className="flex-1 flex flex-col items-start justify-start gap-[10px_0px] max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[5px_0px] max-w-full">
                         <div className="flex flex-row items-start justify-start py-0 px-[3px]">
                             <div className="flex flex-row items-start justify-start gap-[0px_5px]">
 
@@ -58,7 +58,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
 
                             </div>
                         </div>
-                        <div className="self-stretch flex  items-start justify-start ">
+                        <div className="relative text-xs pt-2 h-full font-inria-sans text-black  text-left z-[1]">
                             <span className="text-black">{`Cantidad `}</span>
                             <span className="text-tomato">*</span>
                         </div>
@@ -72,7 +72,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                             />
 
                         </div>
-                        <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px]">
+                        <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px] relative text-xs pt-2 h-full font-inria-sans text-black  text-left z-[1]">
                             <div>
                                 <span className="text-black">{`Descripción`}</span>
                                 <span className="text-tomato">*</span>
@@ -87,7 +87,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                                 />
                             </div>
                         </div>
-                        <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px]">
+                        <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px] relative text-xs pt-2 h-full font-inria-sans text-black  text-left z-[1]">
                             <div>
                                 <span className="text-black">{`Precio`}</span>
                                 <span className="text-tomato">*</span>

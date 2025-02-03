@@ -54,6 +54,7 @@ const FrameComponent1 = ({ key, content, user }) => {
     const itemsdata = async () => {
       const data = await BillsxItemsAPI.getlist(token, content.codigo_de_generacion);
       console.log("data");
+      console.log(data);
       data.map((item) => {
         delete item.id;
         delete item.id_items;
@@ -86,34 +87,66 @@ const FrameComponent1 = ({ key, content, user }) => {
         setItems(newItems);
 
       } else if (content.tipo === "01") {
+        
+        if (data[0].tributos === null) {
+          const newItems = data.map((item) => {
+            const newItem = {
+              codTributo: item.codtributo,
+              descripcion: item.descripcion,
+              uniMedida: item.unimedida,
+              codigo: item.codigo,
+              cantidad: item.cantidad,
+              numItem: item.numitem,
+              tributos: item.tributos,
+              ivaItem: item.ivaitem,
+              noGravado: item.nogravado,
+              psv: item.psv,
+              montoDescu: item.montodescu,
+              numeroDocumento: item.numerodocumento,
+              precioUni: item.preciouni,
+              ventaGravada: item.ventagravada,
+              ventaExenta: item.ventaexenta,
+              ventaNoSuj: item.ventanosuj,
+              tipoItem: item.tipoitem,
+            } ;
+            return newItem;
+          });
+  
+  
+          console.log(newItems);
+          setItems(newItems);
+        }else{
+          const newItems = data.map((item) => {
+            const arr = [] 
+            arr.push(String(item.tributos))
+            const newItem = {
+              codTributo: item.codtributo,
+              descripcion: item.descripcion,
+              uniMedida: item.unimedida,
+              codigo: item.codigo,
+              cantidad: item.cantidad,
+              numItem: item.numitem,
+              tributos: arr,
+              ivaItem: item.ivaitem,
+              noGravado: item.nogravado,
+              psv: item.psv,
+              montoDescu: item.montodescu,
+              numeroDocumento: item.numerodocumento,
+              precioUni: item.preciouni,
+              ventaGravada: item.ventagravada,
+              ventaExenta: item.ventaexenta,
+              ventaNoSuj: item.ventanosuj,
+              tipoItem: item.tipoitem,
+            } ;
+            return newItem;
+          });
+  
+  
+          console.log(newItems);
+          setItems(newItems);
+        }
 
-
-        const newItems = data.map((item) => {
-          const newItem = {
-            codTributo: item.codtributo,
-            descripcion: item.descripcion,
-            uniMedida: item.unimedida,
-            codigo: item.codigo,
-            cantidad: item.cantidad,
-            numItem: item.numitem,
-            tributos: item.tributos,
-            ivaItem: item.ivaitem,
-            noGravado: item.nogravado,
-            psv: item.psv,
-            montoDescu: item.montodescu,
-            numeroDocumento: item.numerodocumento,
-            precioUni: item.preciouni,
-            ventaGravada: item.ventagravada,
-            ventaExenta: item.ventaexenta,
-            ventaNoSuj: item.ventanosuj,
-            tipoItem: item.tipoitem,
-          } ;
-          return newItem;
-        });
-
-
-        console.log(newItems);
-        setItems(newItems);
+        
       } else if (content.tipo === "14") {
 
 

@@ -33,8 +33,16 @@ const Clientes = () => {
   const navigate = useNavigate();
   const [percentage, setPercentage] = useState(0);
   const [rentvalue, setRentvalue] = useState(0);
+  const [isActivated, setIsActivated] = useState(false);
+  const [valueexcenta, setValueexcenta] = useState("");
 
-
+  const toggleButton = (event) => {
+    event.preventDefault();
+    if(isActivated == true){
+      setValueexcenta("");
+    }
+    setIsActivated(!isActivated);
+  };
   /* useefect */
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +77,7 @@ const Clientes = () => {
   var [client, setClient] = useState({
     documentType: "13",
     name: "",
-    document: "",
+    document: null,
     address: "",
     email: null,
     phone: null,
@@ -127,14 +135,14 @@ const Clientes = () => {
 
     Listitems.splice(index, 1);
 
-        /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
-        const Listitemsmap = Listitems.map((item, index) => {
-          return {
-              ...item,
-              numItem: index + 1,
-          };
-      });
-      console.log("Listitemsmap", Listitemsmap);
+    /* mapping the Listitems to reset the numItem and put 1 2 and 3 so on*/
+    const Listitemsmap = Listitems.map((item, index) => {
+      return {
+        ...item,
+        numItem: index + 1,
+      };
+    });
+    console.log("Listitemsmap", Listitemsmap);
     setListitems(Listitemsmap);
 
     console.log("Listitems", Listitems);
@@ -145,27 +153,29 @@ const Clientes = () => {
       0
     );
     const rawiva = Listitems.reduce(
-      (total, item) => total + item.ivaItem * item.cantidad,
+      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
       0
     );
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
 
 
 
     const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
     setRentvalue(value_rent)
 
-    setTotal((roundedSubtotal - value_rent).toFixed(2))
-
+    var newtotal = (roundedSubtotal - value_rent).toFixed(2);
+    setTotal(newtotal)
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
 
+
+  
   /* Adding factura without IVA */
   const itemshandleAdd = (newContents) => {
 
@@ -232,9 +242,6 @@ const Clientes = () => {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
     const newItem = {
       codTributo: null,
       descripcion: newContents.description,
@@ -266,21 +273,26 @@ const Clientes = () => {
       0
     );
     const rawiva = Listitemstrack.reduce(
-      (total, item) => total + item.ivaItem * item.cantidad,
+      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
       0
     );
+    
+    console.log("rawiva:", rawiva);
+    console.log("rawiva", rawiva);
+
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
-    
+
+    setiva(rawiva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
+
     const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
     setRentvalue(value_rent)
 
-    setTotal((roundedSubtotal - value_rent).toFixed(2))
-    
+    var newtotal = (roundedSubtotal - value_rent).toFixed(2);
+    setTotal(newtotal)
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
@@ -292,6 +304,7 @@ const Clientes = () => {
   };
 
   const itemsAdvancehandleAdd = (newContents) => {
+    
     setitemsAdvance((prevContents) => [
       ...prevContents,
       {
@@ -305,6 +318,7 @@ const Clientes = () => {
         taxes: newContents.taxes,
       },
     ]);
+
   };
 
 
@@ -325,9 +339,10 @@ const Clientes = () => {
         });
         return;
       }
-
+      console.log("document");
+      console.log(client.document);
       if (client.document === "") {
-        toast.error("Factura no cliente!", {
+        toast.error("El documeno no puede tener guiones!", {
           position: "top-center",
           autoClose: 3000, // Auto close after 3 seconds
           hideProgressBar: false, // Display the progress bar
@@ -366,12 +381,17 @@ const Clientes = () => {
 
       if (client.documentType === "13") {
         /* if has already - dont */
+        if (client.document === null || client.document === undefined) {
+          toast.error("Error el documento del cliente no puede estar vacío!")
+          return;
+        }
         if (client.document.includes("-")) {
-        console.log("DUI has -");
-        }else{
-        client.document = formatDUI(client.document);
+          toast.error("Error el documento del cliente no puede tener guiones!")
+          return;
+        } else {
+          client.document = formatDUI(client.document);
+        }
       }
-    }
 
       /* validating the email form of email */
       if (client.email !== null) {
@@ -387,179 +407,196 @@ const Clientes = () => {
           return;
         }
       }
-      
-        var data = {
-          identificacion: {
-            version: 1,
-            ambiente: userinfo.ambiente,
-            tipoDte: "01",
-            numeroControl: getNextFormattedNumber(userinfo.count_factura + 1),
-            codigoGeneracion: myUuid,
-            tipoModelo: 1,
-            tipoOperacion: 1,
-            fecEmi: time.date.toString(),
-            horEmi: time.time,
-            tipoMoneda: "USD",
-            tipoContingencia: null,
-            motivoContin: null,
-          },
-          documentoRelacionado: null,
-          emisor: {
-            direccion: {
-              municipio: userinfo.municipio,
-              departamento: userinfo.departamento,
-              complemento: userinfo.direccion,
-            },
-            nit: userinfo.nit,
-            nrc: userinfo.nrc,
-            nombre: userinfo.name,
-            codActividad: userinfo.codactividad,
-            descActividad: userinfo.descactividad,
-            telefono: userinfo.numero_de_telefono,
-            correo: userinfo.correo_electronico,
-            nombreComercial: userinfo.nombre_comercial,
-            tipoEstablecimiento: userinfo.tipoestablecimiento,
 
-            /* TODO: Just in case establecimiento  */
-            codEstableMH: null,
-            codEstable: null,
-            codPuntoVentaMH: null,
-            codPuntoVenta: null,
+      var data = {
+        identificacion: {
+          version: 1,
+          ambiente: userinfo.ambiente,
+          tipoDte: "01",
+          numeroControl: getNextFormattedNumber(userinfo.count_factura + 1),
+          codigoGeneracion: myUuid,
+          tipoModelo: 1,
+          tipoOperacion: 1,
+          fecEmi: time.date.toString(),
+          horEmi: time.time,
+          tipoMoneda: "USD",
+          tipoContingencia: null,
+          motivoContin: null,
+        },
+        documentoRelacionado: null,
+        emisor: {
+          direccion: {
+            municipio: userinfo.municipio,
+            departamento: userinfo.departamento,
+            complemento: userinfo.direccion,
           },
-          receptor: {
+          nit: userinfo.nit,
+          nrc: userinfo.nrc,
+          nombre: userinfo.name,
+          codActividad: userinfo.codactividad,
+          descActividad: userinfo.descactividad,
+          telefono: userinfo.numero_de_telefono,
+          correo: userinfo.correo_electronico,
+          nombreComercial: userinfo.nombre_comercial,
+          tipoEstablecimiento: userinfo.tipoestablecimiento,
+
+          /* TODO: Just in case establecimiento  */
+          codEstableMH: null,
+          codEstable: null,
+          codPuntoVentaMH: null,
+          codPuntoVenta: null,
+        },
+        receptor: {
           /* TODO ADDRES */ codActividad: client.codActividad,
-            direccion: client.address,
-            nrc: client.nrc,
-            descActividad: client.descActividad,
-            correo: client.email,
-            tipoDocumento: client.documentType,
-            nombre: client.name,
-            telefono: client.phone,
-            numDocumento: client.document,
-          },
-          otrosDocumentos: null,
-          ventaTercero: null,
-          cuerpoDocumento: Listitems,
-          resumen: {
-            condicionOperacion: conditionoperationint,
-            totalIva: 0 /* totalIva: iva, IVA 0.1154 percent ----------------- Eliminated here*/,
-            saldoFavor: 0,
-            numPagoElectronico: null,
-            pagos: [
-              {
+          direccion: client.address,
+          nrc: client.nrc,
+          descActividad: client.descActividad,
+          correo: client.email,
+          tipoDocumento: client.documentType,
+          nombre: client.name,
+          telefono: client.phone,
+          numDocumento: client.document,
+        },
+        otrosDocumentos: null,
+        ventaTercero: null,
+        cuerpoDocumento: Listitems,
+        resumen: {
+          condicionOperacion: conditionoperationint,
+          totalIva: 0 /* totalIva: iva, IVA 0.1154 percent ----------------- Eliminated here*/,
+          saldoFavor: 0,
+          numPagoElectronico: null,
+          pagos: [
+            {
               /* TODO: ADD MORE PAYMENTS */ periodo: null,
-                plazo: null,
-                montoPago: total,
-                codigo: payment.paymentmethod,
-                referencia: null,
-              },
-            ],
-            /* Changing the agravada for exenta */
-            totalNoSuj: 0,
-            tributos: null,
-            totalLetras: convertirDineroALetras(total),
-            totalExenta: subtotal,
-            subTotalVentas: subtotal,
-            totalGravada: 0,
-            montoTotalOperacion: subtotal,
-            descuNoSuj: 0,
-            descuExenta: 0,
-            descuGravada: 0,
-            porcentajeDescuento: 0,
-            totalDescu: 0,
-            subTotal: subtotal,
-            ivaRete1: 0,
-            reteRenta: rentvalue,
-            totalNoGravado: 0,
-            totalPagar: total,
-          },
-          extension: {
-            docuEntrega: null,
-            nombRecibe: null,
-            observaciones: observaciones,
-            placaVehiculo: null,
-            nombEntrega: null,
-            docuRecibe: null,
-          },
-          apendice: null,
-          id_envio: userinfo.id_envio,
-        };
+              plazo: null,
+              montoPago: total,
+              codigo: payment.paymentmethod,
+              referencia: null,
+            },
+          ],
+          /* Changing the agravada for exenta */
+          totalNoSuj: 0,
+          tributos: null,
+          totalLetras: convertirDineroALetras(total),
+          totalExenta: subtotal,
+          subTotalVentas: subtotal,
+          totalGravada: 0,
+          montoTotalOperacion: subtotal,
+          descuNoSuj: 0,
+          descuExenta: 0,
+          descuGravada: 0,
+          porcentajeDescuento: 0,
+          totalDescu: 0,
+          subTotal: subtotal,
+          ivaRete1: 0,
+          reteRenta: rentvalue,
+          totalNoGravado: 0,
+          totalPagar: total,
+        },
+        extension: {
+          docuEntrega: null,
+          nombRecibe: null,
+          observaciones: observaciones,
+          placaVehiculo: null,
+          nombEntrega: null,
+          docuRecibe: null,
+        },
+        apendice: null,
+        id_envio: userinfo.id_envio,
+      };
 
-        if (client.name === "") {
-          toast.error("Factura no tiene nombre de cliente!");
-          return;
-        }
+      /* exento to agravado */
+    if (valueexcenta == "" || valueexcenta == null) {
+      
+    const updatedListitems = Listitems.map(item => {
+    const priceunit = item.precioUni / 1.13;
+    const ivaperitemfinal = (item.precioUni * item.cantidad) / 1.13;
+    console.log("Priceunit", ivaperitemfinal);
+    const ivaItemcount = (ivaperitemfinal * 0.13);
+      const updatedItem = {
+        ...item,
+        ventaGravada: (item.precioUni * item.cantidad).toFixed(2),
+        ventaExenta: 0,
+        tributos: null,
+        ivaItem: ivaperitemfinal * 0.13,
+        precioUni: item.precioUni.toFixed(2),
+      };
+      return updatedItem;
+    });
+    console.log("UpdatedListitems");
+    console.log(updatedListitems);
 
-        if (client.phone === "") {
-          data.receptor.telefono = null;
-        }
+    const rawiva = updatedListitems.reduce(
+      (total, item) => total + Number(item.ivaItem),
+      0
+    );
 
-        if (client.address === "") {
-          data.receptor.direccion = null;
-        }
-
-        const response = await EmisorService.count_factura(id_emisor, token);
-        console.log("Count Factura");
-        console.log(response);
-
-        const responseincrement = await UserService.id_enviopus1(id_emisor, token);
-        console.log("incremented");
-        console.log(responseincrement);
-
-        console.log("Data");
-        console.log(data);
-
-        /* 
-      TODO CHANGE THIS THE OTHER SIDE console.log(data);
-       const Firm = {
-         nit: userinfo.nit, 
-         activo: true,
-         passwordPri: userinfo.passwordPri, 
-         dteJson: data
-       } */
-
-        const responsePlantilla = await PlantillaService.create(
-          data,
-          token,
-          id_emisor
+        const rawSubtotal = updatedListitems.reduce(
+          (total, item) => total + item.precioUni * item.cantidad,
+          0
         );
+        console.log("Data");
+        console.log(rawiva);
+        const subtotalplusiva = rawSubtotal + rawiva;
+        const totalpagar = rawSubtotal - rentvalue;
+        data.resumen.totalIva = rawiva.toFixed(2);
+        data.resumen.totalGravada = rawSubtotal.toFixed(2);
+        data.resumen.subTotal = rawSubtotal.toFixed(2);
+        data.resumen.pagos[0].montoPago = rawSubtotal.toFixed(2);
+        data.resumen.totalExenta = 0;
+        data.resumen.montoTotalOperacion = rawSubtotal.toFixed(2);
+        data.resumen.totalPagar = totalpagar.toFixed(2);
 
-        console.log("PlantillaService - Create");
-        console.log(responsePlantilla.message);
-        if (responsePlantilla.message === "Error en el servidor") {
-          toast.error("Factura no creada!", {
-            position: "top-center",
-            autoClose: 3000, // Auto close after 3 seconds
-            hideProgressBar: false, // Display the progress bar
-            closeOnClick: true, // Close the toast when clicked
-            draggable: true, // Allow dragging the toast
-          });
-          return;
-        }
+        data.resumen.totalLetras = convertirDineroALetras(rawSubtotal.toFixed(2));
+        data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
 
-        if (responsePlantilla.message != "Error en el servidor") {
-          toast.success("Factura creada!", {
-            position: "top-center",
-            autoClose: 3000, // Auto close after 3 seconds
-            hideProgressBar: false, // Display the progress bar
-            closeOnClick: true, // Close the toast when clicked
-            draggable: true, // Allow dragging the toast
-          });
+        
+        data.cuerpoDocumento = updatedListitems;
 
-          /* wait 5 seconds and navigate */
-          setTimeout(() => {
+      }
 
-            navigate("/facturas");
+      if (client.name === "") {
+        toast.error("Factura no tiene nombre de cliente!");
+        return;
+      }
 
-          }, 4000);
+      if (client.phone === "") {
+        data.receptor.telefono = null;
+      }
 
+      if (client.address === "") {
+        data.receptor.direccion = null;
+      }
 
-          return;
-        }
+      const response = await EmisorService.count_factura(id_emisor, token);
+      console.log("Count Factura");
+      console.log(response);
 
-        /* 
-      navigate("/facturas");  */
-      } catch (error) {
+      const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+      console.log("incremented");
+      console.log(responseincrement);
+
+      console.log("Data");
+      console.log(data);
+
+      /* 
+    TODO CHANGE THIS THE OTHER SIDE console.log(data);
+     const Firm = {
+       nit: userinfo.nit, 
+       activo: true,
+       passwordPri: userinfo.passwordPri, 
+       dteJson: data
+     } */
+
+      const responsePlantilla = await PlantillaService.create(
+        data,
+        token,
+        id_emisor
+      );
+
+      console.log("PlantillaService - Create");
+      console.log(responsePlantilla.message);
+      if (responsePlantilla.message === "Error en el servidor") {
         toast.error("Factura no creada!", {
           position: "top-center",
           autoClose: 3000, // Auto close after 3 seconds
@@ -567,237 +604,270 @@ const Clientes = () => {
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast
         });
-        console.log(error);
+        return;
       }
-    };
 
-    /* ---------------------------------------------------------- */
-
-    /* Logic of validating email */
-    const validateEmail = (email) => {
-      const re = /\S+@\S+\.\S+/;
-      return re.test(email);
-    };
-
-    const goBackHandler = () => {
-      navigate("/Principal");
-    };
-    /* Logic of select to go to bill or CF */
-    const ChangeHandler = (selectedValue) => {
-      if (selectedValue === "Factura") {
-        console.log("Factura");
-      } else if (selectedValue === "CF") {
-        navigate("/crear/creditofiscal");
-      }else if (selectedValue === "SU") {
-        navigate("/crear/sujeto_excluido");
-      }else if (selectedValue === "NC") {
-        navigate("/crear/nota_credito");
-      }else if (selectedValue === "ND") {
-        navigate("/crear/Nota_debito");
-      }
-    };
-
-    const handleSelectChange = (event) => {
-      event.preventDefault();
-      setSelectedOption(event.target.value);
-      ChangeHandler(event.target.value);
-    };
-
-    /* Logic of renderize CF or NotCF */
-    const handleSelectClient = (event) => {
-      event.preventDefault();
-      setIsVisibleClient(!isVisibleClient);
-    };
-
-    const onSelectClient = (event, clientset) => {
-      event.preventDefault();
-
-      if (client.documentType == "36") {
-        setClient({
-          documentType: "36",
-          name: clientset.name || "",
-          document: clientset.nit || "",
-          address: clientset.direccion || "",
-          email: clientset.correo_electronico || "",
-          phone: clientset.numero_telefono || "",
-          codActividad: clientset.actividad_economica || "",
-          nrc: null,
-          descActividad: "Otros",
+      if (responsePlantilla.message != "Error en el servidor") {
+        toast.success("Factura creada!", {
+          position: "top-center",
+          autoClose: 3000, // Auto close after 3 seconds
+          hideProgressBar: false, // Display the progress bar
+          closeOnClick: true, // Close the toast when clicked
+          draggable: true, // Allow dragging the toast
         });
-      } else {
-        setClient({
-          documentType: "13",
-          name: clientset.name,
-          document: clientset.dui,
-          address: clientset.direccion,
-          email: clientset.correo_electronico,
-          phone: clientset.numero_telefono,
-          codActividad: clientset.actividad_economica,
-          nrc: null,
-          descActividad: "Otros",
-        });
+
+        /* wait 5 seconds and navigate */
+        setTimeout(() => {
+
+          navigate("/facturas");
+
+        }, 4000);
+
+
+        return;
       }
-      console.log(clientset);
-    };
 
-    /* Logic of items */
-    const handleSelectChangeItemsClient = () => {
-      setItems(!Items);
-    };
+      /* 
+    navigate("/facturas");  */
+    } catch (error) {
+      toast.error("Factura no creada!", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+      });
+      console.log(error);
+    }
+  };
 
-    /* utils ----------------------------------- */
+  /* ---------------------------------------------------------- */
 
-    /**
-     * Increments a number and returns it in the specified format.
-     *
-     * @param {number} currentNumber - The current number to increment.
-     * @param {number} totalDigits - The total number of digits for the output.
-     * @returns {string} The incremented number in the desired format.
-     */
-    function getNextFormattedNumber(currentNumber, totalDigits = 15) {
-      // Increment the number by 1
-      const incrementedNumber = currentNumber;
+  /* Logic of validating email */
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
 
-      // Convert the incremented number to a string
-      let incrementedString = incrementedNumber.toString();
+  const goBackHandler = () => {
+    navigate("/Principal");
+  };
+  /* Logic of select to go to bill or CF */
+  const ChangeHandler = (selectedValue) => {
+    if (selectedValue === "Factura") {
+      console.log("Factura");
+    } else if (selectedValue === "CF") {
+      navigate("/crear/creditofiscal");
+    } else if (selectedValue === "SU") {
+      navigate("/crear/sujeto_excluido");
+    } else if (selectedValue === "NC") {
+      navigate("/crear/nota_credito");
+    } else if (selectedValue === "ND") {
+      navigate("/crear/Nota_debito");
+    }
+  };
 
-      // Pad with leading zeros to ensure the correct number of digits
-      incrementedString = incrementedString.padStart(totalDigits, "0");
+  const handleSelectChange = (event) => {
+    event.preventDefault();
+    setSelectedOption(event.target.value);
+    ChangeHandler(event.target.value);
+  };
 
-      // Format the output with the required prefix
-      const formattedOutput = `DTE-01-00000${userinfo.ambiente}0-${incrementedString}`;
+  /* Logic of renderize CF or NotCF */
+  const handleSelectClient = (event) => {
+    event.preventDefault();
+    setIsVisibleClient(!isVisibleClient);
+  };
 
-      return formattedOutput;
+  const onSelectClient = (event, clientset) => {
+    event.preventDefault();
+
+    if (client.documentType == "36") {
+      setClient({
+        documentType: "36",
+        name: clientset.name || "",
+        document: clientset.nit || "",
+        address: clientset.direccion || "",
+        email: clientset.correo_electronico || "",
+        phone: clientset.numero_telefono || "",
+        codActividad: clientset.actividad_economica || "",
+        nrc: null,
+        descActividad: "Otros",
+      });
+    } else {
+      setClient({
+        documentType: "13",
+        name: clientset.name,
+        document: clientset.dui,
+        address: clientset.direccion,
+        email: clientset.correo_electronico,
+        phone: clientset.numero_telefono,
+        codActividad: clientset.actividad_economica,
+        nrc: null,
+        descActividad: "Otros",
+      });
+    }
+    console.log(clientset);
+  };
+
+  /* Logic of items */
+  const handleSelectChangeItemsClient = () => {
+    setItems(!Items);
+  };
+
+  /* utils ----------------------------------- */
+
+  /**
+   * Increments a number and returns it in the specified format.
+   *
+   * @param {number} currentNumber - The current number to increment.
+   * @param {number} totalDigits - The total number of digits for the output.
+   * @returns {string} The incremented number in the desired format.
+   */
+  function getNextFormattedNumber(currentNumber, totalDigits = 15) {
+    // Increment the number by 1
+    const incrementedNumber = currentNumber;
+
+    // Convert the incremented number to a string
+    let incrementedString = incrementedNumber.toString();
+
+    // Pad with leading zeros to ensure the correct number of digits
+    incrementedString = incrementedString.padStart(totalDigits, "0");
+
+    // Format the output with the required prefix
+    const formattedOutput = `DTE-01-00000${userinfo.ambiente}0-${incrementedString}`;
+
+    return formattedOutput;
+  }
+
+  const convertirDineroALetras = (cantidad) => {
+
+
+    // Asegurarse de que la cantidad tenga como máximo dos decimales
+    const cantidadRedondeada = Math.round(cantidad * 100) / 100;
+    const partes = cantidadRedondeada.toFixed(2).split("."); // Divide la parte entera de los decimales
+
+    const dolares = parseInt(partes[0], 10); // Parte entera
+    const centavos = parseInt(partes[1], 10); // Parte decimal
+
+    if (dolares > Number.MAX_SAFE_INTEGER) {
+      throw new Error(
+        "La cantidad en dólares es demasiado grande para convertir."
+      );
     }
 
-    const convertirDineroALetras = (cantidad) => {
+    // Convierte las partes a palabras
+    const dolaresEnLetras = convertirNumeroALetras(dolares);
+    const centavosEnLetras = convertirNumeroALetras(centavos);
 
+    // Construye la representación en palabras
+    let resultado = `${dolaresEnLetras} DÓLARES`;
 
-      // Asegurarse de que la cantidad tenga como máximo dos decimales
-      const cantidadRedondeada = Math.round(cantidad * 100) / 100;
-      const partes = cantidadRedondeada.toFixed(2).split("."); // Divide la parte entera de los decimales
-
-      const dolares = parseInt(partes[0], 10); // Parte entera
-      const centavos = parseInt(partes[1], 10); // Parte decimal
-
-      if (dolares > Number.MAX_SAFE_INTEGER) {
-        throw new Error(
-          "La cantidad en dólares es demasiado grande para convertir."
-        );
-      }
-
-      // Convierte las partes a palabras
-      const dolaresEnLetras = convertirNumeroALetras(dolares);
-      const centavosEnLetras = convertirNumeroALetras(centavos);
-
-      // Construye la representación en palabras
-      let resultado = `${dolaresEnLetras} DÓLARES`;
-
-      if (centavos > 0) {
-        resultado += ` CON ${centavosEnLetras} CENTAVOS`;
-      }
-
-      return resultado;
-    };
-
-    const convertirNumeroALetras = (numero) => {
-      const unidades = [
-        "",
-        "UNO",
-        "DOS",
-        "TRES",
-        "CUATRO",
-        "CINCO",
-        "SEIS",
-        "SIETE",
-        "OCHO",
-        "NUEVE",
-      ];
-      const especiales = ["DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE"];
-      const decenas = [
-        "",
-        "",
-        "VEINTE",
-        "TREINTA",
-        "CUARENTA",
-        "CINCUENTA",
-        "SESENTA",
-        "SETENTA",
-        "OCHENTA",
-        "NOVENTA",
-      ];
-      const centenas = [
-        "",
-        "CIEN",
-        "DOSCIENTOS",
-        "TRESCIENTOS",
-        "CUATROCIENTOS",
-        "QUINIENTOS",
-        "SEISCIENTOS",
-        "SETECIENTOS",
-        "OCHOCIENTOS",
-        "NOVECIENTOS",
-      ];
-
-      if (numero === 0) return "CERO";
-
-      if (numero < 10) return unidades[numero];
-
-      if (numero < 16) return especiales[numero - 10];
-
-      if (numero < 20) return "DIECI" + unidades[numero - 10];
-
-      if (numero < 30)
-        return numero === 20 ? "VEINTE" : "VEINTI" + unidades[numero - 20];
-
-      if (numero < 100) {
-        const decena = Math.floor(numero / 10);
-        const unidad = numero % 10;
-        return decenas[decena] + (unidad > 0 ? " Y " + unidades[unidad] : "");
-      }
-
-      if (numero < 1000) {
-        const centena = Math.floor(numero / 100);
-        const resto = numero % 100;
-        return (
-          (centena === 1 && resto > 0 ? "CIENTO" : centenas[centena]) +
-          (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
-        );
-      }
-
-      if (numero < 1000000) {
-        const miles = Math.floor(numero / 1000);
-        const resto = numero % 1000;
-        return (
-          (miles === 1 ? "MIL" : convertirNumeroALetras(miles) + " MIL") +
-          (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
-        );
-      }
-
-      if (numero < 1000000000) {
-        const millones = Math.floor(numero / 1000000);
-        const resto = numero % 1000000;
-        return (
-          (millones === 1
-            ? "UN MILLÓN"
-            : convertirNumeroALetras(millones) + " MILLONES") +
-          (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
-        );
-      }
-
-      throw new Error("Número demasiado grande para convertir.");
-    };
-
-
-    /* Function i will give it a number like 063842754 and it will gives me a string 06384275-4 */
-    function formatDUI(num) {
-      const str = num.toString();
-      return str.slice(0, -1) + "-" + str.slice(-1);
+    if (centavos > 0) {
+      resultado += ` CON ${centavosEnLetras} CENTAVOS`;
     }
 
-    /* examples of input and output */
+    return resultado;
+  };
 
-    
+  const convertirNumeroALetras = (numero) => {
+    const unidades = [
+      "",
+      "UNO",
+      "DOS",
+      "TRES",
+      "CUATRO",
+      "CINCO",
+      "SEIS",
+      "SIETE",
+      "OCHO",
+      "NUEVE",
+    ];
+    const especiales = ["DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE"];
+    const decenas = [
+      "",
+      "",
+      "VEINTE",
+      "TREINTA",
+      "CUARENTA",
+      "CINCUENTA",
+      "SESENTA",
+      "SETENTA",
+      "OCHENTA",
+      "NOVENTA",
+    ];
+    const centenas = [
+      "",
+      "CIEN",
+      "DOSCIENTOS",
+      "TRESCIENTOS",
+      "CUATROCIENTOS",
+      "QUINIENTOS",
+      "SEISCIENTOS",
+      "SETECIENTOS",
+      "OCHOCIENTOS",
+      "NOVECIENTOS",
+    ];
+
+    if (numero === 0) return "CERO";
+
+    if (numero < 10) return unidades[numero];
+
+    if (numero < 16) return especiales[numero - 10];
+
+    if (numero < 20) return "DIECI" + unidades[numero - 10];
+
+    if (numero < 30)
+      return numero === 20 ? "VEINTE" : "VEINTI" + unidades[numero - 20];
+
+    if (numero < 100) {
+      const decena = Math.floor(numero / 10);
+      const unidad = numero % 10;
+      return decenas[decena] + (unidad > 0 ? " Y " + unidades[unidad] : "");
+    }
+
+    if (numero < 1000) {
+      const centena = Math.floor(numero / 100);
+      const resto = numero % 100;
+      return (
+        (centena === 1 && resto > 0 ? "CIENTO" : centenas[centena]) +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
+
+    if (numero < 1000000) {
+      const miles = Math.floor(numero / 1000);
+      const resto = numero % 1000;
+      return (
+        (miles === 1 ? "MIL" : convertirNumeroALetras(miles) + " MIL") +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
+
+    if (numero < 1000000000) {
+      const millones = Math.floor(numero / 1000000);
+      const resto = numero % 1000000;
+      return (
+        (millones === 1
+          ? "UN MILLÓN"
+          : convertirNumeroALetras(millones) + " MILLONES") +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
+
+    throw new Error("Número demasiado grande para convertir.");
+  };
+
+
+  /* Function i will give it a number like 063842754 and it will gives me a string 06384275-4 */
+  function formatDUI(num) {
+    const str = num.toString();
+    return str.slice(0, -1) + "-" + str.slice(-1);
+  }
+
+  /* examples of input and output */
+
+
 
   const handlePercentageChange = (e) => {
     setPercentage(e.target.value);
@@ -807,111 +877,112 @@ const Clientes = () => {
     console.log(value_rent);
     setRentvalue(value_rent)
 
-    setTotal((subtotal - value_rent).toFixed(2))
+    var newtotal = (subtotal - value_rent).toFixed(2);
+    setTotal(newtotal)
 
   };
 
-    return (
-      <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-center justify-center text-center pt-[17px] pb-5 pr-[15px] pl-5 box-border gap-[22px_0px]  ">
-        <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
-          <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
-          <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white ">
-            <select
-              onChange={handleSelectChange}
-              className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
-            >
-              <option value="Factura">Factura</option>
-              <option value="CF">Comprobante Crédito Fiscal</option>
-              <option value="SU">Factura de Sujeto Excluido</option>
-              <option value="NC">Nota de Crédito</option>
-              <option value="ND">Nota de Débito</option>
-            </select>
-            {/* Your other elements */}
+  return (
+    <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-center justify-center text-center pt-[17px] pb-5 pr-[15px] pl-5 box-border gap-[22px_0px]  ">
+      <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
+        <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
+        <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white ">
+          <select
+            onChange={handleSelectChange}
+            className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
+          >
+            <option value="Factura">Factura</option>
+            <option value="CF">Comprobante Crédito Fiscal</option>
+            <option value="SU">Factura de Sujeto Excluido</option>
+            <option value="NC">Nota de Crédito</option>
+            <option value="ND">Nota de Débito</option>
+          </select>
+          {/* Your other elements */}
+        </div>
+      </header>
+      <section className=" rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full self-stretch  ch:w-1/3 ch:self-center">
+        <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden " />
+        <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1] ">
+          <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
+          <b className="relative text-xs font-inria-sans text-black text-left z-[2]">
+            General
+          </b>
+          <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
+            <img
+              className="w-[18px] h-4 relative object-contain z-[2]"
+              alt=""
+              src="/atras-1@2x.png"
+            />
           </div>
-        </header>
-        <section className=" rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full self-stretch  ch:w-1/3 ch:self-center">
-          <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden " />
-          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1] ">
-            <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
-            <b className="relative text-xs font-inria-sans text-black text-left z-[2]">
-              General
-            </b>
-            <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
-              <img
-                className="w-[18px] h-4 relative object-contain z-[2]"
-                alt=""
-                src="/atras-1@2x.png"
+        </div>
+        <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-2.5 box-border max-w-full"></div>
+        <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
+          <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+            <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
+              <div className="flex flex-row items-start justify-start py-0 px-[3px]">
+                Fecha
+                <span className="text-tomato pl-1"> *</span>
+              </div>
+            </div>
+            <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
+              <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+              <input
+                className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="datos personales datos personales"
+                type="date"
+                /* Onchange settime.date */
+                onChange={(e) => handleChangeTime("date", e.target.value)}
               />
             </div>
           </div>
-          <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-2.5 box-border max-w-full"></div>
-          <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
-            <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-              <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
-                <div className="flex flex-row items-start justify-start py-0 px-[3px]">
-                  Fecha
-                  <span className="text-tomato pl-1"> *</span>
-                </div>
-              </div>
-              <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
-                <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-                <input
-                  className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                  placeholder="datos personales datos personales"
-                  type="date"
-                  /* Onchange settime.date */
-                  onChange={(e) => handleChangeTime("date", e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
-        {CF ? (
-          <BillCF
-            handleSelectClient={handleSelectClient}
-            setClient={setClient}
-            client={client}
-          />
-        ) : (
-          <BillnoCF
-            handleSelectClient={handleSelectClient}
-            setClient={setClient}
-            client={client}
-            isVisibleClient={isVisibleClient}
-            onSelectClient={onSelectClient}
-          />
-        )}
+      {CF ? (
+        <BillCF
+          handleSelectClient={handleSelectClient}
+          setClient={setClient}
+          client={client}
+        />
+      ) : (
+        <BillnoCF
+          handleSelectClient={handleSelectClient}
+          setClient={setClient}
+          client={client}
+          isVisibleClient={isVisibleClient}
+          onSelectClient={onSelectClient}
+        />
+      )}
 
-        {Items ? (
-          <AdvanceItemsComponentOnComponent
-            handleSelectChangeItemsClient={handleSelectChangeItemsClient}
-            itemsAdvancehandleRemove={itemsAdvancehandleRemove}
-            itemsAdvancehandleAdd={itemsAdvancehandleAdd}
-            itemsAdvance={itemsAdvance}
-            items={items}
-          />
-        ) : (
-          <AdvanceItemsComponent
-            handleSelectChangeItemsClient={handleSelectChangeItemsClient}
-            itemshandleRemove={itemshandleRemove}
-            itemshandleAdd={itemshandleAdd}
-            setListitems={setListitems}
-            items={items}
-            percentage={percentage}
-            rentvalue={rentvalue}
-            handlePercentageChange={handlePercentageChange}
-          />
-        )}
+      {Items ? (
+        <AdvanceItemsComponentOnComponent
+          handleSelectChangeItemsClient={handleSelectChangeItemsClient}
+          itemsAdvancehandleRemove={itemsAdvancehandleRemove}
+          itemsAdvancehandleAdd={itemsAdvancehandleAdd}
+          itemsAdvance={itemsAdvance}
+          items={items}
+        />
+      ) : (
+        <AdvanceItemsComponent
+          handleSelectChangeItemsClient={handleSelectChangeItemsClient}
+          itemshandleRemove={itemshandleRemove}
+          itemshandleAdd={itemshandleAdd}
+          setListitems={setListitems}
+          items={items}
+          percentage={percentage}
+          rentvalue={rentvalue}
+          handlePercentageChange={handlePercentageChange}
+        />
+      )}
 
-        {/* <TreeNode text="Subtotal" data={subtotal} />
+      {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Total a Pagar" data={total} /> */}
-        <TreeNode text="Subtotal" data={subtotal} />
-        <TreeNode text="IVA" data={0} />
-        <TreeNode text="Renta Retenida" data={rentvalue} />
-        <TreeNode text="Total a Pagar" data={total} />
-        {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
+      <TreeNode text="Subtotal" data={subtotal} />
+      <TreeNode text="IVA" data={iva} />
+      <TreeNode text="Renta Retenida" data={rentvalue} />
+      <TreeNode text="Total a Pagar" data={total} />
+      {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
         <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
           <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-3 px-[9px] pb-[11px] box-border relative whitespace-nowrap max-w-full z-[1]">
@@ -969,28 +1040,56 @@ const Clientes = () => {
       </section>
 
        */}
-        <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
-          <textarea
-            className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
-            placeholder="Observaciones"
-            rows={8}
-            cols={20}
-            onChange={(e) => setObservaciones(e.target.value)}
-          />
-        </section>
-        <footer className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[27px]">
-          <div className="flex flex-col items-start justify-start gap-[13px_0px]">
-            <button
-              onClick={addBillHandler}
-              className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
-            >
-              <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-              <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
-                Añadir Factura
-              </b>
-            </button>
 
-            {/* <button
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full text-left text-mini text-black font-inria-sans ch:w-1/3 ch:self-center">
+        <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[14px] max-w-full z-[1]">
+          <div className="self-stretch h-[101px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+          <div className="self-stretch h-[101px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-[11px] px-[17px] pb-2 box-border relative max-w-full z-[2]">
+            <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full z-[0]" />
+            {/* <img
+            className="h-4 w-[18px] absolute !m-[0] right-[20px] bottom-[9px] object-contain z-[3]"
+            alt=""
+            src="/atras-1@2x.png"
+          /> */}
+            <b className="relative z-[3]">Exento</b>
+          </div>
+          <div className="flex flex-row items-start justify-start py-0 px-[17px] text-6xl">
+            <div className="relative flex whitespace-nowrap z-[2]">
+              <button
+                onClick={(event) => toggleButton(event)}
+                className={`px-4 py-2 rounded-md text-white font-bold transition-transform duration-200 ${isActivated ? 'bg-steelblue-200' : 'bg-indianred-300'
+                  } ${isActivated ? 'transform scale-95' : 'transform scale-100'}`}
+              >
+                {isActivated ? 'Activado' : 'Desactivado'}
+              </button>
+              {isActivated && <input type="text" className="border border-black rounded-lg ml-4 pl-3 " placeholder="codigo de exento"  onChange={(e) => setValueexcenta(e.target.value)}/>}
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
+        <textarea
+          className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
+          placeholder="Observaciones"
+          rows={8}
+          cols={20}
+          onChange={(e) => setObservaciones(e.target.value)}
+        />
+      </section>
+      <footer className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-[27px]">
+        <div className="flex flex-col items-start justify-start gap-[13px_0px]">
+          <button
+            onClick={addBillHandler}
+            className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
+          >
+            <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+            <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
+              Añadir Factura
+            </b>
+          </button>
+
+          {/* <button
             onClick={testbill}
             className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
           >
@@ -1001,20 +1100,20 @@ const Clientes = () => {
             </b>
           </button> */}
 
-            <button
-              onClick={goBackHandler}
-              className="cursor-pointer [border:none] pt-3 pb-[13px] pr-11 pl-[49px] bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-indianred-100"
-            >
-              <div className="h-12 w-[158px] relative rounded-3xs bg-indianred-500 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-              <b className="relative text-mini font-inria-sans text-white text-left z-[1]">
-                Regresar
-              </b>
-            </button>
-          </div>
-        </footer>
-        <ToastContainer className={"toast-notification"} />
-      </form>
-    );
-  };
+          <button
+            onClick={goBackHandler}
+            className="cursor-pointer [border:none] pt-3 pb-[13px] pr-11 pl-[49px] bg-indianred-500 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start hover:bg-indianred-100"
+          >
+            <div className="h-12 w-[158px] relative rounded-3xs bg-indianred-500 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+            <b className="relative text-mini font-inria-sans text-white text-left z-[1]">
+              Regresar
+            </b>
+          </button>
+        </div>
+      </footer>
+      <ToastContainer className={"toast-notification"} />
+    </form>
+  );
+};
 
-  export default Clientes;
+export default Clientes;

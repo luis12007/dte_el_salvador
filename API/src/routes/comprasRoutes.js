@@ -12,6 +12,6 @@ const authenticateToken = require('../middleware/verifyToken.js');
 
 // Define la ruta POST
 router.post('/create', authenticateToken, cratecompra);
-router.get('/getcompras/:id/:startdate/:enddata ', authenticateToken, getcompras);
+router.get('/getcompras/:id/:startdate/:enddata', authenticateToken, getcompras);
 
 module.exports = router;

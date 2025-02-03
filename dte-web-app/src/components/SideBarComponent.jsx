@@ -132,7 +132,7 @@ const CloseHandler = () => {
                   src={customers}
                 />
                 <div className="flex flex-col items-start justify-start  pt-2 px-0 pb-0">
-                  <div className="relative z-[1]">Clientes</div>
+                  <div className="relative z-[1]">Receptores</div>
                 </div>
               </div>
             </button>
@@ -158,7 +158,7 @@ const CloseHandler = () => {
                   src={book}
                 />
                 <div className="flex flex-col items-start justify-start  pt-2 px-0 pb-0">
-                  <div className="relative z-[1]">Libros</div>
+                  <div className="relative z-[1]">Reportes</div>
                 </div>
               </div>
             </button>

@@ -618,9 +618,8 @@ const CrearCreditoFiscal = () => {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const priceunit = pricefloat / 1.13;
+    const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
     const newItem = {
       codTributo: null,
       descripcion: newContents.description,
@@ -633,11 +632,12 @@ const CrearCreditoFiscal = () => {
       psv: 0,
       montoDescu: 0,
       numeroDocumento: null,
-      precioUni: pricefloat,
-      ventaGravada: pricefloat * cuantityint,
+      precioUni: priceunit,
+      ventaGravada: ivaperitemfinal,
       ventaExenta: 0,
       ventaNoSuj: 0,
       tipoItem: typeitem,
+      iva: cuantityint * pricefloat,
     };
     // Update the list with the new item
     setListitems((prevListitems) => [...prevListitems, newItem]);
@@ -651,15 +651,17 @@ const CrearCreditoFiscal = () => {
       0
     );
     const rawiva = Listitemstrack.reduce(
-      (total, item) => total + item.ventaGravada * 0.13,
+      (total, item) => total + (item.ventaGravada * 0.13) ,
       0
     );
+    console.log("rawiva", rawiva);
     // Round to two decimal places
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(rawSubtotal); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
+    
 
     const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
     console.log(value_rent);
@@ -695,7 +697,7 @@ const CrearCreditoFiscal = () => {
       0
     );
     const rawiva = Listitems.reduce(
-      (total, item) => total + item.ventaGravada * 0.13,
+      (total, item) => total + (item.ventaGravada * 0.13) ,
       0
     );
     // Round to two decimal places
@@ -889,6 +891,26 @@ const CrearCreditoFiscal = () => {
             }
           }
 
+          if (userinfo.ambiente == undefined) {
+            toast.error("No se pudo obtener la información del usuario", {
+              position: "top-center",
+              autoClose: 3000, // Auto close after 3 seconds
+              hideProgressBar: false, // Display the progress bar
+              closeOnClick: true, // Close the toast when clicked
+              draggable: true, // Allow dragging the toast
+              style: { zIndex: 200000 } // Correct way to set z-index
+            });
+            return;
+          }
+
+          
+    /* tofixed(2) to every item in values precioUni and ventaGravada*/
+    Listitems.forEach((item) => {
+      item.precioUni = Number(item.precioUni).toFixed(2);
+      item.ventaGravada = Number(item.ventaGravada).toFixed(2);
+    });
+
+    const totaloperation = (Number(subtotal) + Number(iva));
     var data = {
       identificacion: {
         version: 3,
@@ -964,14 +986,14 @@ const CrearCreditoFiscal = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: iva /* TODO CHANGE */,
+            valor: Number(iva).toFixed(2) /* TODO CHANGE */,
           },
         ],
         totalLetras: convertirDineroALetras(total),
         totalExenta: 0,
         subTotalVentas: subtotal,
         totalGravada: subtotal,
-        montoTotalOperacion: (subtotal + iva).toFixed(2), /* TODO */
+        montoTotalOperacion: totaloperation.toFixed(2), /* TODO */
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
@@ -1060,14 +1082,29 @@ const CrearCreditoFiscal = () => {
     console.log(responsePlantilla);
 
     if (responsePlantilla.message === "Inserción exitosa") {
-      toast.success("Credito Fiscal creado con exito");
+      toast.success("Credito Fiscal creado con exito", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+        progress: undefined,
+      });
+
 
       /* wait 5 second and navigate to /facturas */
       setTimeout(() => {
         navigate("/facturas");
       }, 5000);
     } else {
-      toast.error("CF no creado intentar de nuevo");
+      toast.error("CF no creado intentar de nuevo", {
+        position: "top-center",
+        autoClose: 3000, // Auto close after 3 seconds
+        hideProgressBar: false, // Display the progress bar
+        closeOnClick: true, // Close the toast when clicked
+        draggable: true, // Allow dragging the toast
+        progress: undefined,
+      });
     }
 
     /* 
@@ -1297,7 +1334,10 @@ const CrearCreditoFiscal = () => {
     console.log("Percentage", e.target.value);
   
     const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-      const rawiva = Listitems.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
+    const rawiva = Listitems.reduce(
+      (total, item) => total + (item.ventaGravada * 0.13) ,
+      0
+    );
       // Round to two decimal places
       const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
       const roundediva = Math.round(rawiva * 100) / 100;

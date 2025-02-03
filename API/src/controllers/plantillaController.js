@@ -150,6 +150,7 @@ const plantillacreate = async(req, res) => {
                     ventaexenta: item.ventaExenta,
                     ventanosuj: item.ventaNoSuj,
                     tipoitem: item.tipoItem,
+                    iva: item.iva,
                 }));
 
 
@@ -302,6 +303,7 @@ const plantillacreate = async(req, res) => {
                     ventaexenta: item.ventaExenta,
                     ventanosuj: item.ventaNoSuj,
                     tipoitem: item.tipoItem,
+                    iva: item.iva,
                 }));
 
 
@@ -451,6 +453,7 @@ const plantillacreate = async(req, res) => {
                     ventaexenta: item.ventaExenta,
                     ventanosuj: item.ventaNoSuj,
                     tipoitem: item.tipoItem,
+                    iva: item.iva,
                 }));
 
 
@@ -619,6 +622,7 @@ const plantillacreate = async(req, res) => {
                     ventaexenta: item.ventaExenta,
                     ventanosuj: item.ventaNoSuj,
                     tipoitem: item.tipoItem,
+                    iva: item.iva,
                 }));
 
 
@@ -785,6 +789,7 @@ const plantillacreate = async(req, res) => {
                     ventaexenta: item.ventaExenta,
                     ventanosuj: item.ventaNoSuj,
                     tipoitem: item.tipoItem,
+                    iva: item.iva,
                 }));
 
 
@@ -872,7 +877,9 @@ const getbytypeandid = async(req, res) => {
         const plantillas = await db("plantilla")
             .where("id_emisor", usuarioid)
             .whereIn("tipo", typestoarray)
-            .whereBetween("fecha_y_hora_de_generacion", [stardate, enddate]);
+            .whereBetween("fecha_y_hora_de_generacion", [stardate, enddate])
+            .whereNotNull("sello_de_recepcion");
+
 
         res.status(200).json(plantillas);
     } catch (error) {
@@ -1406,6 +1413,7 @@ const updatePlantilla = async(req, res) => {
                 ventaexenta: item.ventaExenta,
                 ventanosuj: item.ventaNoSuj,
                 tipoitem: item.tipoItem,
+                iva: item.iva,
             }));
         } else if (plantilla.identificacion.tipoDte === "01") {
             var itemsDB = items.map((item) => ({
@@ -1426,6 +1434,7 @@ const updatePlantilla = async(req, res) => {
                 ventaexenta: item.ventaExenta,
                 ventanosuj: item.ventaNoSuj,
                 tipoitem: item.tipoItem,
+                iva: item.iva,
             }));
         } else if (plantilla.identificacion.tipoDte === "14") {
             var itemsDB = items.map((item) => ({
@@ -1446,6 +1455,7 @@ const updatePlantilla = async(req, res) => {
                 ventaexenta: item.ventaExenta,
                 ventanosuj: item.ventaNoSuj,
                 tipoitem: item.tipoItem,
+                iva: item.iva,
             }));
         } else if (plantilla.identificacion.tipoDte === "05") {
             var itemsDB = items.map((item) => ({
@@ -1465,6 +1475,7 @@ const updatePlantilla = async(req, res) => {
                 ventaexenta: item.ventaExenta,
                 ventanosuj: item.ventaNoSuj,
                 tipoitem: item.tipoItem,
+                iva: item.iva,
             }));
         } else if (plantilla.identificacion.tipoDte === "06") {
             var itemsDB = items.map((item) => ({
@@ -1484,6 +1495,7 @@ const updatePlantilla = async(req, res) => {
                 ventaexenta: item.ventaExenta,
                 ventanosuj: item.ventaNoSuj,
                 tipoitem: item.tipoItem,
+                iva: item.iva,
             }));
         }
         // Crear objetos para insertar en la tabla 'items'

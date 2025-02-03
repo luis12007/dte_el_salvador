@@ -180,6 +180,7 @@ const ClietnBillCredit = ({
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
             <select
+            value={client.codActividad}
             className="w-full h-full relative border-white bg-white border-2 max-w-full"
             onChange={(e) => handleChange("codActividad", e.target.value)}
           >

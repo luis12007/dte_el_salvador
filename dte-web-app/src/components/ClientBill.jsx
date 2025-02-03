@@ -73,7 +73,7 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                   <input
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2] no-spinner"
-                    placeholder="624863262"
+                    placeholder="Documento sin guiones ni espacios"
                     type="Number"
                     value={client.document}
                     onChange={(e) => handleChange("document", e.target.value)}

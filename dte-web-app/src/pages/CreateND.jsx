@@ -621,9 +621,10 @@ const CreateND = () => {
     const cuantityint = parseInt(newContents.cuantity);
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+
+    const priceunit = pricefloat / 1.13;
+    const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
+
     const newItem = {
       codTributo: null,
       descripcion: newContents.description,
@@ -636,8 +637,8 @@ const CreateND = () => {
       psv: 0,
       montoDescu: 0,
       numeroDocumento: contentcf.codigo_de_generacion,
-      precioUni: pricefloat,
-      ventaGravada: pricefloat * cuantityint,
+      precioUni: priceunit,
+      ventaGravada: ivaperitemfinal,
       ventaExenta: 0,
       ventaNoSuj: 0,
       tipoItem: typeitem,
@@ -661,8 +662,8 @@ const CreateND = () => {
     const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
     const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(rawSubtotal); // Set the rounded subtotal
+    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
+    setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
 
     const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
     console.log(value_rent);
@@ -892,6 +893,13 @@ const CreateND = () => {
             }
           }
 
+          Listitems.forEach((item) => {
+            item.precioUni = Number(item.precioUni).toFixed(2);
+            item.ventaGravada = Number(item.ventaGravada).toFixed(2);
+          });
+
+    const totaloperation = (Number(subtotal) + Number(iva));
+
     const tipodocumento = "03"
     const tipoGeneracion = 1
     const numDocumento = contentcf.codigo_de_generacion
@@ -972,14 +980,14 @@ const CreateND = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: iva /* TODO CHANGE */,
+            valor: Number(iva).toFixed(2) /* TODO CHANGE */,
           },
         ],
         totalLetras: convertirDineroALetras(total),
         totalExenta: 0,
         subTotalVentas: subtotal,
         totalGravada: subtotal,
-        montoTotalOperacion: (subtotal + iva).toFixed(2), /* TODO */
+        montoTotalOperacion: totaloperation.toFixed(2), /* TODO */
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
