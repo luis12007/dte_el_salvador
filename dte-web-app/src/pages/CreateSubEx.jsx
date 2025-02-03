@@ -12,7 +12,7 @@ import PlantillaService from "../services/PlantillaService";
 import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ClientSubEx from "../components/ClientSubEx";
+import ClientSubExCreate from "../components/ClientSubExCreate";
 
 const CreateSubEx = () => {
     const [selectedOption, setSelectedOption] = useState("");
@@ -942,7 +942,7 @@ const CreateSubEx = () => {
         if (selectedValue === "Factura") {
             navigate("/crear/factura");
         } else if (selectedValue === "CF") {
-            console.log("CF");
+            navigate("/crear/creditofiscal");
         } else if (selectedValue === "SU") {
             navigate("/crear/sujeto_excluido");
         } else if (selectedValue === "NC") {
@@ -1253,7 +1253,7 @@ const CreateSubEx = () => {
                 </div>
             </section>
 
-            <ClientSubEx
+            <ClientSubExCreate
                 handleSelectChangeCFClient={handleSelectChangeCFClient}
                 setClient={setClient}
                 client={client}
