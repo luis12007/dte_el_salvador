@@ -57,7 +57,7 @@ const SistemaDTE = (props) => {
         </div>
         <div className="flex flex-row  relative items-center justify-center  " onClick={ForgetPassHandler}>
           <div onClick={ForgetPassHandler} className="flex flex-row relative text-lg [text-decoration:underline] font-light font-inria-sans text-deepskyblue text-center">
-            Recuperar mi contraseña
+            Soporte Técnico
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-center py-0 pr-5 pl-6">
