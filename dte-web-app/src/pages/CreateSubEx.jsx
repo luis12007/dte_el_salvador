@@ -531,7 +531,7 @@ const CreateSubEx = () => {
         const roundediva = Math.round(rawiva * 100) / 100;
 
         setiva(0); // Set the rounded subtotal
-        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setSubtotal(roundedSubtotal.toFixed(2)); // Set the rounded subtotal
 
         const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
         console.log(value_rent);
@@ -575,7 +575,7 @@ const CreateSubEx = () => {
         const roundediva = Math.round(rawiva * 100) / 100;
 
         setiva(0); // Set the rounded subtotal
-        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
 
         const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
         console.log(value_rent);
@@ -1177,7 +1177,7 @@ const CreateSubEx = () => {
         const roundediva = Math.round(rawiva * 100) / 100;
 
         setiva(0); // Set the rounded subtotal
-        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
 
         const value_rent = ((rawSubtotal * e.target.value) / 100).toFixed(2);
         console.log(value_rent);

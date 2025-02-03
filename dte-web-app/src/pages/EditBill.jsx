@@ -368,7 +368,7 @@ const EditBill = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva.toFixed(2)); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal.toFixed(2))); // Set the rounded subtotal
 
 
 
@@ -568,7 +568,7 @@ const EditBill = () => {
     const roundediva = Math.round(rawiva * 100) / 100;
 
     setiva(roundediva.toFixed(2)); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
+    setSubtotal((roundedSubtotal.toFixed(2))); // Set the rounded subtotal
 
     const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
     setRentvalue(value_rent)
