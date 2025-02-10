@@ -851,9 +851,10 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         console.log('mail:', plantillaDB.re_correo_electronico);
         pdfDoc.pipe(fs.createWriteStream(pdfPath))
             .on('finish', async() => {
+                var mailOptions = {}
                 // Email configuration
                 if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3) {
-                    const mailOptions = {
+                    mailOptions = {
                         from: 'mysoftwaresv@gmail.com',
                         to: plantillaDB.re_correo_electronico,
                         subject: `DTE de parte de ${user.name}`,
@@ -871,7 +872,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         ]
                     };
                 } else if (userDB.id === 5 || userDB.id === 7) {
-                    const mailOptions = {
+                    mailOptions = {
                         from: 'mysoftwaresv@gmail.com',
                         to: plantillaDB.re_correo_electronico,
                         subject: `DTE de parte de ${user.name}`,
@@ -888,8 +889,26 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                } else {
-                    const mailOptions = {
+                } else if(userDB.id === 6){
+                    mailOptions = {
+                        from: 'renovare23sv@gmail.com',
+                        to: plantillaDB.re_correo_electronico,
+                        subject: `DTE de parte de ${user.name}`,
+                        html: '<h3>¡DTE facturacion electronica Renovare!</h3>',
+                        attachments: [{
+                                filename: 'DTE.pdf',
+                                path: pdfPath,
+                                encoding: 'base64'
+                            },
+                            {
+                                filename: 'DTE.json', // Name of the JSON file
+                                path: jsonPath, // Path to the JSON file
+                                encoding: 'base64'
+                            }
+                        ]
+                    };
+                }else {
+                    mailOptions = {
                         from: 'mysoftwaresv@gmail.com',
                         to: plantillaDB.re_correo_electronico,
                         subject: `DTE de parte de ${user.name}`,
@@ -907,23 +926,27 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         ]
                     };
                 }
-                const mailOptions = {
-                    from: 'mysoftwaresv@gmail.com',
-                    to: plantillaDB.re_correo_electronico,
-                    subject: `DTE de parte de ${user.name}`,
-                    html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
-                    attachments: [{
-                            filename: 'DTE.pdf',
-                            path: pdfPath,
-                            encoding: 'base64'
-                        },
-                        {
-                            filename: 'DTE.json', // Name of the JSON file
-                            path: jsonPath, // Path to the JSON file
-                            encoding: 'base64'
-                        }
-                    ]
-                };
+                if(userDB.id === 6){
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'renovare23sv@gmail.com',
+                        pass: 'xgaw crnq hxyq fgwi'
+                    }
+                });
+
+                // Send email
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.error('Error sending email:', error);
+                    } else {
+                        console.log('Email sent:', info.response);
+                        // Delete the files after sending the email
+                        fs.unlinkSync(jsonPath);
+                        fs.unlinkSync(pdfPath);
+                    }
+                });
+            }else{
                 const transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
@@ -943,6 +966,9 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         fs.unlinkSync(pdfPath);
                     }
                 });
+            }
+
+                
             })
             .on('error', (error) => {
                 console.error('Error creating PDF:', error);
