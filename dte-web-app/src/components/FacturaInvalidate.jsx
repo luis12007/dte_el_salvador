@@ -28,6 +28,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
   const navigate = useNavigate();
   const [usuario, setUser] = useState([]);
   const [mailchecker, setMailChecker] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const fecAnula = new Date().toISOString().split('T')[0]; // Gets current date in "YYYY-MM-DD" format
   const horAnula = new Date().toLocaleTimeString('en-US', {
     hour12: false, // 24-hour format
@@ -140,9 +141,12 @@ const FacturaInvalidate = ({ key, content, user }) => {
 
 
 
-
+  const SendBillHandlerNoSend = async () => {
+  toast.error("No se puede invalidar una factura no enviada");
+  };
 
   const SendBillHandler = async () => {
+    setIsLoading(true);
 
 
 
@@ -204,46 +208,46 @@ const FacturaInvalidate = ({ key, content, user }) => {
     var invalidation_obj = {
       identificacion: {
         version: 2,
-        ambiente: "00",
-        codigoGeneracion: "D7212258-BCA5-4D05-964E-516D5D0B3C50",
-        fecAnula: "2025-01-20",
-        horAnula: "17:39:29"
+        ambiente: content.ambiente,
+        codigoGeneracion: myUuid,
+        fecAnula: fecAnula,
+        horAnula: horAnula
       },
       emisor: {
-        nit: "02101601741065",
-        nombre: "LUIS ALONSO HERNANDEZ MAGAÑA",
-        tipoEstablecimiento: "20",
-        nomEstablecimiento: "Servicios de anestesia",
-        telefono: "64319239",
-        correo: "luishdezmtz12@gmail.com",
-        codEstableMH: "1234",
-        codEstable: "20",
+        nit: user.nit,
+        nombre: user.name,
+        tipoEstablecimiento: user.tipoestablecimiento,
+        nomEstablecimiento: user.nombre_comercial,
+        telefono: user.numero_de_telefono,
+        correo: user.correo_electronico,
+        codEstableMH: null,
+        codEstable: null,
         codPuntoVentaMH: null,
         codPuntoVenta: null
       },
       documento: {
-        tipoDte: "14",
-        codigoGeneracion: "B07477D3-EAC8-43F1-899F-93852794D993",
-        selloRecibido: "202578680BFC090F471987960DE22DCCE812H5TB",
-        numeroControl: "DTE-01-00000000-000000000000002",
-        fecEmi: "2025-01-20",
-        montoIva: 0.0,
+        tipoDte: content.tipo,
+        codigoGeneracion: content.codigo_de_generacion,
+        selloRecibido: content.sello_de_recepcion,
+        numeroControl: content.numero_de_control,
+        fecEmi: content.fecha_y_hora_de_generacion,
+        montoIva: parseFloat(content.iva_percibido),
         codigoGeneracionR: null,
-        tipoDocumento: "13",
-        numDocumento: "063842754",
-        nombre: "Luis hernandez",
-        telefono: null,
-        correo: "luishdezmtz12@gmail.com"
+        tipoDocumento: content.re_tipodocumento,
+        numDocumento: content.re_numdocumento,
+        nombre: content.re_name,
+        telefono: content.re_numero_telefono,
+        correo: content.re_correo_electronico
       },
       motivo: {
         tipoAnulacion: 2,
         motivoAnulacion: "Error en los datos del documento",
-        nombreResponsable: "LUIS ALONSO HERNANDEZ MAGAÑA",
-        tipDocResponsable: "13",
-        numDocResponsable: "063842754",
-        nombreSolicita: "LUIS ALONSO HERNANDEZ MAGAÑA",
-        tipDocSolicita: "13",
-        numDocSolicita: "063842754"
+        nombreResponsable: user.name,
+        tipDocResponsable: "36",
+        numDocResponsable: user.nit,
+        nombreSolicita: user.name,
+        tipDocSolicita: "36",
+        numDocSolicita: user.nit
       }
     };
     
@@ -332,12 +336,12 @@ const FacturaInvalidate = ({ key, content, user }) => {
       return
     }
 
-    const parseintversion = parseInt(content.version);
+    ;
 
     const dataSend = { /* TODO: SEND */
       ambiente: content.ambiente,
       idEnvio: content.id_envio,/* let see if it neccesary to increment */
-      version: parseintversion,
+      version: invalidation_obj.identificacion.version,
       documento: firmtoken,
     };
 
@@ -346,13 +350,15 @@ const FacturaInvalidate = ({ key, content, user }) => {
     console.log(callMH);
 
     if (callMH.estado === "PROCESADO") {
+    setIsLoading(false);
+
       toast.success("Factura invalidada con éxito");
 
     const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
     console.log("deleted");
     console.log(response);
     if (response.message === "plantilla eliminado") {
-      toast.success("Plantilla eliminada");
+      toast.success("Factura eliminada con éxito");
       /* wait 5 seconds */
       setTimeout(() => {
         window.location.reload();
@@ -366,6 +372,8 @@ const FacturaInvalidate = ({ key, content, user }) => {
     }
 
     if (callMH.estado === "RECHAZADO") {
+    setIsLoading(false);
+
       toast.error(`RECHAZADO ${callMH.descripcionMsg}`);
       console.log(callMH.observaciones);
       for (let i = 0; i < callMH.observaciones.length; i++) {
@@ -392,7 +400,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
   ) : (
     <div className="self-center flex   w-full flex-row">
       <button
-        onClick={SendBillHandler}
+        onClick={SendBillHandlerNoSend}
         className={`cursor-pointer  h-12 w-full [border:none] justify-center items-center ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
       >
         <h1>No enviada</h1>
@@ -467,6 +475,12 @@ const FacturaInvalidate = ({ key, content, user }) => {
         pauseOnHover
         theme="light"
       />
+
+{isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="loader"></div>
+        </div>
+      )}
     </div>
   );
 };
