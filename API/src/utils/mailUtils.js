@@ -926,6 +926,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         ]
                     };
                 }
+
                 if(userDB.id === 6){
                 const transporter = nodemailer.createTransport({
                     service: 'gmail',
