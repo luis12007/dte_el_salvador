@@ -1037,7 +1037,12 @@ const FrameComponent1 = ({ key, content, user }) => {
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        data.receptor.direccion = content.re_direccion;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
 
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
@@ -1049,7 +1054,12 @@ const FrameComponent1 = ({ key, content, user }) => {
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        data.receptor.direccion = content.re_direccion;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
 
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
@@ -1062,7 +1072,12 @@ const FrameComponent1 = ({ key, content, user }) => {
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        data.receptor.direccion = content.re_direccion;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
       }
 
       if (id_emisor == 7) {
@@ -1072,7 +1087,14 @@ const FrameComponent1 = ({ key, content, user }) => {
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        data.receptor.direccion = content.re_direccion;
+        console.log(content.re_direccion)
+
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
       }
 
       if (id_emisor > 8) {
