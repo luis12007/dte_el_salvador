@@ -64,6 +64,18 @@ const Firm = {
         const data = await res.json();
         return data;
     },
+
+    OSEGUEDA: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8460/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
 }
 
 export default Firm;
