@@ -53,7 +53,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 7) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -63,6 +63,8 @@ const sendPDF = async(req, res) => {
             const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
             pdfDoc.fontSize(18).fillColor('#1E3256')
                 .text(`Dr. ${name1} ${name2} ${name3} ${name4}`, 30, yscale, { align: 'left' })
+        } else if (userDB.id === 7) {
+
         } else {
             /* align in the middle of the left and center */
             pdfDoc.fontSize(18).fillColor('#1E3256')
@@ -81,6 +83,16 @@ const sendPDF = async(req, res) => {
         } else if (userDB.id === 4) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
+
+        } else if (userDB.id === 7) {
+            /* adding img */
+            const logo = path.join(__dirname, '../assets/imgs/osegueda.png');
+            pdfDoc.image(logo, 55, yscale - 60, { width: 190, height: 190 });
+
+            /* adding number 2563-9606 // 2207-4940 */
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('2563-9606', 50, yscale + 90, { align: 'left' })
+                .fontSize(15).text('2207-4940', 180, yscale + 90, { align: 'left' })
 
         } else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')

@@ -736,7 +736,8 @@ const CreateSubEx = () => {
             }; */
 
 
-
+        var totalamountfixed = parseFloat(subtotal) + parseFloat(iva);
+        var totalamount = totalamountfixed.toFixed(2);
         var selectedDepartmentnum = selectedDepartment;
         /* if num is only 1 digit will be 0(digit) or if it is 9 it will be 09, it id 12 will be 12 */
         if (selectedDepartmentnum < 10) {
@@ -816,7 +817,7 @@ const CreateSubEx = () => {
             cuerpoDocumento: Listitems,
             resumen: {
 
-                montoTotalOperacion: (subtotal + iva).toFixed(2), /* TODO */
+                montoTotalOperacion: totalamount,
                 descuExenta: 0,
                 totalDescu: 0,
                 subTotal: subtotal,

@@ -1029,6 +1029,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             pdfDoc.fontSize(18).fillColor('#1E3256')
 
             .text(`Dr. ${newname}`, 30, yscale, { align: 'left' })
+        } else if (userDB.id === 7) {
+
         } else {
             /* align in the middle of the left and center */
             pdfDoc.fontSize(18).fillColor('#1E3256')
@@ -1047,6 +1049,16 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         } else if (userDB.id === 4) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
+
+        } else if (userDB.id === 7) {
+            /* adding img */
+            const logo = path.join(__dirname, '../assets/imgs/osegueda.png');
+            pdfDoc.image(logo, 55, yscale - 60, { width: 190, height: 190 });
+
+            /* adding number 2563-9606 // 2207-4940 */
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('2563-9606', 50, yscale + 90, { align: 'left' })
+                .fontSize(15).text('2207-4940', 180, yscale + 90, { align: 'left' })
 
         } else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')

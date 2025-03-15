@@ -301,14 +301,21 @@ const FacturaInvalidate = ({ key, content, user }) => {
       console.log(responseFirm);
     }
 
-    if (id_emisor == 6 || id_emisor == 7) {
+    if (id_emisor == 6) {
       const responseFirm = await Firmservice.DR_VIDES(Firm);
       console.log("firm response")
       console.log(responseFirm);
       firmtoken = responseFirm.body;
     }
 
-    if (id_emisor > 7) {
+    if (id_emisor == 7) {
+      const responseFirm = await Firmservice.OSEGUEDA(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+    }
+
+    if (id_emisor > 8) {
       const responseFirm = null;
       toast.error("No se encontró firmador registrado");
       return
