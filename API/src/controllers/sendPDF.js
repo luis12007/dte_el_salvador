@@ -40,10 +40,10 @@ const sendPDF = async(req, res) => {
         } else if (plantillaDB.tipo === "14") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('FACTURA SUJETO EXCLUIDO', { align: 'center' });
 
-        }else if (plantillaDB.tipo === "05") {
+        } else if (plantillaDB.tipo === "05") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE CRÉDITO', { align: 'center' });
 
-        }else if (plantillaDB.tipo === "06") {
+        } else if (plantillaDB.tipo === "06") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE DEBITO', { align: 'center' });
 
         }
@@ -53,7 +53,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 7) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -63,6 +63,8 @@ const sendPDF = async(req, res) => {
             const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
             pdfDoc.fontSize(18).fillColor('#1E3256')
                 .text(`Dr. ${name1} ${name2} ${name3} ${name4}`, 30, yscale, { align: 'left' })
+        } else if (userDB.id === 7) {
+
         } else {
             /* align in the middle of the left and center */
             pdfDoc.fontSize(18).fillColor('#1E3256')
@@ -74,6 +76,24 @@ const sendPDF = async(req, res) => {
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
                 .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' })
                 .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
+        } else if (userDB.id === 6) {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+
+        } else if (userDB.id === 4) {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
+
+        } else if (userDB.id === 7) {
+            /* adding img */
+            const logo = path.join(__dirname, '../assets/imgs/osegueda.png');
+            pdfDoc.image(logo, 55, yscale - 60, { width: 190, height: 190 });
+
+            /* adding number 2563-9606 // 2207-4940 */
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('2563-9606', 50, yscale + 90, { align: 'left' })
+                .fontSize(15).text('2207-4940', 180, yscale + 90, { align: 'left' })
+
         } else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
@@ -160,16 +180,29 @@ const sendPDF = async(req, res) => {
         }
 
 
-        pdfDoc.fontSize(10).fillColor('#1E3256')
-            .font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
-            .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
-            .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
-            .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios médicos', infoX + 115, infoY + 70)
-            .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
-            .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
-            .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
-            .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
+        if (userDB.id === 4) {
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text("HM Clinic S.A de C.V", infoX + 122, infoY + 25)
+                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Clínicas médicas', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
+                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
 
+        } else {
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
+                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios médicos', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
+                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
+
+        }
         const truncatedNombreORazonSocialReceptor = truncateText(plantillaDB.re_name, 25);
         const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 37);
 
@@ -228,7 +261,7 @@ const sendPDF = async(req, res) => {
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
-        }else if (plantillaDB.tipo === "05") {
+        } else if (plantillaDB.tipo === "05") {
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
@@ -246,7 +279,7 @@ const sendPDF = async(req, res) => {
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
-        }else if (plantillaDB.tipo === "06") {
+        } else if (plantillaDB.tipo === "06") {
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
@@ -399,7 +432,7 @@ const sendPDF = async(req, res) => {
                 .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
-        }else if (plantillaDB.tipo === "05") {
+        } else if (plantillaDB.tipo === "05") {
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${IVAC.toFixed(2)}`, 300, y + 90, { align: 'right' })
@@ -411,7 +444,7 @@ const sendPDF = async(req, res) => {
                 .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${plantillaDB.montototaloperacion}`, 300, y + 190, { align: 'right' });
-        }else if (plantillaDB.tipo === "06") {
+        } else if (plantillaDB.tipo === "06") {
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${IVAC.toFixed(2)}`, 300, y + 90, { align: 'right' })

@@ -38,14 +38,14 @@ const FrameComponent1 = ({ key, content, user }) => {
       setTipo("Crédito Fiscal");
     } else if (content.tipo === "14") {
       setTipo("Sujeto Excluido");
-    }else if (content.tipo === "05") {
+    } else if (content.tipo === "05") {
       setTipo("Nota de Crédito");
     } else if (content.tipo === "06") {
       setTipo("Nota de Debito");
     }
-    
-    if (content.re_correo_electronico === "" 
-    || content.re_correo_electronico === null) {
+
+    if (content.re_correo_electronico === ""
+      || content.re_correo_electronico === null) {
       console.log("no email");
       setMailChecker(false);
     }
@@ -87,7 +87,7 @@ const FrameComponent1 = ({ key, content, user }) => {
         setItems(newItems);
 
       } else if (content.tipo === "01") {
-        
+
         if (data[0].tributos === null) {
           const newItems = data.map((item) => {
             const newItem = {
@@ -108,16 +108,16 @@ const FrameComponent1 = ({ key, content, user }) => {
               ventaExenta: item.ventaexenta,
               ventaNoSuj: item.ventanosuj,
               tipoItem: item.tipoitem,
-            } ;
+            };
             return newItem;
           });
-  
-  
+
+
           console.log(newItems);
           setItems(newItems);
-        }else{
+        } else {
           const newItems = data.map((item) => {
-            const arr = [] 
+            const arr = []
             arr.push(String(item.tributos))
             const newItem = {
               codTributo: item.codtributo,
@@ -137,16 +137,16 @@ const FrameComponent1 = ({ key, content, user }) => {
               ventaExenta: item.ventaexenta,
               ventaNoSuj: item.ventanosuj,
               tipoItem: item.tipoitem,
-            } ;
+            };
             return newItem;
           });
-  
-  
+
+
           console.log(newItems);
           setItems(newItems);
         }
 
-        
+
       } else if (content.tipo === "14") {
 
 
@@ -161,7 +161,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             descripcion: item.descripcion,
             cantidad: item.cantidad,
             tipoItem: item.tipoitem,
-          } ;
+          };
           return newItem;
         });
 
@@ -345,9 +345,9 @@ const FrameComponent1 = ({ key, content, user }) => {
       navigate(`/editar/CreditoFiscal/${content.codigo_de_generacion}`);
     } else if (content.tipo === "14") {
       navigate(`/editar/SujEx/${content.codigo_de_generacion}`);
-    }else if (content.tipo === "05") {
+    } else if (content.tipo === "05") {
       navigate(`/editar/NC/${content.codigo_de_generacion}`);
-    }else if (content.tipo === "06") {
+    } else if (content.tipo === "06") {
       navigate(`/editar/ND/${content.codigo_de_generacion}`);
     }
 
@@ -800,7 +800,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             fechaEmision: fechaEmision
           }],
           emisor: {
-            
+
             nit: user.nit,
             nrc: user.nrc,
             nombre: user.name,
@@ -915,7 +915,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             fechaEmision: fechaEmision
           }],
           emisor: {
-            
+
             nit: user.nit,
             nrc: user.nrc,
             nombre: user.name,
@@ -1037,7 +1037,12 @@ const FrameComponent1 = ({ key, content, user }) => {
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        data.receptor.direccion = content.re_direccion;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
 
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
@@ -1049,23 +1054,50 @@ const FrameComponent1 = ({ key, content, user }) => {
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        data.receptor.direccion = content.re_direccion;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
 
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
       }
 
-      if (id_emisor == 6 || id_emisor == 7) {
+      if (id_emisor == 6) {
         const responseFirm = await Firmservice.DR_VIDES(Firm);
         console.log("firm response")
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        data.receptor.direccion = content.re_direccion;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
       }
 
-      if (id_emisor > 7) {
+      if (id_emisor == 7) {
+        const responseFirm = await Firmservice.OSEGUEDA(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        console.log(content.re_direccion)
+
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor > 8) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return
@@ -1113,10 +1145,10 @@ const FrameComponent1 = ({ key, content, user }) => {
 
   const testmail = async () => {
 
-  if (content.re_correo_electronico === null || content.re_correo_electronico === "") {
+    if (content.re_correo_electronico === null || content.re_correo_electronico === "") {
       toast.error("el receptor no tiene correo electronico");
       return
-      
+
     }
     console.log("testmail");
     console.log("SendBillHandler");
@@ -1282,16 +1314,16 @@ const FrameComponent1 = ({ key, content, user }) => {
 
         if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
           toast.warning(`La factura ya fue enviada`);
-        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
           toast.info(`No se encontró firma`);
-        }else{
-        if (senddata.estado === "RECHAZADO")
-        toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-        console.log(senddata.observaciones);
-        for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.warning(`Observación ${i + 1} ${senddata.observaciones[i]}`);
+        } else {
+          if (senddata.estado === "RECHAZADO")
+            toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+          console.log(senddata.observaciones);
+          for (let i = 0; i < senddata.observaciones.length; i++) {
+            toast.warning(`Observación ${i + 1} ${senddata.observaciones[i]}`);
+          }
         }
-      }
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
 
@@ -1372,15 +1404,15 @@ const FrameComponent1 = ({ key, content, user }) => {
 
         if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
           toast.warning(`La factura ya fue enviada`);
-        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
           toast.info(`No se encontró firma`);
-        }else{
-        if (senddata.estado === "RECHAZADO")
-          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-        console.log(senddata.observaciones);
-        for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
-        }
+        } else {
+          if (senddata.estado === "RECHAZADO")
+            toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+          console.log(senddata.observaciones);
+          for (let i = 0; i < senddata.observaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          }
         }
 
         console.log("---------------resultado--------------");
@@ -1461,16 +1493,16 @@ const FrameComponent1 = ({ key, content, user }) => {
 
         if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
           toast.warning(`La factura ya fue enviada`);
-        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
           toast.info(`No se encontró firma`);
-        }else{
-        if (senddata.estado === "RECHAZADO")
-          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-        console.log(senddata.observaciones);
-        for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+        } else {
+          if (senddata.estado === "RECHAZADO")
+            toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+          console.log(senddata.observaciones);
+          for (let i = 0; i < senddata.observaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          }
         }
-      }
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
@@ -1547,20 +1579,20 @@ const FrameComponent1 = ({ key, content, user }) => {
           }, 9000);
         }
 
-          setIsLoading(false);
+        setIsLoading(false);
         if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
           toast.error(`La factura ya fue enviada`);
-        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
           toast.info(`No se encontró firma`);
-        }else{
-        if (senddata.estado === "RECHAZADO")
+        } else {
+          if (senddata.estado === "RECHAZADO")
 
-          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-        console.log(senddata.observaciones);
-        for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+            toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+          console.log(senddata.observaciones);
+          for (let i = 0; i < senddata.observaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          }
         }
-      }
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
@@ -1637,19 +1669,19 @@ const FrameComponent1 = ({ key, content, user }) => {
           }, 9000);
         }
 
-          setIsLoading(false);
+        setIsLoading(false);
         if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
           toast.error(`La factura ya fue enviada`);
-        }else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
           toast.info(`No se encontró firma`);
-        }else{
-        if (senddata.estado === "RECHAZADO")
-          toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-        console.log(senddata.observaciones);
-        for (let i = 0; i < senddata.observaciones.length; i++) {
-          toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+        } else {
+          if (senddata.estado === "RECHAZADO")
+            toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+          console.log(senddata.observaciones);
+          for (let i = 0; i < senddata.observaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          }
         }
-      }
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
@@ -1667,86 +1699,86 @@ const FrameComponent1 = ({ key, content, user }) => {
   // Determine the button color and additional content based on `content.firm`
   const buttonStyle = content.firm ? "bg-stone-200" : " bg-lightgreen";
 
-const firmbutton = content.firm ? (
-  <div className="flex w-1/5  self-start flex-row">
-    <button
-      onClick={ValidateBillHandler}
-      className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 w-full justify-center pr-3  ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
-    >
-      <img src={checkimg} alt="Tick" className="w-7 ml-1 h-7" />
-      <img src={signature} className="h-7 absolute opacity-30" alt="" />
+  const firmbutton = content.firm ? (
+    <div className="flex w-1/5  self-start flex-row">
+      <button
+        onClick={ValidateBillHandler}
+        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 w-full justify-center pr-3  ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+      >
+        <img src={checkimg} alt="Tick" className="w-7 ml-1 h-7" />
+        <img src={signature} className="h-7 absolute opacity-30" alt="" />
 
-    </button>
-  </div>
-) : (
-  <div className="flex w-1/5 flex-row">
-    <button
-      onClick={ValidateBillHandler}
-      className={`cursor-pointer h-12  [border:none] pt-[10.5px] w-full justify-center pr-1 ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
-    >
-      <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-        <img src={signature} className="h-7" alt="" />
-      </div>
-    </button>
-  </div>
-);
+      </button>
+    </div>
+  ) : (
+    <div className="flex w-1/5 flex-row">
+      <button
+        onClick={ValidateBillHandler}
+        className={`cursor-pointer h-12  [border:none] pt-[10.5px] w-full justify-center pr-1 ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+      >
+        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+          <img src={signature} className="h-7" alt="" />
+        </div>
+      </button>
+    </div>
+  );
 
-const sendedebutton = content.sellado ? (
-  <div className="self-center flex w-full flex-row">
-    <button
-      onClick={SendBillHandler}
-      className={`cursor-pointer h-12 [border:none] w-full pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-lg flex flex-row items-center justify-center z-[2] hover:bg-lightgray-100`}
-    >
+  const sendedebutton = content.sellado ? (
+    <div className="self-center flex w-full flex-row">
+      <button
+        onClick={SendBillHandler}
+        className={`cursor-pointer h-12 [border:none] w-full pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-lg flex flex-row items-center justify-center z-[2] hover:bg-lightgray-100`}
+      >
 
-      <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
-      <img src={direct} className="h-7 absolute opacity-30" alt="" />
+        <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
+        <img src={direct} className="h-7 absolute opacity-30" alt="" />
 
-      
 
-    </button>
-  </div>
-) : (
-  <div className="self-center flex  w-full flex-row">
-    <button
-      onClick={SendBillHandler}
-      className={`cursor-pointer h-12 w-full [border:none] justify-center items-center ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
-    >
-      <img src={direct} className="h-7" alt="" />
-    </button>
 
-    {isLoading && (
+      </button>
+    </div>
+  ) : (
+    <div className="self-center flex  w-full flex-row">
+      <button
+        onClick={SendBillHandler}
+        className={`cursor-pointer h-12 w-full [border:none] justify-center items-center ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+      >
+        <img src={direct} className="h-7" alt="" />
+      </button>
+
+      {isLoading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="loader"></div>
         </div>
       )}
 
 
-  </div>
-);
+    </div>
+  );
 
-const testbutton = content.sellado ? (
-  <div className="flex  w-1/5 flex-row">
-    <button
-      onClick={testmail}
-      className={`cursor-pointer h-12 [border:none] pt-[10px] w-full justify-center pr-2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
-    >
-      <img src={mailchecker ? checkimg : cross} alt={mailchecker ? "Tick" : "Cross"} className="w-[30px] h-[30px]" />
-      <img src={mailimg} className="h-7 absolute opacity-30" alt="" />
+  const testbutton = content.sellado ? (
+    <div className="flex  w-1/5 flex-row">
+      <button
+        onClick={testmail}
+        className={`cursor-pointer h-12 [border:none] pt-[10px] w-full justify-center pr-2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
+      >
+        <img src={mailchecker ? checkimg : cross} alt={mailchecker ? "Tick" : "Cross"} className="w-[30px] h-[30px]" />
+        <img src={mailimg} className="h-7 absolute opacity-30" alt="" />
 
-    </button>
-  </div>
-) : (
-  <div className="flex w-1/5   flex-row">
-    <button
-      onClick={testmail}
-      className={`cursor-pointer h-12  [border:none] pt-[8px] w-full justify-center pr-2.2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
-    >
-      <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-        <img src={mailimg} className="h-8 w-8" alt="" />
-      </div>
-    </button>
-  </div>
-);
+      </button>
+    </div>
+  ) : (
+    <div className="flex w-1/5   flex-row">
+      <button
+        onClick={testmail}
+        className={`cursor-pointer h-12  [border:none] pt-[8px] w-full justify-center pr-2.2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
+      >
+        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
+          <img src={mailimg} className="h-8 w-8" alt="" />
+        </div>
+      </button>
+    </div>
+  );
 
 
   /* Delete bill handler using the services */
@@ -1824,19 +1856,19 @@ const testbutton = content.sellado ? (
               src="/descargar@2x.png"
             />
           </button>
-          <button
-            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivecross ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
-            onClick={handelrisActivecross}
-          >
-            <img
-              className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
-              loading="lazy"
-              alt=""
-              /* import the img x.png from assets/img */
-              src={imgx}
-            />
-          </button>
-
+          {content.firm ? null : (
+            <button
+              className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivecross ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
+              onClick={handelrisActivecross}
+            >
+              <img
+                className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
+                loading="lazy"
+                alt=""
+                src={imgx}
+              />
+            </button>
+          )}
 
 
         </div>
@@ -1868,22 +1900,22 @@ const testbutton = content.sellado ? (
           </div>
           <div className="flex-1 flex w-full  pt-4 flex-col items-center justify-center gap-[8px_0px]">
             <button
-            className="cursor-pointer [border:none] px-3 py-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
+              className="cursor-pointer [border:none] px-3 py-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
               <b className="relative text-11xl font-inria-sans text-black text-left whitespace-nowrap z-[2]">
                 TOTAL: ${formattedTotal}
               </b>
             </button>
             <div className="w-full  flex pt-4 gap-[0px_12px]">
-    {firmbutton}
-    <div className="flex-grow flex justify-center">
-      {sendedebutton}
-    </div>
-    {testbutton}
-  </div>
+              {firmbutton}
+              <div className="flex-grow flex justify-center">
+                {sendedebutton}
+              </div>
+              {testbutton}
+            </div>
           </div>
         </div>
       </div>
-      
+
     </div>
   );
 };
