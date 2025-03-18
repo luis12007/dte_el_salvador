@@ -188,6 +188,7 @@ const ClietnBillCredit = ({
             <option value="86203">Servicios Médicos</option>
             <option value="73100">Publicidad</option>
             <option value="56101">Restaurantes</option>
+            <option value="52290">Servicios para el transporte ncp</option>
           </select>
             </div>
           </div>
