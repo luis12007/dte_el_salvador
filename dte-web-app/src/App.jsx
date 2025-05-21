@@ -29,6 +29,7 @@ import EditND from './pages/EditND';
 import BooksComponent from './components/BooksComponent';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CreateCR from './pages/CreateCR';
 
 /* http://localhost:3000/#/ingresar the example route */
 export default function App() {
@@ -58,6 +59,7 @@ export default function App() {
 
 {/* Others */}
         <Route path="/crear/sujeto_excluido" element={<Private><CreateSubEx/></Private>}/> 
+        <Route path="/crear/Comprobante_Retencion" element={<Private><CreateCR/></Private>}/> 
         <Route path="/crear/nota_credito" element={<Private><CreateNC/></Private>}/> 
         <Route path="/crear/Nota_debito" element={<Private><CreateND/></Private>}/> 
 

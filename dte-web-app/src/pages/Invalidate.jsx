@@ -47,6 +47,7 @@ const Invalidate = () => {
                 setItems(result || []); // Default to empty array
 
                 if (tokenminis === "undefined" || tokenminis === null) {
+                    if(resultusers.ambiente === "00"){
                     const resultAuthminis = await LoginAPI.loginMinis(
                         resultusers.nit,
                         resultusers.codigo_hacienda,
@@ -54,6 +55,17 @@ const Invalidate = () => {
                     );
                     console.log(resultAuthminis);
                     localStorage.setItem("tokenminis", resultAuthminis.body.token.slice(7));
+                } else {
+                    const resultAuthminis = await LoginAPI.loginMinis(
+                        resultusers.nit,
+                        resultusers.codigo_hacienda,
+                        "MysoftwareSv"
+                    );
+                    console.log(resultAuthminis);
+                    localStorage.setItem("tokenminis", resultAuthminis.body.token.slice(7));
+
+                }
+
                     /* reload */
                     window.location.reload();
                 }

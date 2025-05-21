@@ -290,8 +290,29 @@ const FacturaInvalidate = ({ key, content, user }) => {
       console.log("---------------resultado of firm server--------------");
       console.log(responseFirm);
     }
+    if (id_emisor == 9) {
+      const responseFirm = await Firmservice.HM_Clinic_prod(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+
+
+      console.log("---------------resultado of firm server--------------");
+      console.log(responseFirm);
+    }
     if (id_emisor == 5) {
       const responseFirm = await Firmservice.DR_julio_HM(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+
+
+      console.log("---------------resultado of firm server--------------");
+      console.log(responseFirm);
+    }
+
+    if (id_emisor == 8) {
+      const responseFirm = await Firmservice.DR_julio_HM_prod(Firm);
       console.log("firm response")
       console.log(responseFirm);
       firmtoken = responseFirm.body;
@@ -315,7 +336,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
       firmtoken = responseFirm.body;
     }
 
-    if (id_emisor > 8) {
+    if (id_emisor > 9) {
       const responseFirm = null;
       toast.error("No se encontró firmador registrado");
       return
@@ -332,14 +353,23 @@ const FacturaInvalidate = ({ key, content, user }) => {
     
 
     /* login to MH */
-    const resultAuthminis = await LoginAPI.loginMinis(
+    var resultAuthminis = {};
+    if (usuario.ambiente == "00") {
+    resultAuthminis = await LoginAPI.loginMinis(
       user.nit,
       user.codigo_hacienda,
       "MysoftwareSv"
     );
+    } else {
+    resultAuthminis = await LoginAPI.loginMinis_prod(
+      user.nit,
+      user.codigo_hacienda,
+      "MysoftwareSv"
+    );
+    }
     console.log(resultAuthminis);
     if (resultAuthminis.status != "OK") {
-      toast.success("Error eb ek nubusterui vuelve a intentar");
+      toast.error("Error en el login vuelve a intentar");
       return
     }
 
@@ -351,10 +381,19 @@ const FacturaInvalidate = ({ key, content, user }) => {
       version: invalidation_obj.identificacion.version,
       documento: firmtoken,
     };
+    var callMH = {};
+    if(usuario.ambiente == "00"){
 
-    const callMH = await SendAPI.invalidatebill(dataSend, resultAuthminis.body.token.slice(7));
+
+    callMH = await SendAPI.invalidatebill(dataSend, resultAuthminis.body.token.slice(7));
     console.log("callMH");
     console.log(callMH);
+    } else {
+    callMH = await SendAPI.invalidatebillprod(dataSend, resultAuthminis.body.token.slice(7));
+      console.log("callMH");
+    console.log(callMH);
+    }
+
 
     if (callMH.estado === "PROCESADO") {
     setIsLoading(false);

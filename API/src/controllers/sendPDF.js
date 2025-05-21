@@ -53,7 +53,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -80,7 +80,7 @@ const sendPDF = async(req, res) => {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
 
-        } else if (userDB.id === 4) {
+        } else if (userDB.id === 4 || userDB.id === 9) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
 
@@ -180,7 +180,7 @@ const sendPDF = async(req, res) => {
         }
 
 
-        if (userDB.id === 4) {
+        if (userDB.id === 4 || userDB.id === 9) {
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text("HM Clinic S.A de C.V", infoX + 122, infoY + 25)
                 .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)

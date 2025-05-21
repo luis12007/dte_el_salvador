@@ -670,6 +670,8 @@ const Clientes = () => {
       navigate("/crear/nota_credito");
     } else if (selectedValue === "ND") {
       navigate("/crear/Nota_debito");
+    } else if (selectedValue === "CR") {
+      navigate("/crear/Comprobante_Retencion");
     }
   };
 
@@ -902,6 +904,7 @@ const Clientes = () => {
             <option value="SU">Factura de Sujeto Excluido</option>
             <option value="NC">Nota de Crédito</option>
             <option value="ND">Nota de Débito</option>
+
           </select>
           {/* Your other elements */}
         </div>

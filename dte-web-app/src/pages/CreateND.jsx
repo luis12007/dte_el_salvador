@@ -1126,6 +1126,8 @@ const CreateND = () => {
       navigate("/crear/nota_credito");
     } else if (selectedValue === "ND") {
       navigate("/crear/Nota_debito");
+    }else if (selectedValue === "CR") {
+      navigate("/crear/Comprobante_Retencion");
     }
   };
 
@@ -1379,6 +1381,7 @@ const CreateND = () => {
             <option value="CF">Comprobante Crédito Fiscal</option>
             <option value="SU">Factura de Sujeto Excluido</option>
             <option value="NC">Nota de Crédito</option>
+
 
           </select>
           {/* Your other elements */}
