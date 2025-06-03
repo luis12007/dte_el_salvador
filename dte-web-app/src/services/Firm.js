@@ -30,6 +30,8 @@ const Firm = {
     // calling other endpoints for other clients
 
     HM_Clinic: async(firm) => {
+        console.log("HM_Clinic");
+        console.log(firm);
         const res = await fetch(`${BASE_URL_Firm}/port444/`, {
             method: 'POST',
             headers: {
@@ -42,6 +44,8 @@ const Firm = {
     },
 
     DR_julio_HM: async(firm) => {
+        console.log("DR_julio_HM");
+        console.log(firm);
         const res = await fetch(`${BASE_URL_Firm}/port444/`, {
             method: 'POST',
             headers: {
@@ -54,6 +58,8 @@ const Firm = {
     },
 
     DR_VIDES: async(firm) => {
+        console.log("DR_VIDES");
+        console.log(firm);
         const res = await fetch(`${BASE_URL_Firm}/port444/`, {
             method: 'POST',
             headers: {
@@ -76,6 +82,32 @@ const Firm = {
         const data = await res.json();
         return data;
     },
+
+    HM_Clinic_prod: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    DR_julio_HM_prod: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+
 }
 
 export default Firm;

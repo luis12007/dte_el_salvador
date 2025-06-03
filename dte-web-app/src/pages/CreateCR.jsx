@@ -13,8 +13,9 @@ import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ClientSubExCreate from "../components/ClientSubExCreate";
+import ClientCRCreate from "../components/ClientCRCreate ";
 
-const CreateSubEx = () => {
+const CreateCR = () => {
     const [selectedOption, setSelectedOption] = useState("");
     const [CF, setCF] = useState(false);
     const [Items, setItems] = useState(false);
@@ -1214,6 +1215,7 @@ const CreateSubEx = () => {
                         <option value="CF">Comprobante Crédito Fiscal</option>
                         <option value="NC">Nota de Crédito</option>
                         <option value="ND">Nota de Débito</option>
+                        <option value="CR">Comprobante de Retención</option>
 
                     </select>
                     {/* Your other elements */}
@@ -1257,7 +1259,7 @@ const CreateSubEx = () => {
                 </div>
             </section>
 
-            <ClientSubExCreate
+            <ClientCRCreate
                 handleSelectChangeCFClient={handleSelectChangeCFClient}
                 setClient={setClient}
                 client={client}
@@ -1327,4 +1329,4 @@ const CreateSubEx = () => {
     );
 };
 
-export default CreateSubEx;
+export default CreateCR;

@@ -1047,8 +1047,43 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
       }
+      if (id_emisor == 9) {
+        const responseFirm = await Firmservice.HM_Clinic_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+      }
       if (id_emisor == 5) {
         const responseFirm = await Firmservice.DR_julio_HM(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+      }
+
+      if (id_emisor == 8) {
+        const responseFirm = await Firmservice.DR_julio_HM_prod(Firm);
         console.log("firm response")
         console.log(responseFirm);
         data.firma = responseFirm.body;
@@ -1097,7 +1132,7 @@ const FrameComponent1 = ({ key, content, user }) => {
         }
       }
 
-      if (id_emisor > 8) {
+      if (id_emisor > 9) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return
@@ -1249,18 +1284,34 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log(dataSend);
 
         /* ADD token minis */
-        const resultAuthminis = await LoginAPI.loginMinis(
+        var resultAuthminis = null;
+        if(user.ambiente == "00"){
+        resultAuthminis = await LoginAPI.loginMinis(
           user.nit,
           user.codigo_hacienda,
           "MysoftwareSv"
         );
+      } else {
+        resultAuthminis = await LoginAPI.loginMinis_prod(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+      }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
-          toast.success("Error eb ek nubusterui vuelve a intentar");
+          toast.success("Error en la autenticación, vuelve a intentar");
           return
         }
-        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+
+        var senddata = null;
+        if (user.ambiente == "00") {
+        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
         console.log(senddata);
+        } else {
+          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          console.log(senddata);
+        }
 
 
 
@@ -1351,14 +1402,35 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log(dataSend);
 
         /* ADD token minis */
-        const resultAuthminis = await LoginAPI.loginMinis(
+        var resultAuthminis = null;
+        if(user.ambiente == "00"){
+        resultAuthminis = await LoginAPI.loginMinis(
           user.nit,
           user.codigo_hacienda,
           "MysoftwareSv"
         );
+      } else {
+        resultAuthminis = await LoginAPI.loginMinis_prod(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+      }
         console.log(resultAuthminis);
-        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        if (resultAuthminis.status != "OK") {
+          toast.success("Error en la autenticación, vuelve a intentar");
+          return
+        }
+
+        var senddata = null;
+        if (user.ambiente == "00") {
+        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
         console.log(senddata);
+        } else {
+          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          console.log(senddata);
+        }
+
 
 
         if (senddata.estado === "PROCESADO") {
@@ -1440,14 +1512,34 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log(dataSend);
 
         /* ADD token minis */
-        const resultAuthminis = await LoginAPI.loginMinis(
+        var resultAuthminis = null;
+        if(user.ambiente == "00"){
+        resultAuthminis = await LoginAPI.loginMinis(
           user.nit,
           user.codigo_hacienda,
           "MysoftwareSv"
         );
+      } else {
+        resultAuthminis = await LoginAPI.loginMinis_prod(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+      }
         console.log(resultAuthminis);
-        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        if (resultAuthminis.status != "OK") {
+          toast.success("Error en la autenticación, vuelve a intentar");
+          return
+        }
+
+        var senddata = null;
+        if (user.ambiente == "00") {
+        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
         console.log(senddata);
+        } else {
+          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          console.log(senddata);
+        }
 
 
         if (senddata.estado === "PROCESADO") {
@@ -1529,14 +1621,35 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log(dataSend);
 
         /* ADD token minis */
-        const resultAuthminis = await LoginAPI.loginMinis(
+        /* ADD token minis */
+        var resultAuthminis = null;
+        if(user.ambiente == "00"){
+        resultAuthminis = await LoginAPI.loginMinis(
           user.nit,
           user.codigo_hacienda,
           "MysoftwareSv"
         );
+      } else {
+        resultAuthminis = await LoginAPI.loginMinis_prod(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+      }
         console.log(resultAuthminis);
-        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        if (resultAuthminis.status != "OK") {
+          toast.success("Error en la autenticación, vuelve a intentar");
+          return
+        }
+
+        var senddata = null;
+        if (user.ambiente == "00") {
+        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
         console.log(senddata);
+        } else {
+          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          console.log(senddata);
+        }
 
 
         if (senddata.estado === "PROCESADO") {
@@ -1619,14 +1732,35 @@ const FrameComponent1 = ({ key, content, user }) => {
         console.log(dataSend);
 
         /* ADD token minis */
-        const resultAuthminis = await LoginAPI.loginMinis(
+        var resultAuthminis = null;
+        if(user.ambiente == "00"){
+        resultAuthminis = await LoginAPI.loginMinis(
           user.nit,
           user.codigo_hacienda,
           "MysoftwareSv"
         );
+      } else {
+        resultAuthminis = await LoginAPI.loginMinis_prod(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+      }
         console.log(resultAuthminis);
-        const senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        if (resultAuthminis.status != "OK") {
+          toast.success("Error en la autenticación, vuelve a intentar");
+          return
+        }
+
+        var senddata = null;
+        if (user.ambiente == "00") {
+        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
         console.log(senddata);
+        } else {
+          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          console.log(senddata);
+        }
+
 
 
         if (senddata.estado === "PROCESADO") {

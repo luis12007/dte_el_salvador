@@ -871,12 +871,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                } else if (userDB.id === 5 || userDB.id === 4) {
+                } else if (userDB.id === 6) {
                     mailOptions = {
-                        from: 'mysoftwaresv@gmail.com',
+                        from: 'renovare23sv@gmail.com',
                         to: plantillaDB.re_correo_electronico,
                         subject: `DTE de parte de ${user.name}`,
-                        html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
+                        html: '<h3>¡DTE facturacion electronica Renovare!</h3>',
                         attachments: [{
                                 filename: 'DTE.pdf',
                                 path: pdfPath,
@@ -889,12 +889,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                } else if (userDB.id === 6) {
+                } else if (userDB.id === 4 || userDB.id === 5 || userDB.id === 8 || userDB.id === 9) {
                     mailOptions = {
-                        from: 'renovare23sv@gmail.com',
+                        from: 'Hmclinicmail@gmail.com',
                         to: plantillaDB.re_correo_electronico,
                         subject: `DTE de parte de ${user.name}`,
-                        html: '<h3>¡DTE facturacion electronica Renovare!</h3>',
+                        html: '<h3>¡DTE facturacion electronica!</h3>',
                         attachments: [{
                                 filename: 'DTE.pdf',
                                 path: pdfPath,
@@ -965,6 +965,26 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             fs.unlinkSync(pdfPath);
                         }
                     });
+                } else if (userDB.id === 4 || userDB.id === 5 || userDB.id === 8 || userDB.id === 9) {
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'Hmclinicmail@gmail.com',
+                            pass: 'nlsf izzt siiy sxnr'
+                        }
+                    });
+
+                    // Send email
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            console.error('Error sending email:', error);
+                        } else {
+                            console.log('Email sent:', info.response);
+                            // Delete the files after sending the email
+                            fs.unlinkSync(jsonPath);
+                            fs.unlinkSync(pdfPath);
+                        }
+                    });
                 } else {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',
@@ -1018,7 +1038,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add Doctor's information
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
@@ -1046,7 +1066,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
 
-        } else if (userDB.id === 4) {
+        } else if (userDB.id === 4 || userDB.id === 9) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
 
@@ -1159,7 +1179,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             userDB.tipoestablecimiento = "Predio y/o patio";
         }
 
-        if (userDB.id === 4) {
+        if (userDB.id === 4 || userDB.id === 9) {
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text("HM Clinic S.A de C.V", infoX + 122, infoY + 25)
                 .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)

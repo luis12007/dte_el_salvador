@@ -1145,6 +1145,8 @@ const CrearCreditoFiscal = () => {
       navigate("/crear/nota_credito");
     }else if (selectedValue === "ND") {
       navigate("/crear/Nota_debito");
+    }else if (selectedValue === "CR") {
+      navigate("/crear/Comprobante_Retencion");
     }
   };
 
