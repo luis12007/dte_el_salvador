@@ -1115,6 +1115,36 @@ const FrameComponent1 = ({ key, content, user }) => {
         }
       }
 
+      if (id_emisor == 10) {
+        const responseFirm = await Firmservice.DR_VIDES_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 11) {
+        const responseFirm = await Firmservice.SANDR_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
       if (id_emisor == 7) {
         const responseFirm = await Firmservice.OSEGUEDA(Firm);
         console.log("firm response")
@@ -1132,7 +1162,22 @@ const FrameComponent1 = ({ key, content, user }) => {
         }
       }
 
-      if (id_emisor > 9) {
+      if (id_emisor == 12) {
+        const responseFirm = await Firmservice.OSEGUEDA_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor > 12) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return

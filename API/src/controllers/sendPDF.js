@@ -53,7 +53,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 11) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -63,7 +63,7 @@ const sendPDF = async(req, res) => {
             const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
             pdfDoc.fontSize(18).fillColor('#1E3256')
                 .text(`Dr. ${name1} ${name2} ${name3} ${name4}`, 30, yscale, { align: 'left' })
-        } else if (userDB.id === 7) {
+        } else if (userDB.id === 7 || userDB.id === 12) {
 
         } else {
             /* align in the middle of the left and center */
@@ -76,7 +76,7 @@ const sendPDF = async(req, res) => {
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
                 .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' })
                 .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
-        } else if (userDB.id === 6) {
+        } else if (userDB.id === 6  || userDB.id === 10 ) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
 
@@ -84,7 +84,7 @@ const sendPDF = async(req, res) => {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
 
-        } else if (userDB.id === 7) {
+        } else if (userDB.id === 7 || userDB.id === 12) {
             /* adding img */
             const logo = path.join(__dirname, '../assets/imgs/osegueda.png');
             pdfDoc.image(logo, 55, yscale - 60, { width: 190, height: 190 });

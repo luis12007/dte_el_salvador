@@ -107,6 +107,45 @@ const Firm = {
         return data;
     },
 
+    DR_VIDES_prod: async(firm) => {
+        console.log("DR_VIDES");
+        console.log(firm);
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    OSEGUEDA_prod: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    SANDR_prod: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+
 
 }
 
