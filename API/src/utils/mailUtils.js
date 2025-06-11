@@ -925,26 +925,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                } else {
-                    mailOptions = {
-                        from: 'mysoftwaresv@gmail.com',
-                        to: plantillaDB.re_correo_electronico,
-                        subject: `DTE de parte de ${user.name}`,
-                        html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
-                        attachments: [{
-                                filename: 'DTE.pdf',
-                                path: pdfPath,
-                                encoding: 'base64'
-                            },
-                            {
-                                filename: 'DTE.json', // Name of the JSON file
-                                path: jsonPath, // Path to the JSON file
-                                encoding: 'base64'
-                            }
-                        ]
-                    };
-                }
-
+                } 
                 if (userDB.id === 6 || userDB.id === 10) {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',
@@ -985,7 +966,28 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             fs.unlinkSync(pdfPath);
                         }
                     });
-                } else {
+                } else if (userDB.id === 7) {
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'mysoftwaresv@gmail.com',
+                            pass: 'ajbh eozh iltf oinf'
+                        }
+                    });
+
+                    // Send email
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            console.error('Error sending email:', error);
+                        } else {
+                            console.log('Email sent:', info.response);
+                            // Delete the files after sending the email
+                            fs.unlinkSync(jsonPath);
+                            fs.unlinkSync(pdfPath);
+                        }
+                    });
+                } 
+                else {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
