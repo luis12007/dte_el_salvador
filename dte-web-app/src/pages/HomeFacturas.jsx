@@ -44,10 +44,17 @@ const HomeFacturas = () => {
         const result = await PlantillaAPI.getByUserId(user_id, token);
         console.log("result");
         console.log(result);
-        /* organize the results by fecha_y_hora_de_generacion desc*/
-        result.sort((a, b) => {
-          return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
-        });
+        
+        /* organize the results by fecha_y_hora_de_generacion desc with better sorting */
+        if (result && Array.isArray(result)) {
+          result.sort((a, b) => {
+            // Create full datetime for comparison
+            const dateA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
+            const dateB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
+            return dateB - dateA; // Newest first
+          });
+        }
+        
         setItems(result || []); // Default to empty array
 
         if (result !== null || result.length) {
@@ -109,8 +116,16 @@ const HomeFacturas = () => {
     console.log('Exporting to Excel...');
     console.log(items)
 
-    const transformedData = items.map((item, index) => ({
+    // Sort items by datetime before exporting to maintain order in Excel
+    const sortedItems = [...items].sort((a, b) => {
+      const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
+      const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
+      return dateTimeB - dateTimeA; // Newest first
+    });
+
+    const transformedData = sortedItems.map((item, index) => ({
       'FECHA DE EMISIÓN DEL DOCUMENTO': item.fecha_y_hora_de_generacion,
+      'HORA DE EMISIÓN': item.horemi || '00:00:00',
       'NÚMERO DE CORRELATIVO PREEIMPRESO': item.codigo_de_generacion,
       'NOMBRE EMISOR': user.name,
       'DOCUMENTO EMISOR': user.nit,
@@ -124,21 +139,21 @@ const HomeFacturas = () => {
     }));
 
     const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Facturas');
+    const worksheet = workbook.addWorksheet('Facturas');
     const { firstDate, mostRecentDate } = findFirstAndMostRecentDate(items);
 
-        // Add header rows
-        const headerRows = [
-          ['Reporte de facturas'],
-          [`${user.name}`],
-          [`Fecha del ${formatDateToLetters(firstDate)} al ${formatDateToLetters(mostRecentDate)}`],
-          [''], // Empty row for spacing
-        ];
+    // Add header rows
+    const headerRows = [
+      ['Reporte de facturas'],
+      [`${user.name}`],
+      [`Fecha del ${formatDateToLetters(firstDate)} al ${formatDateToLetters(mostRecentDate)}`],
+      [''], // Empty row for spacing
+    ];
 
-        // Add and style each header row
+    // Add and style each header row
     headerRows.forEach((row, index) => {
       const excelRow = worksheet.addRow(row);
-      worksheet.mergeCells(`A${index + 1}:K${index + 1}`);
+      worksheet.mergeCells(`A${index + 1}:L${index + 1}`); // Updated to L to include hour column
 
       // Style the merged cell
       const cell = worksheet.getCell(`A${index + 1}`);
@@ -173,10 +188,9 @@ const HomeFacturas = () => {
       excelRow.height = index === 0 ? 30 : 25;
     });
 
-
-      
     const tableHeaders = [
-      `FECHA DE EMISIÓN DEL DOCUMENTO`,
+      'FECHA DE EMISIÓN DEL DOCUMENTO',
+      'HORA DE EMISIÓN',
       'NÚMERO DE CORRELATIVO PREEIMPRESO',
       'NOMBRE EMISOR',
       'DOCUMENTO EMISOR',
@@ -217,7 +231,6 @@ const HomeFacturas = () => {
       };
     });
 
-
     // Add data rows
     transformedData.forEach((rowData) => {
       const row = worksheet.addRow(Object.values(rowData));
@@ -239,9 +252,9 @@ const HomeFacturas = () => {
 
     const totals = calculateTotals(transformedData);
 
-    // Add summary section
-    const summaryRows = [ /* Total agravado */
-      ['', '', '', '', '', 'TOTAL', totals.exentas, totals.agravadas, totals.iva, totals.retencion, totals.grantotal]
+    // Add summary section (updated to account for hour column)
+    const summaryRows = [
+      ['', '', '', '', '', '', 'TOTAL', totals.exentas, totals.agravadas, totals.iva, totals.retencion, totals.grantotal]
     ];
 
     // Add and style summary rows
@@ -249,7 +262,7 @@ const HomeFacturas = () => {
       const summaryRow = worksheet.addRow(row);
       // Apply styles to cells
       summaryRow.eachCell((cell, colNumber) => {
-        if (colNumber > 5) {
+        if (colNumber > 6) { // Updated from 5 to 6 to account for hour column
         let borderStyle = {
           top: { style: 'thin', color: { argb: 'FF000000' } },
           left: { style: 'thin', color: { argb: 'FF000000' } },
@@ -264,19 +277,19 @@ const HomeFacturas = () => {
         if (index === summaryRows.length - 1) {
           borderStyle.bottom.style = 'medium';
         }
-        if (colNumber === 2) {
+        if (colNumber === 7) { // Updated from 2 to 7
           borderStyle.left.style = 'medium';
         }
-        if (colNumber === 9) {
+        if (colNumber === 12) { // Updated from 9 to 12
           borderStyle.right.style = 'medium';
         }
         cell.style = {
           font: {
-            bold: index === 0 || colNumber === 2,
+            bold: index === 0 || colNumber === 7, // Updated from 2 to 7
             size: index === 0 ? 12 : 11,
           },
           alignment: {
-            horizontal: index === 0 ? 'center' : (colNumber === 2 ? 'left' : (colNumber === 3 ? 'right' : 'center')),
+            horizontal: index === 0 ? 'center' : (colNumber === 7 ? 'left' : (colNumber === 8 ? 'right' : 'center')), // Updated column numbers
             vertical: 'middle',
           },
           border: borderStyle
@@ -288,41 +301,39 @@ const HomeFacturas = () => {
       summaryRow.height = 25;
     });
 
-    // Set column widths for better readability
+    // Set column widths for better readability (updated to include hour column)
     worksheet.columns = [
-      { width: 15 },
-      { width: 40 },
-      { width: 30 }, 
-      { width: 20 },
-      { width: 30 },
-      { width: 20 }, 
-      { width: 10 }, 
-      { width: 15 },
-      { width: 12 }, 
-      { width: 12 }, 
-      { width: 12 }, 
-      { width: 15 }
+      { width: 15 }, // Date
+      { width: 12 }, // Hour
+      { width: 40 }, // Correlativo
+      { width: 30 }, // Emisor name
+      { width: 20 }, // Emisor doc
+      { width: 30 }, // Cliente name
+      { width: 20 }, // Cliente doc
+      { width: 10 }, // Exentas
+      { width: 15 }, // Gravadas
+      { width: 12 }, // IVA
+      { width: 12 }, // Retención
+      { width: 15 }  // Total
     ];
 
     // Generate and save the file
-        try {
-          const buffer = await workbook.xlsx.writeBuffer();
-          const blob = new Blob([buffer], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          });
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `Reporte de Facturas - ${user.name}.xlsx`;
-          link.click();
-          window.URL.revokeObjectURL(url);
-          toast.success("Reporte de Facturas creado con éxito");
-        } catch (error) {
-          console.error("Error generating Excel file:", error);
-          toast.error("Error al crear el Reporte de Facturas");
-        }
-    
-
+    try {
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Reporte de Facturas - ${user.name}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success("Reporte de Facturas creado con éxito");
+    } catch (error) {
+      console.error("Error generating Excel file:", error);
+      toast.error("Error al crear el Reporte de Facturas");
+    }
   };
 
   const calculateTotals = (data) => {
@@ -355,10 +366,13 @@ const HomeFacturas = () => {
       return acc;
     }, {});
 
-    // Sort items within each date group by time (newest first)
+    // Sort items within each date group by full datetime (newest first)
     Object.keys(grouped).forEach(date => {
       grouped[date].sort((a, b) => {
-        return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
+        // Create full datetime for precise sorting
+        const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
+        const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
+        return dateTimeB - dateTimeA; // Newest first within the same date
       });
     });
 
@@ -367,9 +381,11 @@ const HomeFacturas = () => {
 
   const groupedItems = groupItemsByDate(items);
 
-  // Sort the grouped dates by newest first
+  // Sort the grouped dates by newest first with better date parsing
   const sortedGroupedDates = Object.keys(groupedItems).sort((a, b) => {
-    return new Date(b) - new Date(a);
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateB - dateA; // Newest dates first
   });
 
   /* function to transform format date in text separete by year moth and day in spanish  input 2025-01-02 output 1 de agosto de 2025*/
@@ -440,10 +456,13 @@ const HomeFacturas = () => {
         newItems = await PlantillaAPI.getByUserIdAndType(user_id, token, filterData.value);
       }
       
-      // Sort filtered items by fecha_y_hora_de_generacion desc
+      // Sort filtered items by fecha_y_hora_de_generacion and horemi desc
       if (newItems && Array.isArray(newItems)) {
         newItems.sort((a, b) => {
-          return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
+          // Create full datetime for precise sorting
+          const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
+          const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
+          return dateTimeB - dateTimeA; // Newest first
         });
       }
       
@@ -532,11 +551,14 @@ const HomeFacturas = () => {
                   <div className="flex items-center justify-center my-4 rounded-lg">
                     <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300 hover:scale-105 transition-transform duration-200">
                       <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">{date}</span>
-                      <div>{transformDate(date)}</div>
+                      <div className="text-sm text-gray-600">{transformDate(date)}</div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        {groupedItems[date].length} factura{groupedItems[date].length !== 1 ? 's' : ''}
+                      </div>
                     </div>
                   </div>
                   {groupedItems[date].map((content, itemIndex) => (
-                    <div key={itemIndex}>
+                    <div key={`${content.codigo_de_generacion}-${itemIndex}`} className="animate-fadeInUp" style={{animationDelay: `${itemIndex * 0.1}s`}}>
                       <FacturaUnSend content={content} user={user} />
                     </div>
                   ))}
