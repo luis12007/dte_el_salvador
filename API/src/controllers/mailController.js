@@ -66,7 +66,7 @@ const sendMailFacturaOsegueda = async(req, res) => {
         console.log(plantillaDB);
 
 
-        const response = sendMail.sendMailOsegueda(user, plantillaDB, items);
+        const response = sendMailOsegueda.sendMailOsegueda(user, plantillaDB, items);
         console.log(response);
         console.log("Email sent");
 
