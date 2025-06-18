@@ -1245,7 +1245,23 @@ const FrameComponent1 = ({ key, content, user }) => {
       return
     }
 
-    console.log("---------------enviando--------------");
+    if(id_emisor == 7 || id_emisor == 12){
+      console.log("---------------enviando--------------");
+    console.log(content);
+    console.log(token);
+    console.log(id_emisor);
+    const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+
+    console.log("---------------resultado de mail--------------");
+    console.log(sendEmailFactura);
+
+    if (sendEmailFactura.message === "Email sent") {
+      toast.success("Email enviado");
+    } else {
+      toast.error("No enviado problema");
+    }
+    } else {
+      console.log("---------------enviando--------------");
     console.log(content);
     console.log(token);
     console.log(id_emisor);
@@ -1258,6 +1274,7 @@ const FrameComponent1 = ({ key, content, user }) => {
       toast.success("Email enviado");
     } else {
       toast.error("No enviado problema");
+    }
     }
 
 
@@ -1397,7 +1414,7 @@ const FrameComponent1 = ({ key, content, user }) => {
           if (sendEmailFactura.message === "Email sent") {
             toast.success("Email enviado");
           } else {
-            toast.error("No enviado problema");
+            toast.error("No enviado, problema");
           }
           /* wait for 5 seconds */
           setTimeout(() => {
@@ -1524,6 +1541,27 @@ const FrameComponent1 = ({ key, content, user }) => {
             return
           }
 
+          if (id_emisor == 7 || id_emisor == 12) {
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado, problema");
+          }
+          /* wait for 5 seconds */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 9000);
+        } else {
           console.log("---------------enviando email--------------");
           console.log(content);
           console.log(token);
@@ -1533,11 +1571,17 @@ const FrameComponent1 = ({ key, content, user }) => {
           console.log("---------------resultado de mail--------------");
           console.log(sendEmailFactura);
 
-          /*  window.location.reload(); */
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado problema");
+          }
+          /* wait for 5 seconds */
           setTimeout(() => {
             window.location.reload();
 
           }, 9000);
+        }
         }
         setIsLoading(false);
 
@@ -1633,6 +1677,22 @@ const FrameComponent1 = ({ key, content, user }) => {
             return
           }
 
+          if(id_emisor == 7 || id_emisor == 12){
+            console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          /*  window.location.reload(); */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 9000);
+          } else {
           console.log("---------------enviando email--------------");
           console.log(content);
           console.log(token);
@@ -1647,6 +1707,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             window.location.reload();
 
           }, 9000);
+          }
         }
         setIsLoading(false);
 
@@ -1743,6 +1804,27 @@ const FrameComponent1 = ({ key, content, user }) => {
             return
           }
 
+          if (id_emisor == 7 || id_emisor == 12) {
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado, problema");
+          }
+          /* wait for 5 seconds */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 9000);
+        } else {
           console.log("---------------enviando email--------------");
           console.log(content);
           console.log(token);
@@ -1752,11 +1834,17 @@ const FrameComponent1 = ({ key, content, user }) => {
           console.log("---------------resultado de mail--------------");
           console.log(sendEmailFactura);
 
-          /*  window.location.reload(); */
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado problema");
+          }
+          /* wait for 5 seconds */
           setTimeout(() => {
             window.location.reload();
 
           }, 9000);
+        }
         }
 
         setIsLoading(false);
@@ -1854,6 +1942,27 @@ const FrameComponent1 = ({ key, content, user }) => {
             return
           }
 
+          if (id_emisor == 7 || id_emisor == 12) {
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado, problema");
+          }
+          /* wait for 5 seconds */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 9000);
+        } else {
           console.log("---------------enviando email--------------");
           console.log(content);
           console.log(token);
@@ -1863,11 +1972,17 @@ const FrameComponent1 = ({ key, content, user }) => {
           console.log("---------------resultado de mail--------------");
           console.log(sendEmailFactura);
 
-          /*  window.location.reload(); */
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado problema");
+          }
+          /* wait for 5 seconds */
           setTimeout(() => {
             window.location.reload();
 
           }, 9000);
+        }
         }
 
         setIsLoading(false);
