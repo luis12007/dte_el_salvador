@@ -58,8 +58,9 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
                 <option value="13">DUI</option>
                 <option value="36">NIT </option>
                 <option value="03">Pasaporte</option>
+                <option value="37">Otro</option>
                 {/* <option value="02">Carnet de residencia</option>
-                <option value="37">Otro</option> */}
+                 */}
               </select>
               <div className="h-[23px] w-[359px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
             </div>

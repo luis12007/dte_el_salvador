@@ -40,6 +40,23 @@ const sendMailFactura = async (req, res) => {
         }
     },
 
+    sendBillOsegueda: async(id_emisor, plantilla, token) => {
+        try {
+            const res = await fetch(`${BASE_URL}/mail/factura/osegueda/${id_emisor}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(plantilla)
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            return error;
+        }
+    },
+
     sendCF: async(id_emisor, plantilla, token) => {
         const res = await fetch(`${BASE_URL}/CCF${id_emisor}`, {
             method: 'POST',

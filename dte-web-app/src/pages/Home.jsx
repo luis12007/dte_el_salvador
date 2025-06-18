@@ -15,13 +15,10 @@ const Home = () => {
   const SupportHandler = () => {
     /* window.open("https://wa.link/h382bz", "_blank"); */
     navigate("/facturas");
-
   }
 
   const CreateBillHandler = () => {
-
     navigate("/crear/factura");
-
   }
 
   const sidebar = () => {
@@ -29,86 +26,82 @@ const Home = () => {
   }
 
   return (
-    <div className="w-screen h-screen pb-10 relative bg-steelblue-300 flex flex-col items-center justify-center  box-border gap-[47px_0px] ">
-      <HamburguerComponent sidebar={sidebar} visible={visible} />
+    <div className="w-full min-h-screen bg-steelblue-300 flex flex-col items-center justify-center relative animate-fadeIn">
+      {/* Hamburguer y Sidebar fuera del flujo principal */}
+      <div className="absolute top-0 left-0 z-20 animate-slideInLeft">
+        <HamburguerComponent sidebar={sidebar} visible={visible} />
+      </div>
+      <div className="absolute top-0 left-0 z-10 animate-slideInLeft">
+        <SidebarComponent visible={visible} setVisible={setVisible} />
+      </div>
 
-
-      <section className="self-stretch pt-8 flex flex-row items-start  justify-start  pb-[420px] pr-[31px] pl-0">
-
-        <SidebarComponent visible={visible} setVisible={setVisible}  />
-        <header className="flex-1 flex  pt-8 flex-col items-center   justify-center gap-[10px_0px] text-left text-xs text-black font-inter">
-          <div className="self-center  left-4   flex flex-row items-center  justify-center">
-            <div className="h-[54px] w-[294px] items-center  justify-center  relative">
+      {/* Contenido principal alineado y centrado */}
+      <main className="w-full flex flex-col items-center justify-center pt-16 pb-8 animate-fadeInUp">
+        {/* Header */}
+        <header className="w-full max-w-md flex flex-col items-center justify-center gap-8 animate-slideInDown animate-delay-200">
+          <div className="relative w-full flex flex-col items-center">
+            <div className="relative w-[320px] h-10 flex items-center justify-center mb-2 animate-bounceIn animate-delay-300">
               <img
-                className="absolute rounded-mini  h-8"
+                className="absolute left-0 top-0 w-full h-full rounded-xl transition-transform duration-300 hover:scale-105"
                 loading="lazy"
                 alt=""
                 src="/rectangle-4.svg"
               />
-
-              <div className="relative top-[5px]  ml-3 font-light inline-block  [-webkit-text-stroke:1px_#000] ">{`BIENVENIDO!`}</div>
-              <img className='h-[350px] top-20 relative' src={Homeimg} alt='Homeimg' />
-
+              <span className="relative font-bold text-black text-2xl font-inter z-10 flex items-center justify-center w-full text-center pb-2 animate-pulse">
+                BIENVENIDO!
+              </span>
             </div>
-
+            <img 
+              className="h-52 sm:h-72 md:h-80 lg:h-[350px] mt-2 mb-6 animate-zoomIn animate-delay-500 transition-all duration-500 hover:scale-105 hover:rotate-1" 
+              src={Homeimg} 
+              alt="Homeimg" 
+            />
           </div>
         </header>
-      </section >
-      <div className="w-[303px]  flex flex-row items-start justify-start py-0 px-[15px] box-border">
-        <button className="cursor-pointer [border:none] p-0 bg-[transparent] flex-1 flex flex-row items-start justify-start gap-[0px_15px] mq328:flex-wrap" onClick={CreateBillHandler}>
-          <img
-            className="h-[63px] left-5 bottom-2 w-[65px]  relative object-cover z-[1]"
-            alt=""
-            src="/factura-2@2x.png"
-          />
-          <div className="flex-1 flex flex-col  items-start justify-start pt-5 pb-0 pr-2 pl-0 box-border min-w-[125px] min-h-[51px] mq328:min-h-[auto]">
-            <div className="self-stretch h-[16.5px]  flex flex-row items-start justify-start relative">
-              <img
-                className="h-[97px] w-[315px]  absolute !m-[0] bottom-[-41.7px] left-[-101.4px] rounded-mini"
-                alt=""
-                src="/rectangle-5.svg"
-              />
-              <div className=" bottom-5  left-5 relative text-3xl font-light font-inter text-black text-left inline-block [-webkit-text-stroke:1px_#000] z-[1]">
-                Crear Una Factura
-              </div>
-            </div>
-          </div>
-        </button>
-      </div>
-      <section className="w-[312px]  flex flex-col items-start justify-start py-0 pr-0 pl-5 box-border gap-[63px_0px] text-left text-xl text-black font-inria-sans mq312:gap-[31px_0px]">
-        <button className="cursor-pointer  [border:none] p-0 bg-[transparent] self-stretch flex flex-row flex-wrap items-start justify-start gap-[0px_20px]" onClick={SupportHandler}>
-          <div className="flex flex-row  items-start justify-start relative">
+
+        {/* Botones principales */}
+        <div className="w-full max-w-md flex flex-col items-center gap-10 mt-8 animate-slideInUp animate-delay-700">
+          <button
+            className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 mb-2 hover:scale-105 hover:shadow-2xl hover:bg-blue-50 active:scale-95 transition-all duration-300 animate-fadeInRight animate-delay-800 group"
+            onClick={CreateBillHandler}
+          >
             <img
-              className="h-[97px]  w-[309px] absolute !m-[0] right-[-214px] bottom-[-12px] rounded-mini"
+              className="h-10 w-10 object-contain mr-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
               alt=""
-              src="/rectangle-5.svg"
+              src="/factura-2@2x.png"
             />
+            <span className="text-xl font-inter text-black transition-all duration-300 group-hover:text-blue-600 group-hover:font-semibold">
+              Crear Una Factura
+            </span>
+          </button>
+          <button
+            className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 hover:scale-105 hover:shadow-2xl hover:bg-green-50 active:scale-95 transition-all duration-300 animate-fadeInLeft animate-delay-1000 group"
+            onClick={SupportHandler}
+          >
             <img
-              className="h-[78px] pb-1 left-2 w-[79px] relative object-cover z-[1]"
+              className="h-10 w-10 object-contain mr-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
               alt=""
               src={list}
             />
-          </div>
-          <div className="flex-1 flex flex-col items-start justify-start pt-[26px] px-0 pb-0 box-border min-w-[125px]">
-            <div className="self-stretch h-[31px] relative text-3xl font-light font-inter text-black text-left inline-block shrink-0 [-webkit-text-stroke:1px_#000] z-[1]">
+            <span className="text-xl font-inter text-black transition-all duration-300 group-hover:text-green-600 group-hover:font-semibold">
               Lista de Facturas
-            </div>
-          </div>
-        </button>
-        <div className="w-[278px] flex flex-col items-center justify-center gap-[9px_0px]">
-          <h2 className="m-0 relative text-inherit font-bold font-inherit">
+            </span>
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="w-full max-w-md flex flex-col items-center mt-14 gap-4 animate-fadeInUp animate-delay-1200">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-black m-0 animate-bounceIn animate-delay-1400 hover:scale-110 transition-transform duration-300">
             Sistema de facturación
           </h2>
-          <div className="self-stretch flex flex-row items-start justify-center py-0 px-5">
-            <img
-              className="h-[55px] mb-10 relative object-cover"
-              loading="lazy"
-              alt=""
-              src="/-cee3707255594486baada125edfbc74cremovebgpreview-2@2x.png"
-            />
-          </div>
+          <img
+            className="h-12 sm:h-[55px] object-cover animate-rotateIn animate-delay-1600 hover:animate-spin transition-all duration-300 hover:scale-110"
+            loading="lazy"
+            alt=""
+            src="/-cee3707255594486baada125edfbc74cremovebgpreview-2@2x.png"
+          />
         </div>
-      </section>
+      </main>
     </div>
   );
 };

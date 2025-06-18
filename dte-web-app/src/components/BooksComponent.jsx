@@ -10,7 +10,6 @@ import UserService from '../services/UserServices';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 
-
 const BooksComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [startDate, setStartDate] = useState('');
@@ -43,17 +42,13 @@ const BooksComponent = () => {
     setVisible(!visible);
   }
 
-
-
   const handleDownload = () => {
-    // Implement download logic here
     console.log('Download clicked with dates:', startDate, endDate);
 
     if (startDate === "" || endDate === "") {
       toast.error("Por favor seleccione un rango de fechas");
       return;
     }
-
 
     if (book === "LC") {
       console.log("Libros de Contribuyentes");
@@ -912,7 +907,6 @@ const BooksComponent = () => {
   /* ------------------------CF-------------------------- */
 
 
-
   /* ------------------------Bill-------------------------- */
 
   const LibroConsumidorFinal = async () => {
@@ -1296,95 +1290,268 @@ const BooksComponent = () => {
 
 
   return (
-    <div className="flex flex-col items-center  justify-center min-h-screen bg-steelblue-300">
-      <div className='absolute top-0 left-0 pt-8 ch:items-center'>
+    <div className="min-h-screen bg-steelblue-300 flex flex-col">
+      {/* Header Section */}
+      <div className="fixed top-0 left-0 z-40">
         <HamburguerComponent sidebar={sidebar} visible={visible} />
         <SidebarComponent visible={visible} />
       </div>
-      <div className="grid grid-cols-1 w-3/5 md:grid-cols-2 gap-4 pt-6">
 
-        <div className="bg-white  p-4 rounded-lg shadow-md text-center">
-          <h2 className="text-lg font-bold mb-2">Anexos CF, FCF, CSE, Compras</h2>
-          <button onClick={() => openModal('ANEX')} className="bg-blue-500  text-white px-4 py-2 rounded">Seleccionar</button>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-20">
+        {/* Page Title */}
+        <div className="text-center mb-12 animate-fadeInUp">
+          <h1 className="text-4xl font-bold text-white mb-4">
+            📊 Reportes y Libros Contables
+          </h1>
+          <p className="text-white/80 text-lg">
+            Genera reportes fiscales y gestiona tus libros contables
+          </p>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h2 className="text-lg font-bold mb-2">Libros de Contribuyentes</h2>
-          <button onClick={() => openModal('LC')} className="bg-blue-500  text-white px-4 py-2 rounded">Seleccionar</button>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h2 className="text-lg font-bold mb-2">Libros de Consumidor Final</h2>
-          <button onClick={() => openModal('LCF')} className="bg-blue-500 text-white px-4 py-2 rounded">Seleccionar</button>
-        </div>
-        <div className="bg-white p-4 rounded-lg shadow-md text-center">
-          <h2 className="text-lg font-bold mb-2">Libros de Compras</h2>
-          <button onClick={() => openModal('LCOM')} className="bg-blue-500 text-white px-4 py-2 rounded">Seleccionar</button>
-        </div>
-        <div className="mt-3 p-4 bg-white rounded-lg shadow-md">
-          <div className="flex items-center justify-center h-16">
-            <h2 className="text-lg font-bold">Subir factura de compras</h2>
+
+        {/* Reports Grid */}
+        <div className="w-full max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
+            
+            {/* Anexos Card */}
+            <div className="animate-fadeInUp animate-delay-100 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">📋</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Anexos Fiscales
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  CF, FCF, CSE y Compras
+                </p>
+                <button 
+                  onClick={() => openModal('ANEX')} 
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Generar Anexos
+                </button>
+              </div>
+            </div>
+
+            {/* Libro Contribuyentes Card */}
+            <div className="animate-fadeInUp animate-delay-200 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">📚</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Libro de Contribuyentes
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  Registro de ventas a contribuyentes
+                </p>
+                <button 
+                  onClick={() => openModal('LC')} 
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Generar Libro
+                </button>
+              </div>
+            </div>
+
+            {/* Libro Consumidor Final Card */}
+            <div className="animate-fadeInUp animate-delay-300 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🛒</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Libro Consumidor Final
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  Registro de ventas a consumidor final
+                </p>
+                <button 
+                  onClick={() => openModal('LCF')} 
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Generar Libro
+                </button>
+              </div>
+            </div>
+
+            {/* Libro Compras Card */}
+            <div className="animate-fadeInUp animate-delay-400 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">📦</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Libro de Compras
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  Registro de compras y crédito fiscal
+                </p>
+                <button 
+                  onClick={() => openModal('LCOM')} 
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Generar Libro
+                </button>
+              </div>
+            </div>
           </div>
-          <input
-            type="file"
-            lang="es"
-            accept=".json"
-            onChange={handleFileUpload}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-          />
 
-        </div>
+          {/* Upload Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* File Upload Card */}
+            <div className="animate-slideInUp animate-delay-500 bg-white rounded-xl shadow-lg p-6">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">📁</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  Subir Factura de Compras
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Importa facturas desde archivo JSON
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors duration-200">
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label htmlFor="file-upload" className="cursor-pointer">
+                    <div className="text-gray-400 mb-2">
+                      <span className="text-2xl">📄</span>
+                    </div>
+                    <span className="text-sm text-gray-600">
+                      Haz clic para seleccionar un archivo JSON
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
 
-        {jsonData && (
-          <div className="mt-3 max-w-md p-4 bg-white rounded-lg shadow-md">
-            <h2 className="text-lg font-bold mb-4">JSON Información</h2>
-            <pre className="text-lg bg-slate-300 shadow-2xl p-2 rounded-md overflow-auto max-h-64 ">
-              <p><strong>Emisor: </strong> {jsonData?.emisor?.nombre ?? null}</p>
-              <p><strong>Nombre comercial: </strong> {jsonData?.emisor?.nombreComercial ?? null}</p>
-              <p><strong>Receptor: </strong> {jsonData?.receptor?.nombre ?? null}</p>
-              <p><strong>Fecha: </strong> {jsonData?.identificacion?.fecEmi ?? null}</p>
-              <p><strong>Total: </strong> {jsonData?.resumen?.montoTotalOperacion ?? null}</p>
-
-            </pre>
-            <button
-              onClick={createcompras}
-              className="w-full mt-5 bg-green-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-green-600 transition duration-200"
-            >
-              Guardar Factura
-            </button>
+            {/* JSON Preview Card */}
+            {jsonData && (
+              <div className="animate-zoomIn bg-white rounded-xl shadow-lg p-6">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">✅</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">
+                    Información del JSON
+                  </h3>
+                </div>
+                
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-600">Emisor:</span>
+                      <span className="text-gray-800">{jsonData?.emisor?.nombre || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-600">Nombre comercial:</span>
+                      <span className="text-gray-800">{jsonData?.emisor?.nombreComercial || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-600">Receptor:</span>
+                      <span className="text-gray-800">{jsonData?.receptor?.nombre || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-600">Fecha:</span>
+                      <span className="text-gray-800">{jsonData?.identificacion?.fecEmi || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium text-gray-600">Total:</span>
+                      <span className="text-gray-800 font-bold">${jsonData?.resumen?.montoTotalOperacion || 0}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={createcompras}
+                  className="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  💾 Guardar Factura
+                </button>
+              </div>
+            )}
           </div>
-
-        )}
+        </div>
       </div>
 
+      {/* Enhanced Modal */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
         contentLabel="Select Dates"
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+        className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60"
       >
-        <div className="bg-white p-4 rounded-lg shadow-lg w-3/5 ch:w-2/5">
-          <h2 className="text-lg font-bold mb-4">Selecciona las fechas</h2>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Fecha inicial</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 sm:mx-6 animate-zoomIn">
+          {/* Modal Header */}
+          <div className="bg-blue-500 text-white p-4 sm:p-6 rounded-t-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold">📅 Seleccionar Fechas</h2>
+              <button 
+                onClick={closeModal}
+                className="text-white hover:text-gray-200 transition-colors duration-200"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-blue-100 text-xs sm:text-sm mt-2">
+              Selecciona el rango de fechas para generar el reporte
+            </p>
           </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Fecha final</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            />
+
+          {/* Modal Content */}
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                📅 Fecha inicial
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                📅 Fecha final
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+              />
+            </div>
           </div>
-          <div className="flex justify-end space-x-4">
-            <button onClick={closeModal} className="bg-gray-500 text-white px-4 py-2 rounded">Cerrar</button>
-            <button onClick={handleDownload} className="bg-blue-500 text-white px-4 py-2 rounded">Descargar</button>
+
+          {/* Modal Footer */}
+          <div className="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl flex flex-col sm:flex-row gap-3 justify-end">
+            <button 
+              onClick={closeModal} 
+              className="px-4 sm:px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 text-sm sm:text-base"
+            >
+              Cancelar
+            </button>
+            <button 
+              onClick={handleDownload} 
+              className="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105 text-sm sm:text-base"
+            >
+              📥 Descargar
+            </button>
           </div>
         </div>
       </Modal>

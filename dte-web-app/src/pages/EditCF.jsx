@@ -622,6 +622,7 @@ const departmentsAndMunicipalities = {
           });
           setSelectedDepartment(address[0]);
           setSelectedMunicipality(address[1]);
+
           if (
             responsePlantilla.plantilla[0].re_numero_telefono == null ||
             responsePlantilla.plantilla[0].re_numero_telefono == ""
@@ -814,14 +815,17 @@ const departmentsAndMunicipalities = {
           price: item.precioUni,
         })));
 
-        const rawSubtotal = updatedList.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
-        const rawiva = updatedList.reduce((total, item) => total + item.ventaGravada * 0.13, 0);
-        // Round to two decimal places
-        const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-        const roundediva = Math.round(rawiva * 100) / 100;
+        const tributocf = responsePlantilla.plantilla[0].tributocf;
+const [codigo, descripcion, tasa] = tributocf.split('|');
+
+        const rawiva = tasa
+        console.log("rawSubtotal", rawSubtotal)
+        const roundedSubtotal = Number(responsePlantilla.plantilla[0].total_agravada);
+        console.log("roundedSubtotal", roundedSubtotal)
+        const roundediva = Math.round(rawiva * 1000) / 1000;
 
         setiva(roundediva); // Set the rounded subtotal
-        setSubtotal(rawSubtotal); // Set the rounded subtotal
+        setSubtotal(roundedSubtotal); // Set the rounded subtotal
 
         const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
   console.log(value_rent);

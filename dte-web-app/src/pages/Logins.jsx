@@ -36,7 +36,7 @@ const Login = () => {
 
   return (
     <div className="w-full relative h-screen bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[15px] px-0 pb-0 box-border gap-[55px_0px] tracking-[normal]">
-      <div className="self-stretch  flex flex-row items-start justify-center">
+      <div className="self-stretch flex flex-row items-start justify-center animate-fadeIn">
         <img
           className="h-[150px] w-[150px] relative object-cover"
           loading="lazy"
@@ -44,9 +44,9 @@ const Login = () => {
           src={mysoftlogo}
         />
       </div>
-      <main className="self-center items-center justify-center flex w-full mr-10 ml-10 relative max-w-full">
+      <main className="self-center items-center justify-center flex w-full mr-10 ml-10 relative max-w-full animate-fadeInUp animate-delay-200">
         <SistemaDTE goin={HomeHandler}/>
-        <section className="absolute top-[170px]  left-[0px] w-[430px] h-[583px]">
+        <section className="absolute top-[170px] left-[0px] w-[430px] h-[583px]">
         <img
   className="absolute top-[0px] left-[-185px] w-[811px] h-[827px] object-cover mb:hidden"
   alt=""

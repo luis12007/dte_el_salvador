@@ -1384,6 +1384,27 @@ const FrameComponent1 = ({ key, content, user }) => {
             }, 9000);
             return
           }
+          if (id_emisor == 7 || id_emisor == 12) {
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado problema");
+          }
+          /* wait for 5 seconds */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 9000);
+        } else {
           console.log("---------------enviando email--------------");
           console.log(content);
           console.log(token);
@@ -1403,6 +1424,7 @@ const FrameComponent1 = ({ key, content, user }) => {
             window.location.reload();
 
           }, 9000);
+        }
 
         }
         setIsLoading(false);
@@ -2035,7 +2057,7 @@ const FrameComponent1 = ({ key, content, user }) => {
               src="/descargar@2x.png"
             />
           </button>
-          {content.firm ? null : (
+          {content.sellado ? false : (
             <button
               className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivecross ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
               onClick={handelrisActivecross}
