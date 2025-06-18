@@ -37,35 +37,30 @@ const UserReceptorComponent = ({ correoLuisAlexanderContaiPadding , client , onS
 
   return (
     <div
-      className="self-stretch flex flex-row items-start justify-start text-left text-xs text-black font-inria-sans"
+      className="client-card animate-fadeInUp self-stretch flex flex-row items-start justify-start text-left text-xs text-black font-inria-sans"
       style={userLabelStyle}
       onClick={callfunctions}
     >
-      <div className="flex flex-ro items-end justify-start gap-[0px_11px]">
-        <div className="flex flex-col items-start justify-start pt-0 px-0 pb-1.5">
+      <div className="flex flex-row items-center justify-start gap-[12px] w-full">
+        <div className="flex flex-col items-start justify-start">
           <img
-            className="w-[43px] h-[47px] relative object-cover z-[1]"
+            className="client-avatar w-[32px] h-[32px] relative object-cover z-[1]"
             loading="lazy"
             alt=""
             src="/usuario-2@2x.png"
           />
-          
         </div>
-        <div className="flex flex-col items-start justify-start gap-[9px_0px]">
-          <div className="relative z-[1]">
-            <b>Nombre:</b>
-            <span> {client.name}</span>
+        <div className="flex flex-col items-start justify-start gap-[4px] flex-1">
+          <div className="relative z-[1] text-sm">
+            <span className="font-medium">{client.name}</span>
           </div>
-          <div className="relative z-[1]">
-            <b>Correo:</b>
-            <span> {client.correo_electronico}</span>
+          <div className="relative z-[1] text-xs text-gray-600">
+            {client.correo_electronico}
           </div>
-          <div className="relative z-[1]">
-            <b>Numero de teléfono:</b>
-            <span> {client.numero_telefono}</span>
-          </div> 
+          <div className="relative z-[1] text-xs text-gray-500">
+            {client.numero_telefono}
+          </div>
         </div>
-
       </div>
     </div>
   );

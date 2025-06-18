@@ -346,7 +346,7 @@ const HomeFacturas = () => {
   };
 
   const groupItemsByDate = (items) => {
-    return items.reduce((acc, item) => {
+    const grouped = items.reduce((acc, item) => {
       const date = item.fecha_y_hora_de_generacion.split(" ")[0]; // Extract the date part
       if (!acc[date]) {
         acc[date] = [];
@@ -354,9 +354,23 @@ const HomeFacturas = () => {
       acc[date].push(item);
       return acc;
     }, {});
+
+    // Sort items within each date group by time (newest first)
+    Object.keys(grouped).forEach(date => {
+      grouped[date].sort((a, b) => {
+        return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
+      });
+    });
+
+    return grouped;
   };
 
   const groupedItems = groupItemsByDate(items);
+
+  // Sort the grouped dates by newest first
+  const sortedGroupedDates = Object.keys(groupedItems).sort((a, b) => {
+    return new Date(b) - new Date(a);
+  });
 
   /* function to transform format date in text separete by year moth and day in spanish  input 2025-01-02 output 1 de agosto de 2025*/
   const transformDate = (date) => {
@@ -398,6 +412,25 @@ const HomeFacturas = () => {
     setLoading(true);
     let newItems = [];
 
+    if (!filterData || !filterData.filterByc) {
+      console.error('Invalid filter data:', filterData);
+      toast.info("Por favor, selecciona un tipo de filtro.");
+      setLoading(false);
+      return;
+    }
+
+    if (filterData.filterByc === 'date' && (!filterData.fromDate || !filterData.toDate)) {
+      toast.info("Por favor, selecciona ambas fechas.");
+      setLoading(false);
+      return;
+    }
+
+    if ((filterData.filterByc === 'name' || filterData.filterByc === 'type') && !filterData.value) {
+      toast.info("Por favor, ingresa un valor para buscar.");
+      setLoading(false);
+      return;
+    }
+
     try {
       if (filterData.filterByc === 'name') {
         newItems = await PlantillaAPI.getByUserIdAndName(user_id, token, filterData.value);
@@ -406,11 +439,21 @@ const HomeFacturas = () => {
       } else if (filterData.filterByc === 'type') {
         newItems = await PlantillaAPI.getByUserIdAndType(user_id, token, filterData.value);
       }
+      
+      // Sort filtered items by fecha_y_hora_de_generacion desc
+      if (newItems && Array.isArray(newItems)) {
+        newItems.sort((a, b) => {
+          return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
+        });
+      }
+      
     } catch (error) {
       console.error('Error fetching filtered items:', error);
+      toast.error("Error al filtrar los datos.");
     }
+    
     console.log('Filtered items:', newItems);
-    setItems(newItems);
+    setItems(newItems || []);
     setLoading(false);
   };
 
@@ -442,24 +485,24 @@ const HomeFacturas = () => {
   return (
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-[33px] pr-[22px] box-border ch:items-center">
       <SidebarComponent visible={visible} />
-      <button className="bg-gray-300 w-2/12 self-end h-12 border-black rounded-lg drop-shadow-lg " onClick={() => setShowModal(true)}>
+      <button className="animate-fadeIn bg-gray-300 w-2/12 self-end h-12 border-black rounded-lg drop-shadow-lg hover:scale-105 transition-transform duration-200 flex items-center justify-center" onClick={() => setShowModal(true)}>
         <img src={filterwhite} className="h-9 pl-3 self-center mr-3" alt="" />
       </button>
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-            <h2 className="text-2xl font-bold mb-6">Filtrar Por</h2>
-            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event, 'name')}>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 animate-fadeIn px-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg flex flex-col items-center animate-fadeInUp w-full max-w-sm mx-4">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Filtrar Por</h2>
+            <button className="bg-steelblue-300 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md mb-3 sm:mb-4 text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={(event) => openModal(event, 'name')}>
               Nombre
             </button>
-            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event, 'date')}>
+            <button className="bg-steelblue-300 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md mb-3 sm:mb-4 text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={(event) => openModal(event, 'date')}>
               Fecha
             </button>
-            <button className="bg-steelblue-300 text-white py-3 px-6 rounded-lg shadow-md mb-4 text-lg" onClick={(event) => openModal(event, 'type')}>
+            <button className="bg-steelblue-300 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md mb-3 sm:mb-4 text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={(event) => openModal(event, 'type')}>
               Tipo
             </button>
-            <button className="bg-lightcoral text-white py-3 px-6 rounded-lg shadow-md text-lg" onClick={() => setShowModal(false)}>
+            <button className="bg-lightcoral text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={() => setShowModal(false)}>
               Cerrar
             </button>
           </div>
@@ -474,7 +517,7 @@ const HomeFacturas = () => {
       />
 
 
-      <section className="pl-2 ch:w-1/3 ">
+      <section className="pl-2 ch:w-1/3 animate-fadeInUp animate-delay-200">
         {loading ? (
           <div className="flex items-center justify-center my-4 rounded-lg">
             <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
@@ -484,21 +527,23 @@ const HomeFacturas = () => {
         ) : (
           <>
             {Array.isArray(items) && items.length > 0 ? (
-              Object.keys(groupedItems).map((date) => (
-                <div key={date}>
+              sortedGroupedDates.map((date, index) => (
+                <div key={date} className="animate-slideInUp">
                   <div className="flex items-center justify-center my-4 rounded-lg">
-                    <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
+                    <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300 hover:scale-105 transition-transform duration-200">
                       <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">{date}</span>
                       <div>{transformDate(date)}</div>
                     </div>
                   </div>
-                  {groupedItems[date].map((content, index) => (
-                    <FacturaUnSend key={index} content={content} user={user} />
+                  {groupedItems[date].map((content, itemIndex) => (
+                    <div key={itemIndex}>
+                      <FacturaUnSend content={content} user={user} />
+                    </div>
                   ))}
                 </div>
               ))
             ) : (
-              <div className="flex items-center justify-center my-4 rounded-lg">
+              <div className="flex items-center justify-center my-4 rounded-lg animate-fadeIn">
                 <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
                   <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">No facturas para mostrar</span>
                 </div>
@@ -515,7 +560,7 @@ const HomeFacturas = () => {
 
       <button
         onClick={excelHandler}
-        className="cursor-pointer self-center mt-16 [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center hover:bg-seagreen-100"
+        className="animate-fadeInUp animate-delay-300 cursor-pointer self-center mt-16 [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center hover:bg-seagreen-100 hover:scale-105 transition-all duration-200"
       >
         <b className="relative self-center text-lg font-inria-sans text-white text-left z-[1]">
           Excel
