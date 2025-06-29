@@ -48,6 +48,10 @@ const Clientes = () => {
   /* useefect */
   useEffect(() => {
     const fetchData = async () => {
+      console.log("Fetching user info");
+      console.log("ID Emisor:", id_emisor);
+      console.log("Token:", token);
+      
       const response = await UserService.getUserInfo(id_emisor, token);
       console.log("User Data");
       console.log(response);

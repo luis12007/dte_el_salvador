@@ -1392,7 +1392,7 @@ const FrameComponent1 = ({ key, content, user }) => {
       }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
-          toast.success("Error en la autenticación, vuelve a intentar");
+          toast.error("Error en la autenticación, vuelve a intentar");
           return
         }
 
