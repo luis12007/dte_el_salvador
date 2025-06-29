@@ -53,7 +53,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 11) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -65,6 +65,17 @@ const sendPDF = async(req, res) => {
                 .text(`Dr. ${name1} ${name2} ${name3} ${name4}`, 30, yscale, { align: 'left' })
         } else if (userDB.id === 7 || userDB.id === 12) {
 
+        }else if (userDB.id === 11) {
+            const name = userDB.name.split(" ");
+            const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
+            const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
+            const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
+            const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
+            const newname = `${name1} ${name2} ${name3} ${name4}`;
+
+            pdfDoc.fontSize(17).fillColor('#1E3256')
+
+            .text(`Licda. ${newname}`, 25, yscale, { align: 'left' })
         } else {
             /* align in the middle of the left and center */
             pdfDoc.fontSize(18).fillColor('#1E3256')
@@ -80,7 +91,13 @@ const sendPDF = async(req, res) => {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
 
-        } else if (userDB.id === 4 || userDB.id === 9) {
+        }  else if ( userDB.id === 11) {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('SERVICIOS MEDICOS', 77, yscale + 30, { align: 'left' })
+                .fontSize(17).text('Licenciada en Anestesiología ', 42, yscale + 50, { align: 'left' })
+                .fontSize(15).text('e Inhaloterapia', 100, yscale + 70, { align: 'left' })
+                .fontSize(15).text('J.V.P.M 674', 108, yscale + 92, { align: 'left' });
+        }else if (userDB.id === 4 || userDB.id === 9) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
 

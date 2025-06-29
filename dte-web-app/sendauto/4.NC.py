@@ -5,13 +5,14 @@ import uuid
 import time
 from datetime import datetime
 
-# Variables that you will set at the beginning
-NIT = "06140604191015"  # Replace with your actual NIT
-PASSWORD_PRI = "sparenovare2019"  # Replace with your actual password
-CODIGO_HACIENDA = "M]0tp4$$Coro"  # Replace with your actual code
-STARTING_NUMBER = 251  # Starting number for the numeroControl
+""" INFO DE Luis """
+NIT = "02101601741065"  # Replace with your actual NIT
+PASSWORD_PRI = "Halogenados20242"  # Replace with your actual password
+CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
+STARTING_NUMBER = 550  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
-CODACTIVITY = "8621"  # Replace with your actual activity code
+CODACTIVITY = "86203"  # Replace with your actual activity code
+NRC = "1837811"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER
@@ -19,16 +20,19 @@ def main():
     for iteration in range(NUM_ITERATIONS):
         print(f"\n===== ITERATION {iteration+1}/{NUM_ITERATIONS} =====")
         
-        # Generate a new UUID for codigoGeneracion
-        new_codigo_generacion = str(uuid.uuid4()).upper()
-        new_codigo_generacion2 = str(uuid.uuid4()).upper()
-        
-        # Update the numeroControl with the current number
-        numero_control = f"DTE-01-00000000-000000000000{current_number}"
-        
-        # Update current date and time
+                # Update current date and time
         current_date = datetime.now().strftime("%Y-%m-%d")
         current_time = datetime.now().strftime("%H:%M:%S")
+
+        # Generate a new UUID for codigoGeneracion
+        new_codigo_generacion = str(uuid.uuid4()).upper()
+        reference_code = "0E50FDA3-F270-4A40-85C9-B09256C86651"
+        reference_date = current_date
+
+        # Update the numeroControl with the current number
+        numero_control = f"DTE-05-00000000-000000000000{current_number}"
+        
+
         
         # Define the JSON data to send in the first call
         firm_data = {
@@ -36,43 +40,112 @@ def main():
             "activo": True,
             "passwordPri": PASSWORD_PRI,
             "dteJson": {
-                
                 "identificacion": {
-    "version": 3,
-    "ambiente": "00",
-    "codigoGeneracion": new_codigo_generacion,
-    "fTransmision": current_date,
-    "hTransmision": current_time
-  },
-                "emisor": {
-                    "nit": NIT,
-                     "nombre": "Julio César Hernández Magaña ",
-                    "nombreResponsable": "Juan Carlos Pérez Rodríguez",
-                        "tipoDocResponsable": "13",
-                        "numeroDocResponsable": "063842754",
-                        "tipoEstablecimiento": "20",
-                        "codEstableMH": None,
-    "codPuntoVenta": None,
-    "telefono": "22507890",
-    "correo": "contacto@empresatecnologia.com"
+                    "version": 3,
+                    "ambiente": "00",
+                    "tipoDte": "05",
+                    "numeroControl": numero_control,
+                    "codigoGeneracion": new_codigo_generacion,
+                    "tipoModelo": 1,
+                    "tipoOperacion": 1,
+                    "fecEmi": current_date,
+                    "horEmi": current_time,
+                    "tipoMoneda": "USD",
+                    "tipoContingencia": None,
+                    "motivoContin": None
                 },
-                
-
-                "detalleDTE": [
-    {
-      "noItem": 1,
-      "codigoGeneracion": new_codigo_generacion2,
-      "tipoDoc": "01"
-    }
-  ],
-                "motivo": {
-    "fInicio": current_date,
-    "fFin": current_date,
-    "hInicio": "08:15:00",
-    "hFin": "11:00:00",
-    "tipoContingencia": 2,
-    "motivoContingencia": None
-  }
+                "documentoRelacionado": [
+            {
+                "tipoDocumento": "03",
+                "tipoGeneracion": 1,
+                "numeroDocumento": reference_code,
+                "fechaEmision": reference_date
+            }
+        ],
+                "emisor": {
+                    "direccion": {
+                        "municipio": "14",
+                        "departamento": "06",
+                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+                    },
+                    "nit": NIT,
+                    "nrc": NRC,
+                    "nombre": "HM Clínic S.A de C.V",
+                    "codActividad": CODACTIVITY,
+                    "descActividad": "Clínicas médicas",
+                    "telefono": "60605939",
+                    "correo": "administracion@hmclinicsv.com",
+                    "nombreComercial": "Centro de cirugía ambulatoria.",
+                    "tipoEstablecimiento": "02",
+                },
+                "receptor": {
+            "nit": "02101601741065",
+            "nrc": "1837811",
+            "nombre": "Luis Hernandez",
+            "codActividad": "86203",
+            "descActividad": "Servicios de medicos",
+            "nombreComercial": None,
+            "direccion": {
+                        "municipio": "14",
+                        "departamento": "06",
+                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+                    },
+            "correo": "luishdezmtz12@gmail.com",
+            "telefono": None
+        },
+                "ventaTercero": None,
+                "cuerpoDocumento": [
+            {
+                "codTributo": None,
+                "descripcion": "2",
+                "uniMedida": 99,
+                "codigo": None,
+                "cantidad": 2,
+                "numItem": 1,
+                "tributos": [
+                    "20"
+                ],
+                "montoDescu": 0,
+                "numeroDocumento": reference_code,
+                "precioUni": 1.77,
+                "ventaGravada": 3.54,
+                "ventaExenta": 0,
+                "ventaNoSuj": 0,
+                "tipoItem": 1
+            }
+        ],
+                "resumen": {
+            "totalNoSuj": 0,
+            "totalExenta": 0,
+            "totalGravada": 3.54,
+            "subTotalVentas": 3.54,
+            "descuNoSuj": 0,
+            "descuExenta": 0,
+            "totalDescu": 0,
+            "tributos": [
+                {
+                    "codigo": "20",
+                    "descripcion": "Impuesto al Valor Agregado 13%",
+                    "valor": 0.46
+                }
+            ],
+            "subTotal": 3.54,
+            "ivaPerci1": 0,
+            "ivaRete1": 0,
+            "reteRenta": 0,
+            "montoTotalOperacion": 4,
+            "totalLetras": "CUATRO DÓLARES",
+            "condicionOperacion": 1,
+            "descuGravada": 0
+        },
+        "extension": {
+            "docuEntrega": None,
+            "nombRecibe": None,
+            "observaciones": "",
+            "nombEntrega": None,
+            "docuRecibe": None
+        },
+        "apendice": None,
             }
         }
 
@@ -149,12 +222,16 @@ def main():
         try:
             # Format the data as shown in the example
             bill_data = {
-                "nit": NIT,
+                "tipoDte": plantilla["dteJson"]["identificacion"]["tipoDte"],
+                "ambiente": plantilla["dteJson"]["identificacion"]["ambiente"],
+                "idEnvio": 3,  # This might need to be dynamic
+                "version": plantilla["dteJson"]["identificacion"]["version"],
+                "codigoGeneracion": plantilla["dteJson"]["identificacion"]["codigoGeneracion"],
                 "documento": plantilla["dteJson"]["firma"]
             }
 
             response3 = requests.post(
-                "https://apitest.dtes.mh.gob.sv/fesv/contingencia",
+                "https://apitest.dtes.mh.gob.sv/fesv/recepciondte",
                 headers={
                     'Authorization': f'Bearer {token}',
                     'Content-Type': 'application/json',

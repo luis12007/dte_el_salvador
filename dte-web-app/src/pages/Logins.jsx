@@ -14,11 +14,11 @@ const Login = () => {
     try {
     const result = await LoginAPI.login(props);
     console.log(result);
-    
     if (result.status === "success") {
       localStorage.setItem("token", result.token);
       localStorage.setItem("user_id", result.user_id);
       localStorage.setItem("username", result.username);
+      localStorage.setItem("ambiente", result.ambiente);
       navigate("/principal");
       return
 
