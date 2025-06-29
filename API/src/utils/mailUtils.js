@@ -925,6 +925,24 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
+                } else if (userDB.id === 4 || userDB.id === 13) {
+                    mailOptions = {
+                        from: 'mysoftwaresv@gmail.com',
+                        to: plantillaDB.re_correo_electronico,
+                        subject: `DTE de parte de ${user.name}`,
+                        html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
+                        attachments: [{
+                                filename: 'DTE.pdf',
+                                path: pdfPath,
+                                encoding: 'base64'
+                            },
+                            {
+                                filename: 'DTE.json', // Name of the JSON file
+                                path: jsonPath, // Path to the JSON file
+                                encoding: 'base64'
+                            }
+                        ]
+                    };
                 } 
                 if (userDB.id === 6 || userDB.id === 10) {
                     const transporter = nodemailer.createTransport({
@@ -1040,7 +1058,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add Doctor's information
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 11) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 11 ) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
@@ -1069,6 +1087,10 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
 
         } else if (userDB.id === 4 || userDB.id === 9) {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
+
+        }else if (userDB.id === 14 || userDB.id === 13) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
 

@@ -6,12 +6,12 @@ import time
 from datetime import datetime
 
 # Variables that you will set at the beginning
-NIT = "06140604191015"  # Replace with your actual NIT
-PASSWORD_PRI = "sparenovare2019"  # Replace with your actual password
-CODIGO_HACIENDA = "M]0tp4$$Coro"  # Replace with your actual code
+NIT = "06141510781117"  # Replace with your actual NIT
+PASSWORD_PRI = "Sandra2025"  # Replace with your actual password
+CODIGO_HACIENDA = "M9z@qp3WlX"  # Replace with your actual code
 STARTING_NUMBER = 451  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
-CODACTIVITY = "86909"  # Replace with your actual activity code
+CODACTIVITY = "86203"  # Replace with your actual activity code
 def main():
     current_number = STARTING_NUMBER
     
@@ -56,7 +56,7 @@ def main():
                 "complemento": "Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
             },
             "nit": NIT,
-            "nrc": "2790601",
+            "nrc": "3652641",
             "nombre": "Julio César Hernández Magaña ",
             "codActividad": CODACTIVITY,
             "descActividad": "Servicios médicos",
@@ -162,6 +162,7 @@ def main():
             """ print(f"Signature Response: {json.dumps(firm_result, indent=2)}") """
             
             # Check if the response has a body field (the signature)
+            print(f"Response status code: {firm_result}")
             if 'body' not in firm_result or not firm_result['body']:
                 print("Error: No signature found in the response")
                 continue  # Skip to next iteration
@@ -177,6 +178,7 @@ def main():
             continue  # Skip to next iteration
 
         # STEP 2: Login to get token
+
         print("\nSTEP 2: Logging in to get authorization token...")
         
         try:
@@ -214,7 +216,8 @@ def main():
             print(f"Error in step 2: {e}")
             continue  # Skip to next iteration
         
-
+        print(f"Authorization token obtained: {token}")
+        print(f"Firm: {plantilla["dteJson"]["firma"]}")
         # STEP 3: Send the bill
         print("\nSTEP 3: Sending bill with authorization token...")
         try:
@@ -222,7 +225,7 @@ def main():
             bill_data = {
                 "tipoDte": plantilla["dteJson"]["identificacion"]["tipoDte"],
                 "ambiente": plantilla["dteJson"]["identificacion"]["ambiente"],
-                "idEnvio": 3,  # This might need to be dynamic
+                "idEnvio": 4,  # This might need to be dynamic
                 "version": plantilla["dteJson"]["identificacion"]["version"],
                 "codigoGeneracion": plantilla["dteJson"]["identificacion"]["codigoGeneracion"],
                 "documento": plantilla["dteJson"]["firma"]

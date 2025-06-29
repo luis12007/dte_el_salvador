@@ -84,7 +84,12 @@ const sendPDF = async(req, res) => {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
 
-        } else if (userDB.id === 7 || userDB.id === 12) {
+        }else if (userDB.id === 14 || userDB.id === 13) {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
+
+        } 
+         else if (userDB.id === 7 || userDB.id === 12) {
             /* adding img */
             const logo = path.join(__dirname, '../assets/imgs/osegueda.png');
             pdfDoc.image(logo, 55, yscale - 60, { width: 190, height: 190 });
