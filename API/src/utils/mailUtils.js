@@ -925,7 +925,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                } else if (userDB.id === 4 || userDB.id === 13) {
+                } else if (userDB.id === 4 || userDB.id === 13 || userDB.id === 14) {
                     mailOptions = {
                         from: 'mysoftwaresv@gmail.com',
                         to: plantillaDB.re_correo_electronico,
@@ -1004,7 +1004,27 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             fs.unlinkSync(pdfPath);
                         }
                     });
-                } 
+                } else if (userDB.id === 13 || userDB.id === 14) {
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'mysoftwaresv@gmail.com',
+                            pass: 'ajbh eozh iltf oinf'
+                        }
+                    });
+
+                    // Send email
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            console.error('Error sending email:', error);
+                        } else {
+                            console.log('Email sent:', info.response);
+                            // Delete the files after sending the email
+                            fs.unlinkSync(jsonPath);
+                            fs.unlinkSync(pdfPath);
+                        }
+                    });
+                }
                 else {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',

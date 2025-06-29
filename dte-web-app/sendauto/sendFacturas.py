@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Variables that you will set at the beginning
 NIT = "06141510781117"  # Replace with your actual NIT
-PASSWORD_PRI = "Sandra2025"  # Replace with your actual password
+PASSWORD_PRI = "M9z@qp3WlX"  # Replace with your actual password
 CODIGO_HACIENDA = "M9z@qp3WlX"  # Replace with your actual code
 STARTING_NUMBER = 451  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
