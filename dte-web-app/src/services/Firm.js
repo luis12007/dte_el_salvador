@@ -27,6 +27,23 @@ const Firm = {
         }
     },
 
+    create_prod: async(firm) => {
+        try {
+
+            const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(firm)
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
     // calling other endpoints for other clients
 
     HM_Clinic: async(firm) => {
@@ -83,6 +100,18 @@ const Firm = {
         return data;
     },
 
+    ICP: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port444/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
     HM_Clinic_prod: async(firm) => {
         const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
             method: 'POST',
@@ -108,6 +137,20 @@ const Firm = {
     },
 
     DR_VIDES_prod: async(firm) => {
+        console.log("DR_VIDES");
+        console.log(firm);
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    ICP_PROD: async(firm) => {
         console.log("DR_VIDES");
         console.log(firm);
         const res = await fetch(`${BASE_URL_Firm}/port8446/`, {

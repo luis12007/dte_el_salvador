@@ -1,0 +1,7 @@
+{
+    "status": "ERROR",
+    "body": {
+        "codigo": "803",
+        "mensaje": "No existe llave publica para este nit"
+    }
+}
