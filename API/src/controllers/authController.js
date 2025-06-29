@@ -23,6 +23,7 @@ const login = async(req, res) => {
                 message: 'Inicio de sesión exitoso',
                 token,
                 username: user.usuario,
+                ambiente: user.ambiente,
 
             });
         } else {

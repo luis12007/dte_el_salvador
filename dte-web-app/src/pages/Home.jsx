@@ -11,6 +11,14 @@ const Home = () => {
   const [visible, setVisible] = useState(true);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
+  const ambiente = localStorage.getItem("ambiente");
+  const userNumber = localStorage.getItem("userNumber");
+  
+  const getAmbienteText = (ambienteValue) => {
+    if (ambienteValue === "01") return "PRODUCCIÓN";
+    if (ambienteValue === "00") return "PRUEBAS";
+    return ambienteValue;
+  };
 
   const SupportHandler = () => {
     /* window.open("https://wa.link/h382bz", "_blank"); */
@@ -38,21 +46,61 @@ const Home = () => {
       {/* Contenido principal alineado y centrado */}
       <main className="w-full flex flex-col items-center justify-center pt-16 pb-8 animate-fadeInUp">
         {/* Header */}
-        <header className="w-full max-w-md flex flex-col items-center justify-center gap-8 animate-slideInDown animate-delay-200">
-          <div className="relative w-full flex flex-col items-center">
-            <div className="relative w-[320px] h-10 flex items-center justify-center mb-2 animate-bounceIn animate-delay-300">
-              <img
-                className="absolute left-0 top-0 w-full h-full rounded-xl transition-transform duration-300 hover:scale-105"
-                loading="lazy"
-                alt=""
-                src="/rectangle-4.svg"
-              />
-              <span className="relative font-bold text-black text-2xl font-inter z-10 flex items-center justify-center w-full text-center pb-2 animate-pulse">
-                BIENVENIDO!
-              </span>
+        <header className="w-full max-w-md flex flex-col items-center justify-center gap-8">
+          {/* Información del usuario - Una sola tarjeta */}
+          <div className="w-full flex flex-col items-center gap-3 mb-4 animate-slideInDown animate-delay-200">
+            {/* Tarjeta única con toda la información */}
+            <div className="w-full bg-white rounded-xl p-3 shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300">
+              <div className="flex flex-col items-center space-y-2">
+                {/* Mensaje de bienvenida en la parte superior */}
+                <div className="text-center pb-2 border-b border-gray-100 w-full">
+                  <h1 className="text-xl font-bold text-black">
+                    ¡BIENVENIDO!
+                  </h1>
+                  <p className="text-xs text-gray-600">Sistema de Facturación DTE</p>
+                </div>
+                
+                {/* Fila con usuario y ambiente */}
+                <div className="w-full flex justify-between items-center gap-4 py-1">
+                  {/* Usuario a la izquierda */}
+                  {username && (
+                    <div className="flex-1 text-left">
+                      <p className="text-xs text-gray-500">Usuario</p>
+                      <h2 className="text-base font-bold text-black">
+                        {username.toUpperCase()}
+                      </h2>
+                    </div>
+                  )}
+                  
+                  {/* División vertical mínima */}
+                  <div className="w-px h-8 bg-gray-200"></div>
+                  
+                  {/* Ambiente a la derecha */}
+                  {ambiente && (
+                    <div className="flex-1 text-right">
+                      <p className="text-xs text-gray-500">Ambiente</p>
+                      <h2 className="text-base font-bold text-black">
+                        {getAmbienteText(ambiente)}
+                      </h2>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Número de usuario en la parte inferior */}
+                {userNumber && (
+                  <div className="text-center pt-1 border-t border-gray-100 w-full">
+                    <span className="text-xs text-gray-600">
+                      Usuario #{userNumber}
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
+          </div>
+          
+          <div className="relative w-full flex flex-col items-center animate-zoomIn animate-delay-400">
             <img 
-              className="h-52 sm:h-72 md:h-80 lg:h-[350px] mt-2 mb-6 animate-zoomIn animate-delay-500 transition-all duration-500 hover:scale-105 hover:rotate-1" 
+              className="h-52 sm:h-72 md:h-80 lg:h-[350px] mt-2 mb-6 transition-all duration-500 hover:scale-105 hover:rotate-1" 
               src={Homeimg} 
               alt="Homeimg" 
             />
@@ -60,9 +108,9 @@ const Home = () => {
         </header>
 
         {/* Botones principales */}
-        <div className="w-full max-w-md flex flex-col items-center gap-10 mt-8 animate-slideInUp animate-delay-700">
+        <div className="w-full max-w-md flex flex-col items-center gap-10 mt-8 animate-slideInUp animate-delay-600">
           <button
-            className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 mb-2 hover:scale-105 hover:shadow-2xl hover:bg-blue-50 active:scale-95 transition-all duration-300 animate-fadeInRight animate-delay-800 group"
+            className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 mb-2 hover:scale-105 hover:shadow-2xl hover:bg-blue-50 active:scale-95 transition-all duration-300 group"
             onClick={CreateBillHandler}
           >
             <img
@@ -75,7 +123,7 @@ const Home = () => {
             </span>
           </button>
           <button
-            className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 hover:scale-105 hover:shadow-2xl hover:bg-green-50 active:scale-95 transition-all duration-300 animate-fadeInLeft animate-delay-1000 group"
+            className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 hover:scale-105 hover:shadow-2xl hover:bg-green-50 active:scale-95 transition-all duration-300 group"
             onClick={SupportHandler}
           >
             <img
@@ -90,12 +138,12 @@ const Home = () => {
         </div>
 
         {/* Footer */}
-        <div className="w-full max-w-md flex flex-col items-center mt-14 gap-4 animate-fadeInUp animate-delay-1200">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-black m-0 animate-bounceIn animate-delay-1400 hover:scale-110 transition-transform duration-300">
+        <div className="w-full max-w-md flex flex-col items-center mt-14 gap-4 animate-fadeInUp animate-delay-800">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-black m-0 hover:scale-110 transition-transform duration-300">
             Sistema de facturación
           </h2>
           <img
-            className="h-12 sm:h-[55px] object-cover animate-rotateIn animate-delay-1600 hover:animate-spin transition-all duration-300 hover:scale-110"
+            className="h-12 sm:h-[55px] object-cover hover:animate-spin transition-all duration-300 hover:scale-110"
             loading="lazy"
             alt=""
             src="/-cee3707255594486baada125edfbc74cremovebgpreview-2@2x.png"

@@ -5,13 +5,14 @@ import uuid
 import time
 from datetime import datetime
 
-# Variables that you will set at the beginning
-NIT = "06140604191015"  # Replace with your actual NIT
-PASSWORD_PRI = "sparenovare2019"  # Replace with your actual password
-CODIGO_HACIENDA = "M]0tp4$$Coro"  # Replace with your actual code
-STARTING_NUMBER = 251  # Starting number for the numeroControl
+""" INFO DE ICP """
+NIT = "06142501560105"  # Replace with your actual NIT
+PASSWORD_PRI = "S9z@qp3WlXadsf3"  # Replace with your actual password
+CODIGO_HACIENDA = "M9z@qp3WlX"  # Replace with your actual code
+STARTING_NUMBER = 100  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
-CODACTIVITY = "86909"  # Replace with your actual activity code
+CODACTIVITY = "86203"  # Replace with your actual activity code
+NRC = "790338"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER
@@ -19,19 +20,19 @@ def main():
     for iteration in range(NUM_ITERATIONS):
         print(f"\n===== ITERATION {iteration+1}/{NUM_ITERATIONS} =====")
         
-                # Update current date and time
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        current_time = datetime.now().strftime("%H:%M:%S")
-
         # Generate a new UUID for codigoGeneracion
         new_codigo_generacion = str(uuid.uuid4()).upper()
-        reference_code = "F0BB0F96-FE54-4B39-9418-C41245A69B53"
-        reference_date = current_date
+        codigoGeneracion = ["8397796F-B064-4DAB-881F-BD7BADBABBC4","3E4521AE-4372-4ABA-84F9-CC957426701F", "8C007CD8-2F4B-42CA-AD35-AC1D1684534D", "41BA623A-7C77-4366-A4A0-49ECF64C59AD", "523F728C-EF5E-483F-9B6F-7ADCE0AC6E2B", "562AE3A1-1BF1-462F-AC13-581D8BC7F27A"]
+        selloRecibido = ["20255B98D0E042D640A189E2B23287B7CA07BJIL","2025F6CB93CFEA3348468426E0DD0D2CDF2FKZSJ", "2025F9016C2A6957481788342C4D1A8A347CZCUR", "2025B15173D60CC04265A23AE06DED52AEA4QBXJ", "2025E3106E3645834DE991987DF8EB6BD625TLWZ",  "20253D7A5B9DDA2F4657869EC9AFD7BDF78BJ8PI"]
+        numeroControl = ["DTE-01-00000000-000000000000210","DTE-01-00000000-000000000000211", "DTE-01-00000000-000000000000212", "DTE-01-00000000-000000000000213", "DTE-01-00000000-000000000000214", "DTE-01-00000000-000000000000215"]
 
-        # Update the numeroControl with the current number
-        numero_control = f"DTE-05-00000000-000000000000{current_number}"
         
-
+        # Update the numeroControl with the current number
+        numero_control = f"DTE-01-00000000-000000000000{current_number}"
+        
+        # Update current date and time
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_time = datetime.now().strftime("%H:%M:%S")
         
         # Define the JSON data to send in the first call
         firm_data = {
@@ -39,113 +40,55 @@ def main():
             "activo": True,
             "passwordPri": PASSWORD_PRI,
             "dteJson": {
-                "identificacion": {
-                    "version": 3,
-                    "ambiente": "00",
-                    "tipoDte": "05",
-                    "numeroControl": numero_control,
-                    "codigoGeneracion": new_codigo_generacion,
-                    "tipoModelo": 1,
-                    "tipoOperacion": 1,
-                    "fecEmi": current_date,
-                    "horEmi": current_time,
-                    "tipoMoneda": "USD",
-                    "tipoContingencia": None,
-                    "motivoContin": None
-                },
-                "documentoRelacionado": [
-            {
-                "tipoDocumento": "03",
-                "tipoGeneracion": 1,
-                "numeroDocumento": reference_code,
-                "fechaEmision": reference_date
-            }
-        ],
-                "emisor": {
-                    "direccion": {
-                        "municipio": "14",
-                        "departamento": "06",
-                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
-                    },
-                    "nit": NIT,
-                    "nrc": "2790601",
-                    "nombre": "HM Clínic S.A de C.V",
-                    "codActividad": CODACTIVITY,
-                    "descActividad": "Clínicas médicas",
-                    "telefono": "60605939",
-                    "correo": "administracion@hmclinicsv.com",
-                    "nombreComercial": "Centro de cirugía ambulatoria.",
-                    "tipoEstablecimiento": "02",
-                },
-                "receptor": {
-            "nit": "02101601741065",
-            "nrc": "1837811",
+        "identificacion": {
+            "version": 2,
+            "ambiente": "00",
+            "codigoGeneracion": new_codigo_generacion,
+            "fecAnula": current_date,
+            "horAnula": current_time
+        },
+        "emisor": {
+                        "nit": NIT,
+
+                        "nombre": "Julio César Hernández Magaña ",
+
+            "tipoEstablecimiento": "02",
+            "nomEstablecimiento": "servicios médicos",
+                        "telefono": "60605939",
+
+                        "correo": "hmcirujanoplastico@gmail.com",
+
+            "codEstableMH": None,
+            "codEstable": None,
+            "codPuntoVentaMH": None,
+            "codPuntoVenta": None
+        },
+
+        "documento": {
+            "tipoDte": "01",
+            "codigoGeneracion": codigoGeneracion[iteration],
+            "selloRecibido": selloRecibido[iteration],
+            "numeroControl": numeroControl[iteration],
+            "fecEmi": current_date,
+            "montoIva": 391.15,
+            "codigoGeneracionR": None,
+            "tipoDocumento": "13",
+            "numDocumento": "06384275-4",
             "nombre": "Luis Hernandez",
-            "codActividad": "86203",
-            "descActividad": "Servicios de medicos",
-            "nombreComercial": None,
-            "direccion": {
-                        "municipio": "14",
-                        "departamento": "06",
-                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
-                    },
-            "correo": "luishdezmtz12@gmail.com",
-            "telefono": None
+            "telefono": "64319239",
+            "correo": "luishdezmtz12@gmail.com"
         },
-                "ventaTercero": None,
-                "cuerpoDocumento": [
-            {
-                "codTributo": None,
-                "descripcion": "2",
-                "uniMedida": 99,
-                "codigo": None,
-                "cantidad": 2,
-                "numItem": 1,
-                "tributos": [
-                    "20"
-                ],
-                "montoDescu": 0,
-                "numeroDocumento": reference_code,
-                "precioUni": 1.77,
-                "ventaGravada": 3.54,
-                "ventaExenta": 0,
-                "ventaNoSuj": 0,
-                "tipoItem": 1
-            }
-        ],
-                "resumen": {
-            "totalNoSuj": 0,
-            "totalExenta": 0,
-            "totalGravada": 3.54,
-            "subTotalVentas": 3.54,
-            "descuNoSuj": 0,
-            "descuExenta": 0,
-            "totalDescu": 0,
-            "tributos": [
-                {
-                    "codigo": "20",
-                    "descripcion": "Impuesto al Valor Agregado 13%",
-                    "valor": 0.46
-                }
-            ],
-            "subTotal": 3.54,
-            "ivaPerci1": 0,
-            "ivaRete1": 0,
-            "reteRenta": 0,
-            "montoTotalOperacion": 4,
-            "totalLetras": "CUATRO DÓLARES",
-            "condicionOperacion": 1,
-            "descuGravada": 0
-        },
-        "extension": {
-            "docuEntrega": None,
-            "nombRecibe": None,
-            "observaciones": "",
-            "nombEntrega": None,
-            "docuRecibe": None
-        },
-        "apendice": None,
-            }
+        "motivo": {
+            "tipoAnulacion": 2,
+            "motivoAnulacion": "Error en los datos del documento",
+            "nombreResponsable": "HM Clínic S.A de C.V",
+            "tipDocResponsable": "36",
+            "numDocResponsable": NIT,
+            "nombreSolicita": "HM Clínic S.A de C.V",
+            "tipDocSolicita": "36",
+            "numDocSolicita": NIT
+        }
+    }
         }
 
         # STEP 1: Send firm data to the first endpoint
@@ -221,16 +164,14 @@ def main():
         try:
             # Format the data as shown in the example
             bill_data = {
-                "tipoDte": plantilla["dteJson"]["identificacion"]["tipoDte"],
                 "ambiente": plantilla["dteJson"]["identificacion"]["ambiente"],
                 "idEnvio": 3,  # This might need to be dynamic
                 "version": plantilla["dteJson"]["identificacion"]["version"],
-                "codigoGeneracion": plantilla["dteJson"]["identificacion"]["codigoGeneracion"],
                 "documento": plantilla["dteJson"]["firma"]
             }
 
             response3 = requests.post(
-                "https://apitest.dtes.mh.gob.sv/fesv/recepciondte",
+                "https://apitest.dtes.mh.gob.sv/fesv/anulardte",
                 headers={
                     'Authorization': f'Bearer {token}',
                     'Content-Type': 'application/json',

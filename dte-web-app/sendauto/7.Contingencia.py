@@ -5,13 +5,15 @@ import uuid
 import time
 from datetime import datetime
 
-# Variables that you will set at the beginning
-NIT = "06140604191015"  # Replace with your actual NIT
-PASSWORD_PRI = "sparenovare2019"  # Replace with your actual password
-CODIGO_HACIENDA = "M]0tp4$$Coro"  # Replace with your actual code
-STARTING_NUMBER = 451  # Starting number for the numeroControl
+""" INFO DE Luis """
+NIT = "02101601741065"  # Replace with your actual NIT
+PASSWORD_PRI = "Halogenados20242"  # Replace with your actual password
+CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
+STARTING_NUMBER = 150  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
-CODACTIVITY = "86909"  # Replace with your actual activity code
+CODACTIVITY = "86203"  # Replace with your actual activity code
+NRC = "1837811"  # Replace with your actual NRC
+
 
 def main():
     current_number = STARTING_NUMBER
@@ -21,10 +23,7 @@ def main():
         
         # Generate a new UUID for codigoGeneracion
         new_codigo_generacion = str(uuid.uuid4()).upper()
-        codigoGeneracion = ["4D1F0C89-B42D-4CDB-B310-00949E144408","02276E4C-0167-499F-98CB-5FAA5494C43D", "F89D1A78-DBB3-4DD4-BFE8-4F4DE9D00228", "ED4DAB67-2687-4354-8AF4-FA4069191158", "F7C074F1-F456-4F9A-9218-8810CA22B2E1", "79E3984A-17C4-4B4E-9A0B-23AB8C7ECD46"]
-        selloRecibido = ["20253FEEAC1CCC344F3F950B48D59FC72F35U86G","2025DA3AAE7132764408B62E0FB9B8D72950RDT8", "2025C6712478B633476392A4990FDD2429EFKTWS", "202570623B5B14544E4BB3B93E18EBE006243KS6", "2025552D374FBDAA491EBF750D6DD23A4122J0ZE",  "20255752DFBA181C49CAB7DA3F427F413E38OQI1"]
-        numeroControl = ["DTE-01-00000000-000000000000451","DTE-01-00000000-000000000000452", "DTE-01-00000000-000000000000453", "DTE-01-00000000-000000000000454", "DTE-01-00000000-000000000000455", "DTE-01-00000000-000000000000456"]
-
+        new_codigo_generacion2 = str(uuid.uuid4()).upper()
         
         # Update the numeroControl with the current number
         numero_control = f"DTE-01-00000000-000000000000{current_number}"
@@ -39,55 +38,44 @@ def main():
             "activo": True,
             "passwordPri": PASSWORD_PRI,
             "dteJson": {
-        "identificacion": {
-            "version": 2,
-            "ambiente": "00",
-            "codigoGeneracion": new_codigo_generacion,
-            "fecAnula": current_date,
-            "horAnula": current_time
-        },
-        "emisor": {
-                        "nit": NIT,
+                
+                "identificacion": {
+    "version": 3,
+    "ambiente": "00",
+    "codigoGeneracion": new_codigo_generacion,
+    "fTransmision": current_date,
+    "hTransmision": current_time
+  },
+                "emisor": {
+                    "nit": NIT,
+                     "nombre": "Julio César Hernández Magaña ",
+                    "nombreResponsable": "Juan Carlos Pérez Rodríguez",
+                        "tipoDocResponsable": "13",
+                        "numeroDocResponsable": "063842754",
+                        "tipoEstablecimiento": "20",
+                        "codEstableMH": None,
+    "codPuntoVenta": None,
+    "telefono": "22507890",
+    "correo": "contacto@empresatecnologia.com"
+                },
+                
 
-                        "nombre": "Julio César Hernández Magaña ",
-
-            "tipoEstablecimiento": "02",
-            "nomEstablecimiento": "servicios médicos",
-                        "telefono": "60605939",
-
-                        "correo": "hmcirujanoplastico@gmail.com",
-
-            "codEstableMH": None,
-            "codEstable": None,
-            "codPuntoVentaMH": None,
-            "codPuntoVenta": None
-        },
-
-        "documento": {
-            "tipoDte": "01",
-            "codigoGeneracion": codigoGeneracion[iteration],
-            "selloRecibido": selloRecibido[iteration],
-            "numeroControl": numeroControl[iteration],
-            "fecEmi": current_date,
-            "montoIva": 391.15,
-            "codigoGeneracionR": None,
-            "tipoDocumento": "13",
-            "numDocumento": "06384275-4",
-            "nombre": "Luis Hernandez",
-            "telefono": "64319239",
-            "correo": "luishdezmtz12@gmail.com"
-        },
-        "motivo": {
-            "tipoAnulacion": 2,
-            "motivoAnulacion": "Error en los datos del documento",
-            "nombreResponsable": "HM Clínic S.A de C.V",
-            "tipDocResponsable": "36",
-            "numDocResponsable": "06140107211045",
-            "nombreSolicita": "HM Clínic S.A de C.V",
-            "tipDocSolicita": "36",
-            "numDocSolicita": "06140107211045"
-        }
+                "detalleDTE": [
+    {
+      "noItem": 1,
+      "codigoGeneracion": new_codigo_generacion2,
+      "tipoDoc": "01"
     }
+  ],
+                "motivo": {
+    "fInicio": current_date,
+    "fFin": current_date,
+    "hInicio": "08:15:00",
+    "hFin": "11:00:00",
+    "tipoContingencia": 2,
+    "motivoContingencia": None
+  }
+            }
         }
 
         # STEP 1: Send firm data to the first endpoint
@@ -163,14 +151,12 @@ def main():
         try:
             # Format the data as shown in the example
             bill_data = {
-                "ambiente": plantilla["dteJson"]["identificacion"]["ambiente"],
-                "idEnvio": 3,  # This might need to be dynamic
-                "version": plantilla["dteJson"]["identificacion"]["version"],
+                "nit": NIT,
                 "documento": plantilla["dteJson"]["firma"]
             }
 
             response3 = requests.post(
-                "https://apitest.dtes.mh.gob.sv/fesv/anulardte",
+                "https://apitest.dtes.mh.gob.sv/fesv/contingencia",
                 headers={
                     'Authorization': f'Bearer {token}',
                     'Content-Type': 'application/json',

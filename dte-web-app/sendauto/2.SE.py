@@ -6,12 +6,14 @@ import time
 from datetime import datetime
 
 # Variables that you will set at the beginning
-NIT = "06140604191015"  # Replace with your actual NIT
-PASSWORD_PRI = "sparenovare2019"  # Replace with your actual password
-CODIGO_HACIENDA = "M]0tp4$$Coro"  # Replace with your actual code
-STARTING_NUMBER = 251  # Starting number for the numeroControl
+""" INFO DE Luis """
+NIT = "02101601741065"  # Replace with your actual NIT
+PASSWORD_PRI = "Halogenados20242"  # Replace with your actual password
+CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
+STARTING_NUMBER = 150  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
-NRC = "2790601"
+CODACTIVITY = "86203"  # Replace with your actual activity code
+NRC = "1837811"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER
@@ -23,7 +25,7 @@ def main():
         new_codigo_generacion = str(uuid.uuid4()).upper()
         
         # Update the numeroControl with the current number
-        numero_control = f"DTE-03-00000000-000000000000{current_number}"
+        numero_control = f"DTE-14-00000000-000000000000{current_number}"
         
         # Update current date and time
         current_date = datetime.now().strftime("%Y-%m-%d")
@@ -36,9 +38,9 @@ def main():
             "passwordPri": PASSWORD_PRI,
             "dteJson": {
                 "identificacion": {
-                    "version": 3,
+                    "version": 1,
                     "ambiente": "00",
-                    "tipoDte": "03",
+                    "tipoDte": "14",
                     "numeroControl": numero_control,
                     "codigoGeneracion": new_codigo_generacion,
                     "tipoModelo": 1,
@@ -49,113 +51,71 @@ def main():
                     "tipoContingencia": None,
                     "motivoContin": None
                 },
-                "documentoRelacionado": None,
-
-
                 "emisor": {
-            "direccion": {
-                "municipio": "14",
-                "departamento": "06",
-                "complemento": "Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
-            },
-            "nit": NIT,
-            "nrc": NRC,
-            "nombre": "Julio César Hernández Magaña ",
-            "codActividad": "86909",
-            "descActividad": "Servicios médicos",
-            "telefono": "60605939",
-            "correo": "hmcirujanoplastico@gmail.com",
-            "nombreComercial": "servicios médicos",
-            "tipoEstablecimiento": "02",
-            "codEstableMH": None,
-            "codEstable": None,
-            "codPuntoVentaMH": None,
-            "codPuntoVenta": None
-        },
-        "receptor": {
-            "codActividad": "86203",
             "direccion": {
                 "municipio": "14",
                 "departamento": "06",
                 "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
             },
-            "nrc": "1837811",
-            "descActividad": "Servicios de medicos",
-            "correo": "luishdezmtz12@gmail.com",
-            "nombre": "Luis Hernandez",
-            "telefono": None,
-            "nombreComercial": "Sa",
-            "nit": "02101601741065"
+            "nit": NIT,
+            "nrc": NRC,
+            "nombre": "HM Clínic S.A de C.V",
+            "codActividad": CODACTIVITY,
+            "descActividad": "Clínicas médicas",
+            "telefono": "61111104",
+            "correo": "administracion@hmclinicsv.com",
+            "codEstableMH": None,
+            "codEstable": None,
+            "codPuntoVentaMH": None,
+            "codPuntoVenta": None
         },
-        "otrosDocumentos": None,
-        "ventaTercero": None,
+        "sujetoExcluido": {
+            "tipoDocumento": "13",
+            "numDocumento": "063842754",
+            "nombre": "Luis",
+            "codActividad": None,
+            "descActividad": None,
+            "direccion": {
+                "municipio": "14",
+                "departamento": "06",
+                "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+            },
+            "correo": "luishdezmtz12@gmail.com",
+            "telefono": None
+        },
         "cuerpoDocumento": [
             {
-                "codTributo": None,
-                "descripcion": "sdf",
-                "uniMedida": 99,
-                "codigo": None,
-                "cantidad": 1,
                 "numItem": 1,
-                "tributos": [
-                    "20"
-                ],
-                "noGravado": 0,
-                "psv": 0,
+                "codigo": None,
+                "uniMedida": 99,
+                "precioUni": 2,
                 "montoDescu": 0,
-                "numeroDocumento": None,
-                "precioUni": 1.77,
-                "ventaGravada": 1.77,
-                "ventaExenta": 0,
-                "ventaNoSuj": 0,
+                "compra": 4,
+                "descripcion": "2",
+                "cantidad": 2,
                 "tipoItem": 1
             }
         ],
         "resumen": {
+            "totalCompra": 4,
+            "descu": 0,
+            "totalDescu": 0,
+            "subTotal": 4,
+            "ivaRete1": 0,
+            "reteRenta": 0,
+            "totalPagar": 4,
+            "totalLetras": "CUATRO DÓLARES",
             "condicionOperacion": 1,
-            "saldoFavor": 0,
-            "numPagoElectronico": None,
             "pagos": [
                 {
                     "periodo": None,
                     "plazo": None,
-                    "montoPago": 2,
+                    "montoPago": 4,
                     "codigo": "01",
                     "referencia": None
                 }
             ],
-            "totalNoSuj": 0,
-            "tributos": [
-                {
-                    "codigo": "20",
-                    "descripcion": "Impuesto al Valor Agregado 13%",
-                    "valor": 0.23
-                }
-            ],
-            "totalLetras": "DOS DÓLARES",
-            "totalExenta": 0,
-            "subTotalVentas": 1.77,
-            "totalGravada": 1.77,
-            "montoTotalOperacion": 2,
-            "descuNoSuj": 0,
-            "descuExenta": 0,
-            "descuGravada": 0,
-            "porcentajeDescuento": 0,
-            "totalDescu": 0,
-            "subTotal": 1.77,
-            "ivaRete1": 0,
-            "reteRenta": 0,
-            "totalNoGravado": 0,
-            "totalPagar": 2,
-            "ivaPerci1": 0
-        },
-        "extension": {
-            "docuEntrega": None,
-            "nombRecibe": None,
-            "observaciones": "",
-            "placaVehiculo": None,
-            "nombEntrega": None,
-            "docuRecibe": None
+            "observaciones": ""
         },
         "apendice": None,
             }

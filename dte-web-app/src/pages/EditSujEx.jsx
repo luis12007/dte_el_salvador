@@ -607,6 +607,7 @@ const EditSujEx = () => {
                         id_emisor
                     );
                     const address = responsePlantilla.plantilla[0].re_direccion.split("|");
+                    console.log("Address:", address);
 
                     // Map the response data to the client state
                     setClient({

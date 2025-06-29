@@ -5,28 +5,34 @@ import uuid
 import time
 from datetime import datetime
 
-# Variables that you will set at the beginning
-NIT = "06141510781117"  # Replace with your actual NIT
-PASSWORD_PRI = "M9z@qp3WlX"  # Replace with your actual password
-CODIGO_HACIENDA = "M9z@qp3WlX"  # Replace with your actual code
-STARTING_NUMBER = 451  # Starting number for the numeroControl
+""" INFO DE Luis """
+NIT = "02101601741065"  # Replace with your actual NIT
+PASSWORD_PRI = "Halogenados20242"  # Replace with your actual password
+CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
+STARTING_NUMBER = 550  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
 CODACTIVITY = "86203"  # Replace with your actual activity code
+NRC = "1837811"  # Replace with your actual NRC
+
 def main():
     current_number = STARTING_NUMBER
     
     for iteration in range(NUM_ITERATIONS):
         print(f"\n===== ITERATION {iteration+1}/{NUM_ITERATIONS} =====")
         
-        # Generate a new UUID for codigoGeneracion
-        new_codigo_generacion = str(uuid.uuid4()).upper()
-        
-        # Update the numeroControl with the current number
-        numero_control = f"DTE-01-00000000-000000000000{current_number}"
-        
-        # Update current date and time
+                # Update current date and time
         current_date = datetime.now().strftime("%Y-%m-%d")
         current_time = datetime.now().strftime("%H:%M:%S")
+        
+        # Generate a new UUID for codigoGeneracion
+        new_codigo_generacion = str(uuid.uuid4()).upper()
+        reference_code = "0E50FDA3-F270-4A40-85C9-B09256C86651"
+        reference_date = current_date
+        
+        # Update the numeroControl with the current number
+        numero_control = f"DTE-06-00000000-000000000000{current_number}"
+        
+
         
         # Define the JSON data to send in the first call
         firm_data = {
@@ -35,9 +41,9 @@ def main():
             "passwordPri": PASSWORD_PRI,
             "dteJson": {
                 "identificacion": {
-                    "version": 1,
+                    "version": 3,
                     "ambiente": "00",
-                    "tipoDte": "01",
+                    "tipoDte": "06",
                     "numeroControl": numero_control,
                     "codigoGeneracion": new_codigo_generacion,
                     "tipoModelo": 1,
@@ -48,102 +54,99 @@ def main():
                     "tipoContingencia": None,
                     "motivoContin": None
                 },
-                "documentoRelacionado": None,
+                "documentoRelacionado": [
+            {
+                "tipoDocumento": "03",
+                "tipoGeneracion": 1,
+                "numeroDocumento": reference_code,
+                "fechaEmision": reference_date
+            }
+        ],
                 "emisor": {
-            "direccion": {
-                "municipio": "14",
-                "departamento": "06",
-                "complemento": "Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
-            },
-            "nit": NIT,
-            "nrc": "3652641",
-            "nombre": "Julio César Hernández Magaña ",
-            "codActividad": CODACTIVITY,
-            "descActividad": "Servicios médicos",
-            "telefono": "61111104",
-            "correo": "hmcirujanoplastico@gmail.com",
-            "nombreComercial": "servicios médicos",
-            "tipoEstablecimiento": "02",
-            "codEstableMH": None,
-            "codEstable": None,
-            "codPuntoVentaMH": None,
-            "codPuntoVenta": None
-        },
-                "receptor": {
-                    "codActividad": "10005",
-                    "direccion": None,
-                    "nrc": None,
-                    "descActividad": "Otros",
-                    "correo": "luishdezmtz12@gmail.com",
-                    "tipoDocumento": "13",
-                    "nombre": "Luis Hernandez",
-                    "telefono": "64319239",
-                    "numDocumento": "06384275-4"
+                    "direccion": {
+                        "municipio": "14",
+                        "departamento": "06",
+                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+                    },
+                    "nit": NIT,
+                    "nrc": NRC,
+                    "nombre": "HM Clínic S.A de C.V",
+                    "codActividad": CODACTIVITY,
+                    "descActividad": "Clínicas médicas",
+                    "telefono": "60605939",
+                    "correo": "administracion@hmclinicsv.com",
+                    "nombreComercial": "Centro de cirugía ambulatoria.",
+                    "tipoEstablecimiento": "02",
                 },
-                "otrosDocumentos": None,
+                "receptor": {
+            "nit": "02101601741065",
+            "nrc": "1837811",
+            "nombre": "Luis Hernandez",
+            "codActividad": "86203",
+            "descActividad": "Servicios de medicos",
+            "nombreComercial": None,
+            "direccion": {
+                        "municipio": "14",
+                        "departamento": "06",
+                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+                    },
+            "correo": "luishdezmtz12@gmail.com",
+            "telefono": None
+        },
                 "ventaTercero": None,
                 "cuerpoDocumento": [
-                    {
-                        "codTributo": None,
-                        "descripcion": "Pago por cirugia de Abdominnoplastia",
-                        "uniMedida": 99,
-                        "codigo": None,
-                        "cantidad": 1,
-                        "numItem": 1,
-                        "tributos": None,
-                        "ivaItem": 391.15045,
-                        "noGravado": 0,
-                        "psv": 0,
-                        "montoDescu": 0,
-                        "numeroDocumento": None,
-                        "precioUni": 3400,
-                        "ventaGravada": 3400,
-                        "ventaExenta": 0,
-                        "ventaNoSuj": 0,
-                        "tipoItem": 2
-                    }
+            {
+                "codTributo": None,
+                "descripcion": "2",
+                "uniMedida": 99,
+                "codigo": None,
+                "cantidad": 2,
+                "numItem": 1,
+                "tributos": [
+                    "20"
                 ],
+                "montoDescu": 0,
+                "numeroDocumento": reference_code,
+                "precioUni": 1.77,
+                "ventaGravada": 3.54,
+                "ventaExenta": 0,
+                "ventaNoSuj": 0,
+                "tipoItem": 1
+            }
+        ],
                 "resumen": {
-                    "condicionOperacion": 1,
-                    "totalIva": 391.15,
-                    "saldoFavor": 0,
-                    "numPagoElectronico": None,
-                    "pagos": [
-                        {
-                            "periodo": None,
-                            "plazo": None,
-                            "montoPago": 3400,
-                            "codigo": "01",
-                            "referencia": None
-                        }
-                    ],
-                    "totalNoSuj": 0,
-                    "tributos": None,
-                    "totalLetras": "TRES MIL CUATROCIENTOS DÓLARES",
-                    "totalExenta": 0,
-                    "subTotalVentas": 3400,
-                    "totalGravada": 3400,
-                    "montoTotalOperacion": 3400,
-                    "descuNoSuj": 0,
-                    "descuExenta": 0,
-                    "descuGravada": 0,
-                    "porcentajeDescuento": 0,
-                    "totalDescu": 0,
-                    "subTotal": 3400,
-                    "ivaRete1": 0,
-                    "reteRenta": 0,
-                    "totalNoGravado": 0,
-                    "totalPagar": 3400
-                },
-                "extension": {
-                    "docuEntrega": None,
-                    "nombRecibe": None,
-                    "observaciones": "",
-                    "placaVehiculo": None,
-                    "nombEntrega": None,
-                    "docuRecibe": None
-                },
-                "apendice": None,
+            "totalNoSuj": 0,
+            "totalExenta": 0,
+            "totalGravada": 3.54,
+            "subTotalVentas": 3.54,
+            "descuNoSuj": 0,
+            "descuExenta": 0,
+            "totalDescu": 0,
+            "tributos": [
+                {
+                    "codigo": "20",
+                    "descripcion": "Impuesto al Valor Agregado 13%",
+                    "valor": 0.46
+                }
+            ],
+            "subTotal": 3.54,
+            "ivaPerci1": 0,
+            "ivaRete1": 0,
+            "reteRenta": 0,
+            "montoTotalOperacion": 4,
+            "totalLetras": "CUATRO DÓLARES",
+            "condicionOperacion": 1,
+            "numPagoElectronico": None,
+            "descuGravada": 0
+        },
+        "extension": {
+            "docuEntrega": None,
+            "nombRecibe": None,
+            "observaciones": "",
+            "nombEntrega": None,
+            "docuRecibe": None
+        },
+        "apendice": None,
             }
         }
 
@@ -162,7 +165,6 @@ def main():
             """ print(f"Signature Response: {json.dumps(firm_result, indent=2)}") """
             
             # Check if the response has a body field (the signature)
-            print(f"Response status code: {firm_result}")
             if 'body' not in firm_result or not firm_result['body']:
                 print("Error: No signature found in the response")
                 continue  # Skip to next iteration
@@ -178,7 +180,6 @@ def main():
             continue  # Skip to next iteration
 
         # STEP 2: Login to get token
-
         print("\nSTEP 2: Logging in to get authorization token...")
         
         try:
@@ -216,8 +217,7 @@ def main():
             print(f"Error in step 2: {e}")
             continue  # Skip to next iteration
         
-        print(f"Authorization token obtained: {token}")
-        print(f"Firm: {plantilla["dteJson"]["firma"]}")
+
         # STEP 3: Send the bill
         print("\nSTEP 3: Sending bill with authorization token...")
         try:
@@ -225,7 +225,7 @@ def main():
             bill_data = {
                 "tipoDte": plantilla["dteJson"]["identificacion"]["tipoDte"],
                 "ambiente": plantilla["dteJson"]["identificacion"]["ambiente"],
-                "idEnvio": 4,  # This might need to be dynamic
+                "idEnvio": 3,  # This might need to be dynamic
                 "version": plantilla["dteJson"]["identificacion"]["version"],
                 "codigoGeneracion": plantilla["dteJson"]["identificacion"]["codigoGeneracion"],
                 "documento": plantilla["dteJson"]["firma"]

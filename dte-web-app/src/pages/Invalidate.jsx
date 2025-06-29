@@ -11,6 +11,8 @@ import filterimg from "../assets/imgs/filter.png";
 import filterwhite from "../assets/imgs/filterwhite.png";
 import FilterModal from "../components/FilterModal";
 import FacturaInvalidate from "../components/FacturaInvalidate";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Invalidate = () => {
     const token = localStorage.getItem("token");
@@ -273,8 +275,21 @@ const Invalidate = () => {
                 )}
             </section>
 
-
             <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
+            
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover={false}
+                theme="light"
+                limit={3}
+            />
         </div>
     );
 };

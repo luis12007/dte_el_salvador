@@ -6,12 +6,14 @@ import time
 from datetime import datetime
 
 # Variables that you will set at the beginning
-NIT = "06140604191015"  # Replace with your actual NIT
-PASSWORD_PRI = "sparenovare2019"  # Replace with your actual password
-CODIGO_HACIENDA = "M]0tp4$$Coro"  # Replace with your actual code
-STARTING_NUMBER = 251  # Starting number for the numeroControl
+""" INFO DE Luis """
+NIT = "02101601741065"  # Replace with your actual NIT
+PASSWORD_PRI = "Halogenados20242"  # Replace with your actual password
+CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
+STARTING_NUMBER = 550  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
-CODACTIVITY = "8621"  # Replace with your actual activity code
+CODACTIVITY = "86203"  # Replace with your actual activity code
+NRC = "1837811"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER
@@ -19,19 +21,15 @@ def main():
     for iteration in range(NUM_ITERATIONS):
         print(f"\n===== ITERATION {iteration+1}/{NUM_ITERATIONS} =====")
         
-                # Update current date and time
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        current_time = datetime.now().strftime("%H:%M:%S")
-        
         # Generate a new UUID for codigoGeneracion
         new_codigo_generacion = str(uuid.uuid4()).upper()
-        reference_code = "F0BB0F96-FE54-4B39-9418-C41245A69B53"
-        reference_date = current_date
         
         # Update the numeroControl with the current number
-        numero_control = f"DTE-06-00000000-000000000000{current_number}"
+        numero_control = f"DTE-03-00000000-000000000000{current_number}"
         
-
+        # Update current date and time
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        current_time = datetime.now().strftime("%H:%M:%S")
         
         # Define the JSON data to send in the first call
         firm_data = {
@@ -42,7 +40,7 @@ def main():
                 "identificacion": {
                     "version": 3,
                     "ambiente": "00",
-                    "tipoDte": "06",
+                    "tipoDte": "03",
                     "numeroControl": numero_control,
                     "codigoGeneracion": new_codigo_generacion,
                     "tipoModelo": 1,
@@ -53,95 +51,111 @@ def main():
                     "tipoContingencia": None,
                     "motivoContin": None
                 },
-                "documentoRelacionado": [
-            {
-                "tipoDocumento": "03",
-                "tipoGeneracion": 1,
-                "numeroDocumento": reference_code,
-                "fechaEmision": reference_date
-            }
-        ],
+                "documentoRelacionado": None,
+
+
                 "emisor": {
-                    "direccion": {
-                        "municipio": "14",
-                        "departamento": "06",
-                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
-                    },
-                    "nit": NIT,
-                    "nrc": "2790601",
-                    "nombre": "HM Clínic S.A de C.V",
-                    "codActividad": "86909",
-                    "descActividad": "Clínicas médicas",
-                    "telefono": "60605939",
-                    "correo": "administracion@hmclinicsv.com",
-                    "nombreComercial": "Centro de cirugía ambulatoria.",
-                    "tipoEstablecimiento": "02",
-                },
-                "receptor": {
-            "nit": "02101601741065",
-            "nrc": "1837811",
-            "nombre": "Luis Hernandez",
-            "codActividad": "86203",
-            "descActividad": "Servicios de medicos",
-            "nombreComercial": None,
             "direccion": {
-                        "municipio": "14",
-                        "departamento": "06",
-                        "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
-                    },
-            "correo": "luishdezmtz12@gmail.com",
-            "telefono": None
+                "municipio": "14",
+                "departamento": "06",
+                "complemento": "Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+            },
+            "nit": NIT,
+            "nrc": NRC,
+            "nombre": "Julio César Hernández Magaña ",
+            "codActividad": CODACTIVITY,
+            "descActividad": "Servicios médicos",
+            "telefono": "60605939",
+            "correo": "hmcirujanoplastico@gmail.com",
+            "nombreComercial": "servicios médicos",
+            "tipoEstablecimiento": "02",
+            "codEstableMH": None,
+            "codEstable": None,
+            "codPuntoVentaMH": None,
+            "codPuntoVenta": None
         },
-                "ventaTercero": None,
-                "cuerpoDocumento": [
+        "receptor": {
+            "codActividad": "86203",
+            "direccion": {
+                "municipio": "14",
+                "departamento": "06",
+                "complemento": " Final Paseo General Escalón #B-2, Colonia Escalón. San Salvador."
+            },
+            "nrc": "3652641",
+            "descActividad": "Servicios de medicos",
+            "correo": "luishdezmtz12@gmail.com",
+            "nombre": "Luis Hernandez",
+            "telefono": None,
+            "nombreComercial": "Sa",
+            "nit": "06141510781117"
+        },
+        "otrosDocumentos": None,
+        "ventaTercero": None,
+        "cuerpoDocumento": [
             {
                 "codTributo": None,
-                "descripcion": "2",
+                "descripcion": "sdf",
                 "uniMedida": 99,
                 "codigo": None,
-                "cantidad": 2,
+                "cantidad": 1,
                 "numItem": 1,
                 "tributos": [
                     "20"
                 ],
+                "noGravado": 0,
+                "psv": 0,
                 "montoDescu": 0,
-                "numeroDocumento": reference_code,
+                "numeroDocumento": None,
                 "precioUni": 1.77,
-                "ventaGravada": 3.54,
+                "ventaGravada": 1.77,
                 "ventaExenta": 0,
                 "ventaNoSuj": 0,
                 "tipoItem": 1
             }
         ],
-                "resumen": {
+        "resumen": {
+            "condicionOperacion": 1,
+            "saldoFavor": 0,
+            "numPagoElectronico": None,
+            "pagos": [
+                {
+                    "periodo": None,
+                    "plazo": None,
+                    "montoPago": 2,
+                    "codigo": "01",
+                    "referencia": None
+                }
+            ],
             "totalNoSuj": 0,
-            "totalExenta": 0,
-            "totalGravada": 3.54,
-            "subTotalVentas": 3.54,
-            "descuNoSuj": 0,
-            "descuExenta": 0,
-            "totalDescu": 0,
             "tributos": [
                 {
                     "codigo": "20",
                     "descripcion": "Impuesto al Valor Agregado 13%",
-                    "valor": 0.46
+                    "valor": 0.23
                 }
             ],
-            "subTotal": 3.54,
-            "ivaPerci1": 0,
+            "totalLetras": "DOS DÓLARES",
+            "totalExenta": 0,
+            "subTotalVentas": 1.77,
+            "totalGravada": 1.77,
+            "montoTotalOperacion": 2,
+            "descuNoSuj": 0,
+            "descuExenta": 0,
+            "descuGravada": 0,
+            "porcentajeDescuento": 0,
+            "totalDescu": 0,
+            "subTotal": 1.77,
             "ivaRete1": 0,
             "reteRenta": 0,
-            "montoTotalOperacion": 4,
-            "totalLetras": "CUATRO DÓLARES",
-            "condicionOperacion": 1,
-            "numPagoElectronico": None,
-            "descuGravada": 0
+            "totalNoGravado": 0,
+            "totalPagar": 2,
+            "ivaPerci1": 0
         },
         "extension": {
             "docuEntrega": None,
             "nombRecibe": None,
             "observaciones": "",
+            "placaVehiculo": None,
             "nombEntrega": None,
             "docuRecibe": None
         },
