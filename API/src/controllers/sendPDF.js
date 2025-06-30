@@ -89,7 +89,7 @@ const sendPDF = async(req, res) => {
                 .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
         } else if (userDB.id === 6  || userDB.id === 10 ) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
-                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+                .fontSize(13).text('Servicios de sauna y estéticos', 62, yscale + 30, { align: 'left' })
 
         }  else if ( userDB.id === 11) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
@@ -208,6 +208,19 @@ const sendPDF = async(req, res) => {
                 .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
                 .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
                 .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Clínicas médicas', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
+                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
+
+        }else if (userDB.id === 10 ) {
+
+
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
+                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios de sauna/estéticos', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
                 .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
                 .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
