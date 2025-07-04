@@ -1,4 +1,4 @@
-import Homeimg from '../assets/imgs/homeimg.webp'
+import Homeimg from '../assets/imgs/homeimg.webp'         
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import hamburgerimg from '../assets/imgs/hamburguerimg.png'
@@ -48,7 +48,7 @@ const Home = () => {
         {/* Header */}
         <header className="w-full max-w-md flex flex-col items-center justify-center gap-8">
           {/* Información del usuario - Una sola tarjeta */}
-          <div className="w-full flex flex-col items-center gap-3 mb-4 animate-slideInDown animate-delay-200">
+          <div className="w-[90%] sm:w-full flex flex-col items-center gap-3 mb-8 animate-slideInDown animate-delay-200">
             {/* Tarjeta única con toda la información */}
             <div className="w-full bg-white rounded-xl p-3 shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105 transition-all duration-300">
               <div className="flex flex-col items-center space-y-2">
