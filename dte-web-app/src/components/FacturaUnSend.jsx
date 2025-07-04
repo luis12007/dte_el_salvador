@@ -1207,7 +1207,37 @@ const FrameComponent1 = ({ key, content, user }) => {
         }
       }
 
-      if (id_emisor > 14) {
+      if (id_emisor == 15) {
+        const responseFirm = await Firmservice.RINO_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 16) {
+        const responseFirm = await Firmservice.RINO_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor > 16) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return
