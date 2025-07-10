@@ -1830,6 +1830,22 @@ const ClientBillAddNew = ({
               </div>
             </div>
 
+            {/* OTRO */}
+            <div className="animate-fadeInLeft animate-delay-300 w-full">
+              <div className="relative text-xs font-inria-sans text-left z-[1] mb-1">
+                <span className="text-black">OTRO</span>
+              </div>
+              <div className="w-full px-2 h-[30px] relative rounded-md box-border z-[1] border border-gray-300">
+                <input
+                  className="w-full h-full border-none outline-none font-inria-sans text-xs bg-transparent text-gray-700 rounded-md focus:ring-2 focus:ring-blue-500"
+                  placeholder="Numero de identificación"
+                  type="text"
+                  value={client.otro}
+                  onChange={(e) => handleChange("otro", e.target.value)}
+                />
+              </div>
+            </div>
+
             {/* Nombre */}
             <div className="animate-fadeInRight animate-delay-100 w-full">
               <div className="relative text-xs font-inria-sans text-left z-[1] mb-1">
