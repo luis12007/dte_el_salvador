@@ -2,10 +2,15 @@ import FrameComponent3 from "./SwitchOFF";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleClient, onSelectClient}) => {
+const DocumentTypeFrame = ({
+  handleSelectClient,
+  setClient,
+  client,
+  isVisibleClient,
+  onSelectClient,
+}) => {
   // Extended list of departments and their corresponding municipalities
   const handleChange = (field, value) => {
-
     var descActividaddata2 = "Otros";
     if (value == "10005") {
       descActividaddata2 = "Otros";
@@ -16,7 +21,8 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
     } else if (value == "97000") {
       descActividaddata2 = "empleadores de personal doméstico";
     } else if (value == "99000") {
-      descActividaddata2 = "Actividades de organizaciones y órganos extraterritoriales";
+      descActividaddata2 =
+        "Actividades de organizaciones y órganos extraterritoriales";
     } else if (value == "10004") {
       descActividaddata2 = "Desempleado";
     }
@@ -28,7 +34,7 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
         descActividad: descActividaddata2,
       }));
       return;
-    };
+    }
 
     // Update the client state with the new value
     setClient((prevClient) => ({
@@ -41,7 +47,9 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
       <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start px-0 pb-[29px] box-border gap-[14px] max-w-full">
         <div className="self-stretch h-[532px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <FrameComponent3
-          handleSelectClient={handleSelectClient} isVisibleClient={isVisibleClient} onSelectClient={onSelectClient}
+          handleSelectClient={handleSelectClient}
+          isVisibleClient={isVisibleClient}
+          onSelectClient={onSelectClient}
         />
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
           <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
@@ -51,7 +59,7 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <select
-              value={client.documentType}
+                value={client.documentType}
                 onChange={(e) => handleChange("documentType", e.target.value)}
                 className="w-full relative  bg-white border-2 max-w-full"
               >
@@ -99,7 +107,6 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
                 onChange={(e) => handleChange("name", e.target.value)}
               />
             </div>
-            
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
@@ -175,7 +182,6 @@ const DocumentTypeFrame = ({ handleSelectClient, setClient , client, isVisibleCl
             </div>
             </div>  */}
       </div>
-      
     </section>
   );
 };
