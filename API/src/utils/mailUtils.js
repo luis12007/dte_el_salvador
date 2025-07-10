@@ -1440,7 +1440,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(itemsDB.preciouni, servicesX + 240, y)
                 .text(itemsDB.montodescu, servicesX + 290, y)
                 .text(itemsDB.ventanosuj, servicesX + 350, y)
-                .text(itemsDB.preciouni * itemsDB.cantidad, servicesX + 410, y)
+                .text((parseFloat(itemsDB.preciouni) * parseFloat(itemsDB.cantidad)).toFixed(2), servicesX + 410, y)
                 .text(itemsDB.ventaexenta, servicesX + 470, y);
             numcounter += 1;
             y += 20;
@@ -1492,27 +1492,27 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         var ivaper = Number(plantillaDB.iva_percibido)
 
         if (plantillaDB.tipo === "03") {
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 10, { align: 'right' })
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`Total gravado: $${plantillaDB.total_agravada.toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento.toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
                 .text(`IVA recibido: $${ivaper.toFixed(2)}`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${plantillaDB.iva_retenido.toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${plantillaDB.retencion_de_renta.toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${plantillaDB.montototaloperacion.toFixed(2)}`, 300, y + 190, { align: 'right' });
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "01") {
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${plantillaDB.iva_percibido.toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`Total gravado: $${plantillaDB.total_agravada.toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento.toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`IVA recibido: $${plantillaDB.iva_percibido.toFixed(2)}`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${plantillaDB.iva_retenido.toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${plantillaDB.retencion_de_renta.toFixed(2)}`, 300, y + 150, { align: 'right' })
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`IVA recibido: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${plantillaDB.montototaloperacion.toFixed(2)}`, 300, y + 190, { align: 'right' });
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "14") {
             if (plantillaDB.total_agravada === null) {
                 plantillaDB.total_agravada = 0;
@@ -1521,40 +1521,40 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 plantillaDB.porcentajedescuento = 0;
 
             }
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotal.toFixed(2)}`, 300, y + 10, { align: 'right' })
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`Total gravado: $${plantillaDB.total_agravada.toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${plantillaDB.subtotal.toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada || 0).toFixed(2)}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento || 0).toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`IVA recibido: $${ivaper.toFixed(2)}`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${plantillaDB.iva_retenido.toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${plantillaDB.retencion_de_renta.toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0`, 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${plantillaDB.montototaloperacion.toFixed(2)}`, 300, y + 190, { align: 'right' });
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "05") {
 
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 10, { align: 'right' })
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`Total gravado: $${plantillaDB.total_agravada.toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento.toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${plantillaDB.iva_percibido.toFixed(2)}`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${plantillaDB.iva_retenido.toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${plantillaDB.retencion_de_renta.toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`IVA recibido: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0`, 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${plantillaDB.montototaloperacion.toFixed(2)}`, 300, y + 190, { align: 'right' });
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "06") {
 
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 10, { align: 'right' })
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`Total gravado: $${plantillaDB.total_agravada.toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas.toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${plantillaDB.porcentajedescuento.toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${plantillaDB.iva_percibido.toFixed(2)}`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${plantillaDB.iva_retenido.toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${plantillaDB.retencion_de_renta.toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`IVA recibido: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0', 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${plantillaDB.montototaloperacion.toFixed(2)}`, 300, y + 190, { align: 'right' });
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         }
 
 
