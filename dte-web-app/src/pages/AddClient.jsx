@@ -25,7 +25,8 @@ const CardOfClientAndAddClient = () => {
         id_usuario: id_emisor,
         name: null,
         phone: null,
-        tipo_establecimiento: 20
+        tipo_establecimiento: 20,
+        otro: null,
     })
 
 

@@ -15,7 +15,8 @@ const createClient = async(req, res) => {
         numero_telefono: client.phone,
         tipo_establecimiento: client.tipo_establecimiento,
         departament: client.departament,
-        municipio: client.municipio
+        municipio: client.municipio,
+        otro: client.otro,
     };
     try {
         console.log(client)

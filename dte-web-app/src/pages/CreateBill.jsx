@@ -90,6 +90,7 @@ const Clientes = () => {
     codActividad: "10005",
     nrc: null,
     descActividad: "Otros",
+    otro: null,
   });
 
   var [payment, setpayment] = useState({
@@ -703,6 +704,19 @@ const Clientes = () => {
         email: clientset.correo_electronico || "",
         phone: clientset.numero_telefono || "",
         codActividad: clientset.actividad_economica || "",
+        nrc: null,
+        descActividad: "Otros",
+      });
+    
+    } else if (client.documentType == "37") {
+        setClient({
+        documentType: "37",
+        name: clientset.name,
+        document: clientset.otro,
+        address: clientset.direccion,
+        email: clientset.correo_electronico,
+        phone: clientset.numero_telefono,
+        codActividad: clientset.actividad_economica,
         nrc: null,
         descActividad: "Otros",
       });
