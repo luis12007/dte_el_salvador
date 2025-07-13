@@ -1240,9 +1240,9 @@ const BooksComponent = () => {
         'EXPORTACIONES DE SERVICIO': 0,
         'VENTAS A ZONAS FRANCAS  Y DPA (TASA CERO)': 0,
         'VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS': 0,
+        'TOTAL DE VENTAS': item.total_a_pagar,
         'TIPO DE OPERACIÓN (RENTA)': operation,
         'TIPO DE INGRESO (RENTA)': "1", 
-        'TOTAL DE VENTAS': '2',
         'NÚMERO DEL ANEXO': '2'
       }
       return datatranform;
