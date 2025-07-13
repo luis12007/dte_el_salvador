@@ -1204,6 +1204,8 @@ const BooksComponent = () => {
       return;
     }
     // Transform the data to match the required structure
+    console.log("data");
+    console.log(data);
     const transformedData = data.map(item => {
 
       /* transforming the data from yyyy-mm-dd to dd/mm/yyyy */
@@ -1214,17 +1216,21 @@ const BooksComponent = () => {
       item.fecha_y_hora_de_generacion = `${day}/${month}/${year}`;
       console.log("data item");
       console.log(item.fecha_y_hora_de_generacion);
+      let operation = "1"; /* Gravadas */
+      if (item.totalexenta != 0){
+        operation = "2"; /* Exentas */
+      }
       const datatranform = {
         'FECHA DE EMISIÓN': item.fecha_y_hora_de_generacion,
         'CLASE DE DOCUMENTO': 4,
         'TIPO DE DOCUMENTO': 1,
         'NÚMERO DE RESOLUCIÓN': item.numero_de_control,
         'SERIE DEL DOCUMENTO': item.sello_de_recepcion,/* DSAF */
-        'NUMERO DE CONTROL INTERNO DEL': "0",
-        'NUMERO DE CONTROL INTERNO AL': "0",
+        'NUMERO DE CONTROL INTERNO DEL': item.codigo_de_generacion,
+        'NUMERO DE CONTROL INTERNO AL': item.codigo_de_generacion,
         'NÚMERO DE DOCUMENTO (DEL)': item.codigo_de_generacion,
         'NÚMERO DE DOCUMENTO (AL)': item.codigo_de_generacion,
-        'NÚMERO DE MAQUINA REGISTRADORA': '15555',
+        'NÚMERO DE MAQUINA REGISTRADORA': '',
         'VENTAS EXENTAS': item.totalexenta || 0,
         'VENTAS INTERNAS EXENTAS NO SUJETAS A PROPORCIONALIDAD': 0,
         'VENTAS NO SUJETAS': item.totalnosuj || 0,
@@ -1234,7 +1240,9 @@ const BooksComponent = () => {
         'EXPORTACIONES DE SERVICIO': 0,
         'VENTAS A ZONAS FRANCAS  Y DPA (TASA CERO)': 0,
         'VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS': 0,
-        'TOTAL DE VENTAS': item.total_a_pagar,
+        'TIPO DE OPERACIÓN (RENTA)': operation,
+        'TIPO DE INGRESO (RENTA)': "1", 
+        'TOTAL DE VENTAS': '2',
         'NÚMERO DEL ANEXO': '2'
       }
       return datatranform;
