@@ -5,6 +5,7 @@ import HamburguerComponent from "../components/HamburguerComponent";
 import SidebarComponent from "../components/SideBarComponent";
 import PlantillaAPI from "../services/PlantillaService";
 import UserService from "../services/UserServices";
+import { useNavigate } from "react-router-dom";
 import LoginAPI from "../services/Loginservices";
 import * as XLSX from "xlsx";
 import filterimg from "../assets/imgs/filter.png";
@@ -26,6 +27,7 @@ const HomeFacturas = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [filterByc, setFilterBy] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+      const navigate = useNavigate();
   
 
   // Sidebar visibility toggle
@@ -40,6 +42,21 @@ const HomeFacturas = () => {
       try {
         /* Change to login maybe */
         const resultusers = await UserService.getUserInfo(user_id, token);
+        console.log("resultusers");
+        console.log(resultusers);
+    if (resultusers.payment === false) {
+      toast.error("Error al procesar pago, por favor contacta a soporte!", {
+                position: "top-center",
+                autoClose: 3000, // Auto close after 3 seconds
+                hideProgressBar: false, // Display the progress bar
+                closeOnClick: true, // Close the toast when clicked
+                draggable: true, // Allow dragging the toast
+                style: { zIndex: 200000 } // Correct way to set z-index
+              });
+
+              /* wait 3 seconds */
+                navigate("/ingresar");
+            }
         setUser(resultusers);
         const result = await PlantillaAPI.getByUserId(user_id, token);
         console.log("result");

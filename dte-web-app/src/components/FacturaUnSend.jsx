@@ -226,6 +226,7 @@ const FrameComponent1 = ({ key, content, user }) => {
     itemsdata();
     console.log("user");
     console.log(user);
+    
     setUser(user)
 
     console.log("content");

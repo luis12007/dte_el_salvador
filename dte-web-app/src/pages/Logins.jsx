@@ -15,6 +15,11 @@ const Login = () => {
     const result = await LoginAPI.login(props);
     console.log(result);
     if (result.status === "success") {
+      if (result.payment === false) {
+        toast.error("El pago no fue procesado, contacte a soporte");
+        console.log("El pago no fue procesado");
+        return;
+      }
       localStorage.setItem("token", result.token);
       localStorage.setItem("user_id", result.user_id);
       localStorage.setItem("username", result.username);
