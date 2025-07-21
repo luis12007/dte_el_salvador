@@ -24,6 +24,7 @@ const login = async(req, res) => {
                 token,
                 username: user.usuario,
                 ambiente: user.ambiente,
+                payment: user.payment,
 
             });
         } else {

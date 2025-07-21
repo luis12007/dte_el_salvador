@@ -32,6 +32,8 @@ const CreateSubEx = () => {
     const [isVisibleClient, setIsVisibleClient] = useState(false);
     const [percentage, setPercentage] = useState(0);
     const [rentvalue, setRentvalue] = useState(0);
+          const [codepayment, setCodepayment] = useState("01");
+    
 
 
     /* data for municipalities ------------------------------------ */
@@ -830,7 +832,7 @@ const CreateSubEx = () => {
                         periodo: null,
                         plazo: null,
                         montoPago: total,
-                        codigo: payment.paymentmethod,
+                        codigo: codepayment,
                         referencia: null,
                     },
                 ],
@@ -1291,6 +1293,36 @@ const CreateSubEx = () => {
             <TreeNode text="Renta Retenida" data={rentvalue} />
             <TreeNode text="Total a Pagar" data={total} />
 
+{/* Tarjeta para seleccionar el medio de pago */}
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
+        <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[10px] max-w-full z-[1]">
+          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-center justify-between pt-[11px] px-[17px] pb-2 box-border relative max-w-full z-[2]">
+            <b className="relative z-[3] text-xs font-inria-sans text-black">Metodo de Pago</b>
+          </div>
+          <div className="max-w-full self-stretch px-[17px] py-2 ">
+            <select
+              value={codepayment}
+              onChange={e => setCodepayment(e.target.value)}
+              className="w-full h-[35px] border border-gray-300 rounded-md bg-white text-xs font-inria-sans text-black"
+            >
+              <option value="01">Billetes y monedas</option>
+              <option value="02">Tarjeta Débito</option>
+              <option value="03">Tarjeta Crédito</option>
+              <option value="04">Cheque</option>
+              <option value="05">Transferencia / Depósito Bancario</option>
+              <option value="06">Vales o Cupones</option>
+              <option value="08">Dinero electrónico</option>
+              <option value="09">Monedero electrónico</option>
+              <option value="10">Certificado o tarjeta de regalo</option>
+              <option value="11">Bitcoin</option>
+              <option value="12">Otras Criptomonedas</option>
+              <option value="13">Cuentas por pagar del receptor</option>
+              <option value="14">Giro bancario</option>
+            </select>
+          </div>
+        </div>
+      </section>
+      
             <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
                 <textarea
                     className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
