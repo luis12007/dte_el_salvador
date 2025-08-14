@@ -1131,6 +1131,7 @@ const FrameComponent1 = ({ key, content, user }) => {
         }
       }
 
+
       if (id_emisor == 11) {
         const responseFirm = await Firmservice.SANDR_prod(Firm);
         console.log("firm response")
@@ -1224,6 +1225,36 @@ const FrameComponent1 = ({ key, content, user }) => {
       }
 
       if (id_emisor == 16) {
+        const responseFirm = await Firmservice.GINE_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 17) {
+        const responseFirm = await Firmservice.GINE_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 18) {
         const responseFirm = await Firmservice.RINO_prod(Firm);
         console.log("firm response")
         console.log(responseFirm);
@@ -1238,7 +1269,7 @@ const FrameComponent1 = ({ key, content, user }) => {
         }
       }
 
-      if (id_emisor > 16) {
+      if (id_emisor > 18) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return
