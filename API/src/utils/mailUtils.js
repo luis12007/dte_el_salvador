@@ -1096,7 +1096,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add Doctor's information
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 16 || userDB.id === 17 || userDB.id === 18) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
@@ -1109,6 +1109,13 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             .text(`Dr. ${newname}`, 30, yscale, { align: 'left' })
         } else if (userDB.id === 7  || userDB.id === 12) {
 
+        }else if (userDB.id === 16 || userDB.id === 17) {
+const name = userDB.name.split(" ");
+            const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
+            const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
+            const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
+            pdfDoc.fontSize(18).fillColor('#1E3256')
+                .text(`Dr. ${name1} ${name2} ${name3}`, 53, yscale, { align: 'left' })
         }else if (userDB.id === 11) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
@@ -1237,12 +1244,22 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         console.log('userDB', userDB.name, userDB.direccion);
 
+        let newname = ""
+        if (userDB.id === 16 || userDB.id === 17 ) {
+            const name = userDB.name.split(" ");
+        const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
+        const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
+        const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
+        newname = `${name1} ${name2} ${name3} `;
+        }
+        else{
         const name = userDB.name.split(" ");
         const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
         const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
         const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
         const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
-        const newname = `${name1} ${name2} ${name3} ${name4}`;
+        newname = `${name1} ${name2} ${name3} ${name4}`;
+        }
 
         const truncatedNombreORazonSocial = truncateText(newname, 20);
         const truncatedDireccion = truncateText(userDB.direccion, 37);
