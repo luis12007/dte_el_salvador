@@ -37,6 +37,15 @@ const ClietnBillCredit = ({
       descActividaddata2 = "Servicios de medicos";
     }
 
+    if (field == "descActividad")
+    {
+      setClient((prevClient) => ({
+        ...prevClient,
+        [field]: value,
+      }));
+      return;
+    }
+
     if (field == "codActividad") {
       setClient((prevClient) => ({
         ...prevClient,
@@ -1769,6 +1778,8 @@ const ClietnBillCredit = ({
                   }`}
                   onClick={() => {
                     handleChange("codActividad", activity.value);
+                    /* setting description */
+                    handleChange("descActividad", activity.label);
                     setShowActivityModal(false);
                     setActivitySearch("");
                   }}

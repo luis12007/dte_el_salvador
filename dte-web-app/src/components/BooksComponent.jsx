@@ -67,6 +67,24 @@ const BooksComponent = () => {
       Anexos();
     }
 
+    // Nuevos tipos: exportaciones de datos brutos por documento
+    if (book === "RAW_FACT") {
+      console.log("Exportación bruta: Facturas (01)");
+      exportRawFactura();
+    }
+    if (book === "RAW_CF") {
+      console.log("Exportación bruta: Crédito Fiscal (03)");
+      exportRawCreditoFiscal();
+    }
+    if (book === "RAW_SUEX") {
+      console.log("Exportación bruta: Sujeto Excluido (14)");
+      exportRawSujetoExcluido();
+    }
+    if (book === "RAW_NOTAS") {
+      console.log("Exportación bruta: Notas (05,06)");
+      exportRawNotas();
+    }
+
     closeModal();
   };
 
@@ -77,6 +95,303 @@ const BooksComponent = () => {
     anexoSuex();
     anexoCompras();
   }
+
+  // Utilidades para exportación bruta a Excel (sin transformar)
+  const flattenObject = (obj, prefix = '') => {
+    const res = {};
+    if (!obj || typeof obj !== 'object') return res;
+    for (const [key, value] of Object.entries(obj)) {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        Object.assign(res, flattenObject(value, newKey));
+      } else if (Array.isArray(value)) {
+        // Serializamos arrays como JSON para no perder datos
+        res[newKey] = JSON.stringify(value);
+      } else {
+        res[newKey] = value;
+      }
+    }
+    return res;
+  };
+
+  const buildColumnsFromData = (data) => {
+    const colSet = new Set();
+    data.forEach(item => {
+      const flat = flattenObject(item);
+      Object.keys(flat).forEach(k => colSet.add(k));
+    });
+    return Array.from(colSet);
+  };
+
+  const generateRawExcel = async (data, title, filenameBase) => {
+    if (!data || !data.length) {
+      toast.info("No hay datos para exportar");
+      return;
+    }
+
+    const flatRows = data.map(item => flattenObject(item));
+    const columns = buildColumnsFromData(data);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Datos');
+
+    const addMergedHeader = (text, opts = {}) => {
+      const r = worksheet.addRow([text]);
+      const rowIndex = r.number;
+      worksheet.mergeCells(rowIndex, 1, rowIndex, Math.max(1, columns.length));
+      const cell = worksheet.getCell(rowIndex, 1);
+      cell.style = {
+        font: { bold: opts.bold ?? true, size: opts.size ?? 16, name: 'Arial' },
+        alignment: { horizontal: opts.align ?? 'center', vertical: 'middle', wrapText: true },
+      };
+      r.height = opts.height ?? 25;
+    };
+
+    // Encabezados estilo "libros"
+    addMergedHeader(title, { size: 18 });
+    addMergedHeader(`${user?.name ?? ''}`, { bold: true, size: 14, align: 'left' });
+    addMergedHeader(`Fecha: ${startDate} al ${endDate}`, { bold: false, size: 12, align: 'left' });
+    addMergedHeader(`NRC: ${user?.nrc ?? ''}`, { bold: false, size: 12, align: 'left' });
+    worksheet.addRow(['']);
+
+    // Encabezado de columnas (todas las llaves crudas)
+    const headerRow = worksheet.addRow(columns);
+    headerRow.eachCell((cell) => {
+      cell.style = {
+        font: { bold: true, color: { argb: 'FFFFFFFF' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F81BD' } },
+        alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+        border: {
+          top: { style: 'medium', color: { argb: 'FF000000' } },
+          left: { style: 'medium', color: { argb: 'FF000000' } },
+          bottom: { style: 'medium', color: { argb: 'FF000000' } },
+          right: { style: 'medium', color: { argb: 'FF000000' } },
+        },
+      };
+    });
+
+    // Filas de datos
+    flatRows.forEach(rowObj => {
+      const row = worksheet.addRow(columns.map(c => rowObj[c] ?? ''));
+      row.eachCell((cell) => {
+        cell.style = {
+          alignment: { horizontal: 'left', vertical: 'middle', wrapText: true },
+          border: {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } },
+          },
+        };
+      });
+    });
+
+    // Ancho de columnas
+    const defaultWidth = 20;
+    worksheet.columns = columns.map(() => ({ width: defaultWidth }));
+
+    try {
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${filenameBase} ${startDate} - ${endDate}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success("Archivo creado con éxito");
+    } catch (error) {
+      console.error('Error generating Excel file:', error);
+      toast.error('Error al crear el archivo');
+    }
+  };
+
+  // Exportación con columnas fijas y altura máxima por fila
+  const FIXED_HEADERS = [
+    'tipo',
+    'codigo de generacion',
+    'numero de control',
+    'sello de recepcion',
+    'fecha',
+    'hora emi',
+    're correo electronico',
+    're name',
+    're numero de telefono',
+    'ambiente',
+    'subtotal',
+    'total garvado',
+    'iva percibido',
+    'iva retenido',
+    'retencion de renta',
+    'total',
+    'total a pagar',
+    'observaciones'
+  ];
+
+  // Construye un Date combinando fecha (fecha_y_hora_de_generacion solo fecha) y hora (horemi)
+  const buildDateTime = (obj) => {
+    const dateRaw = (obj?.fecha_y_hora_de_generacion || obj?.fecha || '').toString().split('T')[0];
+    const timeRaw = (obj?.horemi || obj?.hora || '').toString();
+    let iso = '';
+    if (dateRaw && timeRaw) iso = `${dateRaw}T${timeRaw}`;
+    else if (dateRaw) iso = dateRaw;
+    else if (timeRaw) iso = `1970-01-01T${timeRaw}`; // fallback solo hora
+    const d = new Date(iso);
+    return isFinite(d.getTime()) ? d : new Date(0);
+  };
+
+  const mapItemToFixedRow = (item) => {
+    const fechaSolo = (item?.fecha_y_hora_de_generacion || item?.fecha || '').toString().split('T')[0];
+    const horaSolo = (item?.horemi || item?.hora || '').toString();
+    const ambienteLocal = localStorage.getItem('ambiente') || '';
+    // Subtotal heurístico
+    const subtotal = item?.subtotal ?? item?.monto_total ?? item?.montototal ?? item?.montototaloperacion ?? item?.total_agravada ?? 0;
+    // Total heurístico
+    const total = item?.total ?? item?.montototaloperacion ?? item?.monto_total ?? 0;
+    const totalPagar = item?.total_a_pagar ?? total;
+    return {
+      'tipo': item?.tipo ?? item?.type ?? '',
+      'codigo de generacion': item?.codigo_de_generacion ?? item?.codigo_generacion ?? item?.codigo ?? '',
+      'numero de control': item?.numero_de_control ?? item?.numero_control ?? '',
+      'sello de recepcion': item?.sello_de_recepcion ?? '',
+  'fecha': fechaSolo ?? '',
+  'hora emi': horaSolo ?? '',
+      're correo electronico': item?.re_email ?? item?.re_correo ?? item?.re_correo_electronico ?? '',
+      're name': item?.re_name ?? '',
+      're numero de telefono': item?.re_telefono ?? item?.re_numero_telefono ?? item?.re_phone ?? '',
+      'ambiente': item?.ambiente ?? ambienteLocal,
+      'subtotal': subtotal,
+      'total garvado': item?.total_agravada ?? 0,
+      'iva percibido': item?.iva_percibido ?? 0,
+      'iva retenido': item?.iva_retenido ?? 0,
+      'retencion de renta': item?.retencion_de_renta ?? 0,
+      'total': total,
+      'total a pagar': totalPagar,
+      'observaciones': item?.observaciones ?? ''
+    };
+  };
+
+  const generateFixedColumnsExcel = async (data, title, filenameBase) => {
+    if (!data || !data.length) {
+      toast.info('No hay datos para exportar');
+      return;
+    }
+
+    // Ordenar por fecha y hora ascendente
+  const sorted = [...data].sort((a, b) => buildDateTime(a) - buildDateTime(b));
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Datos');
+
+    // Encabezados tipo libros
+    const addMergedHeader = (text, opts = {}) => {
+      const r = worksheet.addRow([text]);
+      const rowIndex = r.number;
+      worksheet.mergeCells(rowIndex, 1, rowIndex, Math.max(1, FIXED_HEADERS.length));
+      const cell = worksheet.getCell(rowIndex, 1);
+      cell.style = {
+        font: { bold: opts.bold ?? true, size: opts.size ?? 16, name: 'Arial' },
+        alignment: { horizontal: opts.align ?? 'center', vertical: 'middle', wrapText: true },
+      };
+      r.height = opts.height ?? 25;
+    };
+
+    addMergedHeader(title, { size: 18 });
+    addMergedHeader(`${user?.name ?? ''}`, { bold: true, size: 14, align: 'left' });
+    addMergedHeader(`Fecha: ${startDate} al ${endDate}`, { bold: false, size: 12, align: 'left' });
+    addMergedHeader(`NRC: ${user?.nrc ?? ''}`, { bold: false, size: 12, align: 'left' });
+    worksheet.addRow(['']);
+
+    // Header fijo
+    const headerRow = worksheet.addRow(FIXED_HEADERS);
+    headerRow.eachCell((cell) => {
+      cell.style = {
+        font: { bold: true, color: { argb: 'FFFFFFFF' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F81BD' } },
+        alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+        border: {
+          top: { style: 'medium', color: { argb: 'FF000000' } },
+          left: { style: 'medium', color: { argb: 'FF000000' } },
+          bottom: { style: 'medium', color: { argb: 'FF000000' } },
+          right: { style: 'medium', color: { argb: 'FF000000' } },
+        },
+      };
+    });
+    headerRow.height = 36;
+
+    // Filas de datos con altura máxima 36
+  sorted.forEach((item) => {
+      const mapped = mapItemToFixedRow(item);
+      const rowValues = FIXED_HEADERS.map((h) => mapped[h] ?? '');
+      const row = worksheet.addRow(rowValues);
+      row.eachCell((cell) => {
+        cell.style = {
+          alignment: { horizontal: 'left', vertical: 'middle', wrapText: true },
+          border: {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } },
+          },
+        };
+      });
+      row.height = 36;
+    });
+
+    worksheet.columns = FIXED_HEADERS.map(() => ({ width: 22 }));
+
+    try {
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${filenameBase} ${startDate} - ${endDate}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success('Archivo creado con éxito');
+    } catch (error) {
+      console.error('Error generating Excel file:', error);
+      toast.error('Error al crear el archivo');
+    }
+  };
+
+  // Exportadores por tipo de documento (sin transformar)
+  const exportRawFactura = async () => {
+    const data = await PlantillaAPI.getbytypeandid(user_id, token, ["01"], startDate, endDate);
+    if (!data.length) {
+      toast.info("No se encontraron datos para el rango de fechas seleccionado - Facturas (01)");
+      return;
+    }
+  await generateFixedColumnsExcel(data, 'FACTURAS (Datos brutos)', 'Facturas (Raw)');
+  };
+
+  const exportRawCreditoFiscal = async () => {
+    const data = await PlantillaAPI.getbytypeandid(user_id, token, ["03"], startDate, endDate);
+    if (!data.length) {
+      toast.info("No se encontraron datos para el rango de fechas seleccionado - Crédito Fiscal (03)");
+      return;
+    }
+  await generateFixedColumnsExcel(data, 'CRÉDITO FISCAL (Datos brutos)', 'Credito Fiscal (Raw)');
+  };
+
+  const exportRawSujetoExcluido = async () => {
+    const data = await PlantillaAPI.getbytypeandid(user_id, token, ["14"], startDate, endDate);
+    if (!data.length) {
+      toast.info("No se encontraron datos para el rango de fechas seleccionado - Sujeto Excluido (14)");
+      return;
+    }
+  await generateFixedColumnsExcel(data, 'SUJETO EXCLUIDO (Datos brutos)', 'Sujeto Excluido (Raw)');
+  };
+
+  const exportRawNotas = async () => {
+    const data = await PlantillaAPI.getbytypeandid(user_id, token, ["05", "06"], startDate, endDate);
+    if (!data.length) {
+      toast.info("No se encontraron datos para el rango de fechas seleccionado - Notas (05,06)");
+      return;
+    }
+  await generateFixedColumnsExcel(data, 'NOTAS DÉBITO/CRÉDITO (Datos brutos)', 'Notas (Raw)');
+  };
 
 
   const anexoSuex = async () => {
@@ -114,6 +429,9 @@ const BooksComponent = () => {
       };
       return datatranform;
     });
+
+    transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - new Date(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
+
     const wb = XLSX.utils.book_new();
 
     // Convert data to worksheet without headers
@@ -471,6 +789,9 @@ const BooksComponent = () => {
       'NÚMERO DEL ANEXO': '3'
     }));
 
+    // Filter and order data by date
+    transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - new Date(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
+
     // Create a new workbook
     const wb = XLSX.utils.book_new();
 
@@ -649,8 +970,6 @@ const BooksComponent = () => {
       };
     });
 
-
-    // Add data rows
     transformedData.forEach((rowData) => {
       const row = worksheet.addRow(Object.values(rowData));
       row.eachCell((cell) => {
@@ -877,6 +1196,7 @@ const BooksComponent = () => {
       'NUMERO DE DUI DEL CLIENTE': '', // Add if available in your data
       'NÚMERO DEL ANEXO': "1" // Add if available in your data
     }));
+    transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - new Date(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
     // Create a new workbook
     const wb = XLSX.utils.book_new();
@@ -1012,6 +1332,8 @@ const BooksComponent = () => {
         },
       };
     });
+    /* order transformeddata by days using day number and day column*/
+    transformedData.sort((a, b) => a['DÍA'] - b['DÍA']);
 
     // Add data rows
     transformedData.forEach((rowData) => {
@@ -1163,13 +1485,26 @@ const BooksComponent = () => {
 
   // Keep your existing transformData function
   const transformData = (data) => {
+    // Comparador robusto para números de control: intenta comparar por número al final; fallback a comparación natural
+    const compareControl = (a, b) => {
+      const sa = String(a ?? '');
+      const sb = String(b ?? '');
+      if (sa === sb) return 0;
+      const ma = sa.match(/(\d+)/g);
+      const mb = sb.match(/(\d+)/g);
+      if (ma && mb) {
+        const na = parseInt(ma[ma.length - 1], 10);
+        const nb = parseInt(mb[mb.length - 1], 10);
+        if (!Number.isNaN(na) && !Number.isNaN(nb) && na !== nb) return na - nb;
+      }
+      return sa.localeCompare(sb, undefined, { numeric: true, sensitivity: 'base' });
+    };
+
     const groupedData = data.reduce((acc, item) => {
-      /* data = "2025-01-31" chopping to have just the 31 */
+      // data = "2025-01-31" -> tomar el día
       const day = item.fecha_y_hora_de_generacion.split('-')[2].split('T')[0];
-      console.log("day");
-      console.log(day);
       if (!acc[day]) {
-        acc[day] = {
+        const base = {
           'DÍA': day,
           'DOCUMENTO EMITIDO (DEL)': item.numero_de_control,
           'DOCUMENTO EMITIDO (AL)': item.numero_de_control,
@@ -1180,8 +1515,18 @@ const BooksComponent = () => {
           'TOTAL DE VENTAS DIARIAS PROPIAS': 0,
           'VENTAS A CUENTAS DE TERCEROS': 0
         };
+        // Guardar min/max como propiedades NO enumerables para no afectar el orden de columnas
+        Object.defineProperty(base, '_minDoc', { value: item.numero_de_control, writable: true, enumerable: false });
+        Object.defineProperty(base, '_maxDoc', { value: item.numero_de_control, writable: true, enumerable: false });
+        acc[day] = base;
       } else {
-        acc[day]['DOCUMENTO EMITIDO (DEL)'] = item.numero_de_control;
+        const curr = item.numero_de_control;
+        if (curr != null) {
+          if (compareControl(curr, acc[day]._minDoc) < 0) acc[day]._minDoc = curr;
+          if (compareControl(curr, acc[day]._maxDoc) > 0) acc[day]._maxDoc = curr;
+          acc[day]['DOCUMENTO EMITIDO (DEL)'] = acc[day]._minDoc;
+          acc[day]['DOCUMENTO EMITIDO (AL)'] = acc[day]._maxDoc;
+        }
       }
       acc[day]['VENTAS EXENTAS'] += Number(item.totalexenta) || 0;
       acc[day]['VENTAS INTERNAS GRAVADAS'] += Number(item.total_agravada) || 0;
@@ -1206,16 +1551,11 @@ const BooksComponent = () => {
     // Transform the data to match the required structure
     console.log("data");
     console.log(data);
+
+    
     const transformedData = data.map(item => {
 
-      /* transforming the data from yyyy-mm-dd to dd/mm/yyyy */
-      const date = new Date(item.fecha_y_hora_de_generacion);
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-      item.fecha_y_hora_de_generacion = `${day}/${month}/${year}`;
-      console.log("data item");
-      console.log(item.fecha_y_hora_de_generacion);
+      
       let operation = "1"; /* Gravadas */
       if (item.totalexenta != 0){
         operation = "2"; /* Exentas */
@@ -1247,6 +1587,9 @@ const BooksComponent = () => {
       }
       return datatranform;
     });
+
+    /* filtering and ordering data by date */
+    transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN']) - new Date(b['FECHA DE EMISIÓN']));
 
 
     /* // Create a new workbook
@@ -1339,6 +1682,48 @@ const BooksComponent = () => {
                 >
                   Generar Anexos
                 </button>
+              </div>
+            </div>
+
+            {/* Exportación Bruta (Todos los Documentos) */}
+            <div className="animate-fadeInUp animate-delay-150 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🧾</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Exportación de Documentos (Raw)
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  Facturas, Crédito Fiscal, Sujeto Excluido y Notas
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button 
+                    onClick={() => openModal('RAW_FACT')}
+                    className="w-full bg-blue-500/90 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                  >
+                    Facturas (01)
+                  </button>
+                  <button 
+                    onClick={() => openModal('RAW_CF')}
+                    className="w-full bg-indigo-500/90 hover:bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                  >
+                    Crédito Fiscal (03)
+                  </button>
+                  <button 
+                    onClick={() => openModal('RAW_SUEX')}
+                    className="w-full bg-emerald-500/90 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                  >
+                    Sujeto Excluido (14)
+                  </button>
+                  <button 
+                    onClick={() => openModal('RAW_NOTAS')}
+                    className="w-full bg-orange-500/90 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                  >
+                    Notas Débito/Crédito (05,06)
+                  </button>
+                </div>
               </div>
             </div>
 

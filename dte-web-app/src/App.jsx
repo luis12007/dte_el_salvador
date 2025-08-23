@@ -83,7 +83,6 @@ export default function App() {
 
         <Route path="/sidebar" element={<Private><Sidebar/></Private>}/>
 
-
         <Route path="/detalles/:id" element={<Private><DetallesFactura/></Private>}/>
         <Route path="/facturas/:id" element={<Private><HomeFacturas/></Private>}/>
         <Route path="/items" element={<Private><ListItems/></Private>}/>

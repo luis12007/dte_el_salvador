@@ -1301,6 +1301,20 @@ const name = userDB.name.split(" ");
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
 
         }
+        else if (userDB.id === 12 || userDB.id === 7) {
+
+
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
+                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios de Odontología', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
+                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
+
+        }
         else {
 
 
@@ -1319,8 +1333,8 @@ const name = userDB.name.split(" ");
 
 
         console.log('plantillaDB', plantillaDB.re_name, plantillaDB.re_direccion);
-        const truncatedNombreORazonSocialReceptor = truncateText(plantillaDB.re_name, 25);
-        const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 37);
+        const truncatedNombreORazonSocialReceptor = truncateText(plantillaDB.re_name, 22);
+        const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 34);
 
         pdfDoc.font('Helvetica-Bold').text('RECEPTOR', infoX + 280, infoY + 8)
 
@@ -1347,7 +1361,7 @@ const name = userDB.name.split(" ");
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
 
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
@@ -1365,7 +1379,7 @@ const name = userDB.name.split(" ");
             let re_numdocumentostring = 'DOC';
             /* i have my address like 01  02|08|direccion and i just need direccion*/
             const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
 
 
             pdfDoc.fontSize(10).fillColor('#1E3256')
@@ -1382,7 +1396,7 @@ const name = userDB.name.split(" ");
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
 
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
@@ -1400,7 +1414,7 @@ const name = userDB.name.split(" ");
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
+            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
 
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
@@ -1443,24 +1457,41 @@ const name = userDB.name.split(" ");
         let y = servicesY + 20;
         let numcounter = 1;
 
+        // Ajuste: envolver descripción y calcular altura dinámica por fila
+        const descColX = servicesX + 110;
+        const descColWidth = 120; // ancho de la columna de descripción
+        const baseRowHeight = 20; // altura base por fila
 
-        itemsDB.forEach(itemsDB => {
-            const truncatedesc = truncateText(itemsDB.descripcion, 26);
+        itemsDB.forEach(item => {
+            const desc = (item.descripcion || '').toString();
+            const descHeight = pdfDoc.heightOfString(desc, { width: descColWidth, align: 'left' });
+            const rowHeight = Math.max(baseRowHeight, Math.ceil(descHeight / baseRowHeight) * baseRowHeight);
 
-            // Check if a new page is needed and reset y if necessary
-            y = checkAndAddNewPageItems(pdfDoc, y, 770, 20);
+            // Saltar de página si la fila no cabe completa
+            if (y + rowHeight > 770) {
+                pdfDoc.addPage();
+                y = 20;
+            }
 
-            pdfDoc.text(numcounter, servicesX, y)
-                .text(itemsDB.cantidad, servicesX + 20, y)
-                .text(itemsDB.codigo, servicesX + 70, y)
-                .text(truncatedesc, servicesX + 110, y)
-                .text(itemsDB.preciouni, servicesX + 240, y)
-                .text(itemsDB.montodescu, servicesX + 290, y)
-                .text(itemsDB.ventanosuj, servicesX + 350, y)
-                .text((parseFloat(itemsDB.preciouni) * parseFloat(itemsDB.cantidad)).toFixed(2), servicesX + 410, y)
-                .text(itemsDB.ventaexenta, servicesX + 470, y);
+            // Dibujar columnas
+            pdfDoc
+                .text(numcounter, servicesX, y)
+                .text(item.cantidad, servicesX + 20, y)
+                .text(item.codigo, servicesX + 70, y);
+
+            // Descripción envuelta dentro del ancho de columna
+            pdfDoc.text(desc, descColX, y, { width: descColWidth, align: 'left' });
+
+            // Resto de columnas (mantener posiciones existentes)
+            pdfDoc
+                .text(item.preciouni, servicesX + 240, y)
+                .text(item.montodescu, servicesX + 290, y)
+                .text(item.ventanosuj, servicesX + 350, y)
+                .text((parseFloat(item.preciouni) * parseFloat(item.cantidad)).toFixed(2), servicesX + 410, y)
+                .text(item.ventaexenta, servicesX + 470, y);
+
             numcounter += 1;
-            y += 20;
+            y += rowHeight; // avanzar según altura real de la fila
         });
 
         pdfDoc.moveTo(30, servicesY - 10).lineTo(550, servicesY - 10).stroke('#000');
