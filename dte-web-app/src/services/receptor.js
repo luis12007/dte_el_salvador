@@ -45,6 +45,25 @@ router.post('/update/count_fiscal/:id', authenticateToken, count_fiscal); */
         const data = await res.json();
         return data;
     },
+
+    Edit_by_id: async(id, token, client) => {
+        try {
+            const res = await fetch(`${BASE_URL}/cliente/put/${id}`, {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(client)
+            });
+            const data = await res.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            return error;
+        }
+
+    }
 }
 
 

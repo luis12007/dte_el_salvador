@@ -48,12 +48,14 @@ const getClientByUserId = async(req, res) => {
 
 //------------------------------------------------------------
 const putClients = async(req, res) => {
+    console.log('Updating client:', req.params.id);
+    console.log('Request body:', req.body);
     const clientId = req.params.id;
     const client = req.body;
     try {
-        const client = await db('receptor').where({ id: clientId }).first();
+        const clientold = await db('receptor').where({ id: clientId }).first();
 
-        if (!client) {
+        if (!clientold) {
             return res.status(404).json({ message: 'Cliente no encontrado' });
         }
 

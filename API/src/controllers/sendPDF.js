@@ -83,7 +83,12 @@ const sendPDF = async(req, res) => {
             pdfDoc.fontSize(17).fillColor('#1E3256')
 
             .text(`Licda. ${newname}`, 25, yscale, { align: 'left' })
-        } else {
+        }
+        else if (userDB.id === 13 || userDB.id === 14) {
+            pdfDoc.fontSize(13).fillColor('#1E3256')
+                .text(`${userDB.name}`, 0, yscale + 30, { align: 'center', width: 300, continued: false })
+        }
+         else {
             /* align in the middle of the left and center */
             pdfDoc.fontSize(18).fillColor('#1E3256')
                 .text(`${userDB.name}`, 0, yscale, { align: 'center', width: 300, continued: false })
@@ -109,8 +114,12 @@ const sendPDF = async(req, res) => {
                 .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
 
         }else if (userDB.id === 14 || userDB.id === 13) {
-            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
-                .fontSize(15).text('CLÍNICAS MÉDICAS', 70, yscale + 30, { align: 'left' })
+                                /* adding img */
+                    const logo = path.join(__dirname, '../assets/imgs/icplogo.png');
+                    pdfDoc.image(logo, 20, yscale - 45, { width: 130, height: 50 });
+
+            pdfDoc.fontSize(12).font('Helvetica').fillColor('#1E3256')
+                .fontSize(12).text('CLÍNICA MÉDICA', 100, yscale +50, { align: 'left' })
 
         } 
          else if (userDB.id === 7 || userDB.id === 12) {
