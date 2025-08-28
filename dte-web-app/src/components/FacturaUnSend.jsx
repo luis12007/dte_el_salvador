@@ -1014,8 +1014,25 @@ const FrameComponent1 = ({ key, content, user }) => {
         dteJson: data,
       };
       const responseFirm = null;
-      if (id_emisor == 1 || id_emisor == 2 || id_emisor == 3) {
+      if (id_emisor == 1 || id_emisor == 2) {
         const responseFirm = await Firmservice.create(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+
+        if (responseFirm === undefined) {
+          toast.error("No se encontró firmador activo");
+          return
+        }
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+
+
+        console.log("---------------resultado of firm server--------------");
+        console.log(responseFirm);
+      }
+      if (id_emisor == 3) {
+        const responseFirm = await Firmservice.create_prod(Firm);
         console.log("firm response")
         console.log(responseFirm);
 
