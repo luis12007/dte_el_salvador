@@ -32,6 +32,8 @@ const UserLabel = ({ correoLuisAlexanderContaiPadding , client = {}, onSelect })
   }, [correoLuisAlexanderContaiPadding]);
 
   return (
+
+    
     <div
       className="w-full text-left text-sm text-gray-800 font-inria-sans"
       style={userLabelStyle}

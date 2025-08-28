@@ -66,12 +66,12 @@ const sendPDF = async(req, res) => {
         } else if (userDB.id === 7 || userDB.id === 12) {
 
         }else if (userDB.id === 16 || userDB.id === 17) {
-const name = userDB.name.split(" ");
+/* const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
             const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
             pdfDoc.fontSize(18).fillColor('#1E3256')
-                .text(`Dr. ${name1} ${name2} ${name3}`, 53, yscale, { align: 'left' })
+                .text(`Dr. ${name1} ${name2} ${name3}`, 53, yscale, { align: 'left' }) */
         }else if (userDB.id === 11) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
@@ -122,6 +122,11 @@ const name = userDB.name.split(" ");
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('2563-9606', 50, yscale + 90, { align: 'left' })
                 .fontSize(15).text('2207-4940', 180, yscale + 90, { align: 'left' })
+
+        }else if (userDB.id === 16 || userDB.id === 17) {
+            /* adding img */
+            const logo = path.join(__dirname, '../assets/imgs/rinologo.png');
+            pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
 
         } else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
