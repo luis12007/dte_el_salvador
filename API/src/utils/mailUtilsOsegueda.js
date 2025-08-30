@@ -307,7 +307,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
                 apendice: plantillaDB.apendice
             };
 
-            console.log('JSON to send:', json);
+            /* console.log('JSON to send:', json); */
         } else if (plantillaDB.tipo === "03") {
 
             const Listitems = itemsDB.map((item, index) => {
@@ -848,7 +848,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             size: 'A4',
             margins: { top: 20, bottom: 20, left: 20, right: 20 }
         });
-        console.log('mail:', plantillaDB.re_correo_electronico);
+        /* console.log('mail:', plantillaDB.re_correo_electronico); */
         pdfDoc.pipe(fs.createWriteStream(pdfPath))
             .on('finish', async() => {
                 var mailOptions = {}
@@ -1040,7 +1040,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             return text;
         };
 
-        console.log('userDB', userDB.name, userDB.direccion);
+        /* console.log('userDB', userDB.name, userDB.direccion); */
 
         const name = userDB.name.split(" ");
         const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
@@ -1090,7 +1090,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
 
 
 
-        console.log('plantillaDB', plantillaDB.re_name, plantillaDB.re_direccion);
+        /* console.log('plantillaDB', plantillaDB.re_name, plantillaDB.re_direccion); */
         const truncatedNombreORazonSocialReceptor = truncateText(plantillaDB.re_name, 25);
         const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 37);
 
@@ -1115,7 +1115,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
         } else if (plantillaDB.tipo === "03") {
-            console.log(plantillaDB.re_numdocumento)
+            /* console.log(plantillaDB.re_numdocumento) */
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
