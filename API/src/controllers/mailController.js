@@ -46,13 +46,13 @@ const sendMailFacturaOsegueda = async(req, res) => {
         const id = req.params.id_emisor;
         const plantilla = req.body.codigo_de_generacion;
         /* serching the information of the customer */
-        console.log(id);
-        console.log(plantilla);
+        /* console.log(id);
+        console.log(plantilla); */
 
         /* inner join the emisor where emisor.id_usuario is usuario.id and find usuario by id */
         const user = await db("usuario").join("emisor", "usuario.id", "emisor.id_usuario").where("usuario.id", id).first();
         /* Send the email to the customer */
-        console.log(user);
+        /* console.log(user); */
 
         /* Sending all the info */
 
@@ -61,9 +61,9 @@ const sendMailFacturaOsegueda = async(req, res) => {
         /* searching in table x and table items */
         const items = await db("facturasxitems").join("items", "facturasxitems.id_items", "items.id").where("facturasxitems.id_facturas", plantilla);
 
-        console.log("Items");
+        /* console.log("Items");
         console.log(items);
-        console.log(plantillaDB);
+        console.log(plantillaDB); */
 
 
         const response = sendMailOsegueda.sendMailOsegueda(user, plantillaDB, items);
