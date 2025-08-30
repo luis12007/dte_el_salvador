@@ -307,7 +307,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
                 apendice: plantillaDB.apendice
             };
 
-            console.log('JSON to send:', json);
+            /* console.log('JSON to send:', json); */
         } else if (plantillaDB.tipo === "03") {
 
             const Listitems = itemsDB.map((item, index) => {
@@ -848,7 +848,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             size: 'A4',
             margins: { top: 20, bottom: 20, left: 20, right: 20 }
         });
-        console.log('mail:', plantillaDB.re_correo_electronico);
+        /* console.log('mail:', plantillaDB.re_correo_electronico); */
         pdfDoc.pipe(fs.createWriteStream(pdfPath))
             .on('finish', async() => {
                 var mailOptions = {}
@@ -1040,7 +1040,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             return text;
         };
 
-        console.log('userDB', userDB.name, userDB.direccion);
+        /* console.log('userDB', userDB.name, userDB.direccion); */
 
         const name = userDB.name.split(" ");
         const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
@@ -1090,7 +1090,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
 
 
 
-        console.log('plantillaDB', plantillaDB.re_name, plantillaDB.re_direccion);
+        /* console.log('plantillaDB', plantillaDB.re_name, plantillaDB.re_direccion); */
         const truncatedNombreORazonSocialReceptor = truncateText(plantillaDB.re_name, 25);
         const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 37);
 
@@ -1115,7 +1115,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
         } else if (plantillaDB.tipo === "03") {
-            console.log(plantillaDB.re_numdocumento)
+            /* console.log(plantillaDB.re_numdocumento) */
             const re_numdocumentostring = 'NIT: ';
 
             const UserAddress = plantillaDB.re_direccion.split("|");
@@ -1278,12 +1278,11 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
 
         // Example usage
         funcenter(plantillaDB.observaciones, y + 55, 30);
-        var ivaC = plantillaDB.subtotalventas * 0.13
         var ivaper = Number(plantillaDB.iva_percibido)
 
         if (plantillaDB.tipo === "03") {
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
@@ -1312,11 +1311,11 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
 
             }
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotal}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 30, { align: 'right' })
                 .text(`Total gravado: $${plantillaDB.total_agravada }`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${plantillaDB.subtotal}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 90, { align: 'right' })
-                .text(`IVA recibido: $${ivaC.toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $${ivaper.toFixed(2)}`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0`, 300, y + 170, { align: 'right' })
@@ -1324,7 +1323,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
         } else if (plantillaDB.tipo === "05") {
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
@@ -1336,7 +1335,7 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
         } else if (plantillaDB.tipo === "06") {
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaC.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
