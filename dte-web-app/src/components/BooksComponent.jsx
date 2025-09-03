@@ -85,6 +85,11 @@ const BooksComponent = () => {
       exportRawNotas();
     }
 
+    if (book === "RAW_COMP") {
+      console.log("Exportación bruta: Compras");
+      exportRawCompras();
+    }
+
     closeModal();
   };
 
@@ -391,6 +396,16 @@ const BooksComponent = () => {
       return;
     }
   await generateFixedColumnsExcel(data, 'NOTAS DÉBITO/CRÉDITO (Datos brutos)', 'Notas (Raw)');
+  };
+
+  // Exportación bruta de Compras
+  const exportRawCompras = async () => {
+    const data = await PlantillaAPI.getcompras(user_id, token, startDate, endDate);
+    if (!data.length) {
+      toast.info('No se encontraron datos para el rango de fechas seleccionado - Compras');
+      return;
+    }
+    await generateFixedColumnsExcel(data, 'COMPRAS (Datos brutos)', 'Compras (Raw)');
   };
 
 
@@ -1727,6 +1742,27 @@ const BooksComponent = () => {
               </div>
             </div>
 
+            {/* Exportación Bruta de Compras */}
+            <div className="animate-fadeInUp animate-delay-175 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🛒</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Exportación de Compras (Raw)
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  JSON de compras convertidas a Excel de columnas fijas
+                </p>
+                <button 
+                  onClick={() => openModal('RAW_COMP')}
+                  className="w-full bg-amber-500/90 hover:bg-amber-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Compras (Raw)
+                </button>
+              </div>
+            </div>
+
             {/* Libro Contribuyentes Card */}
             <div className="animate-fadeInUp animate-delay-200 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="text-center">
@@ -1862,6 +1898,97 @@ const BooksComponent = () => {
                       <span className="font-medium text-gray-600">Total:</span>
                       <span className="text-gray-800 font-bold">${jsonData?.resumen?.montoTotalOperacion || 0}</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* Resumen Section */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Resumen</h4>
+                  <div className="space-y-2 text-xs sm:text-sm">
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">Total gravado:</span>
+                      <span className="text-gray-800">
+                        {jsonData?.resumen?.totalGravada != null ? `$${Number(jsonData.resumen.totalGravada).toFixed(2)}` : 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">IVA (tributos o totalIva):</span>
+                      <span className="text-gray-800">
+                        {Array.isArray(jsonData?.resumen?.tributos) && jsonData.resumen.tributos.length > 0
+                          ? `$${jsonData.resumen.tributos.reduce((sum, t) => sum + (Number(t?.valor) || 0), 0).toFixed(2)}`
+                          : (jsonData?.resumen?.totalIva != null
+                              ? `$${Number(jsonData.resumen.totalIva).toFixed(2)}`
+                              : 'N/A')}
+                      </span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">Total a pagar:</span>
+                      <span className="text-gray-800">
+                        {jsonData?.resumen?.totalPagar != null ? `$${Number(jsonData.resumen.totalPagar).toFixed(2)}` : 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Identifiers Section */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Identificadores</h4>
+                  <div className="space-y-2 text-xs sm:text-sm">
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">Código de generación:</span>
+                      <span className="text-gray-800 break-all">{jsonData?.identificacion?.codigoGeneracion || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">Correlativo (N°):</span>
+                      <span className="text-gray-800">
+                        {jsonData?.identificacion?.numeroControl?.split('-')?.pop() || 'N/A'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">Número de control:</span>
+                      <span className="text-gray-800 break-all">{jsonData?.identificacion?.numeroControl || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">Sello de recepción:</span>
+                      <span className="text-gray-800 break-all">{jsonData?.respuestaMh?.selloRecibido || jsonData?.selloRecepcion || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <span className="font-medium text-gray-600">Fecha/Hora emisión:</span>
+                      <span className="text-gray-800">
+                        {(jsonData?.identificacion?.fecEmi || 'N/A') + ' ' + (jsonData?.identificacion?.horEmi || '')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Items Breakdown Section */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-semibold text-gray-700">Desglose de ítems</h4>
+                    <span className="text-xs text-gray-500">{jsonData?.cuerpoDocumento?.length || 0} ítem(s)</span>
+                  </div>
+                  <div className="max-h-56 overflow-y-auto text-xs">
+                    <div className="grid grid-cols-12 gap-2 py-2 border-b font-medium text-gray-600 sticky top-0 bg-gray-50">
+                      <div className="col-span-1">#</div>
+                      <div className="col-span-3">Código</div>
+                      <div className="col-span-5">Descripción</div>
+                      <div className="col-span-1 text-right">Cant.</div>
+                      <div className="col-span-2 text-right">Subtotal</div>
+                    </div>
+                    {Array.isArray(jsonData?.cuerpoDocumento) && jsonData.cuerpoDocumento.map((item, idx) => {
+                      const qty = Number(item?.cantidad) || 0;
+                      const pu = Number(item?.precioUni) || 0;
+                      const subtotal = (qty * pu).toFixed(2);
+                      return (
+                        <div key={idx} className="grid grid-cols-12 gap-2 py-2 border-b last:border-b-0 items-center">
+                          <div className="col-span-1 text-gray-700">{item?.numItem || idx + 1}</div>
+                          <div className="col-span-3 text-gray-700 truncate" title={item?.codigo || ''}>{item?.codigo || '-'}</div>
+                          <div className="col-span-5 text-gray-700 truncate" title={item?.descripcion || ''}>{item?.descripcion || '-'}</div>
+                          <div className="col-span-1 text-right text-gray-700">{qty}</div>
+                          <div className="col-span-2 text-right text-gray-700">${subtotal}</div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
                 

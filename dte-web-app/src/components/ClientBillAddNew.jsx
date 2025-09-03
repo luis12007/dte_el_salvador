@@ -1742,7 +1742,7 @@ const ClientBillAddNew = ({
             <input
               type="text"
               placeholder="Buscar actividad..."
-              className="mb-2 p-2 border rounded w-full filter-input"
+              className="mb-2 p-2 w-3/4 border rounded self-center filter-input"
               value={activitySearch}
               onChange={(e) => setActivitySearch(e.target.value)}
               autoFocus
@@ -1762,6 +1762,7 @@ const ClientBillAddNew = ({
                     handleChange("codActividad", activity.value);
                     setShowActivityModal(false);
                     setActivitySearch("");
+
                   }}
                 >
                   {activity.label}
@@ -1905,11 +1906,7 @@ const ClientBillAddNew = ({
                 className="w-full px-2 h-[30px] relative rounded-md box-border z-[1] border border-gray-300 bg-white text-left hover:bg-gray-50 transition-colors duration-200"
                 onClick={() => setShowActivityModal(true)}
               >
-                {(() => {
-                  const selectedActivity = allActivities.find((a) => a.value === client.codActividad);
-                  const label = selectedActivity?.label || "Seleccionar actividad";
-                  return label.length > 45 ? label.slice(0, 45) + "..." : label;
-                })()}
+                {client.descActividad || "Seleccionar actividad"}
               </button>
             </div>
 
