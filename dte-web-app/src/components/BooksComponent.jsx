@@ -398,14 +398,178 @@ const BooksComponent = () => {
   await generateFixedColumnsExcel(data, 'NOTAS DÉBITO/CRÉDITO (Datos brutos)', 'Notas (Raw)');
   };
 
-  // Exportación bruta de Compras
+  // Exportación bruta de Compras (esquema específico)
+  const COMPRAS_RAW_HEADERS = [
+    'tipo','codigo_de_generacion','sellado','numero_de_control','sello_de_recepcion','modelo_de_factura','tipo_de_transmision','fecha_y_hora_de_generacion','id_emisor','id_receptor','qr','total_agravada','subtotal','monto_global_de_descuento','iva_percibido','iva_retenido','retencion_de_renta','total_a_pagar','cantidad_en_letras','observaciones','responsable_emisor','documento_e','documento_r','documento_receptor','firm','re_nit','re_nrc','re_actividad_economica','re_direccion','re_correo_electronico','re_nombre_comercial','re_name','re_numero_telefono','re_tipo_establecimiento','version','ambiente','tipomoneda','tipocontingencia','motivocontin','documentorelacionado','codestablemh','codestable','codpuntoventamh','codpuntoventa','re_codactividad','re_tipodocumento','re_numdocumento','otrosdocumentos','ventatercero','condicionoperacion','saldofavor','numpagoelectronico','periodo','montopago','codigo','referencia','totalnosuj','tributos','totalexenta','subtotalventas','montototaloperacion','descunosuj','descuexenta','descugravada','porcentajedescuento','totalnogravado','placavehiculo','horemi','plazo','tributocf','id_envio','em_codactividad','em_direccion','em_nit','em_nrc','em_actividad_economica','em_correo_electronico','em_tipodocumento','em_name','em_numero_telefono','em_numdocumento'
+  ];
+
   const exportRawCompras = async () => {
     const data = await PlantillaAPI.getcompras(user_id, token, startDate, endDate);
+
     if (!data.length) {
       toast.info('No se encontraron datos para el rango de fechas seleccionado - Compras');
       return;
     }
-    await generateFixedColumnsExcel(data, 'COMPRAS (Datos brutos)', 'Compras (Raw)');
+
+    const rows = data.map((p) => {
+      const pago0 = Array.isArray(p?.resumen?.pagos) && p.resumen.pagos.length > 0 ? p.resumen.pagos[0] : null;
+      const trib0 = Array.isArray(p?.resumen?.tributos) && p.resumen.tributos.length > 0 ? p.resumen.tributos[0] : null;
+      return {
+        tipo: p?.tipo ?? p?.tipoDte ?? p?.identificacion?.tipoDte ?? null,
+        codigo_de_generacion: p?.codigo_de_generacion ?? p?.codigoGeneracion ?? p?.identificacion?.codigoGeneracion ?? null,
+        sellado: p?.sellado ?? null,
+        numero_de_control: p?.numero_de_control ?? p?.numeroControl ?? p?.identificacion?.numeroControl ?? null,
+        sello_de_recepcion: p?.sello_de_recepcion ?? p?.respuestaMh?.selloRecibido ?? p?.selloRecepcion ?? null,
+        modelo_de_factura: p?.modelo_de_factura ?? p?.tipoModelo ?? p?.identificacion?.tipoModelo ?? null,
+        tipo_de_transmision: p?.tipo_de_transmision ?? p?.tipoOperacion ?? p?.identificacion?.tipoOperacion ?? null,
+        fecha_y_hora_de_generacion: p?.fecha_y_hora_de_generacion ?? p?.fecEmi ?? p?.identificacion?.fecEmi ?? null,
+        id_emisor: p?.id_emisor ?? null,
+        id_receptor: p?.id_receptor ?? null,
+        qr: p?.qr ?? null,
+        total_agravada: p?.total_agravada ?? p?.resumen?.totalGravada ?? null,
+        subtotal: p?.subtotal ?? p?.subTotal ?? p?.resumen?.subTotal ?? null,
+        monto_global_de_descuento: p?.monto_global_de_descuento ?? p?.resumen?.totalDescu ?? null,
+        iva_percibido: p?.iva_percibido ?? p?.resumen?.ivaPerci1 ?? null,
+        iva_retenido: p?.iva_retenido ?? p?.resumen?.ivaRete1 ?? null,
+        retencion_de_renta: p?.retencion_de_renta ?? p?.resumen?.reteRenta ?? null,
+        total_a_pagar: p?.total_a_pagar ?? p?.resumen?.totalPagar ?? p?.montototaloperacion ?? p?.resumen?.montoTotalOperacion ?? null,
+        cantidad_en_letras: p?.cantidad_en_letras ?? p?.resumen?.totalLetras ?? null,
+        observaciones: p?.observaciones ?? p?.extension?.observaciones ?? null,
+        responsable_emisor: p?.responsable_emisor ?? p?.extension?.docuEntrega ?? null,
+        documento_e: p?.documento_e ?? p?.extension?.nombEntrega ?? null,
+        documento_r: p?.documento_r ?? p?.extension?.nombRecibe ?? null,
+        documento_receptor: p?.documento_receptor ?? p?.extension?.docuRecibe ?? null,
+        firm: p?.firm ?? p?.documento ?? null,
+        re_nit: p?.re_nit ?? p?.receptor?.nit ?? null,
+        re_nrc: p?.re_nrc ?? p?.receptor?.nrc ?? null,
+        re_actividad_economica: p?.re_actividad_economica ?? p?.receptor?.descActividad ?? null,
+        re_direccion: p?.re_direccion ?? ([p?.receptor?.direccion?.departamento, p?.receptor?.direccion?.municipio, p?.receptor?.direccion?.complemento].filter(Boolean).join('|') || null),
+        re_correo_electronico: p?.re_correo_electronico ?? p?.receptor?.correo ?? null,
+        re_nombre_comercial: p?.re_nombre_comercial ?? p?.receptor?.nombreComercial ?? null,
+        re_name: p?.re_name ?? p?.receptor?.nombre ?? null,
+        re_numero_telefono: p?.re_numero_telefono ?? p?.receptor?.telefono ?? null,
+        re_tipo_establecimiento: p?.re_tipo_establecimiento ?? p?.receptor?.tipoEstablecimiento ?? null,
+        version: p?.version ?? p?.identificacion?.version ?? null,
+        ambiente: p?.ambiente ?? p?.identificacion?.ambiente ?? null,
+        tipomoneda: p?.tipomoneda ?? p?.identificacion?.tipoMoneda ?? null,
+        tipocontingencia: p?.tipocontingencia ?? p?.identificacion?.tipoContingencia ?? null,
+        motivocontin: p?.motivocontin ?? p?.identificacion?.motivoContin ?? null,
+        documentorelacionado: p?.documentorelacionado ?? (p?.documentoRelacionado ? JSON.stringify(p.documentoRelacionado) : null),
+        codestablemh: p?.codestablemh ?? p?.emisor?.codEstableMH ?? null,
+        codestable: p?.codestable ?? p?.emisor?.codEstable ?? null,
+        codpuntoventamh: p?.codpuntoventamh ?? p?.emisor?.codPuntoVentaMH ?? null,
+        codpuntoventa: p?.codpuntoventa ?? p?.emisor?.codPuntoVenta ?? null,
+        re_codactividad: p?.re_codactividad ?? p?.receptor?.codActividad ?? null,
+        re_tipodocumento: p?.re_tipodocumento ?? p?.receptor?.tipoDocumento ?? null,
+        re_numdocumento: p?.re_numdocumento ?? p?.receptor?.numeroDocumento ?? null,
+        otrosdocumentos: p?.otrosdocumentos ?? (p?.otrosDocumentos ? JSON.stringify(p.otrosDocumentos) : null),
+        ventatercero: p?.ventatercero ?? (p?.ventaTercero ? JSON.stringify(p.ventaTercero) : null),
+        condicionoperacion: p?.condicionoperacion ?? p?.resumen?.condicionOperacion ?? null,
+        saldofavor: p?.saldofavor ?? p?.resumen?.saldoFavor ?? null,
+        numpagoelectronico: p?.numpagoelectronico ?? p?.resumen?.numPagoElectronico ?? null,
+        periodo: p?.periodo ?? pago0?.periodo ?? null,
+        montopago: p?.montopago ?? pago0?.montoPago ?? null,
+        codigo: p?.codigo ?? pago0?.codigo ?? null,
+        referencia: p?.referencia ?? pago0?.referencia ?? null,
+        totalnosuj: p?.totalnosuj ?? p?.resumen?.totalNoSuj ?? null,
+        tributos: p?.tributos ?? (p?.resumen?.tributos ? JSON.stringify(p.resumen.tributos) : null),
+        totalexenta: p?.totalexenta ?? p?.resumen?.totalExenta ?? null,
+        subtotalventas: p?.subtotalventas ?? p?.resumen?.subTotalVentas ?? null,
+        montototaloperacion: p?.montototaloperacion ?? p?.resumen?.montoTotalOperacion ?? null,
+        descunosuj: p?.descunosuj ?? p?.resumen?.descuNoSuj ?? null,
+        descuexenta: p?.descuexenta ?? p?.resumen?.descuExenta ?? null,
+        descugravada: p?.descugravada ?? p?.resumen?.descuGravada ?? null,
+        porcentajedescuento: p?.porcentajedescuento ?? p?.resumen?.porcentajeDescuento ?? null,
+        totalnogravado: p?.totalnogravado ?? p?.resumen?.totalNoGravado ?? null,
+        placavehiculo: p?.placavehiculo ?? p?.extension?.placaVehiculo ?? null,
+        horemi: p?.horemi ?? p?.horEmi ?? p?.identificacion?.horEmi ?? null,
+        plazo: p?.plazo ?? pago0?.plazo ?? null,
+        tributocf: p?.tributocf ?? (trib0 ? `${trib0.codigo}|${trib0.descripcion}|${trib0.valor}` : null),
+        id_envio: p?.id_envio ?? null,
+        em_codactividad: p?.em_codactividad ?? p?.emisor?.codActividad ?? null,
+        em_direccion: p?.em_direccion ?? ([p?.emisor?.direccion?.departamento, p?.emisor?.direccion?.municipio, p?.emisor?.direccion?.complemento].filter(Boolean).join('|') || null),
+        em_nit: p?.em_nit ?? p?.emisor?.nit ?? null,
+        em_nrc: p?.em_nrc ?? p?.emisor?.nrc ?? null,
+        em_actividad_economica: p?.em_actividad_economica ?? p?.emisor?.descActividad ?? null,
+        em_correo_electronico: p?.em_correo_electronico ?? p?.emisor?.correo ?? null,
+        em_tipodocumento: p?.em_tipodocumento ?? p?.emisor?.tipoDocumento ?? null,
+        em_name: p?.em_name ?? p?.emisor?.nombre ?? null,
+        em_numero_telefono: p?.em_numero_telefono ?? p?.emisor?.telefono ?? null,
+        em_numdocumento: p?.em_numdocumento ?? p?.emisor?.nombreComercial ?? null,
+      };
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Compras (Raw)');
+
+    const addMergedHeader = (text, opts = {}) => {
+      const r = worksheet.addRow([text]);
+      const rowIndex = r.number;
+      worksheet.mergeCells(rowIndex, 1, rowIndex, Math.max(1, COMPRAS_RAW_HEADERS.length));
+      const cell = worksheet.getCell(rowIndex, 1);
+      cell.style = {
+        font: { bold: opts.bold ?? true, size: opts.size ?? 16, name: 'Arial' },
+        alignment: { horizontal: opts.align ?? 'center', vertical: 'middle', wrapText: true },
+      };
+      r.height = opts.height ?? 25;
+    };
+
+    // Encabezados estilo "libros"
+    addMergedHeader('COMPRAS (Datos brutos - esquema especial)', { size: 18 });
+    addMergedHeader(`${user?.name ?? ''}`, { bold: true, size: 14, align: 'left' });
+    addMergedHeader(`Fecha: ${startDate} al ${endDate}`, { bold: false, size: 12, align: 'left' });
+    addMergedHeader(`NRC: ${user?.nrc ?? ''}`, { bold: false, size: 12, align: 'left' });
+    worksheet.addRow(['']);
+
+    // Header de columnas en el orden definido
+    const headerRow = worksheet.addRow(COMPRAS_RAW_HEADERS);
+    headerRow.eachCell((cell) => {
+      cell.style = {
+        font: { bold: true, color: { argb: 'FFFFFFFF' } },
+        fill: { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F81BD' } },
+        alignment: { horizontal: 'center', vertical: 'middle', wrapText: true },
+        border: {
+          top: { style: 'medium', color: { argb: 'FF000000' } },
+          left: { style: 'medium', color: { argb: 'FF000000' } },
+          bottom: { style: 'medium', color: { argb: 'FF000000' } },
+          right: { style: 'medium', color: { argb: 'FF000000' } },
+        },
+      };
+    });
+
+    // Filas de datos
+    rows.forEach((r) => {
+      const row = worksheet.addRow(COMPRAS_RAW_HEADERS.map((key) => r[key] ?? ''));
+      row.eachCell((cell) => {
+        cell.style = {
+          alignment: { horizontal: 'left', vertical: 'middle', wrapText: true },
+          border: {
+            top: { style: 'thin', color: { argb: 'FF000000' } },
+            left: { style: 'thin', color: { argb: 'FF000000' } },
+            bottom: { style: 'thin', color: { argb: 'FF000000' } },
+            right: { style: 'thin', color: { argb: 'FF000000' } },
+          },
+        };
+      });
+    });
+
+    // Ancho de columnas
+    worksheet.columns = COMPRAS_RAW_HEADERS.map(() => ({ width: 24 }));
+
+    try {
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Compras (Raw) ${startDate} - ${endDate}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success('Archivo creado con éxito');
+    } catch (error) {
+      console.error('Error generating Excel file:', error);
+      toast.error('Error al crear el archivo');
+    }
   };
 
 

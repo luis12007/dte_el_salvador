@@ -2321,6 +2321,16 @@ const FrameComponent1 = ({ key, content, user }) => {
               <div className="relative whitespace-nowrap z-[1]">
                 Teléfono: {content.re_numero_telefono}
               </div>
+              {(id_emisor == 6 || id_emisor == 10) && (
+                <>
+                  <div className="relative  z-[1]">
+                    Código de generación: {content.codigo_de_generacion}
+                  </div>
+                  <div className="relative  z-[1]">
+                    Número de control: {content.numero_de_control}
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <div className="flex-1 flex w-full  pt-4 flex-col items-center justify-center gap-[8px_0px]">
