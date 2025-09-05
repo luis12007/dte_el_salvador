@@ -1283,16 +1283,18 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
         if (plantillaDB.tipo === "03") {
 
                         /* separate the | */
+            console.log('plantillaDB.tributocf', plantillaDB);
+
             const iva = plantillaDB.tributocf.split('|');
             const ivaCodigo = iva[0];
             const ivaDescripcion = iva[1];
             const ivaValor = iva[2];
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${plantillaDB.subtotalventas}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaValor.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`Total gravado: $${plantillaDB.total_agravada}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${plantillaDB.subtotalventas}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${plantillaDB.porcentajedescuento}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${ivaValor.toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${plantillaDB.iva_retenido}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${plantillaDB.retencion_de_renta}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
