@@ -516,10 +516,14 @@ const sendPDF = async(req, res) => {
         } else if (plantillaDB.tipo === "03") {
 
             /* separate the | */
+            console.log('plantillaDB.tributocf', plantillaDB);
+
             const iva = plantillaDB.tributocf.split('|');
             const ivaCodigo = iva[0];
             const ivaDescripcion = iva[1];
             const ivaValor = iva[2];
+            
+            console.log('IVA Detalles:', { ivaCodigo, ivaDescripcion, ivaValor });
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
                 .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 90, { align: 'right' })

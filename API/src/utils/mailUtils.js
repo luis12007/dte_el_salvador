@@ -1561,11 +1561,11 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
 
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaValor.toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${ivaValor.toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
