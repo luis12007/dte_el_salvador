@@ -583,6 +583,8 @@ const BooksComponent = () => {
       return;
     }
 
+    
+
     const transformedData = data.map(item => {
       if (item.re_tipodocumento === "13") {
         item.tipo = "2";
@@ -943,9 +945,47 @@ const BooksComponent = () => {
       return;
     }
 
+  const formatToDMY = (input) => {
+      if (!input) return input;
+      const str = String(input).trim();
+      // YYYY-MM-DD
+      const iso = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (iso) {
+        const y = iso[1], m = parseInt(iso[2], 10), d = parseInt(iso[3], 10);
+  return `${d}/${m}/${String(y).slice(-2)}`;
+      }
+      // DD/MM/YY or DD/MM/YYYY
+      const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (dmy) {
+        const d = parseInt(dmy[1], 10);
+        const m = parseInt(dmy[2], 10);
+        let y = dmy[3];
+        if (y.length === 4) y = y.slice(-2);
+  return `${d}/${m}/${y}`;
+      }
+      // DD-MM-YY or DD-MM-YYYY
+      const dmyDash = str.match(/^(\d{1,2})-(\d{1,2})-(\d{2,4})$/);
+      if (dmyDash) {
+        const d = parseInt(dmyDash[1], 10);
+        const m = parseInt(dmyDash[2], 10);
+        let y = dmyDash[3];
+        if (y.length === 4) y = y.slice(-2);
+  return `${d}/${m}/${y}`;
+      }
+      // Fallback: Date
+      const dt = new Date(str);
+      if (!isNaN(dt)) {
+        const m = dt.getMonth() + 1;
+        const d = dt.getDate();
+        const y = String(dt.getFullYear()).slice(-2);
+  return `${d}/${m}/${y}`;
+      }
+      return str;
+    };
+
 
     const transformedData = data.map(item => ({
-      'FECHA DE EMISIÓN DEL DOCUMENTO': item.fecha_y_hora_de_generacion,
+      'FECHA DE EMISIÓN DEL DOCUMENTO': formatToDMY(item.fecha_y_hora_de_generacion),
       'CLASE DE DOCUMENTO': "4",
       'TIPO DE DOCUMENTO': item.tipo,
       'NÚMERO DE DOCUMENTO': item.codigo_de_generacion,
@@ -968,8 +1008,21 @@ const BooksComponent = () => {
       'NÚMERO DEL ANEXO': '3'
     }));
 
-    // Filter and order data by date
-    transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - new Date(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
+    // Parser para D/M/YY o D/M/YYYY
+    const parseDMY = (s) => {
+      if (!s) return new Date('Invalid');
+      const str = String(s).trim();
+      const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (dmy) {
+        const d = parseInt(dmy[1], 10);
+        const m = parseInt(dmy[2], 10);
+        const y = dmy[3].length === 2 ? 2000 + parseInt(dmy[3], 10) : parseInt(dmy[3], 10);
+        return new Date(y, m - 1, d);
+      }
+      return new Date(str);
+    };
+    // Ordenar por fecha con formato D/M/Y
+    transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - parseDMY(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
     // Create a new workbook
     const wb = XLSX.utils.book_new();
@@ -1354,9 +1407,47 @@ const BooksComponent = () => {
       return;
     }
 
+  const formatToDMY = (input) => {
+      if (!input) return input;
+      const str = String(input).trim();
+      // YYYY-MM-DD
+      const iso = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (iso) {
+        const y = iso[1], m = parseInt(iso[2], 10), d = parseInt(iso[3], 10);
+  return `${d}/${m}/${String(y).slice(-2)}`;
+      }
+      // DD/MM/YY or DD/MM/YYYY
+      const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (dmy) {
+        const d = parseInt(dmy[1], 10);
+        const m = parseInt(dmy[2], 10);
+        let y = dmy[3];
+        if (y.length === 4) y = y.slice(-2);
+  return `${d}/${m}/${y}`;
+      }
+      // DD-MM-YY or DD-MM-YYYY
+      const dmyDash = str.match(/^(\d{1,2})-(\d{1,2})-(\d{2,4})$/);
+      if (dmyDash) {
+        const d = parseInt(dmyDash[1], 10);
+        const m = parseInt(dmyDash[2], 10);
+        let y = dmyDash[3];
+        if (y.length === 4) y = y.slice(-2);
+  return `${d}/${m}/${y}`;
+      }
+      // Fallback: Date
+      const dt = new Date(str);
+      if (!isNaN(dt)) {
+        const m = dt.getMonth() + 1;
+        const d = dt.getDate();
+        const y = String(dt.getFullYear()).slice(-2);
+  return `${d}/${m}/${y}`;
+      }
+      return str;
+    };
+
 
     const transformedData = data.map(item => ({
-      'FECHA DE EMISIÓN DEL DOCUMENTO': item.fecha_y_hora_de_generacion,
+      'FECHA DE EMISIÓN DEL DOCUMENTO': formatToDMY(item.fecha_y_hora_de_generacion),
       'CLASE DE DOCUMENTO': 4,
       'TIPO DE DOCUMENTO': item.tipo,
       'NUMERO DE RESOLUCIÓN': item.numero_de_control, // Add if available in your data
@@ -1375,7 +1466,20 @@ const BooksComponent = () => {
       'NUMERO DE DUI DEL CLIENTE': '', // Add if available in your data
       'NÚMERO DEL ANEXO': "1" // Add if available in your data
     }));
-    transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - new Date(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
+    // Parser para D/M/YY o D/M/YYYY
+    const parseDMY = (s) => {
+      if (!s) return new Date('Invalid');
+      const str = String(s).trim();
+      const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (dmy) {
+        const d = parseInt(dmy[1], 10);
+        const m = parseInt(dmy[2], 10);
+        const y = dmy[3].length === 2 ? 2000 + parseInt(dmy[3], 10) : parseInt(dmy[3], 10);
+        return new Date(y, m - 1, d);
+      }
+      return new Date(str);
+    };
+    transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - parseDMY(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
     // Create a new workbook
     const wb = XLSX.utils.book_new();
@@ -1543,7 +1647,7 @@ const BooksComponent = () => {
     const summaryRows = [ /* Total agravado */
       ['', 'Resumen de Operaciones', ''],
       ['', 'Iva Retenido', totals.ivaRetenido],
-      ['', 'Total Ventas agravado', totals.totalVentas],
+      ['', 'Total Ventas gravado', totals.totalVentas],
       ['', 'Ventas Exentas', totals.ventasExentas],
       ['', 'Ventas al Exterior', totals.ventasExterior],
       ['', 'Total Ventas', totals.granTotal]
@@ -1732,6 +1836,45 @@ const BooksComponent = () => {
     console.log(data);
 
     
+  // Helper para formatear a D/M/YY desde DD/MM/YY, DD/MM/YYYY, DD-MM-YY, YYYY-MM-DD, etc.
+  const formatToDMY = (input) => {
+      if (!input) return input;
+      const str = String(input).trim();
+      // YYYY-MM-DD
+      const iso = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (iso) {
+        const y = iso[1], m = parseInt(iso[2], 10), d = parseInt(iso[3], 10);
+    return `${d}/${m}/${String(y).slice(-2)}`;
+      }
+      // DD/MM/YY or DD/MM/YYYY
+      const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (dmy) {
+        const d = parseInt(dmy[1], 10);
+        const m = parseInt(dmy[2], 10);
+        let y = dmy[3];
+        if (y.length === 4) y = y.slice(-2);
+    return `${d}/${m}/${y}`;
+      }
+      // DD-MM-YY or DD-MM-YYYY
+      const dmyDash = str.match(/^(\d{1,2})-(\d{1,2})-(\d{2,4})$/);
+      if (dmyDash) {
+        const d = parseInt(dmyDash[1], 10);
+        const m = parseInt(dmyDash[2], 10);
+        let y = dmyDash[3];
+        if (y.length === 4) y = y.slice(-2);
+    return `${d}/${m}/${y}`;
+      }
+      // Fallback: Date
+      const dt = new Date(str);
+      if (!isNaN(dt)) {
+        const m = dt.getMonth() + 1;
+        const d = dt.getDate();
+        const y = String(dt.getFullYear()).slice(-2);
+    return `${d}/${m}/${y}`;
+      }
+      return str;
+    };
+
     const transformedData = data.map(item => {
 
       
@@ -1740,7 +1883,7 @@ const BooksComponent = () => {
         operation = "2"; /* Exentas */
       }
       const datatranform = {
-        'FECHA DE EMISIÓN': item.fecha_y_hora_de_generacion,
+  'FECHA DE EMISIÓN': formatToDMY(item.fecha_y_hora_de_generacion),
         'CLASE DE DOCUMENTO': 4,
         'TIPO DE DOCUMENTO': 1,
         'NÚMERO DE RESOLUCIÓN': item.numero_de_control,
@@ -1768,7 +1911,20 @@ const BooksComponent = () => {
     });
 
     /* filtering and ordering data by date */
-    transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN']) - new Date(b['FECHA DE EMISIÓN']));
+    // Parser para ordenar por fecha en D/M/YY o D/M/YYYY
+    const parseDMY = (s) => {
+      if (!s) return new Date('Invalid');
+      const str = String(s).trim();
+      const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+      if (dmy) {
+        const d = parseInt(dmy[1], 10);
+        const m = parseInt(dmy[2], 10);
+        const y = dmy[3].length === 2 ? 2000 + parseInt(dmy[3], 10) : parseInt(dmy[3], 10);
+        return new Date(y, m - 1, d);
+      }
+      return new Date(str);
+    };
+    transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN']) - parseDMY(b['FECHA DE EMISIÓN']));
 
 
     /* // Create a new workbook

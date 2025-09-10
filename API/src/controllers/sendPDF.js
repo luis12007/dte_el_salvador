@@ -392,9 +392,9 @@ const sendPDF = async(req, res) => {
             .text('Descripción', servicesX + 110, servicesY)
             .text('Unitario', servicesX + 240, servicesY)
             .text('Descuento', servicesX + 290, servicesY)
-            .text('No sujetas', servicesX + 350, servicesY)
-            .text('Agravadas', servicesX + 410, servicesY)
-            .text('Ventas extensas', servicesX + 470, servicesY);
+            .text('No Sujetas', servicesX + 350, servicesY)
+            .text('Gravadas', servicesX + 410, servicesY)
+            .text('Ventas Exentas', servicesX + 470, servicesY);
 
         const checkAndAddNewPageItems = (pdfDoc, y, threshold, newY) => {
             if (y > threshold) {

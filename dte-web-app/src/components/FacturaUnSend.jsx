@@ -2321,7 +2321,7 @@ const FrameComponent1 = ({ key, content, user }) => {
               <div className="relative whitespace-nowrap z-[1]">
                 Teléfono: {content.re_numero_telefono}
               </div>
-              {(id_emisor == 6 || id_emisor == 10) && (
+              {(id_emisor == 6 || id_emisor == 10 || id_emisor == 12) && (
                 <>
                   <div className="relative  z-[1]">
                     Código de generación: {content.codigo_de_generacion}

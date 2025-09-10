@@ -37,6 +37,7 @@ const Clientes = () => {
   const [valueexcenta, setValueexcenta] = useState("");
       const [isLoading, setIsLoading] = useState(false);
       const [codepayment, setCodepayment] = useState("01");
+  const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
   
 
   const toggleButton = (event) => {
@@ -76,7 +77,7 @@ const Clientes = () => {
   const [observaciones, setObservaciones] = useState("");
 
   /* Call to the info of user */
-  // Get the current date
+  // Get the current date (used to lock the date picker to today)
   const now = new Date();
 
   // Get hours, minutes, and seconds
@@ -87,8 +88,11 @@ const Clientes = () => {
   // Format the time in HH:MM:SS
   const time24Hour = `${hours}:${minutes}:${seconds}`;
 
+  // Importante: toISOString() usa UTC y puede adelantar o atrasar la fecha local.
+  // Construimos la fecha local (YYYY-MM-DD) manualmente para evitar el desfase de un día.
+  const todayDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const [time, setTime] = useState({
-    date: "",
+    date: todayDate,
     time: time24Hour.toString(),
   });
   /* Cliente array */
@@ -344,6 +348,7 @@ const Clientes = () => {
   /* ---------------------------------------------------------- */
   const addBillHandler = async (event) => {
     event.preventDefault();
+  setIsSubmittingAdd(true);
 
 
     try {
@@ -358,6 +363,7 @@ const Clientes = () => {
           draggable: true, // Allow dragging the toast,
           style: { zIndex: 200000 } // Correct way to set z-index
         });
+  setIsSubmittingAdd(false);
         return;
       }
       console.log("document");
@@ -372,6 +378,7 @@ const Clientes = () => {
           style: { zIndex: 200000 } // Correct way to set z-index
 
         });
+  setIsSubmittingAdd(false);
         return;
       }
       if (time.date === "") {
@@ -384,6 +391,7 @@ const Clientes = () => {
           style: { zIndex: 200000 } // Correct way to set z-index
 
         });
+  setIsSubmittingAdd(false);
         return;
 
       }
@@ -404,10 +412,12 @@ const Clientes = () => {
         /* if has already - dont */
         if (client.document === null || client.document === undefined) {
           toast.error("Error el documento del cliente no puede estar vacío!")
+          setIsSubmittingAdd(false);
           return;
         }
         if (client.document.includes("-")) {
           toast.error("Error el documento del cliente no puede tener guiones!")
+          setIsSubmittingAdd(false);
           return;
         } else {
           client.document = formatDUI(client.document);
@@ -425,6 +435,7 @@ const Clientes = () => {
             draggable: true, // Allow dragging the toast
             style: { zIndex: 200000 } // Correct way to set z-index
           });
+          setIsSubmittingAdd(false);
           return;
         }
       }
@@ -578,6 +589,7 @@ const Clientes = () => {
 
       if (client.name === "") {
         toast.error("Factura no tiene nombre de cliente!");
+  setIsSubmittingAdd(false);
         return;
       }
 
@@ -626,6 +638,7 @@ const Clientes = () => {
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast
         });
+  setIsSubmittingAdd(false);
         return;
       }
       
@@ -661,6 +674,7 @@ const Clientes = () => {
         draggable: true, // Allow dragging the toast
       });
       console.log(error);
+  setIsSubmittingAdd(false);
     }
   };
 
@@ -967,10 +981,21 @@ const Clientes = () => {
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
                 className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
+                placeholder="Fecha"
                 type="date"
-                /* Onchange settime.date */
-                onChange={(e) => handleChangeTime("date", e.target.value)}
+                value={time.date}
+                min={time.date}
+                max={time.date}
+                onChange={(e) => {
+                  // Ignorar cualquier intento de cambiar a una fecha distinta a hoy
+                  if (e.target.value === todayDate) {
+                    handleChangeTime("date", e.target.value);
+                  } else {
+                    // Revertir si el navegador permite seleccionar otra (fallback)
+                    e.target.value = todayDate;
+                    handleChangeTime("date", todayDate);
+                  }
+                }}
               />
             </div>
           </div>
@@ -1150,7 +1175,8 @@ const Clientes = () => {
         <div className="flex flex-col items-start justify-start gap-[13px_0px]">
           <button
             onClick={addBillHandler}
-            className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
+            disabled={isSubmittingAdd}
+            className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
             <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
