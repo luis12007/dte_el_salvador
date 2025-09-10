@@ -107,7 +107,7 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                     <button onClick={handleUpdateAllAttributes} className="cursor-pointer [border:none] pt-3 pb-[13px] pr-[35px] pl-10 bg-steelblue-300 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-slategray">
                         <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-300 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
                         <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
-                            Nuevo Item
+                            Añadir Item
                         </b>
                     </button>
                 </div>

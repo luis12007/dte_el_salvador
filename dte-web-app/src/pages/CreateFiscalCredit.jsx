@@ -494,6 +494,7 @@ const CrearCreditoFiscal = () => {
 
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState("");
+  const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
 
   const handleDepartmentChange = (event) => {
     const departmentKey = event.target.value; // Get the department key
@@ -535,8 +536,10 @@ const CrearCreditoFiscal = () => {
   // Format the time in HH:MM:SS
   const time24Hour = `${hours}:${minutes}:${seconds}`;
 
+  // Fecha local de hoy (evita desfase por UTC)
+  const todayDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const [time, setTime] = useState({
-    date: "",
+    date: todayDate,
     time: time24Hour.toString(),
   });
 
@@ -779,6 +782,8 @@ const CrearCreditoFiscal = () => {
   /* --------------------------SEND DATA-------------------------------- */
   const addBillHandler = async (event) => {
     event.preventDefault();
+  if (isSubmittingAdd) return;
+  setIsSubmittingAdd(true);
 
     const myUuid = uuidv4().toUpperCase().toString();
 
@@ -901,6 +906,7 @@ const CrearCreditoFiscal = () => {
                 draggable: true, // Allow dragging the toast
                 style: { zIndex: 200000 } // Correct way to set z-index
               });
+              setIsSubmittingAdd(false);
               return;
             }
           }
@@ -914,6 +920,7 @@ const CrearCreditoFiscal = () => {
               draggable: true, // Allow dragging the toast
               style: { zIndex: 200000 } // Correct way to set z-index
             });
+            setIsSubmittingAdd(false);
             return;
           }
 
@@ -1041,15 +1048,19 @@ const CrearCreditoFiscal = () => {
     }
 
     if (client.nit === "" || client.nit === null) {
+  setIsSubmittingAdd(false);
       toast.error("NIT no puede estar vacio");
       return;
     } else if (client.name === "" || client.name === null) {
+  setIsSubmittingAdd(false);
       toast.error("Nombre no puede estar vacio");
       return;
     } else if (client.address === "" || client.address === null) {
+  setIsSubmittingAdd(false);
       toast.error("Direccion no puede estar vacio");
       return;
     } else if (client.email === "" || client.email === null) {
+  setIsSubmittingAdd(false);
       toast.error("Correo no puede estar vacio");
       return;
     } else if (client.codActividad === "" || client.codActividad === null) {
@@ -1119,6 +1130,7 @@ const CrearCreditoFiscal = () => {
         draggable: true, // Allow dragging the toast
         progress: undefined,
       });
+  setIsSubmittingAdd(false);
     }
 
     /* 
@@ -1421,10 +1433,19 @@ const CrearCreditoFiscal = () => {
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
                 className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
+                placeholder="Fecha"
                 type="date"
-                /* Onchange settime.date */
-                onChange={(e) => handleChangeTime("date", e.target.value)}
+                value={time.date}
+                min={time.date}
+                max={time.date}
+                onChange={(e) => {
+                  if (e.target.value === todayDate) {
+                    handleChangeTime("date", e.target.value);
+                  } else {
+                    e.target.value = todayDate; // revertir
+                    handleChangeTime("date", todayDate);
+                  }
+                }}
               />
             </div>
           </div>
@@ -1510,7 +1531,8 @@ const CrearCreditoFiscal = () => {
         <div className="flex flex-col items-start justify-start gap-[13px_0px]">
           <button
             onClick={addBillHandler}
-            className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100"
+            disabled={isSubmittingAdd}
+            className="cursor-pointer [border:none] pt-[13px] pb-3 pr-[23px] pl-[29px] bg-steelblue-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap hover:bg-steelblue-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="h-12 w-[158px] relative rounded-3xs bg-steelblue-200 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
             <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">

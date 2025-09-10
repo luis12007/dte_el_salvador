@@ -6,14 +6,14 @@ import time
 from datetime import datetime
 
 # Variables that you will set at the beginning
-""" INFO DE Luis """
-NIT = "02101601741065"  # Replace with your actual NIT
-PASSWORD_PRI = "Halogenados20242"  # Replace with your actual password
+""" INFO DE Gineco """
+NIT = "95010105731016"  # Replace with your actual NIT
+PASSWORD_PRI = "Fractura4"  # Replace with your actual password
 CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
-STARTING_NUMBER = 550  # Starting number for the numeroControl
+STARTING_NUMBER = 450  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
 CODACTIVITY = "86203"  # Replace with your actual activity code
-NRC = "1837811"  # Replace with your actual NRC
+NRC = "1868980"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER

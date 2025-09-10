@@ -5,14 +5,14 @@ import uuid
 import time
 from datetime import datetime
 
-""" INFO DE Luis """
-NIT = "02101601741065"  # Replace with your actual NIT
-PASSWORD_PRI = "Halogenados20242"  # Replace with your actual password
+""" INFO DE Gineco """
+NIT = "95010105731016"  # Replace with your actual NIT
+PASSWORD_PRI = "Fractura4"  # Replace with your actual password
 CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
-STARTING_NUMBER = 550  # Starting number for the numeroControl
+STARTING_NUMBER = 250  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
 CODACTIVITY = "86203"  # Replace with your actual activity code
-NRC = "1837811"  # Replace with your actual NRC
+NRC = "1868980"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER
@@ -26,7 +26,7 @@ def main():
 
         # Generate a new UUID for codigoGeneracion
         new_codigo_generacion = str(uuid.uuid4()).upper()
-        reference_code = "0E50FDA3-F270-4A40-85C9-B09256C86651"
+        reference_code = "74EB4168-A024-486B-A2AC-146A213A5072"
         reference_date = current_date
 
         # Update the numeroControl with the current number

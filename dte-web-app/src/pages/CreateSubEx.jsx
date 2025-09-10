@@ -412,8 +412,10 @@ const CreateSubEx = () => {
     // Format the time in HH:MM:SS
     const time24Hour = `${hours}:${minutes}:${seconds}`;
 
+    // Fecha local de hoy (evita desfases por UTC al usar toISOString)
+    const todayDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const [time, setTime] = useState({
-        date: "",
+        date: todayDate,
         time: time24Hour.toString(),
     });
 
@@ -1249,10 +1251,19 @@ const CreateSubEx = () => {
                             <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
                             <input
                                 className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                                placeholder="datos personales datos personales"
+                                placeholder="Fecha"
                                 type="date"
-                                /* Onchange settime.date */
-                                onChange={(e) => handleChangeTime("date", e.target.value)}
+                                value={time.date}
+                                min={time.date}
+                                max={time.date}
+                                onChange={(e) => {
+                                    if (e.target.value === todayDate) {
+                                        handleChangeTime("date", e.target.value);
+                                    } else {
+                                        e.target.value = todayDate;
+                                        handleChangeTime("date", todayDate);
+                                    }
+                                }}
                             />
                         </div>
                     </div>
