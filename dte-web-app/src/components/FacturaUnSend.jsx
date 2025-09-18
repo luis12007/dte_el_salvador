@@ -16,9 +16,10 @@ import cross from "../assets/imgs/cross.png";
 import direct from "../assets/imgs/direct.png";
 import signature from "../assets/imgs/signature.png";
 import UserService from "../services/UserServices";
+import EmisorService from "../services/emisor";
 
 
-const FrameComponent1 = ({ key, content, user }) => {
+const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const [tipo, setTipo] = useState("");
   const token = localStorage.getItem("token");
   const id_emisor = localStorage.getItem("user_id");
@@ -1286,7 +1287,68 @@ const FrameComponent1 = ({ key, content, user }) => {
         }
       }
 
-      if (id_emisor > 18) {
+      if (id_emisor == 19) {
+        const responseFirm = await Firmservice.Jorge_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 20) {
+        const responseFirm = await Firmservice.Jorge_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 21) {
+        const responseFirm = await Firmservice.Montenegro_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 22) {
+        const responseFirm = await Firmservice.Montenegro_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+
+      if (id_emisor > 22) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return
@@ -2205,23 +2267,37 @@ const FrameComponent1 = ({ key, content, user }) => {
     </div>
   );
 
-
+  // Botón eliminar: siempre visible; sólo activo si canDelete (última no sellada)
   /* Delete bill handler using the services */
 
   const DeleteBillHandler = async () => {
     console.log("DeleteBillHandler");
-    const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
-    console.log("deleted");
-    console.log(response);
-    if (response.message === "plantilla eliminado") {
-      toast.success("Plantilla eliminada");
-      /* wait 5 seconds */
-      setTimeout(() => {
-        window.location.reload();
-
-      }, 5000);
-    } else {
-      toast.error("Error al eliminar la plantilla recarga pagina");
+    try {
+      const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
+      console.log("deleted");
+      console.log(response);
+      if (response.message === "plantilla eliminado") {
+        // Disminuir correlativo según tipo de DTE
+        try {
+          if (content.tipo === "03") {
+            await EmisorService.decrease_fiscal(id_emisor, token);
+          } else {
+            await EmisorService.decrease_factura(id_emisor, token);
+          }
+          await EmisorService.decrease_envio(id_emisor, token);
+        } catch (e) {
+          console.error("Error al decrementar contadores:", e);
+        }
+        toast.success("Plantilla eliminada");
+/*         setTimeout(() => {
+          window.location.reload();
+        }, 2000); */
+      } else {
+        toast.error("Error al eliminar la plantilla recarga pagina");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error inesperado al eliminar");
     }
   };
 
@@ -2281,19 +2357,19 @@ const FrameComponent1 = ({ key, content, user }) => {
               src="/descargar@2x.png"
             />
           </button>
-          {content.sellado ? false : (
-            <button
-              className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivecross ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
-              onClick={handelrisActivecross}
-            >
-              <img
-                className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
-                loading="lazy"
-                alt=""
-                src={imgx}
-              />
-            </button>
-          )}
+          <button
+            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivecross ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'} ${!canDelete ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={canDelete ? handelrisActivecross : (e) => e.preventDefault()}
+            disabled={!canDelete}
+            title={canDelete ? 'Eliminar factura' : 'Sólo la última factura no sellada se puede eliminar'}
+          >
+            <img
+              className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
+              loading="lazy"
+              alt="Eliminar"
+              src={imgx}
+            />
+          </button>
 
 
         </div>

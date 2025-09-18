@@ -236,6 +236,55 @@ const Firm = {
         return data;
     },
 
+    Jorge_test: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port444/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+        Jorge_prod: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+    Montenegro_test: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port444/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+        Montenegro_prod: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
+
 
 
 }

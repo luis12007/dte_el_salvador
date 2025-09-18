@@ -237,7 +237,33 @@ const PlantillaAPI = {
 
 
 
-    }
+    },
+    createinvalidated: async(plantilla, token, id_emisor) => {
+        const res = await fetch(`${BASE_URL}/invalidated/create`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'id_emisor': `${id_emisor}`,
+            },
+            body: JSON.stringify(plantilla)
+        });
+        const data = await res.json();
+        return data;
+    },
+    createdeleted: async(plantilla, token, id_emisor) => {
+        const res = await fetch(`${BASE_URL}/deleted/create`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'id_emisor': `${id_emisor}`,
+            },
+            body: JSON.stringify(plantilla)
+        });
+        const data = await res.json();
+        return data;
+    },
 }
 
 export default PlantillaAPI;
