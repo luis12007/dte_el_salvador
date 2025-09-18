@@ -70,7 +70,7 @@ const UserService = {
     },
 
     id_enviopus1: async(id, token) => {
-        const res = await fetch(`${BASE_URL}/emisor/update/enviopus1/${id}`, {
+        const res = await fetch(`${BASE_URL}/emisor/update/envioplus1/${id}`, {
             method: 'PUT',
             headers: {
                 Authorization: `Bearer ${token}`
