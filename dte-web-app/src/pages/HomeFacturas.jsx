@@ -396,6 +396,23 @@ const HomeFacturas = () => {
     return grouped;
   };
 
+  // Determinar si la factura más reciente global (por fecha y hora) no está sellada.
+  // Sólo esa puede eliminarse; si la más reciente está sellada, ninguna se puede eliminar.
+  const getDateTime = (it) => {
+    try {
+      return new Date(it.fecha_y_hora_de_generacion + 'T' + (it.horemi || '00:00:00')).getTime();
+    } catch {
+      return 0;
+    }
+  };
+  let canDeleteId = null;
+  if (Array.isArray(items) && items.length) {
+    const newest = items.reduce((acc, it) => (getDateTime(it) > getDateTime(acc) ? it : acc), items[0]);
+    if (newest && !newest.sellado) {
+      canDeleteId = newest.codigo_de_generacion;
+    }
+  }
+
   const groupedItems = groupItemsByDate(items);
 
   // Sort the grouped dates by newest first with better date parsing
@@ -576,7 +593,11 @@ const HomeFacturas = () => {
                   </div>
                   {groupedItems[date].map((content, itemIndex) => (
                     <div key={`${content.codigo_de_generacion}-${itemIndex}`} className="animate-fadeInUp" style={{animationDelay: `${itemIndex * 0.1}s`}}>
-                      <FacturaUnSend content={content} user={user} />
+                      <FacturaUnSend
+                        content={content}
+                        user={user}
+                        canDelete={content.codigo_de_generacion === canDeleteId}
+                      />
                     </div>
                   ))}
                 </div>

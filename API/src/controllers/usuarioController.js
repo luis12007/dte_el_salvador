@@ -93,6 +93,22 @@ const count_factura = async(req, res) => {
         res.status(500).json({ message: 'Error en el servidor' });
     }
 };
+ 
+const decrease_factura = async(req, res) => {
+    const userid = req.params.id;
+    /* subtract 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+
+            .where('id', userid)
+            .decrement('count_factura', 1);
+        res.status(200).json({ message: 'Contador de facturas decrementado correctamente' });
+    } catch (error) {
+        console.error('Error al decrementar contador de facturas', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
 
 const count_fiscal = async(req, res) => {
     const userid = req.params.id;
@@ -109,6 +125,22 @@ const count_fiscal = async(req, res) => {
     }
 };
 
+const decrease_fiscal = async(req, res) => {
+    const userid = req.params.id;
+    /* subtract 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+
+            .where('id', userid)
+            .decrement('count_fiscal', 1);
+        res.status(200).json({ message: 'Contador fiscal decrementado correctamente' });
+    } catch (error) {
+        console.error('Error al decrementar contador fiscal', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
+
 const id_envioplus = async(req, res) => {
     try {
         const userid = req.params.id;
@@ -122,7 +154,22 @@ const id_envioplus = async(req, res) => {
         console.error('Error al incrementar id envioplus', error);
         res.status(500).json({ message: 'Error en el servidor' });
     }
-}
+};
+
+const decrease_envioplus = async(req, res) => {
+    try {
+        const userid = req.params.id;
+        const response = await knex('emisor')
+
+            .where('id', userid)
+            .decrement('id_envio', 1);
+        res.status(200).json({ message: 'Id envioplus decrementado correctamente' });
+    } catch (error) {
+        console.error('Error al decrementar id envioplus', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
 
 
 
@@ -135,6 +182,8 @@ module.exports = {
     createUser,
     count_factura,
     count_fiscal,
-    id_envioplus
-
+    id_envioplus,
+decrease_factura,
+    decrease_fiscal,
+    decrease_envioplus
 };

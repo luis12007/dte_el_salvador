@@ -432,7 +432,35 @@ const FacturaInvalidate = ({ key, content, user }) => {
       firmtoken = responseFirm.body;
     }
 
-    if (id_emisor > 18) {
+    if (id_emisor == 19) {
+      const responseFirm = await Firmservice.Jorge_test(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+    }
+
+    if (id_emisor == 20) {
+      const responseFirm = await Firmservice.Jorge_prod(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+    }
+
+    if (id_emisor == 21) {
+      const responseFirm = await Firmservice.Montenegro_test(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+    }
+
+    if (id_emisor == 22) {
+      const responseFirm = await Firmservice.Montenegro_prod(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+    }
+
+    if (id_emisor > 22) {
       const responseFirm = null;
       toast.error("No se encontró firmador registrado");
       return
@@ -480,7 +508,6 @@ const FacturaInvalidate = ({ key, content, user }) => {
     var callMH = {};
     if(usuario.ambiente == "00"){
 
-
     callMH = await SendAPI.invalidatebill(dataSend, resultAuthminis.body.token.slice(7));
     console.log("callMH");
     console.log(callMH);
@@ -490,12 +517,12 @@ const FacturaInvalidate = ({ key, content, user }) => {
     console.log(callMH);
     }
 
-
     if (callMH.estado === "PROCESADO") {
     setIsLoading(false);
 
       toast.success("Factura invalidada con éxito");
-
+    const responsecreatedinvalidated = await PlantillaAPI.createinvalidated(content, token, id_emisor);
+    console.log(responsecreatedinvalidated);
     const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
     console.log("deleted");
     console.log(response);

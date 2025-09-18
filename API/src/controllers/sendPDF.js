@@ -53,7 +53,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 21 || userDB.id === 22 ) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
