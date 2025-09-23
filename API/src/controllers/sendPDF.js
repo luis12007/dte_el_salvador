@@ -507,10 +507,10 @@ const sendPDF = async(req, res) => {
                 .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`IVA recibido: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
 
         } else if (plantillaDB.tipo === "03") {
@@ -530,10 +530,10 @@ const sendPDF = async(req, res) => {
                 .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "14") {
             if (plantillaDB.total_agravada === null) {
@@ -548,10 +548,10 @@ const sendPDF = async(req, res) => {
                 .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada || 0).toFixed(2)}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento || 0).toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`IVA recibido: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "05") {
 
@@ -560,7 +560,7 @@ const sendPDF = async(req, res) => {
                 .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
@@ -572,7 +572,7 @@ const sendPDF = async(req, res) => {
                 .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 110, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
                 .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
