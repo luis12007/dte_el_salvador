@@ -956,9 +956,11 @@ const CreateSubEx = () => {
             navigate("/crear/Nota_debito");
         } else if (selectedValue === "CR") {
             navigate("/crear/Comprobante_Retencion");
+        } else if (selectedValue === "CI") {
+
+            navigate("/crear/Comprobante_Liquidacion");
         }
     };
-
     const handleSelectChange = (event) => {
         setSelectedOption(event.target.value);
         ChangeHandler(event.target.value);
@@ -1218,6 +1220,8 @@ const CreateSubEx = () => {
                         <option value="CF">Comprobante Crédito Fiscal</option>
                         <option value="NC">Nota de Crédito</option>
                         <option value="ND">Nota de Débito</option>
+            <option value="CI">Comprobante de liquidación</option>
+
 
                     </select>
                     {/* Your other elements */}

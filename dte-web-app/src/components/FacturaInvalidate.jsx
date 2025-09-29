@@ -540,7 +540,24 @@ const FacturaInvalidate = ({ key, content, user }) => {
 
     }
 
+
     if (callMH.estado === "RECHAZADO") {
+          if ( callMH.descripcionMsg === "[documento.codigoGeneracion] DOCUMENTO SE ENCUENTRA INVALIDADO" ) {
+       toast.success("Factura invalidada con éxito");
+
+    const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
+    console.log("deleted");
+    console.log(response);
+    if (response.message === "plantilla eliminado") {
+      toast.success("Factura eliminada con éxito");
+      /* wait 5 seconds */
+      setTimeout(() => {
+        window.location.reload();
+
+      }, 3000);
+      return;
+    }
+  }
     setIsLoading(false);
 
       toast.error(`RECHAZADO ${callMH.descripcionMsg}`);

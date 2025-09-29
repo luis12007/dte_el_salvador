@@ -18,7 +18,7 @@ import signature from "../assets/imgs/signature.png";
 import UserService from "../services/UserServices";
 
 
-const FacturaSendSelect = ({ key, content, user , GetInf }) => {
+const FacturaSendSelectCI = ({ key, content, user , GetInf }) => {
     const [tipo, setTipo] = useState("");
     const token = localStorage.getItem("token");
     const id_emisor = localStorage.getItem("user_id");
@@ -1378,50 +1378,65 @@ const FacturaSendSelect = ({ key, content, user , GetInf }) => {
     }
 
     return (
-        <div className="w-full rounded-xl bg-white/90 backdrop-blur shadow-md hover:shadow-lg transition-shadow border border-slate-200/60 overflow-hidden">
-            {/* Header */}
-            <header className="flex items-center justify-between px-4 sm:px-5 py-2.5 bg-slate-100/80 border-b border-slate-200/60">
-                <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-sky-100 text-sky-700 border border-sky-200">
-                        {tipo || 'Documento'}
-                    </span>
+        <div className="flex w-full self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-center ml-2 pb-3 box-border my-6  text-black font-inria-sans ">
+            <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-1 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans ">
+                <div className="flex flex-col  items-start justify-start pt-1 px-0 pb-0">
+
+                    <h1 className="m-0 pb-2 relative text-inherit font-bold z-[3]">{tipo}</h1>
                 </div>
+
                 <button
-                    className={`inline-flex items-center justify-center h-8 w-8 rounded-md transition ${isActivedownload ? 'bg-white ring-2 ring-slate-200' : 'bg-slate-200/70 hover:bg-slate-300'}`}
-                    onClick={(event) => handleClickdownload(event)}
-                    title="Descargar"
-                >
-                    <img className="h-5 w-5" loading="lazy" alt="Descargar" src="/descargar@2x.png" />
-                </button>
+            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivedownload ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
+            onClick={(event) => handleClickdownload(event)}
+          >
+            <img
+              className="h-[30px] w-[30px]"
+              loading="lazy"
+              alt=""
+              src="/descargar@2x.png"
+            />
+          </button>
             </header>
 
-            {/* Body */}
-            <div className="px-4 sm:px-5 py-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-700">
-                    <div className="font-medium truncate" title={content.re_name}>{content.re_name}</div>
-                    <div className="sm:text-right">
-                        <span className="text-slate-500">Documento: </span>
-                        <span className="font-medium">{content.re_nit ? content.re_nit : content.re_numdocumento}</span>
+            <div className="">
+                <div className=""></div>
+            </div>
+            <div className="self-stretch flex flex-row items-center justify-center  py-0 px-[10px] box-border">
+                <div className="flex flex-col justify-center self-center w-full">
+                    <div className="flex-1 flex px-4 flex-col items-center justify-center  pt-[7px]  pb-0">
+                        <div className="self-stretch  flex flex-col items-start justify-start gap-[7px_0px]">
+                            <div className="relative  whitespace-nowrap z-[1]">
+                                {content.re_name}
+                            </div>
+                            <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
+                            <div className="relative whitespace-nowrap z-[1]">
+                                {/* re_nit if it is null re_numdocumento */}
+                                Documento: {content.re_nit ? content.re_nit : content.re_numdocumento}
+                            </div>
+                            <div className="relative whitespace-nowrap z-[1]">
+                                Correo: {content.re_correo_electronico}
+                            </div>
+                            <div className="relative whitespace-nowrap z-[1]">
+                                Teléfono: {content.re_numero_telefono}
+                            </div>
+                        </div>
                     </div>
-                    <div className="truncate" title={content.re_correo_electronico}>
-                        <span className="text-slate-500">Correo: </span>
-                        <span>{content.re_correo_electronico}</span>
+                    <div className="flex-1 flex w-full  pt-4 flex-col items-center justify-center gap-[8px_0px]">
+                        <button
+                            className="cursor-pointer [border:none] px-3 py-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
+                            <b className="relative text-11xl font-inria-sans text-black text-left whitespace-nowrap z-[2]">
+                                TOTAL: ${content.total_a_pagar}
+                            </b>
+                        </button>
+                        <div className="w-full  flex pt-4 gap-[0px_12px]">
+                            <div className="flex-grow flex justify-center">
+                                {sendedebutton}
+                            </div>
+                        </div>
                     </div>
-                    <div className="sm:text-right">
-                        <span className="text-slate-500">Teléfono: </span>
-                        <span>{content.re_numero_telefono}</span>
-                    </div>
-                </div>
-
-                <div className="mt-3 flex items-center justify-between">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200">
-                        <span className="text-xs font-semibold text-slate-500">TOTAL</span>
-                        <span className="text-base font-bold text-slate-800">${content.total_a_pagar}</span>
-                    </div>
-                    <div className="min-w-[140px]">{sendedebutton}</div>
                 </div>
             </div>
         </div>
     );
 };
-export default FacturaSendSelect;
+export default FacturaSendSelectCI;

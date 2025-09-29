@@ -43,6 +43,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       setTipo("Nota de Crédito");
     } else if (content.tipo === "06") {
       setTipo("Nota de Debito");
+    }else if (content.tipo === "08") {
+      setTipo("Comprobante de Liquidación");
     }
 
     if (content.re_correo_electronico === ""
@@ -63,6 +65,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       });
 
       if (content.tipo === "03") {
+        
         const newItems = data.map((item) => {
           const newItem = {
             codTributo: item.codtributo,
@@ -221,6 +224,33 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         console.log(newItems);
         setItems(newItems);
+      }else if (content.tipo === "08") {
+
+
+        const newItems = data.map((item) => {
+          const tributosNorm = (t) => (t?.[2] ? t : (t ? [String(t)] : null));
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: tributosNorm(item.tributos),
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+
+
+        console.log(newItems);
+        setItems(newItems);
       }
 
     };
@@ -351,6 +381,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       navigate(`/editar/NC/${content.codigo_de_generacion}`);
     } else if (content.tipo === "06") {
       navigate(`/editar/ND/${content.codigo_de_generacion}`);
+    } else if (content.tipo === "08") {
+      navigate(`/editar/CL/${content.codigo_de_generacion}`);
     }
 
   };
@@ -1000,13 +1032,129 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         };
       }
 
+      if (content.tipo == "08") {
+        const tipodedocumento = content.documentorelacionado.split("|");
+        const tipoDocumento = tipodedocumento[0];
+        const tipoGeneracion = tipodedocumento[1];
+        const numeroDocumento = tipodedocumento[2];
+        const fechaEmision = tipodedocumento[3];
+
+        const address = content.re_direccion.split("|");
+        const tributocf = content.tributocf.split("|");
+        console.log(tipodedocumento)
+        var data = {
+          identificacion: {
+            version: parseInt(content.version),
+            ambiente: content.ambiente,
+            tipoDte: content.tipo,
+            numeroControl: content.numero_de_control,
+            codigoGeneracion: content.codigo_de_generacion,
+            tipoModelo: parseInt(content.modelo_de_factura),
+            tipoOperacion: parseInt(content.tipo_de_transmision),
+            fecEmi: content.fecha_y_hora_de_generacion,
+            horEmi: content.horemi,
+            tipoMoneda: content.tipomoneda,
+          },
+          /* documentoRelacionado: [{
+            tipoDocumento: tipoDocumento,
+            tipoGeneracion: Number(tipoGeneracion),
+            numeroDocumento: numeroDocumento,
+            fechaEmision: fechaEmision
+          }], */
+          emisor: {
+
+            nit: user.nit,
+            nrc: user.nrc,
+            nombre: user.name,
+            codActividad: user.codactividad,
+            descActividad: user.descactividad,
+            nombreComercial: user.nombre_comercial,
+            tipoEstablecimiento: user.tipoestablecimiento,
+            direccion: {
+              municipio: user.municipio,
+              departamento: user.departamento,
+              complemento: user.direccion
+            },
+            telefono: user.numero_de_telefono,
+            correo: user.correo_electronico,
+
+                        /* TODO: Just in case establecimiento  */
+            codEstableMH: content.codestablemh,
+            codEstable: content.codestable,
+            codPuntoVentaMH: content.codpuntoventamh,
+            codPuntoVenta: content.codpuntoventa
+          },
+          receptor: {
+            nit: content.re_nit,
+            nrc: content.re_nrc,
+            nombre: content.re_name,
+            codActividad: content.re_codactividad,
+            descActividad: content.re_actividad_economica,
+            nombreComercial: content.re_numdocumento,
+            direccion: {
+              municipio: address[1],
+              departamento: address[0],
+              complemento: address[2]
+            },
+            correo: content.re_correo_electronico,
+            telefono: content.re_numero_telefono,
+          },
+          cuerpoDocumento: Listitems,
+          resumen: {
+            totalNoSuj: content.totalnosuj,
+            totalExenta: content.totalexenta,
+            totalGravada: parseFloat(content.total_agravada),
+            subTotalVentas: content.subtotalventas,
+            descuNoSuj: content.descunosuj,
+            descuExenta: content.descuexenta,
+            totalDescu: parseFloat(content.monto_global_de_descuento),
+            tributos: [{
+              codigo: tributocf[0],
+              descripcion: tributocf[1],
+              valor: parseFloat(tributocf[2])
+            }],
+            subTotal: parseFloat(content.subtotal),
+            ivaPerci1: parseFloat(content.iva_percibido),
+            ivaRete1: parseFloat(content.iva_retenido),
+            reteRenta: parseFloat(content.retencion_de_renta),
+            montoTotalOperacion: content.montototaloperacion,
+            totalLetras: content.cantidad_en_letras,
+            condicionOperacion: content.condicionoperacion,
+            descuGravada: content.descugravada,
+            numPagoElectronico: content.numpagoelectronico,
+            /* saldoFavor: content.saldofavor,
+            
+            pagos: [
+              {TODO: ADD MORE PAYMENTS
+                periodo: content.periodo,
+                plazo: content.plazo,
+                montoPago: content.montopago,
+                codigo: content.codigo,
+                referencia: content.referencia
+              }
+            ],
+
+            descuGravada: content.descugravada,
+            porcentajeDescuento: content.porcentajedescuento,
+            totalNoGravado: content.totalnogravado,
+            totalPagar: parseFloat(content.total_a_pagar), */
+          },
+          extension: {
+            docuEntrega: content.documento_e,
+            nombRecibe: content.documento_r,
+            observaciones: content.observaciones,
+            nombEntrega: content.responsable_emisor,
+            docuRecibe: content.documento_receptor,
+          },
+          apendice: content.apendice,
+        };
+      }
 
 
 
       console.log("---------------resultado--------------");
       console.log(data);
       console.log("---------------resultado--------------");
-
       /* -------------------------------------------- */
       const Firm = {
         nit: user.nit,
@@ -1318,7 +1466,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       }
 
       if (id_emisor == 21) {
-        const responseFirm = await Firmservice.Montenegro_test(Firm);
+        console.log("Firmando en Koala test")
+        console.log(Firm)
+        const responseFirm = await Firmservice.Koala_test(Firm);
         console.log("firm response")
         console.log(responseFirm);
         data.firma = responseFirm.body;
@@ -1333,7 +1483,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       }
 
       if (id_emisor == 22) {
-        const responseFirm = await Firmservice.Montenegro_prod(Firm);
+                console.log("Firmando en Koala test")
+        console.log(Firm)
+        const responseFirm = await Firmservice.Koala_prod(Firm);
         console.log("firm response")
         console.log(responseFirm);
         data.firma = responseFirm.body;
@@ -1360,6 +1512,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       if (responseFirm) {
         data.receptor.direccion = content.re_direccion;
       }
+
+
       const response = await PlantillaAPI.updateNoItems(
         id_emisor,
         data,
@@ -2179,6 +2333,143 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         console.log(error)
         toast.error("Error al enviar la factura no autorizado");
       }
+    }else if (content.tipo === "08") {
+      const dataSend = { /* TODO: SEND */
+        tipoDte: content.tipo,
+        ambiente: content.ambiente,
+        idEnvio: content.id_envio,
+        version: parseintversion,
+        codigoGeneracion: content.codigo_de_generacion,
+        documento: content.firm,
+      };
+
+      try {
+        console.log(content);
+        console.log("---------------dataSend to minis--------------");
+        console.log(dataSend);
+
+        /* ADD token minis */
+        var resultAuthminis = null;
+        if(user.ambiente == "00"){
+        resultAuthminis = await LoginAPI.loginMinis(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+      } else {
+        resultAuthminis = await LoginAPI.loginMinis_prod(
+          user.nit,
+          user.codigo_hacienda,
+          "MysoftwareSv"
+        );
+      }
+        console.log(resultAuthminis);
+        if (resultAuthminis.status != "OK") {
+          toast.success("Error en la autenticación, vuelve a intentar");
+          return
+        }
+
+        var senddata = null;
+        if (user.ambiente == "00") {
+        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
+        console.log(senddata);
+        } else {
+          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          console.log(senddata);
+        }
+
+
+
+        if (senddata.estado === "PROCESADO") {
+          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          console.log("edited");
+          console.log(response);
+          setIsLoading(false);
+
+          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          console.log("incremented");
+          console.log(responseincrement);
+
+          toast.success("Factura enviada al ministerio");
+
+          /* send email */
+
+          if (content.re_correo_electronico === null) {
+            toast.error("el receptor no tiene correo electronico");
+
+            setTimeout(() => {
+              window.location.reload();
+
+            }, 9000);
+            return
+          }
+
+          if (id_emisor == 7 || id_emisor == 12) {
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado, problema");
+          }
+          /* wait for 5 seconds */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 9000);
+        } else {
+          console.log("---------------enviando email--------------");
+          console.log(content);
+          console.log(token);
+          console.log(id_emisor);
+          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
+
+          console.log("---------------resultado de mail--------------");
+          console.log(sendEmailFactura);
+
+          if (sendEmailFactura.message === "Email sent") {
+            toast.success("Email enviado");
+          } else {
+            toast.error("No enviado problema");
+          }
+          /* wait for 5 seconds */
+          setTimeout(() => {
+            window.location.reload();
+
+          }, 9000);
+        }
+        }
+
+        setIsLoading(false);
+        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+          toast.error(`La factura ya fue enviada`);
+        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+          toast.info(`No se encontró firma`);
+        } else {
+          if (senddata.estado === "RECHAZADO")
+            toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
+          console.log(senddata.observaciones);
+          for (let i = 0; i < senddata.observaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          }
+        }
+
+        console.log("---------------resultado--------------");
+        console.log(senddata.estado);
+
+
+
+      } catch (error) {
+        console.log(error)
+        toast.error("Error al enviar la factura no autorizado");
+      }
     }
 
   };
@@ -2187,24 +2478,24 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const buttonStyle = content.firm ? "bg-stone-200" : " bg-lightgreen";
 
   const firmbutton = content.firm ? (
-    <div className="flex w-1/5  self-start flex-row">
+    <div className="flex w-full flex-row">
       <button
         onClick={ValidateBillHandler}
-        className={`cursor-pointer h-12 [border:none] pt-[11px] pb-3 w-full justify-center pr-3  ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+        className={`relative w-full h-12 md:h-12 cursor-pointer [border:none] px-3 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
-        <img src={checkimg} alt="Tick" className="w-7 ml-1 h-7" />
-        <img src={signature} className="h-7 absolute opacity-30" alt="" />
+        <img src={checkimg} alt="Tick" className="w-7 h-7" />
+        <img src={signature} className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none" alt="" />
 
       </button>
     </div>
   ) : (
-    <div className="flex w-1/5 flex-row">
+    <div className="flex w-full flex-row">
       <button
         onClick={ValidateBillHandler}
-        className={`cursor-pointer h-12  [border:none] pt-[10.5px] w-full justify-center pr-1 ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+        className={`w-full h-12 md:h-12 cursor-pointer [border:none] px-3 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-          <img src={signature} className="h-7" alt="" />
+        <div className="relative z-[3]">
+          <img src={signature} className="h-7 w-7" alt="Firmar" />
         </div>
       </button>
     </div>
@@ -2214,23 +2505,23 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     <div className="self-center flex w-full flex-row">
       <button
         onClick={SendBillHandler}
-        className={`cursor-pointer h-12 [border:none] w-full pt-[11px] pb-3 pr-[23px] pl-[22px] ${buttonStyle} rounded-lg flex flex-row items-center justify-center z-[2] hover:bg-lightgray-100`}
+        className={`relative w-full h-12 md:h-12 cursor-pointer [border:none] px-6 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
 
         <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
-        <img src={direct} className="h-7 absolute opacity-30" alt="" />
+        <img src={direct} className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none" alt="" />
 
 
 
       </button>
     </div>
   ) : (
-    <div className="self-center flex  w-full flex-row">
+    <div className="self-center flex w-full flex-row">
       <button
         onClick={SendBillHandler}
-        className={`cursor-pointer h-12 w-full [border:none] justify-center items-center ${buttonStyle} rounded-lg flex flex-row items-start justify-start z-[2] hover:bg-lightgray-100`}
+        className={`relative w-full h-12 md:h-12 cursor-pointer [border:none] px-6 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
-        <img src={direct} className="h-7" alt="" />
+        <img src={direct} className="h-7 w-7" alt="Enviar" />
       </button>
 
       {isLoading && (
@@ -2244,24 +2535,24 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   );
 
   const testbutton = content.sellado ? (
-    <div className="flex  w-1/5 flex-row">
+    <div className="flex w-full flex-row">
       <button
         onClick={testmail}
-        className={`cursor-pointer h-12 [border:none] pt-[10px] w-full justify-center pr-2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
+        className={`relative w-full h-12 md:h-12 cursor-pointer [border:none] px-3 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
         <img src={mailchecker ? checkimg : cross} alt={mailchecker ? "Tick" : "Cross"} className="w-[30px] h-[30px]" />
-        <img src={mailimg} className="h-7 absolute opacity-30" alt="" />
+        <img src={mailimg} className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none" alt="Mail" />
 
       </button>
     </div>
   ) : (
-    <div className="flex w-1/5   flex-row">
+    <div className="flex w-full flex-row">
       <button
         onClick={testmail}
-        className={`cursor-pointer h-12  [border:none] pt-[8px] w-full justify-center pr-2.2  ${buttonStyle} rounded-lg flex flex-row z-[2] hover:bg-lightgray-100`}
+        className={`w-full h-12 md:h-12 cursor-pointer [border:none] px-3 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
-        <div className="relative text-xs font-light font-inter text-black text-left z-[3]">
-          <img src={mailimg} className="h-8 w-8" alt="" />
+        <div className="relative z-[3]">
+          <img src={mailimg} className="h-8 w-8" alt="Mail" />
         </div>
       </button>
     </div>
@@ -2325,13 +2616,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   }
 
   return (
-    <div className="flex w-full self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-center ml-2 pb-3 box-border my-6  text-black font-inria-sans ">
-      <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-1 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans ">
-        <div className="flex flex-col  items-start justify-start pt-1 px-0 pb-0">
-
-          <h1 className="m-0 relative text-inherit font-bold z-[3]">{tipo}</h1>
+  <div className="w-full max-w-full mx-0 bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-3 sm:px-5 py-4 sm:py-5 my-6 text-black font-inria-sans overflow-hidden break-words box-border">
+    <header className="flex items-center justify-between min-w-0 w-full">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-gainsboro-200 text-black border border-gray-300">
+            {tipo || 'Documento'}
+          </span>
         </div>
-        <div className="flex flex-row  items-start justify-start gap-[0px_8px]">
+  <div className="flex items-center gap-2 flex-shrink-0">
           {/* <img
             className="w-[33px] h-[33px] relative object-cover z-[3]"
             loading="lazy"
@@ -2339,32 +2631,38 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             alt=""
             src="/ver@2x.png"
           /> */}
-          <img
-            className="w-[26px]  h-[26px] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white  relative object-cover z-[3]"
-            loading="lazy"
-            onClick={EditBillHandler}
-            alt=""
-            src="/editar@2x.png"
-          />
           <button
-            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivedownload ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'}`}
-            onClick={handleClickdownload}
+            className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-gainsboro-200 transition"
+            onClick={EditBillHandler}
+            title="Editar"
           >
             <img
-              className="h-[30px] w-[30px]"
+              className="h-6 w-6"
               loading="lazy"
-              alt=""
+              alt="Editar"
+              src="/editar@2x.png"
+            />
+          </button>
+          <button
+            className={`h-8 w-8 flex items-center justify-center rounded-md ${isActivedownload ? 'bg-gainsboro-200' : 'hover:bg-gainsboro-200'} transition`}
+            onClick={handleClickdownload}
+            title="Descargar"
+          >
+            <img
+              className="h-6 w-6"
+              loading="lazy"
+              alt="Descargar"
               src="/descargar@2x.png"
             />
           </button>
           <button
-            className={`h-[33px] w-[30px] mt-0.5 flex items-center justify-center rounded-lg focus:pointer-events-auto focus:outline-none  ${isActivecross ? 'bg-white focus:ring-gray-200' : 'bg-gainsboro-200'} ${!canDelete ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`h-8 w-8 flex items-center justify-center rounded-md ${!canDelete ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gainsboro-200'} transition`}
             onClick={canDelete ? handelrisActivecross : (e) => e.preventDefault()}
             disabled={!canDelete}
             title={canDelete ? 'Eliminar factura' : 'Sólo la última factura no sellada se puede eliminar'}
           >
             <img
-              className="h-[20px]  pt-1 w-[20px] relative object-cover z-[3] rounded-lg px-2 py-1 my-1 focus:pointer-events-auto hover:bg-white"
+              className="h-5 w-5"
               loading="lazy"
               alt="Eliminar"
               src={imgx}
@@ -2376,57 +2674,33 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
       </header>
 
-      <div className="">
-        <div className=""></div>
-      </div>
-      <div className="self-stretch flex flex-row items-center justify-center  py-0 px-[10px] box-border">
-        <div className="flex flex-col justify-center self-center w-full">
-          <div className="flex-1 flex px-4 flex-col items-center justify-center  pt-[7px]  pb-0">
-            <div className="self-stretch  flex flex-col items-start justify-start gap-[7px_0px]">
-              <div className="relative  whitespace-nowrap z-[1]">
-                {content.re_name}
-              </div>
-              <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-              <div className="relative whitespace-nowrap z-[1]">
-                {/* re_nit if it is null re_numdocumento */}
-                Documento: {content.re_nit ? content.re_nit : content.re_numdocumento}
-              </div>
-              <div className="relative whitespace-nowrap z-[1]">
-                Correo: {content.re_correo_electronico}
-              </div>
-              <div className="relative whitespace-nowrap z-[1]">
-                Teléfono: {content.re_numero_telefono}
-              </div>
-              {(id_emisor == 6 || id_emisor == 10 || id_emisor == 12) && (
-                <>
-                  <div className="relative  z-[1]">
-                    Código de generación: {content.codigo_de_generacion}
-                  </div>
-                  <div className="relative  z-[1]">
-                    Número de control: {content.numero_de_control}
-                  </div>
-                </>
-              )}
+      <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <div className="space-y-1 min-w-0">
+          <div className="text-lg font-bold break-words whitespace-normal">{content.re_name}</div>
+          <div className="text-base text-black break-all whitespace-normal">Documento: {content.re_nit ? content.re_nit : content.re_numdocumento}</div>
+          <div className="text-base text-black break-words whitespace-normal">Correo: {content.re_correo_electronico || '—'}</div>
+          <div className="text-base text-black break-words whitespace-normal">Teléfono: {content.re_numero_telefono || '—'}</div>
+          {
+            <div className="text-sm text-black space-y-0.5">
+              <div>Código de generación: {content.codigo_de_generacion}</div>
+              <div>Número de control: {content.numero_de_control}</div>
             </div>
-          </div>
-          <div className="flex-1 flex w-full  pt-4 flex-col items-center justify-center gap-[8px_0px]">
-            <button
-              className="cursor-pointer [border:none] px-3 py-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
-              <b className="relative text-11xl font-inria-sans text-black text-left whitespace-nowrap z-[2]">
-                TOTAL: ${formattedTotal}
-              </b>
-            </button>
-            <div className="w-full  flex pt-4 gap-[0px_12px]">
-              {firmbutton}
-              <div className="flex-grow flex justify-center">
-                {sendedebutton}
-              </div>
-              {testbutton}
-            </div>
+          }
+        </div>
+        <div className="flex md:items-end md:justify-end min-w-0">
+          <div className="inline-flex items-center gap-2 bg-gainsboro-200 px-3 py-2 rounded-lg border border-gray-300">
+            <span className="text-sm font-medium text-black">TOTAL</span>
+            <span className="text-lg font-bold tracking-wide">${formattedTotal}</span>
           </div>
         </div>
       </div>
 
+      {/* Footer actions: stack on mobile; on larger screens, center button is wider */}
+      <div className="mt-5 grid grid-cols-1 sm:grid-cols-5 items-center gap-3">
+        <div className="sm:col-span-1 flex w-full justify-start">{firmbutton}</div>
+        <div className="sm:col-span-3 flex w-full justify-center">{sendedebutton}</div>
+        <div className="sm:col-span-1 flex w-full justify-end">{testbutton}</div>
+      </div>
     </div>
   );
 };

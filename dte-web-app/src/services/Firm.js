@@ -260,7 +260,7 @@ const Firm = {
         return data;
     },
 
-    Montenegro_test: async(firm) => {
+    Koala_test: async(firm) => {
         const res = await fetch(`${BASE_URL_Firm}/port444/`, {
             method: 'POST',
             headers: {
@@ -271,8 +271,8 @@ const Firm = {
         const data = await res.json();
         return data;
     },
-
-        Montenegro_prod: async(firm) => {
+    
+        Koala_prod: async(firm) => {
         const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
             method: 'POST',
             headers: {

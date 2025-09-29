@@ -1126,7 +1126,9 @@ const CreateNC = () => {
       navigate("/crear/Nota_debito");
     }else if (selectedValue === "CR") {
       navigate("/crear/Comprobante_Retencion");
-    }
+    } else if (selectedValue === "CI") {
+      navigate("/crear/Comprobante_Importacion");
+  };
   };
 
   const handleSelectChange = (event) => {
@@ -1379,6 +1381,8 @@ const CreateNC = () => {
             <option value="CF">Comprobante Crédito Fiscal</option>
             <option value="SU">Factura de Sujeto Excluido</option>
             <option value="ND">Nota de Débito</option>
+            <option value="CI">Comprobante de liquidación</option>
+
 
           </select>
           {/* Your other elements */}

@@ -1,1 +1,32 @@
-{"status":"ERROR","body":{"codigo":"801","mensaje":"No existe certificado activo"}}
+<CertificadoMH><_id>68d8ade41ef75f34f6e9fea9</_id><nit>06141604731016</nit><publicKey><keyType>PUBLIC</keyType><algorithm>RSA</algorithm><encodied>MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnDpbqYvXhI85utc/DTzr/pv6+3aoa/aa
+fy3ih3WQ4y/NPPVzym8upVRnMS9MI2KJc1XpYzdAnudknsFzWf8bMBqnLqrmMCi74MV7ApOZHOrO
+gLA/LSbKt9AneVabHv/DHRUucnxlI/W2HnDDK1JVH1+6kQJOR/GDgPyHmw8CYKzGm38e1T+YzyxZ
+DbbEed0tAIZ5Dj6sA5F9IqUWQvpEVnM7h5t0DRwThvMtR3x+ELbri4kffHfLqPmbdxIBTqvAFmxO
+JnrjgwtI+WyukW5p0ucBdYi2RgIV+EbdixRc1B7xtMpd8D8mqMAfou/RO4GT1wF4WBIPMgZUW4Nr
+Qs+rBwIDAQAB</encodied><format>X.509</format><clave>04d53e390692a6139e826402901d800adfbedf828bbf4f7e62f0d45f3a4af0b41a6890a0885fb163e21dd473cf48843d32c51cf69edd8c0fa577d58eb6faba88</clave></publicKey><privateKey><keyType>PRIVATE</keyType><algorithm>RSA</algorithm><encodied>MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCcOlupi9eEjzm61z8NPOv+m/r7
+dqhr9pp/LeKHdZDjL8089XPKby6lVGcxL0wjYolzVeljN0Ce52SewXNZ/xswGqcuquYwKLvgxXsC
+k5kc6s6AsD8tJsq30Cd5Vpse/8MdFS5yfGUj9bYecMMrUlUfX7qRAk5H8YOA/IebDwJgrMabfx7V
+P5jPLFkNtsR53S0AhnkOPqwDkX0ipRZC+kRWczuHm3QNHBOG8y1HfH4QtuuLiR98d8uo+Zt3EgFO
+q8AWbE4meuODC0j5bK6RbmnS5wF1iLZGAhX4Rt2LFFzUHvG0yl3wPyaowB+i79E7gZPXAXhYEg8y
+BlRbg2tCz6sHAgMBAAECggEAexwRt12Xi8JBv9Z2vTvQzGamNRqgRdOik63Y4N3oOt8kYHEbud47
+Z9VHLB8VZJz1q4l7zM9xgMbfJ6tR9w1so0+dhsztb+3pf4qfELy23265I/e/ERmMjaTeNmPlAVyS
+qIxUeatFGD08Mmixo6XRplONdU/X2CGdezuEsM/3E65X5lS5PX+5u58GVaWWGuRbaUc5zuvo9hkb
+0k7kvTNzwakBSCR7tkVFU6HzQ1CUhfCHs+gNcBUgx+kPRQ0rCR15zlSLsuyNjUfTMthC6uF5/YBM
+MKidkqihmyH5aHB66IO1ZGxsWr57Na/1mB0tYDBhw2UNICGpfEWajFjKZVExQQKBgQDLoyYkRPoA
+umzQMlKadYJ266rOvMkupdYkCLb1QJ1trqiv38n0W5+cL6vjhlrB/QMZUWz+whhjxIKuF6W3m9Zo
++1mYzbLbHSEMlfRYNIe6PQHLbjH3urTfKLXi7YWM4K6q5vHxtSxfVUubKMYTEyGh/lTECw8in4ei
+MDuZ6kKF7wKBgQDEZmPi5c4nV4uOOiFOHxwpgyYBVTe+6GEPuHY7wb34rMOmjngngRnS18mkqOcV
+h1WcJ1qPSeAa/n1bB/+6lpNq1evGnqJllLPONe1+GkHPsTUCtXwRyTGhyMmGoRPw64i3EeLjXKDR
+LgEK3xL5Ck6GqDNu77n3+85kCW/0uoEEaQKBgHK2RygrSwHaAq4NiwbDp2jCPQgUxOfoN4c4+YeS
+jJxaxV+9mxByBKmBGT0kVD/u/S3n9pRUVlTtQAg9/fY+bTvaS5COX3CbKiDi4DBH9yVsdHRacP9y
+R61mS3+3+YFwmDRhwG0+d+6EKAERqPLZ1hphIPMGn9ILN+afcRO1KSA1AoGBAIiJSh2+d1BAe2OY
+I/lEhXaSl0RL8yJEON4N9hxa92++45GR8BQ+my5KGAPh7Cy6Vhjl/v4odKUvkQRNDkqwTbHzICOH
+uwx1kX7lXMLTDDeQUXMdqjBPN7LqfLecmdleVUA4Lgy0I5Tor47YQD9kG+1fV8pi3F168CP5r5xq
+YDEpAoGBAIzT4tyuK3/LFlT0frhJDzzjD23+hoPd/K7YClj6hZQO9RW5rMR1fZFexwRyAcFg7Z+9
+lPjhJDxBNto7lmSFnuq/82hLDuybiW7Jjtvtv9YUkZ3lSx5e03NVjsBtuBAsASS5BFd42pCn/Ww5
+AFQCZ+Xu5lIKf/Qx4+af7Jvoj83v</encodied><format>PKCS#8</format><clave>80bc59cf45d09486055516f80eb31ab22746f824559b0758bcc893f51378f9be2b4d1b717f81921d056f23d05a2b5c59371500ea35cb06b9d100404a8918f511</clave></privateKey><activo>true</activo><verificado/><fechaVerificacion/><certificado><basicEstructure><version>2</version><serial>1.2.840.113549.1.1.11</serial><signatureAlgorithm><algorithm>Sha256WithRSAEncryption</algorithm><parameters/></signatureAlgorithm><issuer><countryName>SV</countryName><localilyName>SAN SALVADOR</localilyName><organizationalUnit>MINISTERIO DE HACIENDA</organizationalUnit><organizationalName>DIRECCIÓN GENERAL DE IMPUESTOS INTERNOS</organizationalName><commonName>UNIDAD COORDINADORA DEL PROGAMA FORTALECIMIENTO A LA ADMINISTRACIÓN TRIBUTARÍA</commonName><organizationIdentifier>VATSV-0614-010111-003-2</organizationIdentifier></issuer><validity><notBefore>1759030756.633000000</notBefore><notAfter>1916710756.633000000</notAfter></validity><subject><countryName>El Salvador</countryName><organizationName>Mysoftware</organizationName><organizationUnitName>Mysoftware</organizationUnitName><organizationIdentifier>VATSV06141604731016</organizationIdentifier><surname>JORGE ARNOLDO MALDONADO AGUILAR - CONTRIBUYENTE</surname><givenName>JORGE ARNOLDO MALDONADO AGUILAR - CONTRIBUYENTE</givenName><commonName>MINISTERO DE HACIENDA</commonName><description>06141604731016</description></subject><subjectPublicKeyInfo><algorithmIdenitifier><algorithm>RSA</algorithm><parameters/></algorithmIdenitifier><subjectPublicKey>MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnDpbqYvXhI85utc/DTzr/pv6+3aoa/aa
+fy3ih3WQ4y/NPPVzym8upVRnMS9MI2KJc1XpYzdAnudknsFzWf8bMBqnLqrmMCi74MV7ApOZHOrO
+gLA/LSbKt9AneVabHv/DHRUucnxlI/W2HnDDK1JVH1+6kQJOR/GDgPyHmw8CYKzGm38e1T+YzyxZ
+DbbEed0tAIZ5Dj6sA5F9IqUWQvpEVnM7h5t0DRwThvMtR3x+ELbri4kffHfLqPmbdxIBTqvAFmxO
+JnrjgwtI+WyukW5p0ucBdYi2RgIV+EbdixRc1B7xtMpd8D8mqMAfou/RO4GT1wF4WBIPMgZUW4Nr
+Qs+rBwIDAQAB</subjectPublicKey></subjectPublicKeyInfo></basicEstructure><extensions><authorityKeyIdentifier><keyIdentifier>68d8ade41ef75f34f6e9feaa</keyIdentifier></authorityKeyIdentifier><subjectKeyIdentifier><keyIdentifier>68d8ade41ef75f34f6e9feab</keyIdentifier></subjectKeyIdentifier><keyUsage><digitalSignature>1</digitalSignature><contentCommintment>1</contentCommintment><dataEncipherment>0</dataEncipherment><keyAgreement>0</keyAgreement><keyCertificateSignature>0</keyCertificateSignature><crlSignature>0</crlSignature><encipherOnly>0</encipherOnly><decipherOnly>0</decipherOnly></keyUsage><certificatePolicies><policyInformations/></certificatePolicies><subjectAlternativeNames><rfc822Name></rfc822Name></subjectAlternativeNames><extendedKeyUsage><clientAuth></clientAuth><emailProtection></emailProtection></extendedKeyUsage><crlDistributionPoint><distributionPoint><distributionPoint>http://www2.mh.gob.sv/crl</distributionPoint><distributionPoint>http://www2.mh.gob.sv/crl2</distributionPoint></distributionPoint></crlDistributionPoint><authorityInfoAccess><accessDescription><accessDescription><accessMethod></accessMethod><accessLocation><accessLocation>https://www.minec.gob.sv/ca/public/donwload/subordinadal.crt</accessLocation></accessLocation></accessDescription></accessDescription></authorityInfoAccess><qualifiedCertificateStatements><qcCompliance></qcCompliance><qcEuRetentionPeriod>10</qcEuRetentionPeriod><qcPDS><pdsLocation/><url>https://www2.mh.gob.sv/pds</url><language>ES</language></qcPDS><qcType>id-etsi-qct-esign</qcType></qualifiedCertificateStatements><basicConstraints><ca>false</ca></basicConstraints></extensions></certificado><fechaDebaja/><clavePub/><clavePri/></CertificadoMH>

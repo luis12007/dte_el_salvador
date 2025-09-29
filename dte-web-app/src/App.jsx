@@ -30,6 +30,7 @@ import BooksComponent from './components/BooksComponent';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateCR from './pages/CreateCR';
+import CreateCI from './pages/CreateCI';
 
 /* http://localhost:3000/#/ingresar the example route */
 export default function App() {
@@ -62,6 +63,7 @@ export default function App() {
         <Route path="/crear/Comprobante_Retencion" element={<Private><CreateCR/></Private>}/> 
         <Route path="/crear/nota_credito" element={<Private><CreateNC/></Private>}/> 
         <Route path="/crear/Nota_debito" element={<Private><CreateND/></Private>}/> 
+        <Route path="/crear/Comprobante_Liquidacion" element={<Private><CreateCI/></Private>}/> 
 
         <Route path="/editar/sujEx/:codigo_de_generacion" element={<Private><EditSujEx/></Private>}/>
         <Route path="/editar/NC/:codigo_de_generacion" element={<Private><EditNC/></Private>}/>

@@ -917,6 +917,8 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
         } else if (plantillaDB.tipo === "06") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE DEBITO', { align: 'center' });
 
+        }else if (plantillaDB.tipo === "08") {
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('COMPROBANTE DE LIQUIDACIÓN', { align: 'center' }); 
         }
 
         const yscale = 70;
