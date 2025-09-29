@@ -245,6 +245,8 @@ const PlantillaAPI = {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
                 'id_emisor': `${id_emisor}`,
+                /* adding cors */
+                'Access-Control-Allow-Origin': '*',
             },
             body: JSON.stringify(plantilla)
         });

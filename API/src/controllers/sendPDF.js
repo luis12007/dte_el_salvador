@@ -46,6 +46,8 @@ const sendPDF = async(req, res) => {
         } else if (plantillaDB.tipo === "06") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE DEBITO', { align: 'center' });
 
+        }else if (plantillaDB.tipo === "08") {
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('COMPROBANTE DE LIQUIDACIÓN', { align: 'center' }); 
         }
 
         const yscale = 70;
@@ -137,7 +139,12 @@ const sendPDF = async(req, res) => {
             const logo = path.join(__dirname, '../assets/imgs/rinologo.png');
             pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
 
-        } else {
+        }else if (userDB.id === 21 || userDB.id === 22) {
+            /* adding img */
+            const logo = path.join(__dirname, '../assets/imgs/koala.jpg');
+            pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
+
+        }  else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
                 /* .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' }) 

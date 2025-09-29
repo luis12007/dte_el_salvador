@@ -140,6 +140,97 @@ const decrease_fiscal = async(req, res) => {
     }
 };
 
+const count_cl = async(req, res) => {
+    const userid = req.params.id;
+    /* sum 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+
+            .where('id', userid)
+            .increment('count_cl', 1);
+        res.status(200).json({ message: 'Contador de CL incrementado correctamente' });
+    } catch (error) {
+        console.error('Error al incrementar contador de CL', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
+const decrease_cl = async(req, res) => {
+    const userid = req.params.id;
+    /* subtract 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+
+            .where('id', userid)
+            .decrement('count_cl', 1);
+        res.status(200).json({ message: 'Contador de CL decrementado correctamente' });
+    } catch (error) {
+        console.error('Error al decrementar contador de CL', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+const count_nc = async(req, res) => {
+    const userid = req.params.id;
+    /* sum 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+
+            .where('id', userid)
+            .increment('count_nc', 1);
+        res.status(200).json({ message: 'Contador de NC incrementado correctamente' });
+    } catch (error) {
+        console.error('Error al incrementar contador de NC', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
+const decrease_nc = async(req, res) => {
+    const userid = req.params.id;
+    /* subtract 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+            .where('id', userid)
+            .decrement('count_nc', 1);
+        res.status(200).json({ message: 'Contador de NC decrementado correctamente' });
+    } catch (error) {
+        console.error('Error al decrementar contador de NC', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
+const count_nd = async(req, res) => {
+    const userid = req.params.id;
+    /* sum 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+
+            .where('id', userid)
+            .increment('count_nd', 1);
+        res.status(200).json({ message: 'Contador de ND incrementado correctamente' });
+    } catch (error) {
+        console.error('Error al incrementar contador de ND', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
+const decrease_nd = async(req, res) => {
+    const userid = req.params.id;
+    /* subtract 1 to the actual count */
+    try {
+        const user = await knex('emisor')
+
+            .where('id', userid)
+            .decrement('count_nd', 1);
+        res.status(200).json({ message: 'Contador de ND decrementado correctamente' });
+    } catch (error) {
+        console.error('Error al decrementar contador de ND', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};
+
+
+
+
 
 const id_envioplus = async(req, res) => {
     try {
@@ -185,5 +276,8 @@ module.exports = {
     id_envioplus,
 decrease_factura,
     decrease_fiscal,
+    count_cl,
+    count_nc,
+    count_nd,
     decrease_envioplus
 };

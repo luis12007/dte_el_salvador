@@ -11,8 +11,9 @@ import filterimg from "../assets/imgs/filter.png";
 import filterwhite from "../assets/imgs/filterwhite.png";
 import FilterModal from "../components/FilterModal";
 import x from "../assets/imgs/x.png";
+import FacturaSendSelectCI from "../components/FacturaSendSelectCI";
 
-const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
+const HomeFacturasSelectCI = ({GetInf , setIsModalOpen}) => {
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
     const [items, setItems] = useState([]);
@@ -40,10 +41,14 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
                 const result = await PlantillaAPI.getByUserId(user_id, token);
                 console.log("result");
                 console.log(result);
-                /* organize the results by fecha_y_hora_de_generacion desc*/
-                result.sort((a, b) => {
-                    return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
-                });
+                /* organize results by full datetime (fecha + hora) desc */
+                if (result && Array.isArray(result)) {
+                    result.sort((a, b) => {
+                        const dateA = new Date((a.fecha_y_hora_de_generacion || '') + 'T' + (a.horemi || '00:00:00'));
+                        const dateB = new Date((b.fecha_y_hora_de_generacion || '') + 'T' + (b.horemi || '00:00:00'));
+                        return dateB - dateA; // Newest first
+                    });
+                }
                 setItems(result || []); // Default to empty array
 
                 if (tokenminis === "undefined" || tokenminis === null) {
@@ -64,11 +69,9 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
 
         fetchData(); // Call the async function
 
-        // Simulate loading for 5 seconds
+        // brief loading simulation
         const timer = setTimeout(() => {
             setLoading(false);
-            // Fetch or set your items here
-            // setItems(fetchedItems);
         }, 2000);
 
         return () => clearTimeout(timer);
@@ -91,20 +94,32 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
         XLSX.writeFile(workbook, `facturas- ${dateString}.xlsx`);
     };
 
-    const groupItemsByDate = (items) => {
-        return items.reduce((acc, item) => {
-          if (item.tipo === "03") { // Filter items with type "03"
-            const date = item.fecha_y_hora_de_generacion.split(" ")[0]; // Extract the date part
-            if (!acc[date]) {
-              acc[date] = [];
-            }
-            acc[date].push(item);
-          }
-          return acc;
-        }, {});
-      };
+        const groupItemsByDate = (items) => {
+                // Include Facturas (01) and Crédito Fiscal (03)
+                const filtered = Array.isArray(items) ? items.filter((it) => it && (it.tipo === "01" || it.tipo === "03")) : [];
+                const grouped = filtered.reduce((acc, item) => {
+                        const datePart = (item.fecha_y_hora_de_generacion || '').split(" ")[0];
+                        if (!datePart) return acc;
+                        if (!acc[datePart]) acc[datePart] = [];
+                        acc[datePart].push(item);
+                        return acc;
+                }, {});
 
-    const groupedItems = groupItemsByDate(items);
+                // Sort each group by full datetime desc
+                Object.keys(grouped).forEach((d) => {
+                        grouped[d].sort((a, b) => {
+                                const dtA = new Date((a.fecha_y_hora_de_generacion || '') + 'T' + (a.horemi || '00:00:00'));
+                                const dtB = new Date((b.fecha_y_hora_de_generacion || '') + 'T' + (b.horemi || '00:00:00'));
+                                return dtB - dtA;
+                        });
+                });
+                return grouped;
+        };
+
+        const groupedItems = groupItemsByDate(items);
+
+        // Sort grouped dates desc
+        const sortedGroupedDates = Object.keys(groupedItems).sort((a, b) => new Date(b) - new Date(a));
 
     /* function to transform format date in text separete by year moth and day in spanish  input 2025-01-02 output 1 de agosto de 2025*/
     const transformDate = (date) => {
@@ -199,7 +214,7 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
                 <div className="flex items-center justify-between px-6 sm:px-8 py-4 bg-gradient-to-r from-sky-600 to-sky-500 text-white">
                     <div>
                         <h2 className="text-lg sm:text-xl font-semibold">Seleccionar documento</h2>
-                        <p className="text-xs sm:text-sm opacity-90">Crédito Fiscal (03)</p>
+                        <p className="text-xs sm:text-sm opacity-90">Facturas (01) y Comprobante de Crédito Fiscal (03)</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <button
@@ -242,8 +257,8 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
                         </div>
                     ) : (
                         <>
-                            {Array.isArray(items) && items.length > 0 ? (
-                                Object.keys(groupedItems).map((date) => (
+                            {Array.isArray(items) && items.length > 0 && Object.keys(groupedItems).length > 0 ? (
+                                sortedGroupedDates.map((date) => (
                                     <div key={date} className="animate-fadeInUp">
                                         <div className="sticky top-0 z-10">
                                             <div className="mx-1 my-3">
@@ -255,7 +270,7 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
                                         </div>
                                         <div className="space-y-3">
                                             {groupedItems[date].map((content, index) => (
-                                                <FacturaSendSelect key={index} content={content} user={user} GetInf={GetInf} />
+                                                <FacturaSendSelectCI key={`${content.codigo_de_generacion}-${index}`} content={content} user={user} GetInf={GetInf} />
                                             ))}
                                         </div>
                                     </div>
@@ -302,14 +317,9 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
                     onClose={closeModal}
                     onSearch={handleSearch}
                 />
-
-                {/* Hidden sidebar trigger preserved */}
-                <div className="hidden">
-                    <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
-                </div>
             </div>
         </div>
     );
 };
 
-export default HomeFacturasSelect;
+export default HomeFacturasSelectCI;

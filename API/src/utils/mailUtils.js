@@ -1083,8 +1083,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
-                            user: 'Icpdr.revelo11@gmail.com',
-                            pass: 'fhzh fybu dprt jxob'
+                            user: 'mysoftwaresv@gmail.com',
+                            pass: 'ajbh eozh iltf oinf'
                         }
                     });
 
@@ -1104,8 +1104,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {
-                            user: 'Icpdr.revelo11@gmail.com',
-                            pass: 'fhzh fybu dprt jxob'
+                            user: 'mysoftwaresv@gmail.com',
+                            pass: 'ajbh eozh iltf oinf'
                         }
                     });
 
@@ -1168,8 +1168,9 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         } else if (plantillaDB.tipo === "06") {
             pdfDoc.fontSize(17).fillColor('#1E3256').text('NOTA DE DEBITO', { align: 'center' });
 
+        }else if (plantillaDB.tipo === "08") {
+            pdfDoc.fontSize(17).fillColor('#1E3256').text('COMPROBANTE DE LIQUIDACIÓN', { align: 'center' }); 
         }
-
         const yscale = 70;
 
         // Add Doctor's information
@@ -1259,7 +1260,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .fontSize(15).text('2563-9606', 50, yscale + 90, { align: 'left' })
                 .fontSize(15).text('2207-4940', 180, yscale + 90, { align: 'left' })
 
-        } else {
+        }else if (userDB.id === 21 || userDB.id === 22) {
+                    /* adding img */
+                    const logo = path.join(__dirname, '../assets/imgs/koala.jpg');
+                    pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
+        
+                } else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
                 /* .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' }) 

@@ -27,6 +27,39 @@ router.post('/update/count_fiscal/:id', authenticateToken, count_fiscal); */
         const data = await res.json();
         return data;
     },
+    count_cl: async(id, token) => {
+        const res = await fetch(`${BASE_URL}/emisor/update/count_cl/${id}`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await res.json();
+        return data;
+    },
+    count_nd: async(id, token) => {
+        const res = await fetch(`${BASE_URL}/emisor/update/count_nd/${id}`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await res.json();
+        return data;
+    },
+    count_nc: async(id, token) => {
+        const res = await fetch(`${BASE_URL}/emisor/update/count_nc/${id}`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await res.json();
+        return data;
+    },
     decrease_factura: async(id, token) => {
         const res = await fetch(`${BASE_URL}/emisor/update/decrease_factura/${id}`, {
             method: 'POST',

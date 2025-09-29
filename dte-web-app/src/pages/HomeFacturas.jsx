@@ -536,28 +536,55 @@ const HomeFacturas = () => {
 
 
   return (
-    <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-[33px] pr-[22px] box-border ch:items-center">
+    <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-8 box-border overflow-x-hidden">
       <SidebarComponent visible={visible} />
-      <button className="animate-fadeIn bg-gray-300 w-2/12 self-end h-12 border-black rounded-lg drop-shadow-lg hover:scale-105 transition-transform duration-200 flex items-center justify-center" onClick={() => setShowModal(true)}>
-        <img src={filterwhite} className="h-9 pl-3 self-center mr-3" alt="" />
-      </button>
+
+      {/* Top bar */}
+      <div className="sticky top-[66px] z-20 w-full bg-steelblue-300 text-white shadow-md">
+        <div className="mx-auto max-w-6xl px-3 sm:px-6 py-3 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-semibold">Facturas</h1>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap justify-end">
+            <button
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg transition"
+              onClick={() => setShowModal(true)}
+              title="Filtrar"
+            >
+              <img src={filterwhite} className="h-5 w-5" alt="Filtrar" />
+              <span className="text-sm">Filtrar</span>
+            </button>
+            <button
+              onClick={excelHandler}
+              className="inline-flex items-center gap-2 bg-emerald-400 hover:bg-emerald-300 text-emerald-950 px-3 py-2 rounded-lg shadow transition"
+              title="Exportar a Excel"
+            >
+              <span className="text-sm sm:text-base font-semibold">Excel</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* Espaciador para que el primer contenido no quede debajo del menú sticky */}
+      <div className="h-3 sm:h-4"></div>
 
       {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 animate-fadeIn px-4">
-          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg flex flex-col items-center animate-fadeInUp w-full max-w-sm mx-4">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Filtrar Por</h2>
-            <button className="bg-steelblue-300 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md mb-3 sm:mb-4 text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={(event) => openModal(event, 'name')}>
-              Nombre
-            </button>
-            <button className="bg-steelblue-300 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md mb-3 sm:mb-4 text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={(event) => openModal(event, 'date')}>
-              Fecha
-            </button>
-            <button className="bg-steelblue-300 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md mb-3 sm:mb-4 text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={(event) => openModal(event, 'type')}>
-              Tipo
-            </button>
-            <button className="bg-lightcoral text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg shadow-md text-base sm:text-lg hover:scale-105 transition-transform duration-200 w-full" onClick={() => setShowModal(false)}>
-              Cerrar
-            </button>
+        <div className="fixed inset-0 z-50 mb- flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl ring-1 ring-black/5 p-5 animate-fadeInUp">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-4">Filtrar por</h2>
+            <div className="grid gap-3">
+              <button className="bg-sky-600 text-white py-2.5 px-4 rounded-lg shadow hover:bg-sky-500 transition" onClick={(event) => openModal(event, 'name')}>
+                Nombre
+              </button>
+              <button className="bg-sky-600 text-white py-2.5 px-4 rounded-lg shadow hover:bg-sky-500 transition" onClick={(event) => openModal(event, 'date')}>
+                Fecha
+              </button>
+              <button className="bg-sky-600 text-white py-2.5 px-4 rounded-lg shadow hover:bg-sky-500 transition" onClick={(event) => openModal(event, 'type')}>
+                Tipo
+              </button>
+              <button className="bg-slate-200 text-slate-800 py-2.5 px-4 rounded-lg shadow hover:bg-slate-300 transition" onClick={() => setShowModal(false)}>
+                Cerrar
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -570,11 +597,12 @@ const HomeFacturas = () => {
       />
 
 
-      <section className="pl-2 ch:w-1/3 animate-fadeInUp animate-delay-200">
+  <section className="mx-auto max-w-6xl w-full px-3 sm:px-6 animate-fadeInUp animate-delay-200">
         {loading ? (
           <div className="flex items-center justify-center my-4 rounded-lg">
-            <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
-              <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">Cargando...</span>
+            <div className="flex flex-col items-center px-3 py-6">
+              <div className="h-10 w-10 border-4 border-steelblue-300 border-t-transparent rounded-full animate-spin mb-3"></div>
+              <span className="self-center mx-4 text-base text-black">Cargando...</span>
             </div>
           </div>
         ) : (
@@ -582,17 +610,17 @@ const HomeFacturas = () => {
             {Array.isArray(items) && items.length > 0 ? (
               sortedGroupedDates.map((date, index) => (
                 <div key={date} className="animate-slideInUp">
-                  <div className="flex items-center justify-center my-4 rounded-lg">
-                    <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300 hover:scale-105 transition-transform duration-200">
-                      <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">{date}</span>
-                      <div className="text-sm text-gray-600">{transformDate(date)}</div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        {groupedItems[date].length} factura{groupedItems[date].length !== 1 ? 's' : ''}
-                      </div>
+                  <div className="flex items-center justify-center mt-20">
+                    <div className="inline-flex items-center gap-3 bg-slate-300 text-black px-4 py-2 rounded-full shadow-sm border border-gray-300 mx-3 sm:mx-0">
+                      <span className="text-base font-semibold tracking-wide">{date}</span>
+                      <span className="text-sm opacity-80">{transformDate(date)}</span>
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-200 text-black">
+                        {groupedItems[date].length} DTE{groupedItems[date].length !== 1 ? 's' : ''}
+                      </span>
                     </div>
                   </div>
                   {groupedItems[date].map((content, itemIndex) => (
-                    <div key={`${content.codigo_de_generacion}-${itemIndex}`} className="animate-fadeInUp" style={{animationDelay: `${itemIndex * 0.1}s`}}>
+                    <div key={`${content.codigo_de_generacion}-${itemIndex}`} className="animate-fadeInUp" style={{animationDelay: `${itemIndex * 0.06}s`}}>
                       <FacturaUnSend
                         content={content}
                         user={user}
@@ -604,8 +632,8 @@ const HomeFacturas = () => {
               ))
             ) : (
               <div className="flex items-center justify-center my-4 rounded-lg animate-fadeIn">
-                <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
-                  <span className="self-center mx-4 text-xl [-webkit-text-stroke:1px_#000] font-thin">No facturas para mostrar</span>
+                <div className="flex flex-col items-center px-3 py-6 text-black">
+                  <span className="self-center mx-4 text-lg">No facturas para mostrar</span>
                 </div>
               </div>
             )}
@@ -617,15 +645,7 @@ const HomeFacturas = () => {
           <div className="loader"></div>
         </div>
       )}
-
-      <button
-        onClick={excelHandler}
-        className="animate-fadeInUp animate-delay-300 cursor-pointer self-center mt-16 [border:none] pt-[11px] pb-[14px] pr-[49px] pl-12 bg-seagreen-200 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center hover:bg-seagreen-100 hover:scale-105 transition-all duration-200"
-      >
-        <b className="relative self-center text-lg font-inria-sans text-white text-left z-[1]">
-          Excel
-        </b>
-      </button>
+      {/* Excel button moved to top bar for better UX */}
       <ToastContainer />
       <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
       <ToastContainer

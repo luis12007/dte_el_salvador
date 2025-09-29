@@ -13,8 +13,9 @@ import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HomeFacturasSelect from "./HomeFacturasSelect";
+import HomeFacturasSelectCI from "./HomeFacturasSelectCI";
 
-const CreateND = () => {
+const CreateCI = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
@@ -35,6 +36,11 @@ const CreateND = () => {
   const [numDTErefe, setNumDTErefe] = useState("reference");
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [contentcf, setcontentcf] = useState("");
+  const [originalClient, setOriginalClient] = useState("");
+
+    // Importante: toISOString() usa UTC y puede adelantar o atrasar la fecha local.
+    // Construimos la fecha local (YYYY-MM-DD) manualmente para evitar el desfase de un día.
+
 
 
   /* data for municipalities ------------------------------------ */
@@ -535,10 +541,12 @@ const CreateND = () => {
   const seconds = String(now.getSeconds()).padStart(2, "0"); // Ensure 2 digits
 
   // Format the time in HH:MM:SS
+    const todayDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
   const time24Hour = `${hours}:${minutes}:${seconds}`;
 
   const [time, setTime] = useState({
-    date: "",
+    date: todayDate,
     time: time24Hour.toString(),
   });
 
@@ -899,18 +907,18 @@ const CreateND = () => {
     });
 
     const totaloperation = (Number(subtotal) + Number(iva));
-
-    const tipodocumento = "03"
+    console.log("contentcf contentcf", contentcf);
+    const tipodocumento = contentcf.tipo
     const tipoGeneracion = 1
     const numDocumento = contentcf.codigo_de_generacion
     const fecha = contentcf.fecha_y_hora_de_generacion
-    const merge_data = "03" + "|" + tipoGeneracion + "|" + numDocumento + "|" + fecha
+    const merge_data = contentcf.tipo + "|" + tipoGeneracion + "|" + numDocumento + "|" + fecha
     var data = {
       identificacion: {
-        version: 3,
+        version: 1,
         ambiente: userinfo.ambiente,
-        tipoDte: "06",
-        numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),
+        tipoDte: "08",
+        numeroControl: getNextFormattedNumber(userinfo.count_cl + 1),
         codigoGeneracion: myUuid,
         tipoModelo: 1,
         tipoOperacion: 1,
@@ -1055,8 +1063,8 @@ const CreateND = () => {
     console.log("Data");
     console.log(data);
     try {
-      const responsesum = await EmisorService.count_fiscal(id_emisor, token);
-      console.log("Count Fiscal");
+      const responsesum = await EmisorService.count_cl(id_emisor, token);
+      console.log("Count count_cl");
       console.log(responsesum);
 
       const responseincrement = await UserService.id_enviopus1(id_emisor, token);
@@ -1078,14 +1086,14 @@ const CreateND = () => {
     console.log(responsePlantilla);
 
     if (responsePlantilla.message === "Inserción exitosa") {
-      toast.success("Nota de crédito creado con exito");
+      toast.success("Comprobante de liquidación creado con exito");
 
       /* wait 5 second and navigate to /facturas */
       setTimeout(() => {
         navigate("/facturas");
       }, 5000);
     } else {
-      toast.error("NC no creado intentar de nuevo");
+      toast.error("Comprobante de liquidación no creado intentar de nuevo");
     }
 
     /* 
@@ -1158,7 +1166,7 @@ const CreateND = () => {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-06-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-08-00000030-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -1341,12 +1349,77 @@ const CreateND = () => {
     console.log(clientset);
   };
 
-  const GetInf = (content) => {
-    console.log(content);
+  const GetInf = async (content) => {
+    console.log("content",content);
 
     /* spliting address */
-    const address = content.re_direccion.split("|");
-    setClient({
+    setOriginalClient(content.re_name);
+    let address = "";
+    if (content.tipo === "01") {
+
+            const responsePlantilla = await PlantillaService.getcodegeneration(
+        content.codigo_de_generacion,
+        token,
+        id_emisor
+      );
+      console.log("PlantillaService - getcodegeneration");
+      console.log(responsePlantilla);
+                setListitems([]);
+          responsePlantilla.items.forEach((item) => {
+            const newContents = {
+              type: item.tipoitem.toString(), // Assuming type is returned as a number and needs to be converted to a string
+              cuantity: item.cantidad.toString(), // Assuming cantidad is returned as a number
+              description: item.descripcion,
+              price: item.preciouni.toString(), // Assuming preciouni is returned as a number
+            };
+                  // Call itemshandleAdd with each item
+            inicializeitems(newContents);
+          });
+      setiva(responsePlantilla.plantilla[0].iva_percibido);
+      address = content.re_direccion;
+      setClient({
+      name: "",
+      document: "",
+      address: "",
+      email: "",
+      phone: "",
+      codActividad: "",
+      nrc: "",
+      descActividad: "",
+      nit: "",
+      nombreComercial: "",
+      departamento: "",
+      municipio: "",
+    });
+        
+
+    setSelectedDepartment(null);
+    setSelectedMunicipality("");
+    setcontentcf(content);
+    console.log(client)
+
+    } else {
+      const responsePlantilla = await PlantillaService.getcodegeneration(
+        content.codigo_de_generacion,
+        token,
+        id_emisor
+      );
+      console.log("PlantillaService - getcodegeneration");
+      console.log(responsePlantilla);
+                setListitems([]);
+          responsePlantilla.items.forEach((item) => {
+            const newContents = {
+              type: item.tipoitem.toString(), // Assuming type is returned as a number and needs to be converted to a string
+              cuantity: item.cantidad.toString(), // Assuming cantidad is returned as a number
+              description: item.descripcion,
+              price: item.preciouni.toString(), // Assuming preciouni is returned as a number
+            };
+                  // Call itemshandleAdd with each item
+            inicializeitems(newContents);
+          });
+      setiva(responsePlantilla.plantilla[0].iva_percibido);
+      address = content.re_direccion.split("|");
+      setClient({
       name: content.re_name,
       document: content.re_numdocumento,
       address: address[2],
@@ -1360,14 +1433,101 @@ const CreateND = () => {
       departamento: address[0],
       municipio: address[1],
     });
+        
 
     setSelectedDepartment(address[0]);
     setSelectedMunicipality(address[1]);
     setcontentcf(content);
     console.log(client)
+    }
+
     setIsModalOpen(false);
 
   }
+
+    const inicializeitems = (newContents) => {
+    var type = "bienes";
+    if (newContents.type === "1") {
+      type = "Bienes";
+    } else if (newContents.type === "2") {
+      type = "Servicios";
+    } else if (newContents.type === "3") {
+      type = "Bienes y Servicios";
+    } else if (newContents.type === "4") {
+      type = "Otro";
+    }
+
+
+
+    const cuantityint = parseInt(newContents.cuantity);
+    const pricefloat = parseFloat(newContents.price);
+    const typeitem = parseInt(newContents.type);
+
+    const ivaperitem = pricefloat / 1.13;
+    const ivaperitemfinal = ivaperitem * 0.13;
+    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+    const newItem = {
+      codTributo: null,
+      descripcion: newContents.description,
+      uniMedida: 99,
+      codigo: null,
+      cantidad: cuantityint,
+      numItem: setListitems.length + 1,
+      tributos: null,
+      ivaItem: 0,
+      noGravado: 0,
+      psv: 0,
+      montoDescu: 0,
+      numeroDocumento: null,
+      precioUni: pricefloat,
+      ventaGravada: 0,
+      ventaExenta: pricefloat * cuantityint,
+      ventaNoSuj: 0,
+      tipoItem: typeitem,
+    };
+
+    // Update the list with the new item
+    setListitems((prevListitems) => {
+      const updatedList = [...prevListitems, newItem];
+
+      // Set `setitems` with the content from `updatedList`
+      setitems(updatedList.map(item => ({
+        type: item.tipoItem,
+        cuantity: item.cantidad,
+        description: item.descripcion,
+        price: item.precioUni,
+      })));
+
+      return updatedList;
+    });
+
+    const Listitemstrack = [...Listitems, newItem];
+
+    /* map all newitems and sum the  precioUni*cantidad */
+    // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
+    const rawSubtotal = Listitemstrack.reduce(
+      (total, item) => total + item.precioUni * item.cantidad,
+      0
+    );
+    const rawiva = Listitemstrack.reduce(
+      (total, item) => total + item.ivaItem * item.cantidad,
+      0
+    );
+    // Round to two decimal places
+    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+    const roundediva = Math.round(rawiva * 100) / 100;
+
+    setiva(roundediva); // Set the rounded subtotal
+    console.log(roundedSubtotal)
+    setSubtotal((roundedSubtotal - roundediva).toFixed(2)); // Set the rounded subtotal
+
+    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+    setRentvalue(value_rent)
+
+    setTotal((roundedSubtotal - value_rent).toFixed(2))
+    console.log("ListitemsAdd")
+    console.log(Listitems)
+  };
 
   return (
     <form className="m-0 w-full bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-[17px] pb-3 pr-[15px] pl-5 box-border gap-[22px_0px] tracking-[normal]">
@@ -1378,12 +1538,12 @@ const CreateND = () => {
             onChange={handleSelectChange}
             className="h-[35px] w-full relative  border-gainsboro-300 bg-gainsboro-300 border-2 max-w-full"
           >
+            <option value="CI">Comprobante de liquidación</option>
             <option value="ND">Nota de Débito</option>
             <option value="Factura">Factura</option>
             <option value="CF">Comprobante Crédito Fiscal</option>
             <option value="SU">Factura de Sujeto Excluido</option>
             <option value="NC">Nota de Crédito</option>
-            <option value="CI">Comprobante de liquidación</option>
 
 
 
@@ -1392,9 +1552,9 @@ const CreateND = () => {
         </div>
       </header>
       <header className="flex flex-col self-stretch rounded-mini bg-gainsboro-100 shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] items-center justify-cneter   pr-3.5 pl-[17px] box-border top-[0]   ch:w-1/3 ch:self-center">
-        <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Nota de Debito</h1>
+        <h1 className="[-webkit-text-stroke:1px_#000] h-2 pb-3">Comprobante de liquidación</h1>
         <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-        <h2 className=""> para CF de: {client.name}</h2>
+        <h2 className=""> para CF de: {originalClient}</h2>
       </header>
       <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
@@ -1424,10 +1584,21 @@ const CreateND = () => {
               <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
               <input
                 className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="datos personales datos personales"
+                placeholder="Fecha"
                 type="date"
-                /* Onchange settime.date */
-                onChange={(e) => handleChangeTime("date", e.target.value)}
+                value={time.date}
+                min={time.date}
+                max={time.date}
+                onChange={(e) => {
+                  // Ignorar cualquier intento de cambiar a una fecha distinta a hoy
+                  if (e.target.value === todayDate) {
+                    handleChangeTime("date", e.target.value);
+                  } else {
+                    // Revertir si el navegador permite seleccionar otra (fallback)
+                    e.target.value = todayDate;
+                    handleChangeTime("date", todayDate);
+                  }
+                }}
               />
             </div>
           </div>
@@ -1436,12 +1607,29 @@ const CreateND = () => {
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-4 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
-            <HomeFacturasSelect GetInf={GetInf} setIsModalOpen={setIsModalOpen} />
+            <HomeFacturasSelectCI GetInf={GetInf} setIsModalOpen={setIsModalOpen} />
           </div>
         </div>
       )}
 
-      <AdvanceItemsComponent
+      <BillnoCF
+        handleSelectChangeCFClient={handleSelectChangeCFClient}
+        setClient={setClient}
+        client={client}
+        departmentsAndMunicipalities={departmentsAndMunicipalities}
+        handleDepartmentChange={handleDepartmentChange}
+        handleMunicipalityChange={handleMunicipalityChange}
+        selectedMunicipality={selectedMunicipality}
+        getMunicipalityNumber={getMunicipalityNumber}
+        selectedDepartment={selectedDepartment}
+        visible={true}
+        handleSelectClient={handleSelectClient}
+        isVisibleClient={isVisibleClient}
+        onSelectClient={onSelectClient}
+
+      />
+
+      {/* <AdvanceItemsComponent
         handleSelectChangeItemsClient={handleSelectChangeItemsClient}
         itemshandleRemove={itemshandleRemove}
         itemshandleAdd={itemshandleAdd}
@@ -1450,7 +1638,7 @@ const CreateND = () => {
         percentage={percentage}
         rentvalue={rentvalue}
         handlePercentageChange={handlePercentageChange}
-      />
+      /> */}
 
 
       <TreeNode text="Subtotal" data={subtotal} />
@@ -1494,4 +1682,4 @@ const CreateND = () => {
   );
 };
 
-export default CreateND;
+export default CreateCI;
