@@ -228,22 +228,32 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
 
         const newItems = data.map((item) => {
+            /* here start form 1 and sum 1 each iteration to put numitem */
+            let numItem = 1;
           const tributosNorm = (t) => (t?.[2] ? t : (t ? [String(t)] : null));
           const newItem = {
-            codTributo: item.codtributo,
+            numItem: numItem++,
+            "tipoDte": "03",
+            "tipoGeneracion": 2,
+            numeroDocumento: item.numerodocumento,
+            "fechaGeneracion": "2025-09-20",
+            ventaNoSuj: item.ventanosuj,
+            ventaExenta: item.ventaexenta,
+            ventaGravada: item.ventagravada,
+            "exportaciones": 0,
+            tributos: tributosNorm(item.tributos),/* REVIEW */
+              ivaItem: 20.3/* item.ivaitem */,/* REVIEW */
+            "obsItem": "Factura de venta de servicios médicos especializados correspondiente al mes de septiembre"
+
+            /* codTributo: item.codtributo,
             descripcion: item.descripcion,
             uniMedida: item.unimedida,
             codigo: item.codigo,
             cantidad: item.cantidad,
-            numItem: item.numitem,
-            tributos: tributosNorm(item.tributos),
+
             montoDescu: item.montodescu,
-            numeroDocumento: item.numerodocumento,
             precioUni: item.preciouni,
-            ventaGravada: item.ventagravada,
-            ventaExenta: item.ventaexenta,
-            ventaNoSuj: item.ventanosuj,
-            tipoItem: item.tipoitem,
+            tipoItem: item.tipoitem, */
           };
           return newItem;
         });
@@ -1033,15 +1043,18 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       }
 
       if (content.tipo == "08") {
-        const tipodedocumento = content.documentorelacionado.split("|");
+        /* const tipodedocumento = content.documentorelacionado.split("|");
         const tipoDocumento = tipodedocumento[0];
         const tipoGeneracion = tipodedocumento[1];
         const numeroDocumento = tipodedocumento[2];
-        const fechaEmision = tipodedocumento[3];
+        const fechaEmision = tipodedocumento[3]; */
 
         const address = content.re_direccion.split("|");
         const tributocf = content.tributocf.split("|");
-        console.log(tipodedocumento)
+        /* if address[0] is just "2" i will change it to "02" dinamically*/
+        if (address[0].length == 1) {
+          address[0] = "0" + address[0];
+        }
         var data = {
           identificacion: {
             version: parseInt(content.version),
@@ -1105,23 +1118,17 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             totalExenta: content.totalexenta,
             totalGravada: parseFloat(content.total_agravada),
             subTotalVentas: content.subtotalventas,
-            descuNoSuj: content.descunosuj,
-            descuExenta: content.descuexenta,
-            totalDescu: parseFloat(content.monto_global_de_descuento),
             tributos: [{
               codigo: tributocf[0],
               descripcion: tributocf[1],
               valor: parseFloat(tributocf[2])
             }],
-            subTotal: parseFloat(content.subtotal),
-            ivaPerci1: parseFloat(content.iva_percibido),
-            ivaRete1: parseFloat(content.iva_retenido),
-            reteRenta: parseFloat(content.retencion_de_renta),
             montoTotalOperacion: content.montototaloperacion,
             totalLetras: content.cantidad_en_letras,
             condicionOperacion: content.condicionoperacion,
-            descuGravada: content.descugravada,
-            numPagoElectronico: content.numpagoelectronico,
+            "total": 394.40,
+            "ivaPerci": 3.90,
+            "totalExportacion": 0,
             /* saldoFavor: content.saldofavor,
             
             pagos: [

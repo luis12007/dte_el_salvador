@@ -913,6 +913,7 @@ const CreateCI = () => {
     const numDocumento = contentcf.codigo_de_generacion
     const fecha = contentcf.fecha_y_hora_de_generacion
     const merge_data = contentcf.tipo + "|" + tipoGeneracion + "|" + numDocumento + "|" + fecha
+    
     var data = {
       identificacion: {
         version: 1,

@@ -597,7 +597,7 @@ const HomeFacturas = () => {
       />
 
 
-  <section className="mx-auto max-w-6xl w-full px-3 sm:px-6 animate-fadeInUp animate-delay-200">
+  <section className="mx-auto max-w-6xl w-full  sm:px-6 animate-fadeInUp animate-delay-200">
         {loading ? (
           <div className="flex items-center justify-center my-4 rounded-lg">
             <div className="flex flex-col items-center px-3 py-6">
@@ -609,8 +609,8 @@ const HomeFacturas = () => {
           <>
             {Array.isArray(items) && items.length > 0 ? (
               sortedGroupedDates.map((date, index) => (
-                <div key={date} className="animate-slideInUp">
-                  <div className="flex items-center justify-center mt-20">
+                <div key={date} className="animate-slideInUp px-6">
+                  <div className="flex items-center  justify-center mt-20">
                     <div className="inline-flex items-center gap-3 bg-slate-300 text-black px-4 py-2 rounded-full shadow-sm border border-gray-300 mx-3 sm:mx-0">
                       <span className="text-base font-semibold tracking-wide">{date}</span>
                       <span className="text-sm opacity-80">{transformDate(date)}</span>
