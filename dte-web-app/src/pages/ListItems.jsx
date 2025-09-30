@@ -6,7 +6,7 @@ import ListClientsComponents from "../components/ListClientsComponents";
 
 const ListItems = () => {
   const navigate = useNavigate();
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   const sidebar = () => {
     setVisible(!visible);

@@ -25,7 +25,7 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
     const [filterByc, setFilterBy] = useState('');
 
     // Sidebar visibility toggle
-    const [visible, setVisible] = useState(true);
+    const [visible, setVisible] = useState(false);
     const toggleSidebar = () => {
         setVisible(!visible);
     };
