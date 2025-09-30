@@ -5,7 +5,7 @@ import HamburguerComponent from "../components/HamburguerComponent";
 import SidebarComponent from "../components/SideBarComponent";
 const ListaDeServicioOClientes = () => {
   const navigate = useNavigate();
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
 
 
   const sidebar = () => {

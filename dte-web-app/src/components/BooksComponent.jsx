@@ -14,7 +14,7 @@ const BooksComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [book, setBook] = useState("");
   const user_id = localStorage.getItem("user_id");
   const token = localStorage.getItem("token");

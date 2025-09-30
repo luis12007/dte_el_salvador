@@ -8,7 +8,7 @@ import HamburguerComponent from '../components/HamburguerComponent';
 import list from '../assets/imgs/portapapeles.png';
 
 const Home = () => {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
   const ambiente = localStorage.getItem("ambiente");
