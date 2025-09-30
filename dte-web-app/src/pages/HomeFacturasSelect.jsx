@@ -305,7 +305,7 @@ const HomeFacturasSelect = ({GetInf , setIsModalOpen}) => {
 
                 {/* Hidden sidebar trigger preserved */}
                 <div className="hidden">
-                    <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
+                    <HamburguerComponent sidebar={toggleSidebar} open={visible} />
                 </div>
             </div>
         </div>

@@ -37,7 +37,7 @@ const Home = () => {
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col items-center justify-center relative animate-fadeIn">
       {/* Hamburguer y Sidebar fuera del flujo principal */}
       <div className="absolute top-0 left-0 z-20 animate-slideInLeft">
-        <HamburguerComponent sidebar={sidebar} visible={visible} />
+  <HamburguerComponent sidebar={sidebar} open={visible} />
       </div>
       <div className="absolute top-0 left-0 z-10 animate-slideInLeft">
         <SidebarComponent visible={visible} setVisible={setVisible} />

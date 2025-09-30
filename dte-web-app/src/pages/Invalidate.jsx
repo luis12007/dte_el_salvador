@@ -275,7 +275,7 @@ const Invalidate = () => {
                 )}
             </section>
 
-            <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
+            <HamburguerComponent sidebar={toggleSidebar} open={visible} />
             
             <ToastContainer
                 position="top-center"

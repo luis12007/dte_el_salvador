@@ -979,9 +979,27 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                } else if (userDB.id === 15 || userDB.id === 16 || userDB.id === 17 || userDB.id === 18) {
+                } else if (userDB.id === 16 || userDB.id === 17) {
                     mailOptions = {
                         from: 'mysoftwaresv@gmail.com',
+                        to: plantillaDB.re_correo_electronico,
+                        subject: `DTE de parte de ${user.name}`,
+                        html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
+                        attachments: [{
+                                filename: 'DTE.pdf',
+                                path: pdfPath,
+                                encoding: 'base64'
+                            },
+                            {
+                                filename: 'DTE.json', // Name of the JSON file
+                                path: jsonPath, // Path to the JSON file
+                                encoding: 'base64'
+                            }
+                        ]
+                    };
+                } else if (userDB.id === 15  || userDB.id === 18) {
+                    mailOptions = {
+                        from: 'luiscerritoscp@gmail.com',
                         to: plantillaDB.re_correo_electronico,
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
@@ -1106,6 +1124,26 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         auth: {
                             user: 'mysoftwaresv@gmail.com',
                             pass: 'ajbh eozh iltf oinf'
+                        }
+                    });
+
+                    // Send email
+                    transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            console.error('Error sending email:', error);
+                        } else {
+                            console.log('Email sent:', info.response);
+                            // Delete the files after sending the email
+                            fs.unlinkSync(jsonPath);
+                            fs.unlinkSync(pdfPath);
+                        }
+                    });
+                }else if (userDB.id === 15 || userDB.id === 18) {
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'luiscerritoscp@gmail.com',
+                            pass: 'ocrk xaps iubo yzee'
                         }
                     });
 

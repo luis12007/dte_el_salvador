@@ -1979,7 +1979,7 @@ const BooksComponent = () => {
     <div className="min-h-screen bg-steelblue-300 flex flex-col">
       {/* Header Section */}
       <div className="fixed top-0 left-0 z-40">
-        <HamburguerComponent sidebar={sidebar} visible={visible} />
+  <HamburguerComponent sidebar={sidebar} open={visible} />
         <SidebarComponent visible={visible} />
       </div>
 
