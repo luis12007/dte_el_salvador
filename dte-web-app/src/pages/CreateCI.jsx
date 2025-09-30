@@ -37,6 +37,8 @@ const CreateCI = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [contentcf, setcontentcf] = useState("");
   const [originalClient, setOriginalClient] = useState("");
+  const [descriptionfactura, setdescriptionfactura] = useState("");
+  const [tributos, settributos] = useState(null);
 
     // Importante: toISOString() usa UTC y puede adelantar o atrasar la fecha local.
     // Construimos la fecha local (YYYY-MM-DD) manualmente para evitar el desfase de un día.
@@ -634,22 +636,18 @@ const CreateCI = () => {
     const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
 
     const newItem = {
-      codTributo: null,
-      descripcion: newContents.description,
-      uniMedida: 99,
-      codigo: null,
-      cantidad: cuantityint,
-      numItem: Listitems.length + 1,
-      tributos: ["20"],
-      noGravado: 0,
-      psv: 0,
-      montoDescu: 0,
-      numeroDocumento: contentcf.codigo_de_generacion,
-      precioUni: priceunit,
-      ventaGravada: ivaperitemfinal,
-      ventaExenta: 0,
-      ventaNoSuj: 0,
-      tipoItem: typeitem,
+                  numItem: 1,
+            tipoDte: newContents.tipo,
+            tipoGeneracion: newContents.tipo_de_transmision,
+            numeroDocumento: newContents.codigo_de_generacion,
+            fechaGeneracion: newContents.fecha_y_hora_de_generacion,
+            ventaNoSuj: newContents.totalnosuj,
+            ventaExenta: newContents.totalexenta,
+            ventaGravada: newContents.total_agravada,
+            exportaciones: 0,
+            tributos: ["20"],
+              ivaItem: newContents.iva_percibido,
+            obsItem: ""
     };
     // Update the list with the new item
     setListitems((prevListitems) => [...prevListitems, newItem]);
@@ -914,6 +912,34 @@ const CreateCI = () => {
     const fecha = contentcf.fecha_y_hora_de_generacion
     const merge_data = contentcf.tipo + "|" + tipoGeneracion + "|" + numDocumento + "|" + fecha
     
+    /* const newItem = {
+      codTributo: null,
+      descripcion: newContents.description,
+      uniMedida: 99,
+      codigo: null,
+      cantidad: cuantityint,
+      tributos: null,
+      ivaItem: 0,
+      noGravado: 0,
+      psv: 0,
+      montoDescu: 0,
+      numeroDocumento: null,
+      precioUni: pricefloat,
+      ventaGravada: 0,
+      ventaExenta: pricefloat * cuantityint,
+      ventaNoSuj: 0,
+      tipoItem: typeitem,
+    }; */
+    console.log("contentcf", contentcf);
+
+    if (descriptionfactura === "" || descriptionfactura === null) {
+      toast.error("Descripcion de factura no puede estar vacio");
+      return;
+    }
+    /* setting descriptionfactura to the listitems[0] */
+    if (Listitems.length > 0) {
+      Listitems[0].obsItem = descriptionfactura;
+    }
     var data = {
       identificacion: {
         version: 1,
@@ -979,7 +1005,7 @@ const CreateCI = () => {
           {
             /* TODO: ADD MORE PAYMENTS */ periodo: null,
             plazo: null,
-            montoPago: total,
+            montoPago: contentcf.montototaloperacion,
             codigo: payment.paymentmethod,
             referencia: null,
           },
@@ -989,24 +1015,24 @@ const CreateCI = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: Number(iva).toFixed(2) /* TODO CHANGE */,
+            valor: Number((tributos ?? contentcf?.iva_percibido) ?? "").toFixed(2) /* TODO CHANGE */,
           },
         ],
-        totalLetras: convertirDineroALetras(total),
+        totalLetras: convertirDineroALetras(contentcf.montototaloperacion),
         totalExenta: 0,
-        subTotalVentas: subtotal,
-        totalGravada: subtotal,
-        montoTotalOperacion: totaloperation.toFixed(2), /* TODO */
+        subTotalVentas: contentcf.subtotal,
+        totalGravada: contentcf.subtotal,
+        montoTotalOperacion: contentcf.montototaloperacion.toFixed(2), /* TODO */
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
         porcentajeDescuento: 0,
         totalDescu: 0,
-        subTotal: subtotal,
+        subTotal: contentcf.subtotal,
         ivaRete1: 0,
         reteRenta: rentvalue,
         totalNoGravado: 0,
-        totalPagar: total,
+        totalPagar: contentcf.montototaloperacion,
         ivaPerci1: 0,
       },
       extension: {
@@ -1020,7 +1046,9 @@ const CreateCI = () => {
       apendice: null,
       id_envio: userinfo.id_envio,
     };
-
+/*     console.log("DATA A ENVIAR");
+    console.log(data);
+    return */
     if (client.phone === "") {
       data.receptor.telefono = null;
     }
@@ -1053,9 +1081,7 @@ const CreateCI = () => {
     } else if (selectedMunicipality === "" || selectedMunicipality === null) {
       toast.error("Municipio no puede estar vacio");
       return;
-    } else if (Listitems.length === 0) {
-      toast.error("No hay items en la factura");
-      return;
+    
     } else if (time.date === "" || time.date === null) {
       toast.error("Fecha no puede estar vacio");
       return;
@@ -1366,16 +1392,8 @@ const CreateCI = () => {
       console.log("PlantillaService - getcodegeneration");
       console.log(responsePlantilla);
                 setListitems([]);
-          responsePlantilla.items.forEach((item) => {
-            const newContents = {
-              type: item.tipoitem.toString(), // Assuming type is returned as a number and needs to be converted to a string
-              cuantity: item.cantidad.toString(), // Assuming cantidad is returned as a number
-              description: item.descripcion,
-              price: item.preciouni.toString(), // Assuming preciouni is returned as a number
-            };
-                  // Call itemshandleAdd with each item
-            inicializeitems(newContents);
-          });
+            inicializeitems(responsePlantilla);
+
       setiva(responsePlantilla.plantilla[0].iva_percibido);
       address = content.re_direccion;
       setClient({
@@ -1405,22 +1423,16 @@ const CreateCI = () => {
         token,
         id_emisor
       );
+      console.log("content",responsePlantilla);
+      const tributos = responsePlantilla.plantilla[0].tributocf.split("|");
+      settributos(tributos[2]);
       console.log("PlantillaService - getcodegeneration");
       console.log(responsePlantilla);
                 setListitems([]);
-          responsePlantilla.items.forEach((item) => {
-            const newContents = {
-              type: item.tipoitem.toString(), // Assuming type is returned as a number and needs to be converted to a string
-              cuantity: item.cantidad.toString(), // Assuming cantidad is returned as a number
-              description: item.descripcion,
-              price: item.preciouni.toString(), // Assuming preciouni is returned as a number
-            };
-                  // Call itemshandleAdd with each item
-            inicializeitems(newContents);
-          });
+            inicializeitems(responsePlantilla);
       setiva(responsePlantilla.plantilla[0].iva_percibido);
       address = content.re_direccion.split("|");
-      setClient({
+      /* setClient({
       name: content.re_name,
       document: content.re_numdocumento,
       address: address[2],
@@ -1433,11 +1445,25 @@ const CreateCI = () => {
       nombreComercial: content.re_nombre_comercial,
       departamento: address[0],
       municipio: address[1],
+    }); */
+    setClient({
+      name: "",
+      document: "",
+      address: "",
+      email: "",
+      phone: "",
+      codActividad: "",
+      nrc: "",
+      descActividad: "",
+      nit: "",
+      nombreComercial: "",
+      departamento: "",
+      municipio: "",
     });
         
-
-    setSelectedDepartment(address[0]);
-    setSelectedMunicipality(address[1]);
+/* 
+    setSelectedDepartment(address[0].toString());
+    setSelectedMunicipality(address[1].toString()); */
     setcontentcf(content);
     console.log(client)
     }
@@ -1447,57 +1473,25 @@ const CreateCI = () => {
   }
 
     const inicializeitems = (newContents) => {
-    var type = "bienes";
-    if (newContents.type === "1") {
-      type = "Bienes";
-    } else if (newContents.type === "2") {
-      type = "Servicios";
-    } else if (newContents.type === "3") {
-      type = "Bienes y Servicios";
-    } else if (newContents.type === "4") {
-      type = "Otro";
-    }
-
-
-
-    const cuantityint = parseInt(newContents.cuantity);
-    const pricefloat = parseFloat(newContents.price);
-    const typeitem = parseInt(newContents.type);
-
-    const ivaperitem = pricefloat / 1.13;
-    const ivaperitemfinal = ivaperitem * 0.13;
-    const ivarounded = Math.round(ivaperitemfinal * 100) / 100;
+      console.log("newContents", newContents);
     const newItem = {
-      codTributo: null,
-      descripcion: newContents.description,
-      uniMedida: 99,
-      codigo: null,
-      cantidad: cuantityint,
-      numItem: setListitems.length + 1,
-      tributos: null,
-      ivaItem: 0,
-      noGravado: 0,
-      psv: 0,
-      montoDescu: 0,
-      numeroDocumento: null,
-      precioUni: pricefloat,
-      ventaGravada: 0,
-      ventaExenta: pricefloat * cuantityint,
-      ventaNoSuj: 0,
-      tipoItem: typeitem,
+                  numItem: 1,
+            tipoDte: newContents.plantilla[0].tipo,
+            tipoGeneracion: 2,
+            numeroDocumento: newContents.plantilla[0].codigo_de_generacion,
+            fechaGeneracion: newContents.plantilla[0].fecha_y_hora_de_generacion,
+            ventaNoSuj: newContents.plantilla[0].totalnosuj,
+            ventaExenta: newContents.plantilla[0].totalexenta,
+            ventaGravada: newContents.plantilla[0].total_agravada,
+            exportaciones: 0,
+            tributos: ["20"],
+              ivaItem: newContents.plantilla[0].iva_percibido,
+            obsItem: ""
     };
 
     // Update the list with the new item
     setListitems((prevListitems) => {
       const updatedList = [...prevListitems, newItem];
-
-      // Set `setitems` with the content from `updatedList`
-      setitems(updatedList.map(item => ({
-        type: item.tipoItem,
-        cuantity: item.cantidad,
-        description: item.descripcion,
-        price: item.precioUni,
-      })));
 
       return updatedList;
     });
@@ -1642,11 +1636,23 @@ const CreateCI = () => {
       /> */}
 
 
-      <TreeNode text="Subtotal" data={subtotal} />
-      <TreeNode text="IVA" data={iva} />
-      <TreeNode text="Renta Retenida" data={rentvalue} />
-      <TreeNode text="Total a Pagar" data={total} />
+  <TreeNode text="Subtotal" data={(contentcf?.subtotal ?? "").toString()} />
+  <TreeNode
+    text="IVA"
+    data={((tributos ?? contentcf?.iva_percibido) ?? "").toString()}
+  />
+  <TreeNode text="Renta Retenida" data={"0.00"} />
+  <TreeNode text="Total a Pagar" data={(contentcf?.montototaloperacion ?? "").toString()} />
 
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
+        <textarea
+          className="[border:none] bg-white h-[63px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
+          placeholder="Descripción Factura"
+          rows={8}
+          cols={20}
+          onChange={(e) => setdescriptionfactura(e.target.value)}
+        />
+      </section>
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"

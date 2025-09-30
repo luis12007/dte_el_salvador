@@ -647,7 +647,7 @@ const HomeFacturas = () => {
       )}
       {/* Excel button moved to top bar for better UX */}
       <ToastContainer />
-      <HamburguerComponent sidebar={toggleSidebar} visible={visible} />
+  <HamburguerComponent sidebar={toggleSidebar} open={visible} />
       <ToastContainer
         position="top-center"
         autoClose={5000}

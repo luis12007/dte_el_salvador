@@ -233,17 +233,17 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           const tributosNorm = (t) => (t?.[2] ? t : (t ? [String(t)] : null));
           const newItem = {
             numItem: numItem++,
-            "tipoDte": "03",
-            "tipoGeneracion": 2,
+            tipoDte: item.tipodte,
+            tipoGeneracion: item.tipogeneracion,
             numeroDocumento: item.numerodocumento,
-            "fechaGeneracion": "2025-09-20",
+            fechaGeneracion: item.fechageneracion,
             ventaNoSuj: item.ventanosuj,
             ventaExenta: item.ventaexenta,
             ventaGravada: item.ventagravada,
-            "exportaciones": 0,
+            exportaciones: 0,
             tributos: tributosNorm(item.tributos),/* REVIEW */
-              ivaItem: 20.3/* item.ivaitem */,/* REVIEW */
-            "obsItem": "Factura de venta de servicios médicos especializados correspondiente al mes de septiembre"
+              ivaItem: item.ivaitem/* item.ivaitem */,/* REVIEW */
+            obsItem: item.obsitem
 
             /* codTributo: item.codtributo,
             descripcion: item.descripcion,
@@ -1126,9 +1126,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             montoTotalOperacion: content.montototaloperacion,
             totalLetras: content.cantidad_en_letras,
             condicionOperacion: content.condicionoperacion,
-            "total": 394.40,
-            "ivaPerci": 3.90,
-            "totalExportacion": 0,
+            total: parseFloat(content.total_a_pagar),
+            ivaPerci: parseFloat(content.iva_percibido),
+            totalExportacion: 0,
             /* saldoFavor: content.saldofavor,
             
             pagos: [

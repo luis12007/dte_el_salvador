@@ -939,24 +939,19 @@ const plantillacreate = async(req, res) => {
 
                 // Crear objetos para insertar en la tabla 'items'
                 const itemsDB = items.map((item) => ({
-                    codtributo: item.codTributo,
-                    descripcion: item.descripcion,
-                    unimedida: item.uniMedida,
-                    codigo: item.codigo,
-                    cantidad: item.cantidad,
                     numitem: item.numItem,
-                    tributos: (item.tributos && item.tributos[0] != null) ? item.tributos[0] : (item.tributos || null),
-                    ivaitem: null,
-                    nogravado: item.noGravado,
-                    psv: item.psv,
-                    montodescu: item.montoDescu,
-                    numerodocumento: docunum2,
-                    preciouni: item.precioUni,
-                    ventagravada: item.ventaGravada,
-                    ventaexenta: item.ventaExenta,
-                    ventanosuj: item.ventaNoSuj,
-                    tipoitem: item.tipoItem,
-                    iva: item.iva,
+            tipodte: item.tipoDte,
+            tipogeneracion: item.tipoGeneracion,
+            numerodocumento: item.numeroDocumento,
+            fechageneracion: item.fechaGeneracion,
+            ventanosuj: item.ventaNoSuj,
+            ventaexenta: item.ventaExenta,
+            ventagravada: item.ventaGravada,
+            exportaciones: 0,
+            tributos: (item.tributos && item.tributos[0] != null) ? item.tributos[0] : (item.tributos || null),
+            ivaitem: item.ivaItem,
+            obsitem: item.obsItem,
+            cantidad: 0,
                 }));
 
 
