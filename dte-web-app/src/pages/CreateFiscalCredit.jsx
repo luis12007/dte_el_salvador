@@ -32,7 +32,7 @@ const CrearCreditoFiscal = () => {
     const [percentage, setPercentage] = useState(0);
     const [rentvalue, setRentvalue] = useState(0);
           const [codepayment, setCodepayment] = useState("01");
-    
+    const [isivareten1percent, setIsivareten1percent] = useState(false);
   
 
   /* data for municipalities ------------------------------------ */
@@ -1021,7 +1021,7 @@ const CrearCreditoFiscal = () => {
         porcentajeDescuento: 0,
         totalDescu: 0,
         subTotal: subtotal,
-        ivaRete1: 0,
+        ivaRete1: isivareten1percent ? (Number(subtotal) * 0.01).toFixed(2) : 0,
         reteRenta: rentvalue,
         totalNoGravado: 0,
         totalPagar: total,
@@ -1097,7 +1097,6 @@ const CrearCreditoFiscal = () => {
 
     console.log("Data");
     console.log(data);
-
     const responsePlantilla = await PlantillaService.create(
       data,
       token,
@@ -1386,6 +1385,20 @@ const CrearCreditoFiscal = () => {
   
   };
 
+  const handleIvaReten1Toggle = () => {
+    const ivaReten1Value = Number(subtotal) * 0.01;
+    
+    if (isivareten1percent) {
+      // If currently active, deactivate: add back the 1% to total
+      setTotal((Number(total) + ivaReten1Value).toFixed(2));
+    } else {
+      // If currently inactive, activate: subtract 1% from total
+      setTotal((Number(total) - ivaReten1Value).toFixed(2));
+    }
+    
+    setIsivareten1percent(!isivareten1percent);
+  };
+
 
   
   return (
@@ -1486,6 +1499,7 @@ const CrearCreditoFiscal = () => {
       
       <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
+      {isivareten1percent && <TreeNode text="IVA Retenido" data={(subtotal * 0.01).toFixed(2)} />}
       <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
 
@@ -1519,7 +1533,30 @@ const CrearCreditoFiscal = () => {
         </div>
       </section>
 
-      
+      {/* Tarjeta para IVA Retenido 1% */}
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
+        <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[10px] max-w-full z-[1]">
+          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-center justify-between pt-[11px] px-[17px] pb-2 box-border relative max-w-full z-[2]">
+            <b className="relative z-[3] text-xs font-inria-sans text-black">IVA Retenido 1%</b>
+          </div>
+          <div className="max-w-full self-stretch px-[17px] py-4 flex flex-row items-center justify-center">
+            <button
+              type="button"
+              onClick={handleIvaReten1Toggle}
+              className={`cursor-pointer [border:none] pt-[13px] pb-3 px-8 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap ${
+                isivareten1percent ? 'bg-steelblue-200 hover:bg-steelblue-100' : 'bg-gray-400 hover:bg-gray-500'
+              } transition-colors`}
+            >
+              <div className={`h-12 w-full absolute inset-0 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden ${
+                isivareten1percent ? 'bg-steelblue-200' : 'bg-gray-400'
+              }`} />
+              <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
+                {isivareten1percent ? "Desactivar Retención 1%" : "Activar Retención 1%"}
+              </b>
+            </button>
+          </div>
+        </div>
+      </section>
       
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
