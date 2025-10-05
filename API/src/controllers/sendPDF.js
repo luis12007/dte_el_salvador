@@ -486,6 +486,10 @@ const sendPDF = async(req, res) => {
 
         pdfDoc.fillColor('#1E3256').fontSize(13).text('Observaciones', 30, y + 40);
         const funcenter = (text, startY, startX, maxCharsPerLine = 40, lineHeight = 15, maxChars = 400) => {
+            // Handle null or undefined text
+            if (!text) {
+                text = '';
+            }
             // Truncate text if it exceeds the maximum number of characters
             const truncatedText = text.length > maxChars ? text.slice(0, maxChars) : text;
 
@@ -505,8 +509,8 @@ const sendPDF = async(req, res) => {
             }
         };
 
-        // Example usage
-        funcenter(plantillaDB.observaciones, y + 55, 30);
+        // Example usage - handle null/undefined observaciones
+        funcenter(plantillaDB.observaciones || '', y + 55, 30);
 
         if (plantillaDB.tipo === "01") {
             pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
@@ -614,7 +618,10 @@ const sendPDF = async(req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+        // Only send error response if headers haven't been sent yet
+        if (!res.headersSent) {
+            res.status(500).json({ message: "Internal server error" });
+        }
     }
 
 }

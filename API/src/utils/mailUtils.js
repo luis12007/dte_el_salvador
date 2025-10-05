@@ -1652,6 +1652,10 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         pdfDoc.fillColor('#1E3256').fontSize(13).text('Observaciones', 30, y + 40);
         const funcenter = (text, startY, startX, maxCharsPerLine = 40, lineHeight = 15, maxChars = 400) => {
+            // Handle null or undefined text
+            if (!text) {
+                text = '';
+            }
             // Truncate text if it exceeds the maximum number of characters
             const truncatedText = text.length > maxChars ? text.slice(0, maxChars) : text;
 
@@ -1671,8 +1675,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             }
         };
 
-        // Example usage
-        funcenter(plantillaDB.observaciones, y + 55, 30);
+        // Example usage - handle null/undefined observaciones
+        funcenter(plantillaDB.observaciones || '', y + 55, 30);
         var ivaper = Number(plantillaDB.iva_percibido)
 
         if (plantillaDB.tipo === "03") {
