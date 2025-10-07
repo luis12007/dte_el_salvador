@@ -1787,20 +1787,38 @@ const DeletePlantillaById = async(req, res) => {
     const codigo_de_generacion = req.params.codigo_de_generacion;
     console.log("DeletePlantillaById");
     try {
-        const plantilla = await db("plantilla")
-            .where({ codigo_de_generacion: codigo_de_generacion })
-            .first();
-        if (!plantilla) {
-            return res.status(404).json({ message: "plantilla no encontrado" });
-        }
+        // Do backup + delete in a single transaction
+        await db.transaction(async (trx) => {
+            const plantilla = await trx("plantilla")
+                .where({ codigo_de_generacion: codigo_de_generacion })
+                .first();
 
-        const creatingcopy = await db("deleted").insert(plantilla);
-        console.log("creatingcopy", creatingcopy);
-        await db("plantilla")
-            .where({ codigo_de_generacion: codigo_de_generacion })
-            .del();
+            if (!plantilla) {
+                const err = new Error('plantilla no encontrado');
+                err.status = 404;
+                throw err;
+            }
+
+            // Prepare backup object. Avoid inserting the original PK if present.
+            const backup = { ...plantilla };
+
+            // Add deletion timestamp
+            backup.deleted_at = new Date().toISOString();
+
+            // Insert into deleted and get the inserted row for verification
+            const [inserted] = await trx('deleted').returning('*').insert(backup);
+            console.log('Inserted into deleted:', inserted);
+
+            // Remove from plantilla
+            const deletedRows = await trx('plantilla').where({ codigo_de_generacion: codigo_de_generacion }).del();
+            console.log('Deleted from plantilla, rows:', deletedRows);
+        });
+
         res.status(200).json({ message: "plantilla eliminado" });
     } catch (error) {
+        if (error && error.status === 404) {
+            return res.status(404).json({ message: "plantilla no encontrado" });
+        }
         console.error("Error al eliminar plantilla", error);
         res.status(500).json({ message: "Error en el servidor" });
     }
