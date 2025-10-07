@@ -1793,6 +1793,9 @@ const DeletePlantillaById = async(req, res) => {
         if (!plantilla) {
             return res.status(404).json({ message: "plantilla no encontrado" });
         }
+
+        const creatingcopy = await db("deleted").insert(plantilla);
+        console.log("creatingcopy", creatingcopy);
         await db("plantilla")
             .where({ codigo_de_generacion: codigo_de_generacion })
             .del();

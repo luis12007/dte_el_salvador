@@ -572,8 +572,6 @@ const FacturaInvalidate = ({ key, content, user }) => {
     setIsLoading(false);
 
       toast.success("Factura invalidada con éxito");
-    const responsecreatedinvalidated = await PlantillaAPI.createinvalidated(content, token, id_emisor);
-    console.log(responsecreatedinvalidated);
     const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
     console.log("deleted");
     console.log(response);

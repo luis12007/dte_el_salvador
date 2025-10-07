@@ -613,6 +613,29 @@ const BooksComponent = () => {
 
     transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - new Date(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
+    // Calcular totales
+    const totales = transformedData.reduce((acc, item) => ({
+      'TIPO DE DOCUMENTO': '',
+      'NÚMERO DE NIT, DUI U OTRO DOCUMENTO': '',
+      'NOMBRE, RAZÓN SOCIAL O DENOMINACIÓN': 'TOTAL',
+      'FECHA DE EMISIÓN DEL DOCUMENTO': '',
+      'NÚMERO DE SERIE DEL DOCUMENTO': '',
+      'NÚMERO DE DOCUMENTO': '',
+      'MONTO DE LA OPERACIÓN': acc['MONTO DE LA OPERACIÓN'] + Number(item['MONTO DE LA OPERACIÓN'] || 0),
+      'MONTO DE LA RETENCIÓN DEL IVA 13%': acc['MONTO DE LA RETENCIÓN DEL IVA 13%'] + Number(item['MONTO DE LA RETENCIÓN DEL IVA 13%'] || 0),
+      'TIPO DE OPERACIÓN (Renta)': '',
+      'CLASIFICACIÓN (Renta)': '',
+      'SECTOR (Renta)': '',
+      'TIPO DE COSTO/GASTO (Renta)': '',
+      'NÚMERO DEL ANEXO': ''
+    }), {
+      'MONTO DE LA OPERACIÓN': 0,
+      'MONTO DE LA RETENCIÓN DEL IVA 13%': 0
+    });
+
+    // Agregar fila de totales
+    transformedData.push(totales);
+
     const wb = XLSX.utils.book_new();
 
     // Convert data to worksheet without headers
@@ -1024,6 +1047,44 @@ const BooksComponent = () => {
     // Ordenar por fecha con formato D/M/Y
     transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - parseDMY(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
+    // Calcular totales
+    const totales = transformedData.reduce((acc, item) => ({
+      'FECHA DE EMISIÓN DEL DOCUMENTO': '',
+      'CLASE DE DOCUMENTO': '',
+      'TIPO DE DOCUMENTO': '',
+      'NÚMERO DE DOCUMENTO': '',
+      'NIT O NRC DEL PROVEEDOR': '',
+      'NOMBRE DEL PROVEEDOR': 'TOTAL',
+      'COMPRAS INTERNAS EXENTAS': acc['COMPRAS INTERNAS EXENTAS'] + Number(item['COMPRAS INTERNAS EXENTAS'] || 0),
+      'INTERNACIONES EXENTAS Y/O NO SUJETAS': acc['INTERNACIONES EXENTAS Y/O NO SUJETAS'] + Number(item['INTERNACIONES EXENTAS Y/O NO SUJETAS'] || 0),
+      'IMPORTACIONES EXENTAS Y/O NO SUJETAS': acc['IMPORTACIONES EXENTAS Y/O NO SUJETAS'] + Number(item['IMPORTACIONES EXENTAS Y/O NO SUJETAS'] || 0),
+      'COMPRAS INTERNAS GRAVADAS': acc['COMPRAS INTERNAS GRAVADAS'] + Number(item['COMPRAS INTERNAS GRAVADAS'] || 0),
+      'INTERNACIONES GRAVADAS DE BIENES': acc['INTERNACIONES GRAVADAS DE BIENES'] + Number(item['INTERNACIONES GRAVADAS DE BIENES'] || 0),
+      'IMPORTACIONES GRAVADAS DE BIENES': acc['IMPORTACIONES GRAVADAS DE BIENES'] + Number(item['IMPORTACIONES GRAVADAS DE BIENES'] || 0),
+      'IMPORTACIONES GRAVADAS DE SERVICIOS': acc['IMPORTACIONES GRAVADAS DE SERVICIOS'] + Number(item['IMPORTACIONES GRAVADAS DE SERVICIOS'] || 0),
+      'CRÉDITO FISCAL': acc['CRÉDITO FISCAL'] + Number(item['CRÉDITO FISCAL'] || 0),
+      'TOTAL DE COMPRAS': acc['TOTAL DE COMPRAS'] + Number(item['TOTAL DE COMPRAS'] || 0),
+      'DUI DEL PROVEEDOR': '',
+      'TIPO DE OPERACIÓN (Renta)': '',
+      'CLASIFICACIÓN (Renta)': '',
+      'SECTOR (Renta)': '',
+      'TIPO DE COSTO/GASTO (Renta)': '',
+      'NÚMERO DEL ANEXO': ''
+    }), {
+      'COMPRAS INTERNAS EXENTAS': 0,
+      'INTERNACIONES EXENTAS Y/O NO SUJETAS': 0,
+      'IMPORTACIONES EXENTAS Y/O NO SUJETAS': 0,
+      'COMPRAS INTERNAS GRAVADAS': 0,
+      'INTERNACIONES GRAVADAS DE BIENES': 0,
+      'IMPORTACIONES GRAVADAS DE BIENES': 0,
+      'IMPORTACIONES GRAVADAS DE SERVICIOS': 0,
+      'CRÉDITO FISCAL': 0,
+      'TOTAL DE COMPRAS': 0
+    });
+
+    // Agregar fila de totales
+    transformedData.push(totales);
+
     // Create a new workbook
     const wb = XLSX.utils.book_new();
 
@@ -1096,11 +1157,11 @@ const BooksComponent = () => {
       'NRC DEL CLIENTE': item.re_nrc,
       'VENTAS EXENTAS': item.totalexenta || 0,
       'VENTAS INTERNAS GRAVADAS': item.total_agravada || 0,
-      'DÉBITO FISCAL': 0,
+      'DÉBITO FISCAL': item.tributocf.split('|')[2] || 0,
       'VENTAS EXENTAS A CUENTA DE TERCEROS': 0,
       'VENTAS INTERNAS GRAVADAS A CUENTA DE TERCEROS': 0,
       'DEBITO FISCAL POR CUENTA DE TERCEROS': 0,
-      'IVA PERCIBIDO': item.tributocf.split('|')[2] || 0,
+      'IVA PERCIBIDO': 0,
       'RETENCION': item.retencion_de_renta || 0,
       'TOTAL': item.total_a_pagar
     }));
@@ -1227,7 +1288,7 @@ const BooksComponent = () => {
 
     // Add summary section
     const summaryRows = [ /* Total agravado */
-      ['', '', '', '', '', 'TOTAL', totals.sujetas, totals.locales, totals.exportaciones,'0','0','0', totals.iva, totals.retencion, totals.grantotal]
+      ['', '', '', '', '', 'TOTAL', "0", totals.locales,totals.sujetas, totals.exportaciones,'0','0', totals.iva, totals.retencion, totals.grantotal]
     ];
 
     // Add and style summary rows
@@ -1481,6 +1542,39 @@ const BooksComponent = () => {
     };
     transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - parseDMY(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
+    // Calcular totales
+    const totales = transformedData.reduce((acc, item) => ({
+      'FECHA DE EMISIÓN DEL DOCUMENTO': '',
+      'CLASE DE DOCUMENTO': '',
+      'TIPO DE DOCUMENTO': '',
+      'NUMERO DE RESOLUCIÓN': '',
+      'SERIE DEL DOCUMENTO': '',
+      'NÚMERO DE DOCUMENTO': '',
+      'NÚMERO DE CONTROL INTERNO': '',
+      'NIT O NRC DEL CLIENTE': '',
+      'NOMBRE RAZÓN SOCIAL O DENOMINACIÓN': 'TOTAL',
+      'VENTAS EXENTAS': acc['VENTAS EXENTAS'] + Number(item['VENTAS EXENTAS'] || 0),
+      'VENTAS NO SUJETAS': acc['VENTAS NO SUJETAS'] + Number(item['VENTAS NO SUJETAS'] || 0),
+      'VENTAS GRAVADAS LOCALES': acc['VENTAS GRAVADAS LOCALES'] + Number(item['VENTAS GRAVADAS LOCALES'] || 0),
+      'DEBITO FISCAL': acc['DEBITO FISCAL'] + Number(item['DEBITO FISCAL'] || 0),
+      'VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS': acc['VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS'] + Number(item['VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS'] || 0),
+      'DEBITO FISCAL POR VENTAS A CUENTA DE TERCEROS': acc['DEBITO FISCAL POR VENTAS A CUENTA DE TERCEROS'] + Number(item['DEBITO FISCAL POR VENTAS A CUENTA DE TERCEROS'] || 0),
+      'TOTAL DE VENTAS': acc['TOTAL DE VENTAS'] + Number(item['TOTAL DE VENTAS'] || 0),
+      'NUMERO DE DUI DEL CLIENTE': '',
+      'NÚMERO DEL ANEXO': ''
+    }), {
+      'VENTAS EXENTAS': 0,
+      'VENTAS NO SUJETAS': 0,
+      'VENTAS GRAVADAS LOCALES': 0,
+      'DEBITO FISCAL': 0,
+      'VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS': 0,
+      'DEBITO FISCAL POR VENTAS A CUENTA DE TERCEROS': 0,
+      'TOTAL DE VENTAS': 0
+    });
+
+    // Agregar fila de totales
+    transformedData.push(totales);
+
     // Create a new workbook
     const wb = XLSX.utils.book_new();
 
@@ -1637,11 +1731,49 @@ const BooksComponent = () => {
       });
     });
 
-    // Add empty row before summary
-    worksheet.addRow([]);
-
     // Calculate totals
     const totals = calculateTotals(transformedData);
+
+    // Add total row
+    const totalRow = worksheet.addRow([
+      'TOTAL',
+      '',
+      '',
+      '',
+      totals.ventasExentas,
+      totals.totalVentas,
+      totals.ventasExterior,
+      totals.granTotal - totals.ventasExterior,
+      0
+    ]);
+
+    // Style total row
+    totalRow.eachCell((cell, colNumber) => {
+      cell.style = {
+        font: {
+          bold: true,
+          size: 11,
+        },
+        alignment: {
+          horizontal: 'center',
+          vertical: 'middle',
+        },
+        border: {
+          top: { style: 'medium', color: { argb: 'FF000000' } },
+          left: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'medium', color: { argb: 'FF000000' } },
+          right: { style: 'thin', color: { argb: 'FF000000' } },
+        },
+        fill: {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFE7E6E6' },
+        },
+      };
+    });
+
+    // Add empty row before summary
+    worksheet.addRow([]);
 
     // Add summary section
     const summaryRows = [ /* Total agravado */
@@ -1926,6 +2058,46 @@ const BooksComponent = () => {
     };
     transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN']) - parseDMY(b['FECHA DE EMISIÓN']));
 
+    // Calcular totales
+    const totales = transformedData.reduce((acc, item) => ({
+      'FECHA DE EMISIÓN': '',
+      'CLASE DE DOCUMENTO': '',
+      'TIPO DE DOCUMENTO': '',
+      'NÚMERO DE RESOLUCIÓN': '',
+      'SERIE DEL DOCUMENTO': '',
+      'NUMERO DE CONTROL INTERNO DEL': '',
+      'NUMERO DE CONTROL INTERNO AL': '',
+      'NÚMERO DE DOCUMENTO (DEL)': '',
+      'NÚMERO DE DOCUMENTO (AL)': '',
+      'NÚMERO DE MAQUINA REGISTRADORA': 'TOTAL',
+      'VENTAS EXENTAS': acc['VENTAS EXENTAS'] + Number(item['VENTAS EXENTAS'] || 0),
+      'VENTAS INTERNAS EXENTAS NO SUJETAS A PROPORCIONALIDAD': acc['VENTAS INTERNAS EXENTAS NO SUJETAS A PROPORCIONALIDAD'] + Number(item['VENTAS INTERNAS EXENTAS NO SUJETAS A PROPORCIONALIDAD'] || 0),
+      'VENTAS NO SUJETAS': acc['VENTAS NO SUJETAS'] + Number(item['VENTAS NO SUJETAS'] || 0),
+      'VENTAS GRAVADAS LOCALES': acc['VENTAS GRAVADAS LOCALES'] + Number(item['VENTAS GRAVADAS LOCALES'] || 0),
+      'EXPORTACIONES DENTRO DEL ÁREA DE CENTROAMÉRICA': acc['EXPORTACIONES DENTRO DEL ÁREA DE CENTROAMÉRICA'] + Number(item['EXPORTACIONES DENTRO DEL ÁREA DE CENTROAMÉRICA'] || 0),
+      'EXPORTACIONES FUERA DEL ÁREA DE CENTROAMÉRICA': acc['EXPORTACIONES FUERA DEL ÁREA DE CENTROAMÉRICA'] + Number(item['EXPORTACIONES FUERA DEL ÁREA DE CENTROAMÉRICA'] || 0),
+      'EXPORTACIONES DE SERVICIO': acc['EXPORTACIONES DE SERVICIO'] + Number(item['EXPORTACIONES DE SERVICIO'] || 0),
+      'VENTAS A ZONAS FRANCAS  Y DPA (TASA CERO)': acc['VENTAS A ZONAS FRANCAS  Y DPA (TASA CERO)'] + Number(item['VENTAS A ZONAS FRANCAS  Y DPA (TASA CERO)'] || 0),
+      'VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS': acc['VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS'] + Number(item['VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS'] || 0),
+      'TOTAL DE VENTAS': acc['TOTAL DE VENTAS'] + Number(item['TOTAL DE VENTAS'] || 0),
+      'TIPO DE OPERACIÓN (RENTA)': '',
+      'TIPO DE INGRESO (RENTA)': '',
+      'NÚMERO DEL ANEXO': ''
+    }), {
+      'VENTAS EXENTAS': 0,
+      'VENTAS INTERNAS EXENTAS NO SUJETAS A PROPORCIONALIDAD': 0,
+      'VENTAS NO SUJETAS': 0,
+      'VENTAS GRAVADAS LOCALES': 0,
+      'EXPORTACIONES DENTRO DEL ÁREA DE CENTROAMÉRICA': 0,
+      'EXPORTACIONES FUERA DEL ÁREA DE CENTROAMÉRICA': 0,
+      'EXPORTACIONES DE SERVICIO': 0,
+      'VENTAS A ZONAS FRANCAS  Y DPA (TASA CERO)': 0,
+      'VENTAS A CUENTA DE TERCEROS NO DOMICILIADOS': 0,
+      'TOTAL DE VENTAS': 0
+    });
+
+    // Agregar fila de totales
+    transformedData.push(totales);
 
     /* // Create a new workbook
     const wb = XLSX.utils.book_new();
