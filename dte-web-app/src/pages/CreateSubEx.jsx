@@ -795,10 +795,10 @@ const CreateSubEx = () => {
                 telefono: userinfo.numero_de_telefono,
                 correo: userinfo.correo_electronico,
                 /* TODO: Just in case establecimiento  */
-                codEstableMH: null,
-                codEstable: null,
-                codPuntoVentaMH: null,
-                codPuntoVenta: null,
+                codEstable: "M001",
+                codPuntoVentaMH: "P001",
+                codPuntoVenta: "P001",
+                codEstableMH: "M001",
             },
             sujetoExcluido: {
                 /* TODO ADDRESS NIT nombre comercial  ADDED: nit , nombreComercial , DELETED: tipodedocumento*/

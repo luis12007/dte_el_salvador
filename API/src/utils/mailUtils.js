@@ -1213,7 +1213,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add Doctor's information
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 21 || userDB.id === 22) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 ) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
@@ -1224,7 +1224,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             pdfDoc.fontSize(18).fillColor('#1E3256')
 
             .text(`Dr. ${newname}`, 30, yscale, { align: 'left' })
-        } else if (userDB.id === 7  || userDB.id === 12) {
+        } else if (userDB.id === 7  || userDB.id === 12 || userDB.id === 21 || userDB.id === 22) {
 
         }else if (userDB.id === 16 || userDB.id === 17) {
 /* const name = userDB.name.split(" ");
@@ -1300,7 +1300,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         }else if (userDB.id === 21 || userDB.id === 22) {
                     /* adding img */
-                    const logo = path.join(__dirname, '../assets/imgs/koala.jpg');
+                    const logo = path.join(__dirname, '../assets/imgs/koala.png');
                     pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
         
                 } else {

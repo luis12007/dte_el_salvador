@@ -222,10 +222,10 @@ const FacturaInvalidate = ({ key, content, user }) => {
         nomEstablecimiento: user.nombre_comercial,
         telefono: user.numero_de_telefono,
         correo: user.correo_electronico,
-        codEstableMH: null,
-        codEstable: null,
-        codPuntoVentaMH: null,
-        codPuntoVenta: null
+                  codEstableMH: "M001",
+          codEstable: "M001",
+          codPuntoVentaMH: "P001",
+          codPuntoVenta: "P001",
       },
       documento: {
         tipoDte: content.tipo,
