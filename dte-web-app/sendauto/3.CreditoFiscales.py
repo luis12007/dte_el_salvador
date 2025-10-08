@@ -10,7 +10,7 @@ from datetime import datetime
 NIT = "06142907941010"  # Replace with your actual NIT
 PASSWORD_PRI = "S9z@qp3WlXadsf3"  # Replace with your actual password
 CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
-STARTING_NUMBER = 850  # Starting number for the numeroControl
+STARTING_NUMBER = 950  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
 CODACTIVITY = "96092"  # Replace with your actual activity code
 NRC = "796662"  # Replace with your actual NRC

@@ -12,8 +12,6 @@ import PlantillaService from "../services/PlantillaService";
 import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import HomeFacturasSelect from "./HomeFacturasSelect";
-import HomeFacturasSelectCI from "./HomeFacturasSelectCI";
 
 const CreateCI = () => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -34,7 +32,7 @@ const CreateCI = () => {
   const [percentage, setPercentage] = useState(0);
   const [rentvalue, setRentvalue] = useState(0);
   const [numDTErefe, setNumDTErefe] = useState("reference");
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentcf, setcontentcf] = useState("");
   const [originalClient, setOriginalClient] = useState("");
   const [descriptionfactura, setdescriptionfactura] = useState("");
@@ -561,7 +559,25 @@ const CreateCI = () => {
       setUserinfo(response);
     };
     fetchData();
+
+    // Inicializar item vacío si no existe
+    if (Listitems.length === 0) {
+      initializeEmptyItem();
+    }
   }, []);
+
+  // useEffect para actualizar totales cuando cambie el item
+  useEffect(() => {
+    if (Listitems.length > 0) {
+      const item = Listitems[0];
+      const ivaValue = parseFloat(item.ivaItem) || 0;
+      const ventaGravada = parseFloat(item.ventaGravada) || 0;
+      
+      setiva(ivaValue.toFixed(2));
+      setSubtotal(ventaGravada.toFixed(2));
+      setTotal(ventaGravada.toFixed(2));
+    }
+  }, [Listitems]);
 
   /* CLIENTE */
   var [client, setClient] = useState({
@@ -931,6 +947,9 @@ const CreateCI = () => {
       tipoItem: typeitem,
     }; */
     console.log("contentcf", contentcf);
+    console.log("contentcf", subtotal);
+    console.log("contentcf", iva);
+    console.log("contentcf", total);
 
     if (descriptionfactura === "" || descriptionfactura === null) {
       toast.error("Descripcion de factura no puede estar vacio");
@@ -973,10 +992,10 @@ const CreateCI = () => {
         tipoEstablecimiento: userinfo.tipoestablecimiento,
 
         /* TODO: Just in case establecimiento  */
-        codEstableMH: null,
-        codEstable: null,
-        codPuntoVentaMH: null,
-        codPuntoVenta: null,
+                  codEstableMH: "M001",
+          codEstable: "M001",
+          codPuntoVentaMH: "P001",
+          codPuntoVenta: "P001",
       },
       receptor: {
         /* TODO ADDRESS NIT nombre comercial  ADDED: nit , nombreComercial , DELETED: tipodedocumento*/
@@ -1005,7 +1024,7 @@ const CreateCI = () => {
           {
             /* TODO: ADD MORE PAYMENTS */ periodo: null,
             plazo: null,
-            montoPago: contentcf.montototaloperacion,
+            montoPago: total,
             codigo: payment.paymentmethod,
             referencia: null,
           },
@@ -1015,24 +1034,24 @@ const CreateCI = () => {
           {
             codigo: "20",
             descripcion: "Impuesto al Valor Agregado 13%",
-            valor: Number((tributos ?? contentcf?.iva_percibido) ?? "").toFixed(2) /* TODO CHANGE */,
+            valor: Number(iva).toFixed(2) /* TODO CHANGE */,
           },
         ],
-        totalLetras: convertirDineroALetras(contentcf.montototaloperacion),
+        totalLetras: convertirDineroALetras(total),
         totalExenta: 0,
-        subTotalVentas: contentcf.subtotal,
-        totalGravada: contentcf.subtotal,
-        montoTotalOperacion: contentcf.montototaloperacion.toFixed(2), /* TODO */
+        subTotalVentas: subtotal,
+        totalGravada: subtotal,
+        montoTotalOperacion: total, /* TODO */
         descuNoSuj: 0,
         descuExenta: 0,
         descuGravada: 0,
         porcentajeDescuento: 0,
         totalDescu: 0,
-        subTotal: contentcf.subtotal,
+        subTotal: subtotal,
         ivaRete1: 0,
         reteRenta: rentvalue,
         totalNoGravado: 0,
-        totalPagar: contentcf.montototaloperacion,
+        totalPagar: total,
         ivaPerci1: 0,
       },
       extension: {
@@ -1376,6 +1395,33 @@ const CreateCI = () => {
     console.log(clientset);
   };
 
+  const handleItemChange = (field, value) => {
+    if (Listitems.length > 0) {
+      const updatedItem = {
+        ...Listitems[0],
+        [field]: value
+      };
+      setListitems([updatedItem]);
+    }
+  };
+
+  const initializeEmptyItem = () => {
+    const emptyItem = {
+      numItem: 1,
+      tipoDte: "",
+      tipoGeneracion: "",
+      numeroDocumento: "",
+      fechaGeneracion: "",
+      ventaNoSuj: 0,
+      ventaExenta: 0,
+      ventaGravada: 0,
+      exportaciones: 0,
+      tributos: ["20"],
+      ivaItem: 0
+    };
+    setListitems([emptyItem]);
+  };
+
   const GetInf = async (content) => {
     console.log("content",content);
 
@@ -1392,9 +1438,9 @@ const CreateCI = () => {
       console.log("PlantillaService - getcodegeneration");
       console.log(responsePlantilla);
                 setListitems([]);
-            inicializeitems(responsePlantilla);
+            inicializeitems(content);
 
-      setiva(responsePlantilla.plantilla[0].iva_percibido);
+      setiva(content.iva_percibido);
       address = content.re_direccion;
       setClient({
       name: "",
@@ -1429,8 +1475,8 @@ const CreateCI = () => {
       console.log("PlantillaService - getcodegeneration");
       console.log(responsePlantilla);
                 setListitems([]);
-            inicializeitems(responsePlantilla);
-      setiva(responsePlantilla.plantilla[0].iva_percibido);
+            inicializeitems(content);
+      setiva(content.iva_percibido);
       address = content.re_direccion.split("|");
       /* setClient({
       name: content.re_name,
@@ -1476,27 +1522,22 @@ const CreateCI = () => {
       console.log("newContents", newContents);
     const newItem = {
                   numItem: 1,
-            tipoDte: newContents.plantilla[0].tipo,
-            tipoGeneracion: 2,
-            numeroDocumento: newContents.plantilla[0].codigo_de_generacion,
-            fechaGeneracion: newContents.plantilla[0].fecha_y_hora_de_generacion,
-            ventaNoSuj: newContents.plantilla[0].totalnosuj,
-            ventaExenta: newContents.plantilla[0].totalexenta,
-            ventaGravada: newContents.plantilla[0].total_agravada,
+            tipoDte: newContents.tipo,
+            tipoGeneracion: newContents.tipo_de_transmision,
+            numeroDocumento: newContents.codigo_de_generacion,
+            fechaGeneracion: newContents.fecha_y_hora_de_generacion,
+            ventaNoSuj: newContents.totalnosuj,
+            ventaExenta: newContents.totalexenta,
+            ventaGravada: newContents.total_agravada,
             exportaciones: 0,
             tributos: ["20"],
-              ivaItem: newContents.plantilla[0].iva_percibido,
-            obsItem: ""
+              ivaItem: newContents.iva_percibido
     };
 
     // Update the list with the new item
-    setListitems((prevListitems) => {
-      const updatedList = [...prevListitems, newItem];
+    setListitems([newItem]);
 
-      return updatedList;
-    });
-
-    const Listitemstrack = [...Listitems, newItem];
+    const Listitemstrack = [newItem];
 
     /* map all newitems and sum the  precioUni*cantidad */
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
@@ -1599,13 +1640,6 @@ const CreateCI = () => {
           </div>
         </div>
       </section>
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
-            <HomeFacturasSelectCI GetInf={GetInf} setIsModalOpen={setIsModalOpen} />
-          </div>
-        </div>
-      )}
 
       <BillnoCF
         handleSelectChangeCFClient={handleSelectChangeCFClient}
@@ -1624,6 +1658,217 @@ const CreateCI = () => {
 
       />
 
+      {/* Card Editable para llenar información del documento */}
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full">
+        <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start px-0 pb-[29px] box-border gap-[14px] max-w-full">
+          <div className="self-stretch h-auto relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
+          
+          {/* Header */}
+          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
+            <div className="h-[37px] w-full relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
+            <b className="relative z-[2] text-lg pt-1">Información del Documento</b>
+          </div>
+
+          {/* Content */}
+          {Listitems.length > 0 && (
+            <div className="self-stretch flex flex-col items-start justify-start gap-[9.5px_0px] max-w-full text-left text-xs text-black font-inria-sans">
+              <div className="flex flex-row items-start justify-start py-0 px-3.5">
+                <div className="flex flex-row items-start justify-start gap-[0px_4px]"></div>
+              </div>
+
+              <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
+                <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                  
+                  {/* Tipo DTE */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Tipo DTE</span>
+                        <span className="text-tomato">*</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <select
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-full relative text-darkslategray text-left"
+                          value={Listitems[0].tipoDte}
+                          onChange={(e) => handleItemChange("tipoDte", e.target.value)}
+                        >
+                          <option value="">Seleccione tipo</option>
+                          <option value="01">Factura</option>
+                          <option value="03">Comprobante de Crédito Fiscal</option>
+                          <option value="04">Nota de Remisión</option>
+                          <option value="05">Nota de Crédito</option>
+                          <option value="06">Nota de Débito</option>
+                          <option value="07">Comprobante de Retención</option>
+                          <option value="08">Comprobante de Liquidación</option>
+                          <option value="09">Documento Contable de Liquidación</option>
+                          <option value="11">Factura de Exportación</option>
+                          <option value="14">Factura de Sujeto Excluido</option>
+                          <option value="15">Comprobante de Donación</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tipo de Generación */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Tipo de Generación</span>
+                        <span className="text-tomato">*</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <select
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-full relative text-darkslategray text-left"
+                          value={Listitems[0].tipoGeneracion}
+                          onChange={(e) => handleItemChange("tipoGeneracion", e.target.value)}
+                        >
+                          <option value="">Seleccione tipo</option>
+                          <option value="1">Fisica</option>
+                          <option value="2">DTE</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Número de Documento */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Número de Documento (Código de Generación)</span>
+                        <span className="text-tomato">*</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <input
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                          placeholder="Código de Generación"
+                          type="text"
+                          value={Listitems[0].numeroDocumento}
+                          onChange={(e) => handleItemChange("numeroDocumento", e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fecha de Generación */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Fecha de Generación</span>
+                        <span className="text-tomato">*</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <input
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                          type="date"
+                          value={Listitems[0].fechaGeneracion}
+                          onChange={(e) => handleItemChange("fechaGeneracion", e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Venta No Sujeta */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Venta No Sujeta</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <input
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                          placeholder="0.00"
+                          type="number"
+                          step="0.01"
+                          value={Listitems[0].ventaNoSuj}
+                          onChange={(e) => handleItemChange("ventaNoSuj", parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Venta Exenta */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Venta Exenta</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <input
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                          placeholder="0.00"
+                          type="number"
+                          step="0.01"
+                          value={Listitems[0].ventaExenta}
+                          onChange={(e) => handleItemChange("ventaExenta", parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Venta Gravada */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Venta Gravada</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <input
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                          placeholder="0.00"
+                          type="number"
+                          step="0.01"
+                          value={Listitems[0].ventaGravada}
+                          onChange={(e) => handleItemChange("ventaGravada", parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Exportaciones */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">Exportaciones</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <input
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                          placeholder="0.00"
+                          type="number"
+                          step="0.01"
+                          value={Listitems[0].exportaciones}
+                          onChange={(e) => handleItemChange("exportaciones", parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* IVA */}
+                  <div className="self-stretch flex flex-row items-start justify-start py-1 box-border max-w-full">
+                    <div className="flex-1 flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
+                      <div className="relative text-xs font-inria-sans text-left z-[1]">
+                        <span className="text-black">IVA</span>
+                      </div>
+                      <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
+                        <input
+                          className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                          placeholder="0.00"
+                          type="number"
+                          step="0.01"
+                          value={Listitems[0].ivaItem}
+                          onChange={(e) => handleItemChange("ivaItem", parseFloat(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* <AdvanceItemsComponent
         handleSelectChangeItemsClient={handleSelectChangeItemsClient}
         itemshandleRemove={itemshandleRemove}
@@ -1636,13 +1881,13 @@ const CreateCI = () => {
       /> */}
 
 
-  <TreeNode text="Subtotal" data={(contentcf?.subtotal ?? "").toString()} />
+  <TreeNode text="Subtotal" data={subtotal.toString()} />
   <TreeNode
     text="IVA"
-    data={((tributos ?? contentcf?.iva_percibido) ?? "").toString()}
+    data={iva.toString()}
   />
   <TreeNode text="Renta Retenida" data={"0.00"} />
-  <TreeNode text="Total a Pagar" data={(contentcf?.montototaloperacion ?? "").toString()} />
+  <TreeNode text="Total a Pagar" data={total.toString()} />
 
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea

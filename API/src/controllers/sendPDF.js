@@ -55,7 +55,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 21 || userDB.id === 22 ) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -65,7 +65,7 @@ const sendPDF = async(req, res) => {
             const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
             pdfDoc.fontSize(18).fillColor('#1E3256')
                 .text(`Dr. ${name1} ${name2} ${name3} ${name4}`, 30, yscale, { align: 'left' })
-        } else if (userDB.id === 7 || userDB.id === 12) {
+        } else if (userDB.id === 7 || userDB.id === 12  || userDB.id === 21 || userDB.id === 22) {
 
         }else if (userDB.id === 16 || userDB.id === 17) {
 /* const name = userDB.name.split(" ");
@@ -141,7 +141,7 @@ const sendPDF = async(req, res) => {
 
         }else if (userDB.id === 21 || userDB.id === 22) {
             /* adding img */
-            const logo = path.join(__dirname, '../assets/imgs/koala.jpg');
+            const logo = path.join(__dirname, '../assets/imgs/koala.png');
             pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
 
         }  else {
