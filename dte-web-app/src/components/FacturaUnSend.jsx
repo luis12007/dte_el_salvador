@@ -1051,10 +1051,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         const address = content.re_direccion.split("|");
         const tributocf = content.tributocf.split("|");
+        /* CREATING RECEPTOR ADDRESS */
+        const r_direccion = {
+          municipio: address[1],
+          departamento: address[0],
+          complemento: address[2]
+        };
+
         /* if address[0] is just "2" i will change it to "02" dinamically*/
-        if (address[0].length == 1) {
-          address[0] = "0" + address[0];
-        }
+        console.log("---------------------------------------")
+        console.log(address)
         var data = {
           identificacion: {
             version: parseInt(content.version),
@@ -1104,11 +1110,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             codActividad: content.re_codactividad,
             descActividad: content.re_actividad_economica,
             nombreComercial: content.re_numdocumento,
-            direccion: {
-              municipio: address[1],
-              departamento: address[0],
-              complemento: address[2]
-            },
+            direccion: r_direccion,
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
@@ -1157,11 +1159,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         };
       }
 
-
+        console.log("--------------------C DE LIQUIDACION-------------------")
+        console.log(data)
 
       console.log("---------------resultado--------------");
       console.log(data);
       console.log("---------------resultado--------------");
+      /* deleting firma and sellado from data setting to null */
+
       /* -------------------------------------------- */
       const Firm = {
         nit: user.nit,
@@ -1169,6 +1174,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         passwordPri: user.passwordpri,
         dteJson: data,
       };
+      console.log("---------------Firm--------------");
+      console.log(Firm);
+      console.log("---------------Firm--------------");
       const responseFirm = null;
       if (id_emisor == 1 || id_emisor == 2) {
         const responseFirm = await Firmservice.create(Firm);
@@ -1484,7 +1492,17 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        }else if (content.tipo == "08") {
+          const address = content.re_direccion.split("|");
+                    if (address[0].length == 1) {
+            address[0] = "0" + address[0];
+          }
+          data.receptor.direccion = {
+            municipio: address[1],
+            departamento: address[0],
+            complemento: address[2]
+          };
+        }else {
           data.receptor.direccion = content.re_direccion;
         }
       }
@@ -1501,7 +1519,19 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        }else if (content.tipo == "08") {
+          const address = content.re_direccion.split("|");
+
+          /*  */
+          if (address[0].length == 1) {
+            address[0] = "0" + address[0];
+          }
+          data.receptor.direccion = {
+            municipio: address[1],
+            departamento: address[0],
+            complemento: address[2]
+          };
+        }else {
           data.receptor.direccion = content.re_direccion;
         }
       }
@@ -1534,10 +1564,10 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         toast.success("Factura firmada");
 
         /* wait 5 seconds */
-        setTimeout(() => {
+          setTimeout(() => {
           window.location.reload();
 
-        }, 3000);
+        }, 3000); 
 
 
 

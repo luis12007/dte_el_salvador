@@ -789,7 +789,7 @@ const Clientes = () => {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-01-00000${userinfo.ambiente}0-${incrementedString}`;
+    const formattedOutput = `DTE-01-M001P001-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -1125,10 +1125,8 @@ const Clientes = () => {
               <option value="03">Tarjeta Crédito</option>
               <option value="04">Cheque</option>
               <option value="05">Transferencia / Depósito Bancario</option>
-              <option value="06">Vales o Cupones</option>
               <option value="08">Dinero electrónico</option>
               <option value="09">Monedero electrónico</option>
-              <option value="10">Certificado o tarjeta de regalo</option>
               <option value="11">Bitcoin</option>
               <option value="12">Otras Criptomonedas</option>
               <option value="13">Cuentas por pagar del receptor</option>

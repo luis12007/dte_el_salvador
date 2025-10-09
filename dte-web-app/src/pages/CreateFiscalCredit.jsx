@@ -36,8 +36,7 @@ const CrearCreditoFiscal = () => {
   
 
   /* data for municipalities ------------------------------------ */
-  /* TODO */
-  /* const departmentsAndMunicipalities = {
+  const departmentsAndMunicipalities = {
         0: {
             departmentName: 'Otro Pais',
             municipalities: [
@@ -158,13 +157,13 @@ const CrearCreditoFiscal = () => {
                 { name: 'La Union Sur', index: 20 }
             ]
         }
-    }; */
+    }; 
 
-  const departmentsAndMunicipalities = {
-    /* 1: {
+/*   const departmentsAndMunicipalities = {
+    1: {
             departmentName: "Otro pais",
             municipalities: [{ name: "Otro pais", index: 0 }]
-        }, */
+        }, 
     1: {
       departmentName: "Ahuachapán",
       municipalities: [
@@ -492,6 +491,9 @@ const CrearCreditoFiscal = () => {
     },
   };
 
+ */
+
+  
   const [selectedDepartment, setSelectedDepartment] = useState(null);
   const [selectedMunicipality, setSelectedMunicipality] = useState("");
   const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
@@ -1201,7 +1203,7 @@ const CrearCreditoFiscal = () => {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-03-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-03-M001P001-${incrementedString}`;
 
     return formattedOutput;
   }
