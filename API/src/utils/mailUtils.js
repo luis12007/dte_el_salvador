@@ -333,7 +333,6 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             });
 
 
-            const address = plantillaDB.re_direccion.split("|");
             const tributocf = plantillaDB.tributocf.split("|");
             var json = {
                 identificacion: {
@@ -374,9 +373,9 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 receptor: {
                     codActividad: plantillaDB.re_codactividad,
                     direccion: {
-                        municipio: address[1],
-                        departamento: address[0],
-                        complemento: address[2]
+                        municipio: plantillaDB.municipio,
+                        departamento: plantillaDB.departamento,
+                        complemento: plantillaDB.complemento
                     },
                     nrc: plantillaDB.re_nrc,
                     descActividad: plantillaDB.re_actividad_economica,
@@ -409,7 +408,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     totalLetras: plantillaDB.cantidad_en_letras,
                     totalExenta: plantillaDB.totalexenta,
                     subTotalVentas: parseFloat(plantillaDB.subtotalventas),
-                    totalGravada: parseFloat(plantillaDB.totalagravada),
+                    totalGravada: parseFloat(plantillaDB.subtotalventas),
                     montoTotalOperacion: parseFloat(plantillaDB.montototaloperacion),
                     descuNoSuj: plantillaDB.descunosuj,
                     descuExenta: plantillaDB.descuexenta,
@@ -1496,8 +1495,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             console.log(plantillaDB.re_numdocumento)
             const re_numdocumentostring = 'NIT: ';
 
-            const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
+            const truncatedDireccionReceptor = truncateText(plantillaDB.complemento, 34);
 
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)

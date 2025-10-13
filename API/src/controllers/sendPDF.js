@@ -315,8 +315,7 @@ const sendPDF = async(req, res) => {
         } else if (plantillaDB.tipo === "03") {
             const re_numdocumentostring = 'NIT: ';
 
-            const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
+            const truncatedDireccionReceptor = truncateText(plantillaDB.complemento, 34);
 
             pdfDoc.fontSize(10).fillColor('#1E3256')
                 .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)

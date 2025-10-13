@@ -44,7 +44,10 @@ const plantillacreate = async(req, res) => {
             /* RECEPTOR */
 
             re_codactividad: plantilla.receptor.codActividad,
-            re_direccion: plantilla.receptor.direccion.departamento + "|" + plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.complemento,
+            re_direccion: plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.complemento,
+            municipio: plantilla.receptor.direccion.municipio,
+            departamento: plantilla.receptor.direccion.departamento,
+            complemento: plantilla.receptor.direccion.complemento,
             re_nit: plantilla.receptor.nit,
             re_nrc: plantilla.receptor.nrc,
             re_actividad_economica: plantilla.receptor.descActividad,
@@ -1088,7 +1091,10 @@ const updatePlantilla = async(req, res) => {
             /* RECEPTOR */
 
             re_codactividad: plantilla.receptor.codActividad,
-            re_direccion: plantilla.receptor.direccion.departamento + "|" + plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.complemento,
+                        re_direccion: "06"  + "|" + plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.complemento,
+            municipio: plantilla.receptor.direccion.municipio,
+            departamento: plantilla.receptor.direccion.departamento,
+            complemento: plantilla.receptor.direccion.complemento,
             re_nit: plantilla.receptor.nit,
             re_nrc: plantilla.receptor.nrc,
             re_actividad_economica: plantilla.receptor.descActividad,
@@ -1866,7 +1872,10 @@ const updatePlantillaNoItems = async(req, res) => {
             /* RECEPTOR */
 
             re_codactividad: plantilla.receptor.codActividad,
-            re_direccion: plantilla.receptor.direccion.departamento + "|" + plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.complemento,
+                                    re_direccion: "06"  + "|" + plantilla.receptor.direccion.municipio + "|" + plantilla.receptor.direccion.complemento,
+            municipio: plantilla.receptor.direccion.municipio,
+            departamento: plantilla.receptor.direccion.departamento,
+            complemento: plantilla.receptor.direccion.complemento,
             re_nit: plantilla.receptor.nit,
             re_nrc: plantilla.receptor.nrc,
             re_actividad_economica: plantilla.receptor.descActividad,

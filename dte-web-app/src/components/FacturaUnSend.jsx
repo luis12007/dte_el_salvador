@@ -620,7 +620,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               complemento: userinfo.direccion 
             }, the string "08|08|direccion" */
 
-        const address = content.re_direccion.split("|");
         const tributocf = content.tributocf.split("|");
         var data = {
           identificacion: {
@@ -663,9 +662,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           receptor: {
             codActividad: content.re_codactividad,
             direccion: {
-              municipio: address[1],
-              departamento: address[0],
-              complemento: address[2]
+              municipio: content.municipio,
+              departamento: content.departamento,
+              complemento: content.complemento
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
