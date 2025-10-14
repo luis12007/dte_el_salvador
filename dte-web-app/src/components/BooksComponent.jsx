@@ -614,7 +614,7 @@ const BooksComponent = () => {
     transformedData.sort((a, b) => new Date(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - new Date(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
     // Calcular totales
-    const totales = transformedData.reduce((acc, item) => ({
+    /* const totales = transformedData.reduce((acc, item) => ({
       'TIPO DE DOCUMENTO': '',
       'NÚMERO DE NIT, DUI U OTRO DOCUMENTO': '',
       'NOMBRE, RAZÓN SOCIAL O DENOMINACIÓN': 'TOTAL',
@@ -634,7 +634,7 @@ const BooksComponent = () => {
     });
 
     // Agregar fila de totales
-    transformedData.push(totales);
+    transformedData.push(totales); */
 
     const wb = XLSX.utils.book_new();
 
@@ -1048,7 +1048,7 @@ const BooksComponent = () => {
     transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - parseDMY(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
     // Calcular totales
-    const totales = transformedData.reduce((acc, item) => ({
+    /* const totales = transformedData.reduce((acc, item) => ({
       'FECHA DE EMISIÓN DEL DOCUMENTO': '',
       'CLASE DE DOCUMENTO': '',
       'TIPO DE DOCUMENTO': '',
@@ -1083,7 +1083,7 @@ const BooksComponent = () => {
     });
 
     // Agregar fila de totales
-    transformedData.push(totales);
+    transformedData.push(totales); */
 
     // Create a new workbook
     const wb = XLSX.utils.book_new();
@@ -1525,6 +1525,8 @@ const BooksComponent = () => {
       'DEBITO FISCAL POR VENTAS A CUENTA DE TERCEROS': 0, // Add if available in your data
       'TOTAL DE VENTAS': item.total_a_pagar,
       'NUMERO DE DUI DEL CLIENTE': '', // Add if available in your data
+      'NÚMERO DEL ANEXO': "1", // Add if available in your data
+      'NÚMERO DEL ANEXO': "1", // Add if available in your data
       'NÚMERO DEL ANEXO': "1" // Add if available in your data
     }));
     // Parser para D/M/YY o D/M/YYYY
@@ -1543,7 +1545,7 @@ const BooksComponent = () => {
     transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN DEL DOCUMENTO']) - parseDMY(b['FECHA DE EMISIÓN DEL DOCUMENTO']));
 
     // Calcular totales
-    const totales = transformedData.reduce((acc, item) => ({
+    /* const totales = transformedData.reduce((acc, item) => ({
       'FECHA DE EMISIÓN DEL DOCUMENTO': '',
       'CLASE DE DOCUMENTO': '',
       'TIPO DE DOCUMENTO': '',
@@ -1573,7 +1575,7 @@ const BooksComponent = () => {
     });
 
     // Agregar fila de totales
-    transformedData.push(totales);
+    transformedData.push(totales); */
 
     // Create a new workbook
     const wb = XLSX.utils.book_new();
@@ -2020,13 +2022,13 @@ const BooksComponent = () => {
         'TIPO DE DOCUMENTO': 1,
         'NÚMERO DE RESOLUCIÓN': item.numero_de_control,
         'SERIE DEL DOCUMENTO': item.sello_de_recepcion,/* DSAF */
-        'NUMERO DE CONTROL INTERNO DEL': item.codigo_de_generacion,
-        'NUMERO DE CONTROL INTERNO AL': item.codigo_de_generacion,
-        'NÚMERO DE DOCUMENTO (DEL)': item.codigo_de_generacion,
+        'VENTAS EXENTAS2': item.totalexenta || 0,
+        'VENTAS EXENTAS': item.totalexenta || 0,
+                'NÚMERO DE DOCUMENTO (DEL)': item.codigo_de_generacion,
         'NÚMERO DE DOCUMENTO (AL)': item.codigo_de_generacion,
         'NÚMERO DE MAQUINA REGISTRADORA': '',
-        'VENTAS EXENTAS': item.totalexenta || 0,
         'VENTAS INTERNAS EXENTAS NO SUJETAS A PROPORCIONALIDAD': 0,
+        'VENTAS INTERNAS EXENTAS NO SUJETAS A PROPORCIONALIDAD2': 0,
         'VENTAS NO SUJETAS': item.totalnosuj || 0,
         'VENTAS GRAVADAS LOCALES': item.total_agravada || 0,
         'EXPORTACIONES DENTRO DEL ÁREA DE CENTROAMÉRICA': 0,
@@ -2059,7 +2061,7 @@ const BooksComponent = () => {
     transformedData.sort((a, b) => parseDMY(a['FECHA DE EMISIÓN']) - parseDMY(b['FECHA DE EMISIÓN']));
 
     // Calcular totales
-    const totales = transformedData.reduce((acc, item) => ({
+    /* const totales = transformedData.reduce((acc, item) => ({
       'FECHA DE EMISIÓN': '',
       'CLASE DE DOCUMENTO': '',
       'TIPO DE DOCUMENTO': '',
@@ -2097,7 +2099,7 @@ const BooksComponent = () => {
     });
 
     // Agregar fila de totales
-    transformedData.push(totales);
+    transformedData.push(totales); */
 
     /* // Create a new workbook
     const wb = XLSX.utils.book_new();
