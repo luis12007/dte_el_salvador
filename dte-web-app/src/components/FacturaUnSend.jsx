@@ -92,7 +92,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
       } else if (content.tipo === "01") {
 
-        if (data[0].tributos === null) {
+        if (!data[0]?.tributos || data[0]?.tributos === null) {
           const newItems = data.map((item) => {
             const newItem = {
               codTributo: item.codtributo,
