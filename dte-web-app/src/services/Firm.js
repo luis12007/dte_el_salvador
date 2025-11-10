@@ -284,6 +284,30 @@ const Firm = {
         return data;
     },
 
+    default_test: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port444/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+    
+    default_prod: async(firm) => {
+        const res = await fetch(`${BASE_URL_Firm}/port8446/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(firm)
+        });
+        const data = await res.json();
+        return data;
+    },
+
 
 
 

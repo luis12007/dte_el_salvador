@@ -1535,8 +1535,130 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         }
       }
 
+      if (id_emisor == 23) {
+        const responseFirm = await Firmservice.default_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
 
-      if (id_emisor > 22) {
+      if (id_emisor == 24) {
+        const responseFirm = await Firmservice.default_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 25) {
+        const responseFirm = await Firmservice.default_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 26) {
+        const responseFirm = await Firmservice.default_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 27) {
+        const responseFirm = await Firmservice.default_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 28) {
+        const responseFirm = await Firmservice.default_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 29) {
+        const responseFirm = await Firmservice.default_test(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 30) {
+        const responseFirm = await Firmservice.default_prod(Firm);
+        console.log("firm response")
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        }else{
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+
+
+
+      if (id_emisor > 30) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return

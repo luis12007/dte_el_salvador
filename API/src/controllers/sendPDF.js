@@ -55,7 +55,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 23 || userDB.id === 24) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -143,6 +143,9 @@ const sendPDF = async(req, res) => {
             /* adding img */
             const logo = path.join(__dirname, '../assets/imgs/koala.png');
             pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
+
+                        pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(9).text('Factura por cuenta de:', 30, yscale + 100, { align: 'left' })
 
         }  else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
@@ -382,6 +385,23 @@ const sendPDF = async(req, res) => {
                 .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
                 .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
 
+        } else if (plantillaDB.tipo === "08") {
+            const re_numdocumentostring = 'NIT: ';
+
+            const truncatedDireccionReceptor = truncateText(plantillaDB.complemento, 34);
+
+            pdfDoc.fontSize(10).fillColor('#1E3256')
+                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
+                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
+                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
+                .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
+                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
+                .font('Helvetica').text(`${plantillaDB.re_actividad_economica}`, infoX + 385, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
+                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
+                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
+                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
+                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
+
         }
 
         // Add services section
@@ -416,12 +436,12 @@ const sendPDF = async(req, res) => {
         const descColWidth = 120; // ancho disponible para descripción (ajusta si es necesario)
         itemsDB.forEach(item => {
             // Preparar valores y asegurar tipos
-            const desc = (item.descripcion ?? '').toString();
-            const cantidad = item.cantidad ?? '';
-            const codigo = item.codigo ?? '';
-            const unitario = item.preciouni ?? '';
-            const descuento = item.montodescu ?? '';
-            const noSuj = item.ventanosuj ?? '';
+            let desc = (item.descripcion ?? '').toString();
+            let cantidad = item.cantidad ?? '';
+            let codigo = item.codigo ?? '';
+            let unitario = item.preciouni ?? '';
+            let descuento = item.montodescu ?? '';
+            let noSuj = item.ventanosuj ?? '';
             const exenta = item.ventaexenta ?? '';
             const totalLinea = (() => {
                 const p = parseFloat(item.preciouni);
@@ -429,6 +449,12 @@ const sendPDF = async(req, res) => {
                 if (isNaN(p) || isNaN(c)) return '';
                 return (p * c).toFixed(2);
             })();
+
+            if (plantillaDB.tipo == "08") {
+                desc = item.obsItem || '';
+                unitario = item.ivaItem || '';
+                cantidad = item.numItem || '';
+            }
 
             // Calcular altura requerida para la descripción envuelta
             const descHeight = pdfDoc.heightOfString(desc, {
@@ -586,6 +612,28 @@ const sendPDF = async(req, res) => {
                 .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
                 .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
+        } else if (plantillaDB.tipo === "08") {
+
+            /* separate the | */
+            console.log('plantillaDB.tributocf', plantillaDB);
+
+            const iva = plantillaDB.tributocf.split('|');
+            const ivaCodigo = iva[0];
+            const ivaDescripcion = iva[1];
+            const ivaValor = iva[2];
+            
+            console.log('IVA Detalles:', { ivaCodigo, ivaDescripcion, ivaValor });
+
+            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 90, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
+                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         }
 
