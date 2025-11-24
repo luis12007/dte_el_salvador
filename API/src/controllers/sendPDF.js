@@ -154,27 +154,48 @@ const sendPDF = async(req, res) => {
                 .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });*/
         }
 
-        const generateQRCodeImage = async(text, outputPath) => {
+        const generateQRCodeImage = async (text, outputPath) => {
             try {
-                await QRCode.toFile(outputPath, text, {
+                // Log the exact text used to generate the QR so we can debug spaces/%20
+                console.log('QR content before generating:', text);
+
+                // Ensure outputPath is absolute so later reads use the same file
+                const outPath = path.isAbsolute(outputPath) ? outputPath : path.join(__dirname, outputPath);
+
+                await QRCode.toFile(outPath, text, {
                     color: {
                         dark: '#000000',
                         light: '#FFFFFF'
                     }
                 });
+                console.log('QR code image generated and saved to', outPath);
+                return outPath;
             } catch (err) {
                 console.error('Error generating QR code:', err);
+                throw err;
             }
         };
 
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
         const qrCodePath = path.join(__dirname, '../../qrcode.png');
-        await generateQRCodeImage(`
-                        https: //admin.factura.gob.sv/consultaPublica?ambiente=${userDB.ambiente}&codGen=${plantillaDB.codigo_de_generacion}&fechaEmi=${plantillaDB.fecha_y_hora_de_generacion}`, qrCodePath);
-        await delay(3000);
+
+        // Build QR URL using encodeURIComponent for parameters (avoid accidental spaces)
+        const qrText = `https://admin.factura.gob.sv/consultaPublica?ambiente=${encodeURIComponent(userDB.ambiente)}&codGen=${encodeURIComponent(plantillaDB.codigo_de_generacion)}&fechaEmi=${encodeURIComponent(plantillaDB.fecha_y_hora_de_generacion)}`;
+        console.log('Generating QR with text:', qrText);
+        try {
+            await generateQRCodeImage(qrText, qrCodePath);
+        } catch (err) {
+            console.error('Failed to generate QR image:', err);
+        }
 
         pdfDoc.rect(280, yscale, 100, 100).stroke('#000');
-        pdfDoc.image(qrCodePath, 280, yscale, { width: 100, height: 100 });
+        // short delay to ensure file is visible (we awaited generation, so usually unnecessary)
+        await delay(200);
+        try {
+            pdfDoc.image(qrCodePath, 280, yscale, { width: 100, height: 100 });
+        } catch (err) {
+            console.error('Error adding QR image to PDF:', err, 'path:', qrCodePath);
+        }
         pdfDoc.fontSize(10).font('Helvetica-Bold').text('Código de generación:', 400, yscale)
             .font('Helvetica').text(`${plantillaDB.codigo_de_generacion}`, 400, yscale + 15)
             .font('Helvetica-Bold').text('Numero de control:', 400, yscale + 40)

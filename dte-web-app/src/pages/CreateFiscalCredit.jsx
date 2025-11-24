@@ -1069,15 +1069,27 @@ const CrearCreditoFiscal = () => {
       toast.error("Codigo de actividad no puede estar vacio");
       return;
     } else if (client.nrc === "" || client.nrc === null) {
+      setIsSubmittingAdd(false);
       toast.error("NRC no puede estar vacio");
       return;
     } else if (selectedDepartment === "" || selectedDepartment === null) {
+      setIsSubmittingAdd(false);
       toast.error("Departamento no puede estar vacio");
       return;
+    } else if (!departmentsAndMunicipalities[selectedDepartment]) {
+      setIsSubmittingAdd(false);
+      toast.error("Departamento seleccionado no es válido");
+      return;
     } else if (selectedMunicipality === "" || selectedMunicipality === null) {
+      setIsSubmittingAdd(false);
       toast.error("Municipio no puede estar vacio");
       return;
+    } else if (!departmentsAndMunicipalities[selectedDepartment].municipalities.find(m => m.index === parseInt(selectedMunicipality))) {
+      setIsSubmittingAdd(false);
+      toast.error("Municipio seleccionado no es válido para el departamento elegido");
+      return;
     } else if (Listitems.length === 0) {
+      setIsSubmittingAdd(false);
       toast.error("No hay items en la factura");
       return;
     } else if (time.date === "" || time.date === null) {

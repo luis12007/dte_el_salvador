@@ -14,6 +14,7 @@ const GroupComponent = ({ visible, setVisible }) => {
   const GoAddServiceHandler = () => navigate("/items");
   const GoCancelBill = () => navigate("/invalidar");
   const GoBooksBill = () => navigate("/facturas/libros");
+  const GoDownloadDTEs = () => navigate("/descargar-dtes");
   const CloseHandler = () => navigate("/ingresar");
 
   return (
@@ -71,6 +72,11 @@ const GroupComponent = ({ visible, setVisible }) => {
           <button onClick={GoBooksBill} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
             <img className="h-6 w-6 object-contain" alt="" src={book} />
             <span className="text-sm text-gray-800 group-hover:text-sky-700">Reportes</span>
+          </button>
+
+          <button onClick={GoDownloadDTEs} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
+            <img className="h-6 w-6 object-contain" alt="" src="/descargar@2x.png" />
+            <span className="text-sm text-gray-800 group-hover:text-sky-700">Descargar DTEs</span>
           </button>
 
           <div className="pt-2 mt-2 border-t">

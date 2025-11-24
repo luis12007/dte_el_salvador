@@ -654,8 +654,14 @@ const CreateSubEx = () => {
         } else if (selectedDepartment === "" || selectedDepartment === null) {
             toast.error("Departamento no puede estar vacio");
             return;
+        } else if (!departmentsAndMunicipalities[selectedDepartment]) {
+            toast.error("Departamento seleccionado no es válido");
+            return;
         } else if (selectedMunicipality === "" || selectedMunicipality === null) {
             toast.error("Municipio no puede estar vacio");
+            return;
+        } else if (!departmentsAndMunicipalities[selectedDepartment].municipalities.find(m => m.index === parseInt(selectedMunicipality))) {
+            toast.error("Municipio seleccionado no es válido para el departamento elegido");
             return;
         } else if (Listitems.length === 0) {
             toast.error("No hay items en la factura");
