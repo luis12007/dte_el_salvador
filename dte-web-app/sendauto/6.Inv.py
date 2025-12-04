@@ -5,14 +5,14 @@ import uuid
 import time
 from datetime import datetime
 
-""" INFO DE Jorge """
-NIT = "06141604731016"  # Replace with your actual NIT
-PASSWORD_PRI = "Clinica2024"  # Replace with your actual password
+""" INFO DE Doctora de Calderon """
+NIT = "06071104721016"  # Replace with your actual NIT
+PASSWORD_PRI = "Calderon2025"  # Replace with your actual password
 CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
-STARTING_NUMBER = 850  # Starting number for the numeroControl
-NUM_ITERATIONS = 120  # Number of times to run the script
+STARTING_NUMBER = 100  # Starting number for the numeroControl
+NUM_ITERATIONS = 100  # Number of times to run the script
 CODACTIVITY = "86203"  # Replace with your actual activity code
-NRC = "2353298"  # Replace with your actual NRC
+NRC = "2040340"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER
@@ -22,13 +22,13 @@ def main():
         
         # Generate a new UUID for codigoGeneracion
         new_codigo_generacion = str(uuid.uuid4()).upper()
-        codigoGeneracion = ["2337DDBF-8F05-4087-979A-422DB2672804","4039B0BD-6469-4272-B168-A80CD34336A4", "271B4E4F-7760-4910-BB83-93AE8447213F", "97EC573C-5498-4D02-B429-730A72790C17", "08A46369-925D-4221-BB86-C372BC51019A", "F9BB9345-E90F-4C41-AFA8-CD300F80455F"]
-        selloRecibido = ["2025791FFAB8E1B2469EA4B0B88E50B4BA69IHEO","2025A713772D264B40C182869061B9016898PDD9", "2025C3BE2FA981754ADA889D45F0D40D0F1BIJNK", "2025DE2781B1C6674DF3973C67521D3EBA20ZFWS", "20251411F22C40E2463A8FE3750D4815F2AFQSVL",  "2025F3D4B9B04E284F7AB62E1460445437A2GTZN"]
-        numeroControl = ["DTE-01-00000000-000000000000850","DTE-01-00000000-000000000000851",                       "DTE-01-00000000-000000000000852", "DTE-01-00000000-000000000000854",            "DTE-01-00000000-000000000000855", "DTE-01-00000000-000000000000761"]
+        codigoGeneracion = ["1A4CD40A-0D6F-4834-93AD-73149AEBE570","D6BA9FD7-0066-4544-B100-D6ADB37A8CD5", "C9C7CFF0-9E46-441F-BEB0-72ACF654D248", "B58019AB-231F-4D29-9D71-A2690F9F7D31", "4E8B568E-139B-4E32-BCE5-F01D7B8B5F24", "A482F4F2-917F-45B5-A4C9-F40E2D4D1B39"]
+        selloRecibido = ["2025FAF657E1D4C346E09D837C560CA43657NBJX","20250B5FAA937EA444A98A63556EF9670CD4XWN6", "202586D85DDB33E746EE82052B6782AE201BHEEN", "20255D05221C62914BE69F3C171822A72D58IZ5I", "20257C706CFB41C142858C3097A83126023CI5OU",  "20252186C858A55A429AB843ABB83D4553D0HTZK"]
+        numeroControl = ["DTE-01-M001P001-000000000000250","DTE-01-M001P001-000000000000251",                       "DTE-01-M001P001-000000000000252", "DTE-01-M001P001-000000000000253",            "DTE-01-M001P001-000000000000254", "DTE-01-M001P001-000000000000255"]
 
         
         # Update the numeroControl with the current number
-        numero_control = f"DTE-01-00000000-000000000000{current_number}"
+        numero_control = f"DTE-01-M001P001-000000000000{current_number}"
         
         # Update current date and time
         current_date = datetime.now().strftime("%Y-%m-%d")

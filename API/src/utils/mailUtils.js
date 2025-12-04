@@ -1337,7 +1337,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add Doctor's information
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 23 || userDB.id === 24) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 29 || userDB.id === 30) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
@@ -1348,7 +1348,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             pdfDoc.fontSize(18).fillColor('#1E3256')
 
             .text(`Dr. ${newname}`, 30, yscale, { align: 'left' })
-        } else if (userDB.id === 7  || userDB.id === 12 || userDB.id === 21 || userDB.id === 22) {
+        } else if (userDB.id === 7  || userDB.id === 12 || userDB.id === 21 || userDB.id === 22 || userDB.id === 27 || userDB.id === 28) {
 
         }else if (userDB.id === 16 || userDB.id === 17) {
 /* const name = userDB.name.split(" ");
@@ -1406,7 +1406,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                     pdfDoc.fontSize(12).font('Helvetica').fillColor('#1E3256')
                         .fontSize(12).text('CLÍNICA MÉDICA', 100, yscale +50, { align: 'left' })
         
-        }else if (userDB.id === 16 || userDB.id === 17) {
+        }else if (userDB.id === 27 || userDB.id === 28) {
+                    /* adding img */
+            const logo = path.join(__dirname, '../assets/imgs/Calderon.png');
+            pdfDoc.image(logo, 75, yscale - 13, { width: 140, height: 120 });
+
+                }else if (userDB.id === 16 || userDB.id === 17) {
                     /* adding img */
                     const logo = path.join(__dirname, '../assets/imgs/rinologo.png');
                     pdfDoc.image(logo, 40, yscale - 10, { width: 210, height: 120 });
@@ -1858,8 +1863,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
                 .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "01") {
@@ -1869,8 +1874,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "14") {
@@ -1887,8 +1892,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento || 0).toFixed(2)}`, 300, y + 90, { align: 'right' })
                 .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "05") {
@@ -1899,8 +1904,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
                 .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "06") {
@@ -1911,8 +1916,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
                 .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         } else if (plantillaDB.tipo === "08") {
@@ -1928,8 +1933,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
                 .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
                 .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
                 .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
                 .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
         }

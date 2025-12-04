@@ -22,7 +22,7 @@ def main():
         new_codigo_generacion = str(uuid.uuid4()).upper()
         
         # Update the numeroControl with the current number
-        numero_control = f"DTE-01-00000000-000000000000{current_number}"
+        numero_control = f"DTE-01-M001P001-000000000000{current_number}"
         
         # Update current date and time
         current_date = datetime.now().strftime("%Y-%m-%d")

@@ -66,7 +66,7 @@ const ListReceptores = ({onSelectClient, handleSelectClient}) => {
   return (
     <div className="modal-overlay animate-fadeIn">
       <section className="modal-content animate-zoomIn">
-        <div className="flex-1 flex flex-col items-start justify-start gap-[16px] max-w-full">
+        <div className="flex-1 flex flex-col items-start justify-start gap-[40px] max-w-full">
           {/* Header */}
           <div className="w-full flex flex-row items-center justify-between">
             <h2 className="text-xl font-bold text-gray-800">
@@ -131,7 +131,7 @@ const ListReceptores = ({onSelectClient, handleSelectClient}) => {
           <div className="w-full flex justify-center">
             <button 
               onClick={AddClientHandler}
-              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200"
+              className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 my-4 rounded-lg text-sm font-medium transition-all duration-200"
             >
               Agregar Receptor
             </button>

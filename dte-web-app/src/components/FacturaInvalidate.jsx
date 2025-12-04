@@ -498,14 +498,14 @@ const FacturaInvalidate = ({ key, content, user }) => {
     }
 
     if (id_emisor == 21) {
-      const responseFirm = await Firmservice.Montenegro_test(Firm);
+      const responseFirm = await Firmservice.default_test(Firm);
       console.log("firm response")
       console.log(responseFirm);
       firmtoken = responseFirm.body;
     }
 
     if (id_emisor == 22) {
-      const responseFirm = await Firmservice.Montenegro_prod(Firm);
+      const responseFirm = await Firmservice.default_prod(Firm);
       console.log("firm response")
       console.log(responseFirm);
       firmtoken = responseFirm.body;

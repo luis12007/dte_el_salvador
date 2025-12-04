@@ -7,14 +7,14 @@ from datetime import datetime
 
 # Variables that you will set at the beginning
 
-""" INFO DE Koala """
-NIT = "06142907941010"  # Replace with your actual NIT
-PASSWORD_PRI = "S9z@qp3WlXadsf3"  # Replace with your actual password
+""" INFO DE Doctora de Calderon """
+NIT = "06071104721016"  # Replace with your actual NIT
+PASSWORD_PRI = "Calderon2025"  # Replace with your actual password
 CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
-STARTING_NUMBER = 850  # Starting number for the numeroControl
-NUM_ITERATIONS = 100  # Number of times to run the script
-CODACTIVITY = "96092"  # Replace with your actual activity code
-NRC = "796662"  # Replace with your actual NRC
+STARTING_NUMBER = 250  # Starting number for the numeroControl
+NUM_ITERATIONS = 10  # Number of times to run the script
+CODACTIVITY = "86203"  # Replace with your actual activity code
+NRC = "2040340"  # Replace with your actual NRC
 
 def main():
     current_number = STARTING_NUMBER
@@ -26,7 +26,7 @@ def main():
         new_codigo_generacion = str(uuid.uuid4()).upper()
         
         # Update the numeroControl with the current number
-        numero_control = f"DTE-01-00000000-000000000000{current_number}"
+        numero_control = f"DTE-01-M001P001-000000000000{current_number}"
         
         # Update current date and time
         current_date = datetime.now().strftime("%Y-%m-%d")
