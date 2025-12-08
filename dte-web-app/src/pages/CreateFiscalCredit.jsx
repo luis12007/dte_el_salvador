@@ -12,6 +12,7 @@ import PlantillaService from "../services/PlantillaService";
 import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AdvanceNoItemsComponentCreditFacturas from "../components/AdvanceNoItemsComponentCreditFacturas";
 
 const CrearCreditoFiscal = () => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -1499,7 +1500,7 @@ const CrearCreditoFiscal = () => {
 
       />
 
-      <AdvanceItemsComponent
+      <AdvanceNoItemsComponentCreditFacturas
         handleSelectChangeItemsClient={handleSelectChangeItemsClient}
         itemshandleRemove={itemshandleRemove}
         itemshandleAdd={itemshandleAdd}

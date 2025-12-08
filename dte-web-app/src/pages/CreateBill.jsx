@@ -38,6 +38,9 @@ const Clientes = () => {
       const [isLoading, setIsLoading] = useState(false);
       const [codepayment, setCodepayment] = useState("01");
   const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
+  // Estado para IVA retenido 1%
+  const [isivareten1percent, setIsivareten1percent] = useState(false);
+  const [ivaretenido, setIvaRetenido] = useState(0);
   
 
   const toggleButton = (event) => {
@@ -441,7 +444,8 @@ const Clientes = () => {
       }
 
       var data = {
-        identificacion: {
+        identificacion:
+         {
           version: 1,
           ambiente: userinfo.ambiente,
           tipoDte: "01",
@@ -925,15 +929,22 @@ const Clientes = () => {
 
   const handlePercentageChange = (e) => {
     setPercentage(e.target.value);
-    console.log("Percentage", e.target.value);
-
     const value_rent = ((subtotal * e.target.value) / 100).toFixed(2);
-    console.log(value_rent);
-    setRentvalue(value_rent)
-
+    setRentvalue(value_rent);
     var newtotal = (subtotal - value_rent).toFixed(2);
-    setTotal(newtotal)
+    setTotal(newtotal);
+  };
 
+  const handleIvaReten1Toggle = () => {
+    if (!isivareten1percent) {
+      const ivaRet = (subtotal * 0.01).toFixed(2);
+      setIvaRetenido(ivaRet);
+      setTotal((prev) => (parseFloat(prev) - parseFloat(ivaRet)).toFixed(2));
+    } else {
+      setTotal((prev) => (parseFloat(prev) + parseFloat(ivaretenido)).toFixed(2));
+      setIvaRetenido(0);
+    }
+    setIsivareten1percent(!isivareten1percent);
   };
 
   return (
@@ -980,27 +991,34 @@ const Clientes = () => {
                 <span className="text-tomato pl-1"> *</span>
               </div>
             </div>
-            <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
-              <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-              <input
-                className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                placeholder="Fecha"
-                type="date"
-                value={time.date}
-                min={time.date}
-                max={time.date}
-                onChange={(e) => {
-                  // Ignorar cualquier intento de cambiar a una fecha distinta a hoy
-                  if (e.target.value === todayDate) {
-                    handleChangeTime("date", e.target.value);
-                  } else {
-                    // Revertir si el navegador permite seleccionar otra (fallback)
-                    e.target.value = todayDate;
-                    handleChangeTime("date", todayDate);
-                  }
-                }}
-              />
-            </div>
+            {/* Input de fecha con validación de usuario */}
+<div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
+  <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+  <input
+    className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+    placeholder="Fecha"
+    type="date"
+    value={time.date}
+    {...((id_emisor === "7" || id_emisor === "12")
+      ? {}
+      : { min: time.date, max: time.date })}
+    onChange={(e) => {
+      // Si el usuario es 7 o 12, permite cualquier fecha
+      if (id_emisor === "7" || id_emisor === "12") {
+        handleChangeTime("date", e.target.value);
+      } else {
+        // Para otros usuarios, solo permite la fecha de hoy
+        if (e.target.value === todayDate) {
+          handleChangeTime("date", e.target.value);
+        } else {
+          e.target.value = todayDate; // revertir
+          handleChangeTime("date", todayDate);
+        }
+      }
+    }}
+    {...((id_emisor === "7" || id_emisor === "12") ? {} : { readOnly: true })}
+  />
+</div>
           </div>
         </div>
       </section>
@@ -1044,125 +1062,41 @@ const Clientes = () => {
 
       {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
-      <TreeNode text="Total a Pagar" data={total} /> */}
+      <TreeNode text="Total a Pagar" data={total} */}
       <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
+      {isivareten1percent && <TreeNode text="IVA Retenido" data={ivaretenido} />}
       <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
-      {/* <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">
-        <form className="m-0 flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[10px] max-w-full">
-          <div className="self-stretch h-[581px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-3 px-[9px] pb-[11px] box-border relative whitespace-nowrap max-w-full z-[1]">
-            <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full z-[0]" />
-            <img
-              className="h-4 w-[18px] absolute !m-[0] top-[10px] right-[17px] object-contain z-[2]"
-              alt=""
-              src="/atras-1@2x.png"
-            />
-            <b className="relative text-xs font-inria-sans text-black text-left z-[2]">
-              Condiciones de la Operación
-            </b>
-          </div>
-          <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
-            <div className="flex-1 flex flex-col items-start justify-start gap-[23.5px_0px] max-w-full">
-              <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px] max-w-full">
-                <div className="self-stretch flex flex-col items-start justify-start gap-[10px_0px] max-w-full">
-                  <div className="self-stretch flex flex-col items-start justify-start gap-[4px_0px] max-w-full">
-                    <div className="relative text-xs font-inria-sans text-black text-left z-[1]"></div>
-                    <div className="h-[23px] w-[362px] relative rounded-6xs box-border hidden max-w-full z-[0] border-[0.3px] border-solid border-gray-100" />
-                    <div>
-                      <span className="text-black">Tipo</span>
-                      <span className="text-tomato">*</span>
-                    </div>
-                    <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
-                      <select
-                        className="w-full h-full relative  border-white bg-white border-2 max-w-full"
-                        type="text"
-                        onChange={(e) => setpayment({ ...payment, paymentType: e.target.value })}
-                      >
-                        <option value="1">Contado</option>
-                        <option value="2">Crédito</option>
-                        <option value="3">Otro</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="self-stretch h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-                </div>
-                <div className="self-stretch flex flex-col items-end justify-start gap-[28px] max-w-full z-[1]">
-                  {contents.map((content, index) => (
-                    <TableOfContents
-                      key={index}
-                      content={content}
-                      onRemove={() => handleRemove(index)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="self-stretch flex flex-col items-start justify-start gap-[13px_0px]">
-                <TableOfContentsNew handleAdd={handleAdd} setpayment={setpayment} total={total} /> 
-              </div>
-            </div>
-          </div>
-        </form>
-      </section>
 
-       */}
-
-        {/* Tarjeta para seleccionar el medio de pago */}
+      {/* Tarjeta para IVA Retenido 1% (idéntica a CreateFiscalCredit.jsx) */}
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[10px] max-w-full z-[1]">
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-center justify-between pt-[11px] px-[17px] pb-2 box-border relative max-w-full z-[2]">
-            <b className="relative z-[3] text-xs font-inria-sans text-black">Metodo de Pago</b>
+            <b className="relative z-[3] text-xs font-inria-sans text-black">IVA Retenido 1%</b>
           </div>
-          <div className="max-w-full self-stretch px-[17px] py-2 ">
-            <select
-              value={codepayment}
-              onChange={e => setCodepayment(e.target.value)}
-              className="w-full h-[35px] border border-gray-300 rounded-md bg-white text-xs font-inria-sans text-black"
+          <div className="max-w-full self-stretch px-[17px] py-4 flex flex-row items-center justify-center">
+            <button
+              type="button"
+              onClick={handleIvaReten1Toggle}
+              className={`cursor-pointer [border:none] pt-[13px] pb-3 px-8 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap ${
+                isivareten1percent ? 'bg-steelblue-200 hover:bg-steelblue-100' : 'bg-gray-400 hover:bg-gray-500'
+              } transition-colors`}
             >
-              <option value="01">Billetes y monedas</option>
-              <option value="02">Tarjeta Débito</option>
-              <option value="03">Tarjeta Crédito</option>
-              <option value="04">Cheque</option>
-              <option value="05">Transferencia / Depósito Bancario</option>
-              <option value="08">Dinero electrónico</option>
-              <option value="09">Monedero electrónico</option>
-              <option value="11">Bitcoin</option>
-              <option value="12">Otras Criptomonedas</option>
-              <option value="13">Cuentas por pagar del receptor</option>
-              <option value="14">Giro bancario</option>
-            </select>
+              <div className={`h-12 w-full absolute inset-0 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden ${
+                isivareten1percent ? 'bg-steelblue-200' : 'bg-gray-400'
+              }`} />
+              <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
+                {isivareten1percent ? "Desactivar Retención 1%" : "Activar Retención 1%"}
+              </b>
+            </button>
           </div>
         </div>
       </section>
 
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full text-left text-mini text-black font-inria-sans ch:w-1/3 ch:self-center">
-        <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[14px] max-w-full z-[1]">
-          <div className="self-stretch h-[101px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-          <div className="self-stretch h-[101px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-[11px] px-[17px] pb-2 box-border relative max-w-full z-[2]">
-            <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full z-[0]" />
-            {/* <img
-            className="h-4 w-[18px] absolute !m-[0] right-[20px] bottom-[9px] object-contain z-[3]"
-            alt=""
-            src="/atras-1@2x.png"
-          /> */}
-            <b className="relative z-[3]">Exento</b>
-          </div>
-          <div className="flex flex-row items-start justify-start py-0 px-[17px] text-6xl">
-            <div className="relative flex whitespace-nowrap z-[2]">
-              <button
-                onClick={(event) => toggleButton(event)}
-                className={`px-4 py-2 rounded-md text-white font-bold transition-transform duration-200 ${isActivated ? 'bg-steelblue-200' : 'bg-indianred-300'
-                  } ${isActivated ? 'transform scale-95' : 'transform scale-100'}`}
-              >
-                {isActivated ? 'Activado' : 'Desactivado'}
-              </button>
-              {isActivated && <input type="text" className="border border-black rounded-lg ml-4 pl-3 " placeholder="codigo de exento"  onChange={(e) => setValueexcenta(e.target.value)}/>}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Card para Renta Retenida (porcentaje editable) */}
+
+
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
           className="[border:none] bg-white h-[163px] w-auto [outline:none] flex-1 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-end justify-start pt-[11px] px-[17px] pb-2 box-border font-inria-sans font-bold text-mini text-black max-w-full"
