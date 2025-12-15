@@ -524,7 +524,7 @@ const Clientes = () => {
           porcentajeDescuento: 0,
           totalDescu: 0,
           subTotal: subtotal,
-          ivaRete1: 0,
+          ivaRete1: isivareten1percent ? ivaretenido : 0,
           reteRenta: rentvalue,
           totalNoGravado: 0,
           totalPagar: total,
@@ -581,7 +581,7 @@ const Clientes = () => {
         data.resumen.pagos[0].montoPago = rawSubtotal.toFixed(2);
         data.resumen.totalExenta = 0;
         data.resumen.montoTotalOperacion = rawSubtotal.toFixed(2);
-        data.resumen.totalPagar = totalpagar.toFixed(2);
+        data.resumen.totalPagar = (totalpagar - parseFloat(ivaretenido)).toFixed(2);
 
         data.resumen.totalLetras = convertirDineroALetras(rawSubtotal.toFixed(2));
         data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
@@ -939,7 +939,7 @@ const Clientes = () => {
     if (!isivareten1percent) {
       const ivaRet = (subtotal * 0.01).toFixed(2);
       setIvaRetenido(ivaRet);
-      setTotal((prev) => (parseFloat(prev) - parseFloat(ivaRet)).toFixed(2));
+      setTotal((total - parseFloat(ivaRet)).toFixed(2));
     } else {
       setTotal((prev) => (parseFloat(prev) + parseFloat(ivaretenido)).toFixed(2));
       setIvaRetenido(0);

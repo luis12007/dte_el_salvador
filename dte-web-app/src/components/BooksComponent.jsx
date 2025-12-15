@@ -10,6 +10,8 @@ import UserService from "../services/UserServices";
 import * as XLSX from "xlsx";
 import ExcelJS from "exceljs";
 
+import ModalEditJson from "./ModalEditJson";
+
 const BooksComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [startDate, setStartDate] = useState("");
@@ -20,6 +22,9 @@ const BooksComponent = () => {
   const token = localStorage.getItem("token");
   const [jsonData, setJsonData] = useState(null);
   const [user, setUser] = useState({});
+
+  // Estado para el modal de edición de JSON
+  const [isEditJsonModalOpen, setIsEditJsonModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -98,6 +103,7 @@ const BooksComponent = () => {
     anexoBill();
     anexoCF();
     anexoSuex();
+    anexoCompras();
   };
 
   // Utilidades para exportación bruta a Excel (sin transformar)
@@ -195,7 +201,30 @@ const BooksComponent = () => {
     });
 
     // Filas de datos
+
+    // Formatear fecha_y_hora_de_generacion y recolectar totales
+    const numericColumns = columns.filter(
+      (col) => flatRows.some((row) => !isNaN(Number(row[col])))
+    );
+    const totals = {};
+    numericColumns.forEach((col) => (totals[col] = 0));
+
     flatRows.forEach((rowObj) => {
+      // Formato fecha dd/mm/yyyy si existe la columna
+      if (rowObj["fecha_y_hora_de_generacion"]) {
+        const d = new Date(rowObj["fecha_y_hora_de_generacion"]);
+        if (!isNaN(d.getTime())) {
+          const day = String(d.getDate()).padStart(2, "0");
+          const month = String(d.getMonth() + 1).padStart(2, "0");
+          const year = d.getFullYear();
+          rowObj["fecha_y_hora_de_generacion"] = `${day}/${month}/${year}`;
+        }
+      }
+      // Sumar totales
+      numericColumns.forEach((col) => {
+        const val = Number(rowObj[col]);
+        if (!isNaN(val)) totals[col] += val;
+      });
       const row = worksheet.addRow(columns.map((c) => rowObj[c] ?? ""));
       row.eachCell((cell) => {
         cell.style = {
@@ -209,6 +238,28 @@ const BooksComponent = () => {
         };
       });
     });
+
+    // Fila de totales
+    if (flatRows.length > 0 && numericColumns.length > 0) {
+      const totalRow = columns.map((col) => {
+        if (numericColumns.includes(col)) return totals[col];
+        if (col === columns[0]) return "TOTALES";
+        return "";
+      });
+      const row = worksheet.addRow(totalRow);
+      row.eachCell((cell) => {
+        cell.style = {
+          font: { bold: true },
+          alignment: { horizontal: "left", vertical: "middle", wrapText: true },
+          border: {
+            top: { style: "thin", color: { argb: "FF000000" } },
+            left: { style: "thin", color: { argb: "FF000000" } },
+            bottom: { style: "thin", color: { argb: "FF000000" } },
+            right: { style: "thin", color: { argb: "FF000000" } },
+          },
+        };
+      });
+    }
 
     // Ancho de columnas
     const defaultWidth = 20;
@@ -268,10 +319,56 @@ const BooksComponent = () => {
     return isFinite(d.getTime()) ? d : new Date(0);
   };
 
-  const mapItemToFixedRow = (item) => {
-    const fechaSolo = (item?.fecha_y_hora_de_generacion || item?.fecha || "")
+  const mapItemToFixedRow = (item, allItems = null) => {
+    // Si es una petición de totales
+    if (item === "TOTALES" && Array.isArray(allItems)) {
+      const numericFields = [
+        "subtotal",
+        "total garvado",
+        "iva percibido",
+        "iva retenido",
+        "retencion de renta",
+        "total",
+        "total a pagar"
+      ];
+      const totals = {};
+      numericFields.forEach(f => totals[f] = 0);
+      allItems.forEach(row => {
+        const mapped = mapItemToFixedRow(row);
+        numericFields.forEach(f => {
+          const val = Number(mapped[f]);
+          if (!isNaN(val)) totals[f] += val;
+        });
+      });
+      return {
+        tipo: "TOTALES",
+        "codigo de generacion": "",
+        "numero de control": "",
+        "sello de recepcion": "",
+        fecha: "",
+        "hora emi": "",
+        "re correo electronico": "",
+        "re name": "",
+        "re numero de telefono": "",
+        ambiente: "",
+        subtotal: totals["subtotal"],
+        "total garvado": totals["total garvado"],
+        "iva percibido": totals["iva percibido"],
+        "iva retenido": totals["iva retenido"],
+        "retencion de renta": totals["retencion de renta"],
+        total: totals["total"],
+        "total a pagar": totals["total a pagar"],
+        observaciones: ""
+      };
+    }
+    let fechaSolo = (item?.fecha_y_hora_de_generacion || item?.fecha || "")
       .toString()
       .split("T")[0];
+    // Formatear fecha como dd/mm/yyyy si es válida
+    if (fechaSolo && fechaSolo.includes("-")) {
+      const [y, m, d] = fechaSolo.split("-");
+      if (y && m && d) fechaSolo = `${d}/${m}/${y}`;
+    }
     const horaSolo = (item?.horemi || item?.hora || "").toString();
     const ambienteLocal = localStorage.getItem("ambiente") || "";
     // Subtotal heurístico
@@ -408,6 +505,25 @@ const BooksComponent = () => {
       });
       row.height = 36;
     });
+
+    // Fila de totales
+    if (sorted.length > 0) {
+      const totalsObj = mapItemToFixedRow("TOTALES", sorted);
+      const totalRow = FIXED_HEADERS.map((h) => totalsObj[h] ?? "");
+      const row = worksheet.addRow(totalRow);
+      row.eachCell((cell) => {
+        cell.style = {
+          font: { bold: true },
+          alignment: { horizontal: "left", vertical: "middle", wrapText: true },
+          border: {
+            top: { style: "thin", color: { argb: "FF000000" } },
+            left: { style: "thin", color: { argb: "FF000000" } },
+            bottom: { style: "thin", color: { argb: "FF000000" } },
+            right: { style: "thin", color: { argb: "FF000000" } },
+          },
+        };
+      });
+    }
 
     worksheet.columns = FIXED_HEADERS.map(() => ({ width: 22 }));
 
@@ -2736,7 +2852,7 @@ const BooksComponent = () => {
                   Anexos Fiscales
                 </h3>
                 <p className="text-gray-600 mb-6 text-sm">
-                  CF, FCF, CSE
+                  CF, FCF, CSE y Compras
                 </p>
                 <button
                   onClick={() => openModal("ANEX")}
@@ -2790,7 +2906,7 @@ const BooksComponent = () => {
             </div>
 
             {/* Exportación Bruta de Compras */}
-            {/* <div className="animate-fadeInUp animate-delay-175 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            { <div className="animate-fadeInUp animate-delay-175 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="text-center">
                 <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">🛒</span>
@@ -2808,7 +2924,7 @@ const BooksComponent = () => {
                   Compras (Raw)
                 </button>
               </div>
-            </div> */}
+            </div> }
 
             {/* Libro Contribuyentes Card */}
             <div className="animate-fadeInUp animate-delay-200 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
@@ -2853,7 +2969,7 @@ const BooksComponent = () => {
             </div>
 
             {/* Libro Compras Card */}
-            {/* <div className="animate-fadeInUp animate-delay-400 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            { <div className="animate-fadeInUp animate-delay-400 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="text-center">
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">📦</span>
@@ -2871,10 +2987,9 @@ const BooksComponent = () => {
                   Generar Libro
                 </button>
               </div>
-            </div> */}
+            </div> }
           </div>
 
-          {/* 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="animate-slideInUp animate-delay-500 bg-white rounded-xl shadow-lg p-6">
               <div className="text-center mb-6">
@@ -2910,7 +3025,7 @@ const BooksComponent = () => {
               </div>
             </div>
 
-            {/* {jsonData && (
+            {jsonData && (
               <div className="animate-zoomIn bg-white rounded-xl shadow-lg p-6">
                 <div className="text-center mb-6">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -2919,6 +3034,12 @@ const BooksComponent = () => {
                   <h3 className="text-xl font-bold text-gray-800 mb-2">
                     Información del JSON
                   </h3>
+                  <button
+                    className="mt-2 mb-2 px-4 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm"
+                    onClick={() => setIsEditJsonModalOpen(true)}
+                  >
+                    Editar JSON
+                  </button>
                 </div>
                 
                 <div className="bg-gray-50 rounded-lg p-4 mb-6">
@@ -3040,9 +3161,16 @@ const BooksComponent = () => {
                 >
                   💾 Guardar Factura
                 </button>
+                {/* Modal para editar el JSON */}
+                <ModalEditJson
+                  isOpen={isEditJsonModalOpen}
+                  onRequestClose={() => setIsEditJsonModalOpen(false)}
+                  jsonData={jsonData}
+                  onSave={(newData) => setJsonData(newData)}
+                />
               </div>
             )} 
-          </div>*/}
+          </div>
         </div>
       </div>
 

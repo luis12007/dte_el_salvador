@@ -55,7 +55,7 @@ const sendPDF = async(req, res) => {
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
         console.log(userDB)
 
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26  || userDB.id === 29 || userDB.id === 30) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26  || userDB.id === 29 || userDB.id === 30 || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36 ) {
             /* giving the userDB.name a format of name right now is LUIS HERNANDEZ  and it will be Luis Hernandez */
 
             const name = userDB.name.split(" ");
@@ -98,7 +98,7 @@ const sendPDF = async(req, res) => {
 
         if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
-                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+                .fontSize(15).text('SERVICIOS MÉDICOS', 70, yscale + 30, { align: 'left' })
                 .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' })
                 .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });
         } else if (userDB.id === 6  || userDB.id === 10 ) {
@@ -107,7 +107,7 @@ const sendPDF = async(req, res) => {
 
         }  else if ( userDB.id === 11) {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
-                .fontSize(15).text('SERVICIOS MEDICOS', 77, yscale + 30, { align: 'left' })
+                .fontSize(15).text('SERVICIOS MÉDICOS', 77, yscale + 30, { align: 'left' })
                 .fontSize(17).text('Licenciada en Anestesiología ', 42, yscale + 50, { align: 'left' })
                 .fontSize(15).text('e Inhaloterapia', 100, yscale + 70, { align: 'left' })
                 .fontSize(15).text('J.V.P.M 674', 108, yscale + 92, { align: 'left' });
@@ -154,7 +154,7 @@ const sendPDF = async(req, res) => {
 
         }  else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
-                .fontSize(15).text('SERVICIOS MEDICOS', 70, yscale + 30, { align: 'left' })
+                .fontSize(15).text('SERVICIOS MÉDICOS', 70, yscale + 30, { align: 'left' })
                 /* .fontSize(17).text('Anestesiólogo Internista', 55, yscale + 50, { align: 'left' }) 
                 .fontSize(15).text('J.V.P.M 8059', 100, yscale + 70, { align: 'left' });*/
         }

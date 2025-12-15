@@ -3,6 +3,7 @@ import userAPI from "../services/UserServices";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 const Perfil = () => {
   const [name, setName] = useState('')
   const [nit , setNit] = useState('')
@@ -14,7 +15,18 @@ const Perfil = () => {
   const [nombre_comercial , setNombre_comercial] = useState('')
   const [id_usuario , setId_usuario] = useState(localStorage.getItem('user_id'))
   const [	tipo_de_establecimieto , setTipo_establecimiento] = useState('')
+  const [descActividad, setDescActividad] = useState("");
   const token = localStorage.getItem('token')
+  const navigate = useNavigate();
+
+  // Lista de actividades económicas
+  const actividadesEconomicas = [
+    { code: "45100", desc: "Venta de vehículos automotores" },
+    { code: "86203", desc: "Servicios médicos" },
+    { code: "86201", desc: "Clínicas médicas" },
+    { code: "96091", desc: "clínicas médicas, Spa" },
+    { code: "96092", desc: "Servicios n.c.p." }
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +40,9 @@ const Perfil = () => {
         setNit(result.nit);
         setNrc(result.nrc);
         setActividad_economica(result.codactividad);
+        // Buscar la descripción correspondiente
+        const found = actividadesEconomicas.find(a => a.code === result.codactividad);
+        setDescActividad(found ? found.desc : "");
         setDireccion(result.direccion);
         setNumero_telefono(result.numero_de_telefono);
         setCorreo_electronico(result.correo_electronico);
@@ -48,6 +63,7 @@ const Perfil = () => {
       nit,
       nrc,
       actividad_economica,
+      descactividad: descActividad,
       direccion,
       numero_de_telefono,
       correo_electronico,
@@ -70,6 +86,7 @@ const Perfil = () => {
         nit,
         nrc,
         actividad_economica,
+        descactividad: descActividad,
         direccion,
         numero_de_telefono,
         correo_electronico,
@@ -85,28 +102,23 @@ const Perfil = () => {
     }
   }
 
-
+  // Handler para el cambio en el dropdown
+  const handleActividadChange = (e) => {
+    const desc = e.target.value;
+    setDescActividad(desc);
+    const found = actividadesEconomicas.find(a => a.desc === desc);
+    if (found) setActividad_economica(found.code);
+  };
 
 
 
   return (
-    <form className="m-0 w-full h-screen bg-steelblue-300 overflow-hidden flex flex-col items-end justify-start pt-[42px] px-5 pb-[182px] box-border gap-[25px_0px] tracking-[normal] ">
-      <section className="self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-[25px] box-border gap-[15px] max-w-full ch:w-1/3 ch:self-center">
+    <form className="min-h-screen w-full bg-steelblue-300 flex flex-col items-center justify-start py-8 px-2 sm:px-0">
+      <section className="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-blue-200 flex flex-col items-center justify-start py-8 px-4 sm:px-8 gap-6 transition-all duration-300 hover:shadow-blue-300">
+        <h2 className="text-2xl font-bold text-blue-900 mb-2 tracking-wide">Perfil de Usuario</h2>
         <div className="self-stretch h-[575px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
         <div className="self-stretch flex flex-col items-start justify-start gap-[6px_0px] max-w-full">
-          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
-            <div className="h-[37px] w-[390px] relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
-            <b className="relative text-xs font-inria-sans text-black text-left z-[2]">
-              Datos Personales
-            </b>
-            <div className="flex flex-col items-start justify-start pt-px px-0 pb-0">
-              <img
-                className="w-[18px] h-4 relative object-contain z-[2]"
-                alt=""
-                src="/atras-1@2x.png"
-              />
-            </div>
-          </div>
+
           <div className="self-stretch flex flex-row items-start justify-start pt-0 px-3.5 pb-[9px] box-border max-w-full">
             <div className="flex-1 flex flex-col items-start justify-start gap-[6px_0px] max-w-full">
               <div className="flex flex-row items-start justify-start py-0 px-[3px]">
@@ -171,20 +183,20 @@ const Perfil = () => {
           <div className="flex-1 flex flex-col items-start justify-start gap-[6px_0px] max-w-full">
             <div className="flex flex-row items-start justify-start py-0 px-[3px]">
               <div className="relative text-xs font-inria-sans text-black text-left z-[1]">
-                Actividad Económica
+                Actividad económica
               </div>
             </div>
             <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
-              <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-              <div className="relative text-xs font-inria-sans text-darkslategray w-full text-left z-[2]">
-              <input
-                  className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-                  placeholder="datos personales datos personales"
-                  type="text"
-                  value={actividad_economica}
-                  onChange={(e) => setActividad_economica(e.target.value)}
-                />
-              </div>
+              <select
+                className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                value={descActividad}
+                onChange={handleActividadChange}
+              >
+                <option value="">Selecciona una actividad</option>
+                {actividadesEconomicas.map((a) => (
+                  <option key={a.code} value={a.desc}>{a.desc}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
@@ -287,15 +299,23 @@ const Perfil = () => {
             </div>
           </div>
         </div>
+        <div className="w-full flex flex-col sm:flex-row gap-3 mt-4 mb-4">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="w-full sm:w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow transition-colors"
+          >
+            Guardar Cambios
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/principal")}
+            className="w-full sm:w-1/2 bg-indianred-500 hover:bg-indianred-400 text-white font-semibold py-2 rounded-lg shadow transition-colors"
+          >
+            Cancelar
+          </button>
+        </div>
       </section>
-      <FrameComponent2
-        actionFrameAlignSelf="center"
-        actionFramePadding="unset"
-        actionFrameWidth="382px"
-        updateControlsBackgroundColor="#a85050"
-        rectangleDivBackgroundColor="#a85050"
-        handleSubmit={handleSubmit}
-      />
       <ToastContainer
           position="top-center"
           autoClose={5000}

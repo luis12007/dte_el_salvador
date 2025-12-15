@@ -22,7 +22,10 @@ const DataProductNoAdvanceComponent = ({onRemove, handleSelectChangeItemsClient,
                                     
 
                                 >
-                                    <option value="CF">{`${content.type}`}</option>
+                                        <option value="1">Bienes</option>
+    <option value="2">Servicios</option>
+    <option value="3">Bienes y servicios</option>
+    <option value="4">Otro</option>
                                 </select>
                                 <div className="h-[23px] w-[362px] relative rounded-6xs box-border hidden  max-w-full z-[1] border-[0.3px] border-solid border-gray-100" />
 

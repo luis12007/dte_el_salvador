@@ -26,6 +26,7 @@ const putUserInfo = async(req, res) => {
         name: req.body.name,
         nit: req.body.nit,
         nrc: req.body.nrc,
+        descactividad: req.body.descactividad,
         codactividad: req.body.codactividad,
         direccion: req.body.direccion,
         numero_de_telefono: req.body.numero_de_telefono,
@@ -53,8 +54,6 @@ const putUserInfo = async(req, res) => {
         delete updatedUser.passwordpri; // Assuming 'passwordpri' should not be updated
         delete updatedUser.municipio; // Assuming 'municipio' should not be updated
         delete updatedUser.departamento; // Assuming 'departamento' should not be updated
-        delete updatedUser.codactividad; // Assuming 'codactividad' should not be updated
-        delete updatedUser.descactividad; // Assuming 'descactividad' should not be updated
         delete updatedUser.tipoestablecimiento; // Assuming 'tipoestablecimiento' should not be updated
 
         // Update the user in the database
