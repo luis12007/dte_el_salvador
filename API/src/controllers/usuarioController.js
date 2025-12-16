@@ -22,18 +22,22 @@ const getUserInfo = async(req, res) => {
 const putUserInfo = async(req, res) => {
     const userId = req.params.id; // Assuming userId is passed in the route parameters
 
+    console.log("a ver", req.body);
     const newUserDetails = {
         name: req.body.name,
         nit: req.body.nit,
         nrc: req.body.nrc,
         descactividad: req.body.descactividad,
-        codactividad: req.body.codactividad,
+        codactividad: req.body.actividad_economica,
         direccion: req.body.direccion,
         numero_de_telefono: req.body.numero_de_telefono,
         correo_electronico: req.body.correo_electronico,
         nombre_comercial: req.body.nombre_comercial,
         tipoestablecimiento: req.body.tipoestablecimiento
     };
+
+    console.log('Updating user with ID:', userId);
+    console.log('New user details:', newUserDetails);
 
     try {
         // Fetch existing user data
