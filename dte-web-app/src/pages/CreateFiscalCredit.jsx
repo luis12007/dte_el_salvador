@@ -1401,7 +1401,7 @@ const CrearCreditoFiscal = () => {
   };
 
   const handleIvaReten1Toggle = () => {
-    const ivaReten1Value = Number(subtotal) * 0.01;
+    const ivaReten1Value = ((Number(subtotal) / 1.13) * 0.01);
     
     if (isivareten1percent) {
       // If currently active, deactivate: add back the 1% to total
