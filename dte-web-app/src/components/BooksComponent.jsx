@@ -1133,12 +1133,12 @@ const BooksComponent = () => {
     reader.readAsText(file);
   };
 
-  const createcompras = async () => {
-    if (!jsonData) {
+  const createcompras = async (payload = jsonData) => {
+    if (!payload) {
       toast.error("No JSON data available");
       return;
     }
-    const data = await PlantillaAPI.createcompras(jsonData, token, user_id);
+    const data = await PlantillaAPI.createcompras(payload, token, user_id);
     console.log(data);
     if (data.message === "compra creada") {
       toast.success("Compra agregada con éxito");
@@ -1203,21 +1203,87 @@ const BooksComponent = () => {
       return;
     }
 
-    const transformedData = data.map((item, index) => ({
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    const transformedData = data.map((item, index) => {
+      const fechaDoc =
+        item?.fecha ?? item?.fecha_y_hora_de_generacion ?? item?.identificacion?.fecEmi ?? "";
+
+      // Libro (según tu lista) agrupa importaciones + internaciones
+      const comprasInternasExentas =
+        item?.compras_internas_exentas ??
+        item?.comprasInternasExentas ??
+        item?.totalexenta ??
+        item?.resumen?.totalExenta ??
+        0;
+
+      const importacionesExentasNoSujetas =
+        item?.importaciones_exentas_no_sujetas ?? item?.importacionesExentasNoSujetas ?? 0;
+      const internacionesExentasNoSujetas =
+        item?.internaciones_exentas_no_sujetas ?? item?.internacionesExentasNoSujetas ?? 0;
+      const importInternExentas =
+        num(importacionesExentasNoSujetas) + num(internacionesExentasNoSujetas);
+
+      const comprasInternasGravadas =
+        item?.compras_internas_gravadas ??
+        item?.comprasInternasGravadas ??
+        item?.ventas_internas_gravadas ??
+        item?.ventasInternasGravadas ??
+        item?.total_agravada ??
+        item?.resumen?.totalGravada ??
+        0;
+
+      const internacionesGravadasBienes =
+        item?.internaciones_gravadas_bienes ?? item?.internacionesGravadasBienes ?? 0;
+      const importacionesGravadasBienes =
+        item?.importaciones_gravadas_bienes ?? item?.importacionesGravadasBienes ?? 0;
+      const importacionesGravadasServicio =
+        item?.importaciones_gravadas_servicio ??
+        item?.importacionesGravadasServicio ??
+        item?.importacionesGravadasServicios ??
+        0;
+      const importInternGravadas =
+        num(internacionesGravadasBienes) +
+        num(importacionesGravadasBienes) +
+        num(importacionesGravadasServicio);
+
+      const creditoFiscal =
+        item?.credito_fiscal ??
+        item?.creditoFiscal ??
+        item?.iva_percibido ??
+        item?.resumen?.ivaPerci1 ??
+        item?.resumen?.totalIva ??
+        0;
+
+      const totalCompras =
+        item?.total_compras ??
+        item?.totalCompras ??
+        item?.total_a_pagar ??
+        item?.montototaloperacion ??
+        item?.resumen?.totalPagar ??
+        item?.resumen?.montoTotalOperacion ??
+        0;
+
+      return {
       "N°": index + 1,
-      "FECHA DE EMISIÓN DEL DOCUMENTO": item.fecha_y_hora_de_generacion,
+        "FECHA DE EMISIÓN DEL DOCUMENTO": fechaDoc,
       "NÚMERO DE DOCUMENTO": item.codigo_de_generacion,
-      "NÚMERO DE REGISTRO DEL CONTRIBUYENTE": item.em_nrc,
+        "NÚMERO DE REGISTRO DEL CONTRIBUYENTE":
+          item?.nrc_proveedor ?? item?.nrcProveedor ?? item?.em_nrc ?? "",
       "NOMBRE DEL PROVEEDOR": item.em_name,
-      "COMPRAS EXENTAS INTERNAS": 0,
-      "IMPORTACIONES E INTERNACIONES EXENTAS": 0,
-      "COMPRAS INTERNAS GRAVADAS": item.total_agravada || 0,
-      "IMPORTACIONES E INTERNACIONES GRAVADAS": 0,
-      "CRÉDITO FISCAL": item.iva_percibido,
+      "COMPRAS EXENTAS INTERNAS": num(comprasInternasExentas),
+      "IMPORTACIONES E INTERNACIONES EXENTAS": num(importInternExentas),
+      "COMPRAS INTERNAS GRAVADAS": num(comprasInternasGravadas),
+      "IMPORTACIONES E INTERNACIONES GRAVADAS": num(importInternGravadas),
+      "CRÉDITO FISCAL": num(creditoFiscal),
       "ANTICIPO A CUENTA IVA PERCIBIDO": "",
-      "TOTAL DE COMPRAS": item.montototaloperacion,
+      "TOTAL DE COMPRAS": num(totalCompras),
       "COMPRAS AS SUJETOS EXCLUIDOS": "",
-    }));
+      };
+    });
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Libro de compras");
@@ -1498,31 +1564,89 @@ const BooksComponent = () => {
       return str;
     };
 
-    const transformedData = data.map((item) => ({
+    const num = (v) => {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    const transformedData = data.map((item) => {
+      const nitProveedor = item?.nit_proveedor ?? item?.nitProveedor ?? item?.em_nit ?? "";
+      const nrcProveedor = item?.nrc_proveedor ?? item?.nrcProveedor ?? item?.em_nrc ?? "";
+      const nitOrNrc = String(nitProveedor || "").trim() ? nitProveedor : nrcProveedor;
+
+      const comprasInternasExentas =
+        item?.compras_internas_exentas ??
+        item?.comprasInternasExentas ??
+        item?.totalexenta ??
+        item?.resumen?.totalExenta ??
+        0;
+      const internacionesExentasNoSujetas =
+        item?.internaciones_exentas_no_sujetas ?? item?.internacionesExentasNoSujetas ?? 0;
+      const importacionesExentasNoSujetas =
+        item?.importaciones_exentas_no_sujetas ?? item?.importacionesExentasNoSujetas ?? 0;
+      const comprasInternasGravadas =
+        item?.compras_internas_gravadas ??
+        item?.comprasInternasGravadas ??
+        item?.ventas_internas_gravadas ??
+        item?.ventasInternasGravadas ??
+        item?.total_agravada ??
+        item?.resumen?.totalGravada ??
+        0;
+      const internacionesGravadasBienes =
+        item?.internaciones_gravadas_bienes ?? item?.internacionesGravadasBienes ?? 0;
+      const importacionesGravadasBienes =
+        item?.importaciones_gravadas_bienes ?? item?.importacionesGravadasBienes ?? 0;
+      const importacionesGravadasServicio =
+        item?.importaciones_gravadas_servicio ??
+        item?.importacionesGravadasServicio ??
+        item?.importacionesGravadasServicios ??
+        0;
+      const creditoFiscal =
+        item?.credito_fiscal ??
+        item?.creditoFiscal ??
+        item?.iva_percibido ??
+        item?.resumen?.ivaPerci1 ??
+        item?.resumen?.totalIva ??
+        0;
+      const totalCompras =
+        item?.total_compras ??
+        item?.totalCompras ??
+        item?.total_a_pagar ??
+        item?.montototaloperacion ??
+        item?.resumen?.totalPagar ??
+        item?.resumen?.montoTotalOperacion ??
+        0;
+
+      return {
       "FECHA DE EMISIÓN DEL DOCUMENTO": formatToDMY(
-        item.fecha_y_hora_de_generacion
+        item?.fecha ?? item?.fecha_y_hora_de_generacion
       ),
-      "CLASE DE DOCUMENTO": "4",
+        "CLASE DE DOCUMENTO": item?.clase_documento ?? item?.claseDocumento ?? "4",
       "TIPO DE DOCUMENTO": item.tipo,
       "NÚMERO DE DOCUMENTO": item.codigo_de_generacion,
-      "NIT O NRC DEL PROVEEDOR": item.em_nit || item.em_nit,
+      "NIT O NRC DEL PROVEEDOR": nitOrNrc,
       "NOMBRE DEL PROVEEDOR": item.em_name,
-      "COMPRAS INTERNAS EXENTAS": 0,
-      "INTERNACIONES EXENTAS Y/O NO SUJETAS": 0,
-      "IMPORTACIONES EXENTAS Y/O NO SUJETAS": 0,
-      "COMPRAS INTERNAS GRAVADAS": item.total_agravada || 0,
-      "INTERNACIONES GRAVADAS DE BIENES": 0,
-      "IMPORTACIONES GRAVADAS DE BIENES": 0,
-      "IMPORTACIONES GRAVADAS DE SERVICIOS": 0,
-      "CRÉDITO FISCAL": item.iva_percibido,
-      "TOTAL DE COMPRAS": item.total_a_pagar,
-      "DUI DEL PROVEEDOR": "",
-      "TIPO DE OPERACIÓN (Renta)": "1",
-      "CLASIFICACIÓN (Renta)": "2",
-      "SECTOR (Renta)": "2",
-      "TIPO DE COSTO/GASTO (Renta)": "3",
-      "NÚMERO DEL ANEXO": "3",
-    }));
+      "COMPRAS INTERNAS EXENTAS": num(comprasInternasExentas),
+      "INTERNACIONES EXENTAS Y/O NO SUJETAS": num(internacionesExentasNoSujetas),
+      "IMPORTACIONES EXENTAS Y/O NO SUJETAS": num(importacionesExentasNoSujetas),
+      "COMPRAS INTERNAS GRAVADAS": num(comprasInternasGravadas),
+      "INTERNACIONES GRAVADAS DE BIENES": num(internacionesGravadasBienes),
+      "IMPORTACIONES GRAVADAS DE BIENES": num(importacionesGravadasBienes),
+        "IMPORTACIONES GRAVADAS DE SERVICIOS": num(importacionesGravadasServicio),
+      "CRÉDITO FISCAL": num(creditoFiscal),
+      "TOTAL DE COMPRAS": num(totalCompras),
+        "DUI DEL PROVEEDOR":
+          item?.dui_proveedor ?? "",
+        "TIPO DE OPERACIÓN (Renta)":
+          item?.tipo_operacion_renta ?? item?.tipoOperacionRenta ?? item?.rentaTipoOperacion ?? "1",
+        "CLASIFICACIÓN (Renta)":
+          item?.clasificacion_renta ?? item?.clasificacionRenta ?? item?.rentaClasificacion ?? "2",
+        "SECTOR (Renta)": item?.sector_renta ?? item?.sectorRenta ?? item?.rentaSector ?? "2",
+        "TIPO DE COSTO/GASTO (Renta)":
+          item?.tipo_costo_gasto_renta ?? item?.tipoCostoGastoRenta ?? item?.rentaTipoCostoGasto ?? "3",
+        "NÚMERO DEL ANEXO": item?.numero_anexo ?? item?.numeroAnexo ?? item?.rentaNumeroAnexo ?? "3",
+      };
+    });
 
     // Parser para D/M/YY o D/M/YYYY
     const parseDMY = (s) => {
@@ -3034,12 +3158,7 @@ const BooksComponent = () => {
                   <h3 className="text-xl font-bold text-gray-800 mb-2">
                     Información del JSON
                   </h3>
-                  <button
-                    className="mt-2 mb-2 px-4 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm"
-                    onClick={() => setIsEditJsonModalOpen(true)}
-                  >
-                    Editar JSON
-                  </button>
+                  {/* El llenado/edición ahora se hace desde el botón principal */}
                 </div>
                 
                 <div className="bg-gray-50 rounded-lg p-4 mb-6">
@@ -3156,10 +3275,10 @@ const BooksComponent = () => {
                 </div>
                 
                 <button
-                  onClick={createcompras}
+                  onClick={() => setIsEditJsonModalOpen(true)}
                   className="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
                 >
-                  💾 Guardar Factura
+                  ✍️ Llenar campos restante
                 </button>
                 {/* Modal para editar el JSON */}
                 <ModalEditJson
@@ -3167,6 +3286,11 @@ const BooksComponent = () => {
                   onRequestClose={() => setIsEditJsonModalOpen(false)}
                   jsonData={jsonData}
                   onSave={(newData) => setJsonData(newData)}
+                  primaryLabel="💾 Guardar Factura"
+                  onSaveBill={async (finalJson) => {
+                    await createcompras(finalJson);
+                    setIsEditJsonModalOpen(false);
+                  }}
                 />
               </div>
             )} 

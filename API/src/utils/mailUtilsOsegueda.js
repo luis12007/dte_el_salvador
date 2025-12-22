@@ -1092,7 +1092,20 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
 
 
         /* console.log('plantillaDB', plantillaDB.re_name, plantillaDB.re_direccion); */
-        const truncatedNombreORazonSocialReceptor = truncateText(plantillaDB.re_name, 25);
+        const receptorNombreORazonSocial = (plantillaDB.re_name ?? '').toString();
+        const splitIntoMaxTwoLines = (text, maxChars) => {
+            const safeText = (text ?? '').toString().trim();
+            if (safeText.length <= maxChars) return [safeText];
+
+            const before = safeText.slice(0, maxChars + 1);
+            let breakAt = before.lastIndexOf(' ');
+            if (breakAt < 1) breakAt = maxChars;
+
+            const line1 = safeText.slice(0, breakAt).trim();
+            const line2 = safeText.slice(breakAt).trim();
+            return [line1, line2];
+        };
+        const receptorNombreLines = splitIntoMaxTwoLines(receptorNombreORazonSocial, 23);
         const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 37);
 
         pdfDoc.font('Helvetica-Bold').text('RECEPTOR', infoX + 280, infoY + 8)
@@ -1105,9 +1118,14 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
                 re_numdocumentostring = 'NRC: ';
             }
 
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
-                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_numdocumento}`, infoX + 301, infoY + 40)
+            pdfDoc.fontSize(10).fillColor('#1E3256');
+            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
+            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
+            if (receptorNombreLines[1]) {
+                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
+            }
+
+            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_numdocumento}`, infoX + 301, infoY + 40)
                 .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
                 .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
                 .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
@@ -1122,9 +1140,14 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             const UserAddress = plantillaDB.re_direccion.split("|");
             const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
 
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
-                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
+            pdfDoc.fontSize(10).fillColor('#1E3256');
+            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
+            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
+            if (receptorNombreLines[1]) {
+                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
+            }
+
+            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
                 .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
                 .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
                 .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
@@ -1141,9 +1164,14 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
 
 
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
-                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`: ${plantillaDB.re_numdocumento}`, infoX + 303, infoY + 40)
+            pdfDoc.fontSize(10).fillColor('#1E3256');
+            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
+            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
+            if (receptorNombreLines[1]) {
+                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
+            }
+
+            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`: ${plantillaDB.re_numdocumento}`, infoX + 303, infoY + 40)
                 .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text(' ', infoX + 307, infoY + 55)
                 .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text(' ', infoX + 385, infoY + 70)
                 .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
@@ -1157,9 +1185,14 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             const UserAddress = plantillaDB.re_direccion.split("|");
             const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
 
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
-                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
+            pdfDoc.fontSize(10).fillColor('#1E3256');
+            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
+            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
+            if (receptorNombreLines[1]) {
+                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
+            }
+
+            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
                 .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
                 .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
                 .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
@@ -1175,9 +1208,14 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             const UserAddress = plantillaDB.re_direccion.split("|");
             const truncatedDireccionReceptor = truncateText(UserAddress[2], 37);
 
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocialReceptor, infoX + 392, infoY + 25)
-                .font('Helvetica-Bold').text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
+            pdfDoc.fontSize(10).fillColor('#1E3256');
+            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
+            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
+            if (receptorNombreLines[1]) {
+                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
+            }
+
+            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
                 .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
                 .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
                 .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)

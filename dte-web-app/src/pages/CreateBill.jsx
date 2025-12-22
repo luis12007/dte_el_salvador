@@ -583,7 +583,7 @@ const Clientes = () => {
         data.resumen.montoTotalOperacion = rawSubtotal.toFixed(2);
         data.resumen.totalPagar = (totalpagar - parseFloat(ivaretenido)).toFixed(2);
 
-        data.resumen.totalLetras = convertirDineroALetras(rawSubtotal.toFixed(2));
+        data.resumen.totalLetras = convertirDineroALetras(Number(total).toFixed(2));
         data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
 
         

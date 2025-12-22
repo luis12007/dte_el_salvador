@@ -1,11 +1,56 @@
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 import HamburguerComponent from '../components/HamburguerComponent';
 import SidebarComponent from '../components/SideBarComponent';
 import PlantillaAPI from '../services/PlantillaService';
 import BillsxItemsAPI from '../services/BIllxitemsService';
 import UserService from '../services/UserServices';
 import JSZip from 'jszip';
+import "react-toastify/dist/ReactToastify.css";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+
+const sanitizeFilenamePart = (value) => {
+  const raw = String(value ?? '').trim();
+  if (!raw) return 'SIN_NOMBRE';
+  // Evita caracteres inválidos en Windows y separadores de ruta.
+  const sanitized = raw
+    .replace(/[\\/]/g, '-')
+    .replace(/[<>:"|?*\u0000-\u001F]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return sanitized || 'SIN_NOMBRE';
+};
+
+const normalizeTributos = (tributosRaw, contextForLogs) => {
+  if (tributosRaw === null || tributosRaw === undefined) return null;
+
+  // Caso string: puede venir "" o "A|B|C"
+  if (typeof tributosRaw === 'string') {
+    const trimmed = tributosRaw.trim();
+    if (!trimmed) return null;
+    const parts = trimmed
+      .split('|')
+      .map((p) => String(p).trim())
+      .filter(Boolean);
+    return parts.length > 0 ? parts : null;
+  }
+
+  // Caso array: ya viene parseado
+  if (Array.isArray(tributosRaw)) {
+    const parts = tributosRaw
+      .map((p) => String(p ?? '').trim())
+      .filter(Boolean);
+    return parts.length > 0 ? parts : null;
+  }
+
+  // Otros tipos: log para diagnóstico y no romper
+  console.warn('[DownloadDTEs] tributos en formato inesperado; se omite', {
+    ...contextForLogs,
+    typeof: typeof tributosRaw,
+    value: tributosRaw,
+  });
+  return null;
+};
 
 const DownloadDTEs = () => {
   const [tipoDte, setTipoDte] = useState('');
@@ -13,6 +58,15 @@ const DownloadDTEs = () => {
   const [fechaFin, setFechaFin] = useState('');
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalKind, setModalKind] = useState(''); // '', 'progress', 'not-found', 'error'
+  const [keepModalOpen, setKeepModalOpen] = useState(false);
+  const [isModalFadingOut, setIsModalFadingOut] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState({
+    title: '',
+    detail: '',
+    current: 0,
+    total: 0,
+  });
   const [visible, setVisible] = useState(false);
   const token = localStorage.getItem("token");
   const id_emisor = localStorage.getItem("user_id");
@@ -50,75 +104,211 @@ const DownloadDTEs = () => {
 
     setIsDownloading(true);
     setIsLoading(true);
+    setKeepModalOpen(false);
+    setIsModalFadingOut(false);
+    setModalKind('progress');
+    setLoadingStatus({
+      title: 'Buscando DTEs...',
+      detail: `Consultando del ${fechaInicio} al ${fechaFin}`,
+      current: 0,
+      total: 0,
+    });
 
     try {
+      console.log('[DownloadDTEs] Inicio descarga', {
+        id_emisor,
+        tipoDte,
+        fechaInicio,
+        fechaFin,
+      });
+
       // Obtener información del usuario
+      setLoadingStatus({
+        title: 'Buscando DTEs...',
+        detail: 'Cargando información del emisor...',
+        current: 0,
+        total: 0,
+      });
       const user = await UserService.getUserInfo(id_emisor, token);
+      console.log('[DownloadDTEs] Usuario cargado', {
+        id_emisor,
+        nit: user?.nit,
+        nrc: user?.nrc,
+        name: user?.name,
+      });
       
       // Obtener DTEs por tipo y rango de fechas
+      setLoadingStatus({
+        title: 'Buscando DTEs...',
+        detail: 'Consultando documentos en el período seleccionado...',
+        current: 0,
+        total: 0,
+      });
       const dtes = await PlantillaAPI.getByUserIdAndRange(id_emisor, token, fechaInicio, fechaFin);
+      console.log('[DownloadDTEs] DTEs obtenidos', {
+        total: Array.isArray(dtes) ? dtes.length : null,
+      });
       
       if (!dtes || dtes.length === 0) {
-        toast.info('No se encontraron DTEs para el período seleccionado');
+        toast.warn('No se encontró ningún DTE para el período seleccionado');
+        setModalKind('not-found');
+        setKeepModalOpen(true);
+        setLoadingStatus({
+          title: 'Sin resultados',
+          detail: 'No se encontraron DTEs para el período seleccionado.',
+          current: 0,
+          total: 0,
+        });
         setIsDownloading(false);
-        setIsLoading(false);
         return;
       }
 
-      // Filtrar por tipo de DTE y solo los que tienen sello de recepción
-      const filteredDtes = dtes.filter(dte => 
-        dte.tipo === tipoDte && 
-        dte.sellado === true && 
-        dte.sellorecibido !== null && 
-        dte.sellorecibido !== undefined
-      );
+      // Filtrar SOLO por tipo de DTE (sin importar si están sellados o no)
+      setLoadingStatus({
+        title: 'Buscando DTEs...',
+        detail: 'Filtrando por tipo de documento...',
+        current: 0,
+        total: 0,
+      });
+      const filteredDtes = dtes.filter(dte => dte?.tipo === tipoDte);
+
+      console.log('[DownloadDTEs] DTEs filtrados (sellados + tipo)', {
+        tipoDte,
+        totalFiltrados: filteredDtes.length,
+      });
       
       if (filteredDtes.length === 0) {
-        toast.info(`No se encontraron DTEs sellados de tipo ${tipoDte} para el período seleccionado`);
+        toast.warn(`No se encontró ningún DTE de tipo ${tipoDte} para el período seleccionado`);
+        setModalKind('not-found');
+        setKeepModalOpen(true);
+        setLoadingStatus({
+          title: 'Sin resultados',
+          detail: `No se encontraron DTEs de tipo ${tipoDte} en el período seleccionado.`,
+          current: 0,
+          total: 0,
+        });
         setIsDownloading(false);
-        setIsLoading(false);
         return;
       }
 
       toast.info(`Descargando ${filteredDtes.length} DTEs...`);
+      setLoadingStatus({
+        title: `Encontrados ${filteredDtes.length} DTE(s)`,
+        detail: 'Iniciando descarga de PDFs y generación de JSONs...',
+        current: 0,
+        total: filteredDtes.length,
+      });
 
       // Crear archivo ZIP para PDFs y JSONs
       const zipPDF = new JSZip();
       const zipJSON = new JSZip();
 
       // Procesar cada DTE
+      let processedCount = 0;
+      let pdfOkCount = 0;
+      let pdfFailCount = 0;
+      let jsonOkCount = 0;
+      let jsonFailCount = 0;
       for (const dte of filteredDtes) {
         try {
+          processedCount += 1;
+          setLoadingStatus({
+            title: 'Descargando...',
+            detail: `Procesando ${processedCount} de ${filteredDtes.length}`,
+            current: processedCount,
+            total: filteredDtes.length,
+          });
+          console.log('[DownloadDTEs] Procesando DTE', {
+            idx: processedCount,
+            total: filteredDtes.length,
+            codigoGeneracion: dte?.codigo_de_generacion,
+            tipo: dte?.tipo,
+            receptor: dte?.re_name,
+          });
+
           // Obtener items del DTE
           const items = await BillsxItemsAPI.getlist(token, dte.codigo_de_generacion);
+          console.log('[DownloadDTEs] Items obtenidos', {
+            codigoGeneracion: dte?.codigo_de_generacion,
+            items: Array.isArray(items) ? items.length : null,
+          });
           
           // Construir el objeto JSON en formato para firmar
           const dteJson = await buildDTEJson(dte, user, items);
+          jsonOkCount += 1;
           
           // Agregar JSON al ZIP
           const jsonFileName = `${dte.codigo_de_generacion}.json`;
           zipJSON.file(jsonFileName, JSON.stringify(dteJson, null, 2));
 
           // Descargar PDF
-          const pdfBlob = await downloadPDFAsBlob(dte.codigo_de_generacion, user, dte);
+          const pdfBlob = await downloadPDFAsBlob(dte.codigo_de_generacion);
           if (pdfBlob) {
-            const pdfFileName = `${dte.re_name}_${dte.codigo_de_generacion}.pdf`;
+            pdfOkCount += 1;
+            const receptorSafe = sanitizeFilenamePart(dte.re_name);
+            const pdfFileName = `${receptorSafe}_${dte.codigo_de_generacion}.pdf`;
             zipPDF.file(pdfFileName, pdfBlob);
+            console.log('[DownloadDTEs] PDF agregado al ZIP', {
+              codigoGeneracion: dte?.codigo_de_generacion,
+              filename: pdfFileName,
+              sizeBytes: pdfBlob.size,
+            });
+          } else {
+            pdfFailCount += 1;
+            console.warn('[DownloadDTEs] PDF no disponible (null)', {
+              codigoGeneracion: dte?.codigo_de_generacion,
+            });
           }
         } catch (error) {
+          jsonFailCount += 1;
           console.error(`Error procesando DTE ${dte.codigo_de_generacion}:`, error);
         }
       }
 
-      // Generar y descargar ZIP de PDFs
-      const pdfZipBlob = await zipPDF.generateAsync({ type: 'blob' });
-      downloadZipFile(pdfZipBlob, `DTEs_PDFs_${tipoDte}_${fechaInicio}_${fechaFin}.zip`);
+      console.log('[DownloadDTEs] Resumen procesamiento', {
+        totalFiltrados: filteredDtes.length,
+        processedCount,
+        pdfOkCount,
+        pdfFailCount,
+        jsonOkCount,
+        jsonFailCount,
+      });
+
+      setLoadingStatus({
+        title: 'Generando archivos...',
+        detail: 'Empaquetando PDFs y JSONs en ZIP...',
+        current: filteredDtes.length,
+        total: filteredDtes.length,
+      });
+
+      // Generar y descargar ZIP de PDFs (si hay al menos 1 PDF)
+      const pdfFilesCount = Object.keys(zipPDF.files || {}).length;
+      if (pdfFilesCount > 0) {
+        const pdfZipBlob = await zipPDF.generateAsync({ type: 'blob' });
+        downloadZipFile(pdfZipBlob, `DTEs_PDFs_${tipoDte}_${fechaInicio}_${fechaFin}.zip`);
+      } else {
+        console.warn('[DownloadDTEs] ZIP de PDFs vacío; se omite descarga');
+        toast.info('No se pudo generar el ZIP de PDFs (no hubo PDFs disponibles)');
+      }
 
       // Generar y descargar ZIP de JSONs
-      const jsonZipBlob = await zipJSON.generateAsync({ type: 'blob' });
-      downloadZipFile(jsonZipBlob, `DTEs_JSONs_${tipoDte}_${fechaInicio}_${fechaFin}.zip`);
+      const jsonFilesCount = Object.keys(zipJSON.files || {}).length;
+      if (jsonFilesCount > 0) {
+        const jsonZipBlob = await zipJSON.generateAsync({ type: 'blob' });
+        downloadZipFile(jsonZipBlob, `DTEs_JSONs_${tipoDte}_${fechaInicio}_${fechaFin}.zip`);
+      } else {
+        console.warn('[DownloadDTEs] ZIP de JSONs vacío; se omite descarga');
+        toast.info('No se pudo generar el ZIP de JSONs (no hubo JSONs disponibles)');
+      }
 
       toast.success(`Se descargaron ${filteredDtes.length} DTEs exitosamente`);
+      setModalKind('progress');
+      setLoadingStatus({
+        title: 'Listo',
+        detail: 'Descarga iniciada. Puedes revisar tus descargas.',
+        current: filteredDtes.length,
+        total: filteredDtes.length,
+      });
       
       // Resetear formulario
       setTipoDte('');
@@ -127,16 +317,52 @@ const DownloadDTEs = () => {
     } catch (error) {
       console.error('Error al descargar DTEs:', error);
       toast.error('Error al descargar los DTEs');
+      setModalKind('error');
+      setLoadingStatus({
+        title: 'Error',
+        detail: 'Ocurrió un error descargando los DTEs. Revisa la consola para más detalle.',
+        current: 0,
+        total: 0,
+      });
     } finally {
       setIsDownloading(false);
-      setIsLoading(false);
+      if (!keepModalOpen) {
+        setIsLoading(false);
+      }
     }
   };
 
+  // Mantener el modal de "Sin resultados" 5s, con shake y luego fade-out.
+  useEffect(() => {
+    if (!isLoading || modalKind !== 'not-found') return;
+
+    setIsModalFadingOut(false);
+    const fadeTimer = setTimeout(() => {
+      setIsModalFadingOut(true);
+    }, 4300);
+
+    const closeTimer = setTimeout(() => {
+      setIsLoading(false);
+      setKeepModalOpen(false);
+      setIsModalFadingOut(false);
+      setModalKind('');
+    }, 5000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(closeTimer);
+    };
+  }, [isLoading, modalKind]);
+
   // Función para descargar PDF como Blob
-  const downloadPDFAsBlob = async (codigoGeneracion, user, dte) => {
-    const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+  const downloadPDFAsBlob = async (codigoGeneracion) => {
     try {
+      const url = `${BASE_URL}/mail/bill/${id_emisor}`;
+      console.log('[DownloadDTEs] Solicitando PDF', {
+        url,
+        codigoGeneracion,
+      });
+
       const response = await fetch(`${BASE_URL}/mail/bill/${id_emisor}`, {
         method: 'POST',
         headers: {
@@ -147,10 +373,50 @@ const DownloadDTEs = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Error al descargar PDF');
+        let errorBody = '';
+        try {
+          errorBody = await response.text();
+        } catch (e) {
+          // ignorar
+        }
+        console.error('[DownloadDTEs] Respuesta no OK al descargar PDF', {
+          codigoGeneracion,
+          status: response.status,
+          statusText: response.statusText,
+          contentType: response.headers.get('content-type'),
+          bodyPreview: errorBody?.slice?.(0, 500),
+        });
+        throw new Error(`Error al descargar PDF (HTTP ${response.status})`);
       }
 
-      return await response.blob();
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType && !contentType.toLowerCase().includes('pdf') && !contentType.toLowerCase().includes('octet-stream')) {
+        // Muchas APIs devuelven JSON en error aunque sea 200; registramos para diagnóstico.
+        let bodyPreview = '';
+        try {
+          bodyPreview = (await response.clone().text())?.slice?.(0, 500) || '';
+        } catch (e) {
+          // ignorar
+        }
+        console.warn('[DownloadDTEs] Content-Type inesperado para PDF', {
+          codigoGeneracion,
+          contentType,
+          bodyPreview,
+        });
+      }
+
+      const blob = await response.blob();
+      console.log('[DownloadDTEs] PDF recibido', {
+        codigoGeneracion,
+        contentType,
+        sizeBytes: blob.size,
+      });
+
+      if (!blob || blob.size === 0) {
+        console.warn('[DownloadDTEs] PDF vacío (0 bytes)', { codigoGeneracion });
+      }
+
+      return blob;
     } catch (error) {
       console.error(`Error descargando PDF para ${codigoGeneracion}:`, error);
       return null;
@@ -159,6 +425,12 @@ const DownloadDTEs = () => {
 
   // Función para descargar archivo ZIP
   const downloadZipFile = (blob, filename) => {
+    try {
+      console.log('[DownloadDTEs] Generando descarga ZIP', {
+        filename,
+        sizeBytes: blob?.size,
+      });
+
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.href = url;
@@ -167,6 +439,10 @@ const DownloadDTEs = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('[DownloadDTEs] Error iniciando descarga ZIP', { filename, error });
+      toast.error('No se pudo iniciar la descarga del ZIP');
+    }
   };
 
   // Función para construir el JSON del DTE en formato para firmar
@@ -177,7 +453,11 @@ const DownloadDTEs = () => {
     if (content.tipo === "03") {
       // Crédito Fiscal
       processedItems = items.map(item => {
-        const tributos = item.tributos ? item.tributos.split('|') : [];
+        const tributos = normalizeTributos(item.tributos, {
+          tipoDte: content?.tipo,
+          codigoGeneracion: content?.codigo_de_generacion,
+          numItem: item?.numitem,
+        });
         return {
           numItem: parseInt(item.numitem),
           tipoItem: parseInt(item.tipoitem),
@@ -192,7 +472,7 @@ const DownloadDTEs = () => {
           ventaNoSuj: parseFloat(item.ventanosuj),
           ventaExenta: parseFloat(item.ventaexenta),
           ventaGravada: parseFloat(item.ventagravada),
-          tributos: tributos.length > 0 ? tributos : null,
+          tributos,
           psv: parseFloat(item.psv),
           noGravado: parseFloat(item.nogravado),
           ivaItem: parseFloat(item.ivaitem)
@@ -214,7 +494,11 @@ const DownloadDTEs = () => {
         ventaNoSuj: parseFloat(item.ventanosuj),
         ventaExenta: parseFloat(item.ventaexenta),
         ventaGravada: parseFloat(item.ventagravada),
-        tributos: item.tributos,
+        tributos: normalizeTributos(item.tributos, {
+          tipoDte: content?.tipo,
+          codigoGeneracion: content?.codigo_de_generacion,
+          numItem: item?.numitem,
+        }),
         psv: parseFloat(item.psv),
         noGravado: parseFloat(item.nogravado)
       }));
@@ -322,6 +606,7 @@ const DownloadDTEs = () => {
 
   return (
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col items-center justify-start relative animate-fadeIn">
+      <ToastContainer />
       {/* Hamburguer y Sidebar */}
       <div className="absolute top-0 left-0 z-20 animate-slideInLeft">
         <HamburguerComponent sidebar={sidebar} open={visible} />
@@ -467,10 +752,23 @@ const DownloadDTEs = () => {
       {/* Modal de carga */}
       {isLoading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-xl p-8 shadow-2xl flex flex-col items-center gap-4">
-            <div className="h-16 w-16 border-4 border-steelblue-300 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-lg font-semibold text-black">Descargando DTEs...</p>
-            <p className="text-sm text-gray-600">Por favor espere</p>
+          <div
+            className={
+              `bg-white rounded-xl p-8 shadow-2xl flex flex-col items-center gap-4 ` +
+              `transition-opacity duration-700 ${isModalFadingOut ? 'opacity-0' : 'opacity-100'} ` +
+              `${modalKind === 'not-found' ? 'border-2 border-yellow-400 animate-shake' : ''}`
+            }
+          >
+            {modalKind !== 'not-found' && (
+              <div className="h-16 w-16 border-4 border-steelblue-300 border-t-transparent rounded-full animate-spin"></div>
+            )}
+            <p className="text-lg font-semibold text-black">{loadingStatus.title || 'Procesando...'}</p>
+            <p className="text-sm text-gray-600">{loadingStatus.detail || 'Por favor espere'}</p>
+            {loadingStatus.total > 0 && (
+              <p className="text-sm text-gray-600">
+                {loadingStatus.current} / {loadingStatus.total}
+              </p>
+            )}
           </div>
         </div>
       )}

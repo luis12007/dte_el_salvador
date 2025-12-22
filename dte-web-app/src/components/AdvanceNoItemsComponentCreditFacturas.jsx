@@ -1,4 +1,5 @@
 import DataProductNoAdvanceComponent from "./DataProuctNoAdvanceComponent";
+import DataProductNoAdvanceComponentCreate from "./DataProuctNoAdvanceComponentCreate";
 import DataProductNoAdvanceComponentNew from "./DataProuctNoAdvanceComponentNew";
 import { useState } from "react";
 const AdvanceNoItemsComponentCreditFacturas = ({
@@ -49,7 +50,7 @@ const AdvanceNoItemsComponentCreditFacturas = ({
         </div> */}
 
         {items.map((content, index) => (
-          <DataProductNoAdvanceComponent
+          <DataProductNoAdvanceComponentCreate
             key={index}
             content={content}
             onRemove={(event) => itemshandleRemoves(event, index)}

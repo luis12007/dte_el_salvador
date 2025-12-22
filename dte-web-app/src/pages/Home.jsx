@@ -61,25 +61,25 @@ const Home = () => {
                 </div>
                 
                 {/* Fila con usuario y ambiente */}
-                <div className="w-full flex justify-between items-center gap-4 py-1">
+                <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-4 py-1">
                   {/* Usuario a la izquierda */}
                   {username && (
-                    <div className="flex-1 text-left">
+                    <div className="flex-1 min-w-0 text-left w-full">
                       <p className="text-xs text-gray-500">Usuario</p>
-                      <h2 className="text-base font-bold text-black">
+                      <h2 className="text-sm sm:text-base font-bold text-black leading-tight break-all sm:truncate">
                         {username.toUpperCase()}
                       </h2>
                     </div>
                   )}
                   
                   {/* División vertical mínima */}
-                  <div className="w-px h-8 bg-gray-200"></div>
+                  <div className="hidden sm:block w-px h-8 bg-gray-200"></div>
                   
                   {/* Ambiente a la derecha */}
                   {ambiente && (
-                    <div className="flex-1 text-right">
+                    <div className="flex-1 min-w-0 text-left sm:text-right w-full">
                       <p className="text-xs text-gray-500">Ambiente</p>
-                      <h2 className="text-base font-bold text-black">
+                      <h2 className="text-sm sm:text-base font-bold text-black leading-tight truncate">
                         {getAmbienteText(ambiente)}
                       </h2>
                     </div>
