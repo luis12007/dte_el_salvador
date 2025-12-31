@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import checkimg from "../assets/imgs/marca-de-verificacion.png";
 import Firmservice from "../services/Firm";
 import PlantillaAPI from "../services/PlantillaService";
@@ -30,6 +30,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const [mailchecker, setMailChecker] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [formattedTotal, setFormattedTotal] = useState("");
+  const deleteInFlightRef = useRef(false);
 
 
   useEffect(() => {
@@ -2810,6 +2811,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   /* Delete bill handler using the services */
 
   const DeleteBillHandler = async () => {
+    if (deleteInFlightRef.current) return;
+    deleteInFlightRef.current = true;
     console.log("DeleteBillHandler");
     try {
       const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
@@ -2837,6 +2840,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     } catch (err) {
       console.error(err);
       toast.error("Error inesperado al eliminar");
+    } finally {
+      deleteInFlightRef.current = false;
     }
   };
 
@@ -2855,13 +2860,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     }, 1000);
   };
 
-  const handelrisActivecross = () => {
+  const handelrisActivecross = async () => {
+    if (!canDelete) return;
+    if (deleteInFlightRef.current) return;
     setIsActivecross(true);
-    DeleteBillHandler();
-    setTimeout(() => {
+    try {
+      await DeleteBillHandler();
+    } finally {
       setIsActivecross(false);
-    }, 1000);
-  }
+    }
+  };
 
   return (
   <div className="w-full max-w-full mx-0 bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-3 sm:px-5 py-4 sm:py-5 my-6 text-black font-inria-sans overflow-hidden break-words box-border">
@@ -2904,9 +2912,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             />
           </button>
           <button
-            className={`h-8 w-8 flex items-center justify-center rounded-md ${!canDelete ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gainsboro-200'} transition`}
-            onClick={canDelete ? handelrisActivecross : (e) => e.preventDefault()}
-            disabled={!canDelete}
+            className={`h-8 w-8 flex items-center justify-center rounded-md ${(!canDelete || isActivecross) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gainsboro-200'} transition`}
+            onClick={canDelete && !isActivecross ? handelrisActivecross : (e) => e.preventDefault()}
+            disabled={!canDelete || isActivecross}
             title={canDelete ? 'Eliminar factura' : 'Sólo la última factura no sellada se puede eliminar'}
           >
             <img
