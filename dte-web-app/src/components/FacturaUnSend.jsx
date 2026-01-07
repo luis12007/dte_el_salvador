@@ -31,6 +31,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formattedTotal, setFormattedTotal] = useState("");
   const deleteInFlightRef = useRef(false);
+  const autoFixMunicipioFormatoAttemptedRef = useRef(false);
 
 
   useEffect(() => {
@@ -1497,6 +1498,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
                     if (address[0].length == 1) {
             address[0] = "0" + address[0];
           }
+          if (address[1]?.length == 1) {
+            address[1] = "0" + address[1];
+          }
           data.receptor.direccion = {
             municipio: address[1],
             departamento: address[0],
@@ -1525,6 +1529,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           /*  */
           if (address[0].length == 1) {
             address[0] = "0" + address[0];
+          }
+          if (address[1]?.length == 1) {
+            address[1] = "0" + address[1];
           }
           data.receptor.direccion = {
             municipio: address[1],
@@ -1892,8 +1899,457 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
   }
 
+  const MUNICIPIO_FORMAT_ERROR = "Campo #/receptor/direccion/municipio no cumple el formato requerido";
+  const DEPARTAMENTO_FORMAT_ERROR = "Campo #/receptor/direccion/departamento no cumple el formato requerido";
+
+  const DEFAULT_RECEPTOR_DEPARTAMENTO = "06";
+  const DEFAULT_RECEPTOR_MUNICIPIO = "23";
+
+  const isDireccionFormatoRechazoCase = (senddata) => {
+    const normalize = (value) =>
+      String(value ?? "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, " ");
+
+    if (!senddata) return false;
+
+    const estado = normalize(senddata.estado);
+    if (estado !== "rechazado") return false;
+
+    const expectedMunicipio = normalize(MUNICIPIO_FORMAT_ERROR);
+    const expectedDepartamento = normalize(DEPARTAMENTO_FORMAT_ERROR);
+
+    const observaciones = Array.isArray(senddata.observaciones) ? senddata.observaciones : [];
+    const obsHit = observaciones.some((o) => {
+      const n = normalize(o);
+      return n === expectedMunicipio || n.includes(expectedMunicipio) || n === expectedDepartamento || n.includes(expectedDepartamento);
+    });
+
+    if (obsHit) return true;
+
+    const desc = normalize(senddata.descripcionMsg);
+    return (
+      desc.includes(expectedMunicipio) ||
+      desc.includes(expectedDepartamento)
+    );
+  };
+
+  const applyDefaultDireccionToContentForFallback = () => {
+    const fixedComplemento = getReceptorComplemento();
+
+    if (content?.tipo === "01") {
+      // Para FACTURA (01) la dirección del receptor viene en re_direccion ("DD|MM|complemento")
+      content.re_direccion = `${DEFAULT_RECEPTOR_DEPARTAMENTO}|${DEFAULT_RECEPTOR_MUNICIPIO}|${fixedComplemento}`;
+      // También dejamos consistencia si existen campos sueltos
+      content.departamento = DEFAULT_RECEPTOR_DEPARTAMENTO;
+      content.municipio = DEFAULT_RECEPTOR_MUNICIPIO;
+      content.complemento = fixedComplemento;
+      return;
+    }
+
+    if (content?.tipo === "03") {
+      // Para CCF (03) se usan campos separados
+      content.departamento = DEFAULT_RECEPTOR_DEPARTAMENTO;
+      content.municipio = DEFAULT_RECEPTOR_MUNICIPIO;
+      content.complemento = fixedComplemento;
+      return;
+    }
+  };
+
+  const handleDireccionFormatoFallback = async () => {
+    if (content.tipo !== "01" && content.tipo !== "03") return false;
+    if (autoFixMunicipioFormatoAttemptedRef.current) return false;
+
+    autoFixMunicipioFormatoAttemptedRef.current = true;
+
+    try {
+      applyDefaultDireccionToContentForFallback();
+      await ValidateBillHandler();
+
+      toast.info(
+        `Se cambió la dirección del receptor a default (depto ${DEFAULT_RECEPTOR_DEPARTAMENTO}, mun ${DEFAULT_RECEPTOR_MUNICIPIO}). Se recargará y debe intentar de nuevo.`
+      );
+
+      setTimeout(() => window.location.reload(), 4000);
+      return true;
+    } catch (e) {
+      console.log(e);
+      toast.error("No se pudo aplicar fallback de dirección");
+      autoFixMunicipioFormatoAttemptedRef.current = false;
+      return false;
+    }
+  };
+
+  const getReceptorComplemento = () => {
+    if (typeof content?.complemento === "string" && content.complemento.trim() !== "") {
+      return content.complemento;
+    }
+
+    if (typeof content?.re_direccion === "string" && content.re_direccion.includes("|")) {
+      const parts = content.re_direccion.split("|");
+      if (parts.length >= 3 && parts[2]) return parts[2];
+    }
+
+    return "";
+  };
+
+  const callFirmServiceByEmisor = async (Firm) => {
+    if (id_emisor == 1 || id_emisor == 2) return await Firmservice.create(Firm);
+    if (id_emisor == 3) return await Firmservice.create_prod(Firm);
+    if (id_emisor == 4) return await Firmservice.HM_Clinic(Firm);
+    if (id_emisor == 9) return await Firmservice.HM_Clinic_prod(Firm);
+    if (id_emisor == 5) return await Firmservice.DR_julio_HM(Firm);
+    if (id_emisor == 8) return await Firmservice.DR_julio_HM_prod(Firm);
+    if (id_emisor == 6) return await Firmservice.DR_VIDES(Firm);
+    if (id_emisor == 10) return await Firmservice.DR_VIDES_prod(Firm);
+    if (id_emisor == 11) return await Firmservice.SANDR_prod(Firm);
+    if (id_emisor == 7) return await Firmservice.OSEGUEDA(Firm);
+    if (id_emisor == 12) return await Firmservice.OSEGUEDA_prod(Firm);
+    if (id_emisor == 14) return await Firmservice.ICP(Firm);
+    if (id_emisor == 13) return await Firmservice.ICP_PROD(Firm);
+    if (id_emisor == 15) return await Firmservice.RINO_test(Firm);
+    if (id_emisor == 16) return await Firmservice.GINE_test(Firm);
+    if (id_emisor == 17) return await Firmservice.GINE_prod(Firm);
+    if (id_emisor == 18) return await Firmservice.RINO_prod(Firm);
+    if (id_emisor == 19) return await Firmservice.Jorge_test(Firm);
+    if (id_emisor == 20) return await Firmservice.Jorge_prod(Firm);
+    if (id_emisor == 21) return await Firmservice.Koala_test(Firm);
+    if (id_emisor == 22) return await Firmservice.Koala_prod(Firm);
+    if (id_emisor == 23) return await Firmservice.default_test(Firm);
+    if (id_emisor == 24) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 25) return await Firmservice.default_test(Firm);
+    if (id_emisor == 26) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 27) return await Firmservice.default_test(Firm);
+    if (id_emisor == 28) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 29) return await Firmservice.default_test(Firm);
+    if (id_emisor == 30) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 31) return await Firmservice.default_test(Firm);
+    if (id_emisor == 32) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 33) return await Firmservice.default_test(Firm);
+    if (id_emisor == 34) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 35) return await Firmservice.default_test(Firm);
+    if (id_emisor == 36) return await Firmservice.default_prod(Firm);
+
+    toast.error("No se encontró firmador registrado");
+    return null;
+  };
+
+  const handleRechazadoMunicipioFormato = async (resultAuthminis) => {
+    if (content.tipo !== "01" && content.tipo !== "03") return false;
+    if (autoFixMunicipioFormatoAttemptedRef.current) return false;
+
+    autoFixMunicipioFormatoAttemptedRef.current = true;
+
+    try {
+      toast.info("Rechazado por municipio: re-firmando...");
+
+      const fixedDepartamento = "06";
+      const fixedMunicipio = "23";
+      const fixedComplemento = getReceptorComplemento();
+
+      let data = null;
+
+      if (content.tipo === "01") {
+        data = {
+          identificacion: {
+            version: parseInt(content.version),
+            ambiente: content.ambiente,
+            tipoDte: content.tipo,
+            numeroControl: content.numero_de_control,
+            codigoGeneracion: content.codigo_de_generacion,
+            tipoModelo: parseInt(content.modelo_de_factura),
+            tipoOperacion: parseInt(content.tipo_de_transmision),
+            fecEmi: content.fecha_y_hora_de_generacion,
+            horEmi: content.horemi,
+            tipoMoneda: content.tipomoneda,
+            tipoContingencia: content.tipocontingencia,
+            motivoContin: content.motivocontin,
+          },
+          documentoRelacionado: content.documentorelacionado,
+          emisor: {
+            direccion: {
+              municipio: user.municipio,
+              departamento: user.departamento,
+              complemento: user.direccion,
+            },
+            nit: user.nit,
+            nrc: user.nrc,
+            nombre: user.name,
+            codActividad: user.codactividad,
+            descActividad: user.descactividad,
+            telefono: user.numero_de_telefono,
+            correo: user.correo_electronico,
+            nombreComercial: user.nombre_comercial,
+            tipoEstablecimiento: user.tipoestablecimiento,
+            codEstableMH: content.codestablemh,
+            codEstable: content.codestable,
+            codPuntoVentaMH: content.codpuntoventamh,
+            codPuntoVenta: content.codpuntoventa,
+          },
+          receptor: {
+            codActividad: content.re_codactividad,
+            direccion: {
+              departamento: fixedDepartamento,
+              municipio: fixedMunicipio,
+              complemento: fixedComplemento,
+            },
+            nrc: content.re_nrc,
+            descActividad: content.re_actividad_economica,
+            correo: content.re_correo_electronico,
+            tipoDocumento: content.re_tipodocumento,
+            nombre: content.re_name,
+            telefono: content.re_numero_telefono,
+            numDocumento: content.re_numdocumento,
+          },
+          otrosDocumentos: content.otrosdocumentos,
+          ventaTercero: content.ventatercero,
+          cuerpoDocumento: Listitems,
+          resumen: {
+            condicionOperacion: content.condicionoperacion,
+            totalIva: parseFloat(content.iva_percibido),
+            saldoFavor: content.saldofavor,
+            numPagoElectronico: content.numpagoelectronico,
+            pagos: [
+              {
+                periodo: content.periodo,
+                plazo: content.plazo,
+                montoPago: content.montopago,
+                codigo: content.codigo,
+                referencia: content.referencia,
+              },
+            ],
+            totalNoSuj: content.totalnosuj,
+            tributos: content.tributos,
+            totalLetras: content.cantidad_en_letras,
+            totalExenta: content.totalexenta,
+            subTotalVentas: content.subtotalventas,
+            totalGravada: parseFloat(content.total_agravada),
+            montoTotalOperacion: content.montototaloperacion,
+            descuNoSuj: content.descunosuj,
+            descuExenta: content.descuexenta,
+            descuGravada: content.descugravada,
+            porcentajeDescuento: content.porcentajedescuento,
+            totalDescu: parseFloat(content.monto_global_de_descuento),
+            subTotal: parseFloat(content.subtotal),
+            ivaRete1: parseFloat(content.iva_retenido),
+            reteRenta: parseFloat(content.retencion_de_renta),
+            totalNoGravado: content.totalnogravado,
+            totalPagar: parseFloat(content.total_a_pagar),
+          },
+          extension: {
+            docuEntrega: content.documento_e,
+            nombRecibe: content.documento_r,
+            observaciones: content.observaciones,
+            placaVehiculo: content.placavehiculo,
+            nombEntrega: content.responsable_emisor,
+            docuRecibe: content.documento_receptor,
+          },
+          apendice: content.apendice,
+        };
+      }
+
+      if (content.tipo === "03") {
+        const tributocf = content.tributocf.split("|");
+
+        data = {
+          identificacion: {
+            version: parseInt(content.version),
+            ambiente: content.ambiente,
+            tipoDte: content.tipo,
+            numeroControl: content.numero_de_control,
+            codigoGeneracion: content.codigo_de_generacion,
+            tipoModelo: parseInt(content.modelo_de_factura),
+            tipoOperacion: parseInt(content.tipo_de_transmision),
+            fecEmi: content.fecha_y_hora_de_generacion,
+            horEmi: content.horemi,
+            tipoMoneda: content.tipomoneda,
+            tipoContingencia: content.tipocontingencia,
+            motivoContin: content.motivocontin,
+          },
+          documentoRelacionado: content.documentorelacionado,
+          emisor: {
+            direccion: {
+              municipio: user.municipio,
+              departamento: user.departamento,
+              complemento: user.direccion,
+            },
+            nit: user.nit,
+            nrc: user.nrc,
+            nombre: user.name,
+            codActividad: user.codactividad,
+            descActividad: user.descactividad,
+            telefono: user.numero_de_telefono,
+            correo: user.correo_electronico,
+            nombreComercial: user.nombre_comercial,
+            tipoEstablecimiento: user.tipoestablecimiento,
+            codEstableMH: content.codestablemh,
+            codEstable: content.codestable,
+            codPuntoVentaMH: content.codpuntoventamh,
+            codPuntoVenta: content.codpuntoventa,
+          },
+          receptor: {
+            codActividad: content.re_codactividad,
+            direccion: {
+              departamento: fixedDepartamento,
+              municipio: fixedMunicipio,
+              complemento: fixedComplemento,
+            },
+            nrc: content.re_nrc,
+            descActividad: content.re_actividad_economica,
+            correo: content.re_correo_electronico,
+            nombre: content.re_name,
+            telefono: content.re_numero_telefono,
+            nombreComercial: content.re_numdocumento,
+            nit: content.re_nit,
+          },
+          otrosDocumentos: content.otrosdocumentos,
+          ventaTercero: content.ventatercero,
+          cuerpoDocumento: Listitems,
+          resumen: {
+            condicionOperacion: content.condicionoperacion,
+            saldoFavor: content.saldofavor,
+            numPagoElectronico: content.numpagoelectronico,
+            pagos: [
+              {
+                periodo: content.periodo,
+                plazo: content.plazo,
+                montoPago: content.montopago,
+                codigo: content.codigo,
+                referencia: content.referencia,
+              },
+            ],
+            totalNoSuj: content.totalnosuj,
+            tributos: [
+              {
+                codigo: tributocf[0],
+                descripcion: tributocf[1],
+                valor: parseFloat(tributocf[2]),
+              },
+            ],
+            totalLetras: content.cantidad_en_letras,
+            totalExenta: content.totalexenta,
+            subTotalVentas: content.subtotalventas,
+            totalGravada: parseFloat(content.total_agravada),
+            montoTotalOperacion: content.montototaloperacion,
+            descuNoSuj: content.descunosuj,
+            descuExenta: content.descuexenta,
+            descuGravada: content.descugravada,
+            porcentajeDescuento: content.porcentajedescuento,
+            totalDescu: parseFloat(content.monto_global_de_descuento),
+            subTotal: parseFloat(content.subtotal),
+            ivaRete1: parseFloat(content.iva_retenido),
+            reteRenta: parseFloat(content.retencion_de_renta),
+            totalNoGravado: content.totalnogravado,
+            totalPagar: parseFloat(content.total_a_pagar),
+            ivaPerci1: parseFloat(content.iva_percibido),
+          },
+          extension: {
+            docuEntrega: content.documento_e,
+            nombRecibe: content.documento_r,
+            observaciones: content.observaciones,
+            placaVehiculo: content.placavehiculo,
+            nombEntrega: content.responsable_emisor,
+            docuRecibe: content.documento_receptor,
+          },
+          apendice: content.apendice,
+        };
+      }
+
+      if (!data) {
+        autoFixMunicipioFormatoAttemptedRef.current = false;
+        return false;
+      }
+
+      const Firm = {
+        nit: user.nit,
+        activo: true,
+        passwordPri: user.passwordpri,
+        dteJson: data,
+      };
+
+      const responseFirm = await callFirmServiceByEmisor(Firm);
+      if (!responseFirm || responseFirm === undefined) {
+        toast.error("No se encontró firmador activo");
+        autoFixMunicipioFormatoAttemptedRef.current = false;
+        return false;
+      }
+
+      data.firma = responseFirm.body;
+      data.sellado = content.sellado;
+      data.sello = content.sello;
+
+      // Guardar el contenido corregido (plantilla) para que quede persistido.
+      const responseUpdate = await PlantillaAPI.updateNoItems(
+        id_emisor,
+        data,
+        token,
+        data.identificacion.codigoGeneracion
+      );
+      console.log("AUTO-FIX content (plantilla):", data);
+      console.log("AUTO-FIX update response:", responseUpdate);
+
+      const parseintversion = parseInt(content.version);
+      const dataSendFixed = {
+        tipoDte: content.tipo,
+        ambiente: content.ambiente,
+        idEnvio: content.id_envio,
+        version: parseintversion,
+        codigoGeneracion: content.codigo_de_generacion,
+        documento: responseFirm.body,
+      };
+
+      const minisToken = resultAuthminis?.body?.token?.slice(7);
+      if (!minisToken) {
+        toast.error("No se pudo obtener token de MH para reenviar");
+        autoFixMunicipioFormatoAttemptedRef.current = false;
+        return false;
+      }
+
+      let resendData = null;
+      if (user.ambiente == "00") {
+        resendData = await SendAPI.sendBill(dataSendFixed, minisToken);
+      } else {
+        resendData = await SendAPI.sendBillprod(dataSendFixed, minisToken);
+      }
+
+      console.log("AUTO-FIX resend response:", resendData);
+
+      if (resendData?.estado === "PROCESADO") {
+        await PlantillaAPI.updatesend(
+          id_emisor,
+          true,
+          resendData.selloRecibido,
+          token,
+          content.codigo_de_generacion
+        );
+        toast.success("Factura enviada (auto-fix municipio aplicado)");
+        setTimeout(() => window.location.reload(), 9000);
+        autoFixMunicipioFormatoAttemptedRef.current = false;
+        return true;
+      }
+
+      toast.error(`RECHAZADO ${resendData?.descripcionMsg || ""}`);
+      if (Array.isArray(resendData?.observaciones)) {
+        for (let i = 0; i < resendData.observaciones.length; i++) {
+          toast.warning(`motivo ${i + 1} ${resendData.observaciones[i]}`);
+        }
+      }
+
+      autoFixMunicipioFormatoAttemptedRef.current = false;
+      return false;
+    } catch (e) {
+      console.log(e);
+      toast.error("Error al auto-corregir municipio");
+      autoFixMunicipioFormatoAttemptedRef.current = false;
+      return false;
+    }
+  };
+
   const SendBillHandler = async () => {
     setIsLoading(true);
+    // Permite que el fallback se ejecute en cada intento del usuario.
+    autoFixMunicipioFormatoAttemptedRef.current = false;
     /*  */
     console.log("SendBillHandler");
     console.log(content);
@@ -2026,6 +2482,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
           toast.info(`No se encontró firma`);
         } else {
+          if (isDireccionFormatoRechazoCase(senddata)) {
+            const didFallback = await handleDireccionFormatoFallback();
+            if (didFallback) {
+              setIsLoading(false);
+              return;
+            }
+          }
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
           console.log(senddata.observaciones);
@@ -2164,6 +2627,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
           toast.info(`No se encontró firma`);
         } else {
+          if (isDireccionFormatoRechazoCase(senddata)) {
+            const didFallback = await handleDireccionFormatoFallback();
+            if (didFallback) {
+              setIsLoading(false);
+              return;
+            }
+          }
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
           console.log(senddata.observaciones);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import checkimg from "../assets/imgs/marca-de-verificacion.png";
 import Firmservice from "../services/Firm";
 import PlantillaAPI from "../services/PlantillaService";
@@ -27,6 +27,357 @@ const FacturaSendSelectCI = ({ key, content, user , GetInf }) => {
     const navigate = useNavigate();
     const [usuario, setUser] = useState([]);
     const [mailchecker, setMailChecker] = useState(true);
+    const autoFixMunicipioFormatoAttemptedRef = useRef(false);
+
+    const MUNICIPIO_FORMAT_ERROR = "Campo #/receptor/direccion/municipio no cumple el formato requerido";
+
+    const isMunicipioFormatoRechazoCase = (senddata) => {
+        const normalize = (value) =>
+            String(value ?? "")
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, " ");
+
+        if (!senddata) return false;
+        if (content.tipo !== "01" && content.tipo !== "03") return false;
+
+        const estado = normalize(senddata.estado);
+        if (estado !== "rechazado") return false;
+
+        const observaciones = Array.isArray(senddata.observaciones) ? senddata.observaciones : [];
+        if (observaciones.length !== 2) return false;
+
+        const expected = normalize(MUNICIPIO_FORMAT_ERROR);
+        return observaciones.every((o) => normalize(o) === expected);
+    };
+
+    const getReceptorComplemento = () => {
+        if (typeof content?.complemento === "string" && content.complemento.trim() !== "") {
+            return content.complemento;
+        }
+
+        if (typeof content?.re_direccion === "string" && content.re_direccion.includes("|")) {
+            const parts = content.re_direccion.split("|");
+            if (parts.length >= 3 && parts[2]) return parts[2];
+        }
+
+        return "";
+    };
+
+    const callFirmServiceByEmisor = async (Firm) => {
+        if (id_emisor == 1 || id_emisor == 2 || id_emisor == 3) return await Firmservice.create(Firm);
+        if (id_emisor == 4) return await Firmservice.HM_Clinic(Firm);
+        if (id_emisor == 5) return await Firmservice.DR_julio_HM(Firm);
+        if (id_emisor == 6 || id_emisor == 7) return await Firmservice.DR_VIDES(Firm);
+
+        toast.error("No se encontró firmador registrado");
+        return null;
+    };
+
+    const handleRechazadoMunicipioFormato = async (resultAuthminis) => {
+        if (content.tipo !== "01" && content.tipo !== "03") return false;
+        if (autoFixMunicipioFormatoAttemptedRef.current) return false;
+        autoFixMunicipioFormatoAttemptedRef.current = true;
+
+        try {
+            toast.info("Rechazado por municipio: re-firmando con depto 06 y mun 23...");
+
+            const fixedDepartamento = "06";
+            const fixedMunicipio = "23";
+            const fixedComplemento = getReceptorComplemento();
+
+            let data = null;
+
+            if (content.tipo === "01") {
+                data = {
+                    identificacion: {
+                        version: parseInt(content.version),
+                        ambiente: content.ambiente,
+                        tipoDte: content.tipo,
+                        numeroControl: content.numero_de_control,
+                        codigoGeneracion: content.codigo_de_generacion,
+                        tipoModelo: parseInt(content.modelo_de_factura),
+                        tipoOperacion: parseInt(content.tipo_de_transmision),
+                        fecEmi: content.fecha_y_hora_de_generacion,
+                        horEmi: content.horemi,
+                        tipoMoneda: content.tipomoneda,
+                        tipoContingencia: content.tipocontingencia,
+                        motivoContin: content.motivocontin,
+                    },
+                    documentoRelacionado: content.documentorelacionado,
+                    emisor: {
+                        direccion: {
+                            municipio: user.municipio,
+                            departamento: user.departamento,
+                            complemento: user.direccion,
+                        },
+                        nit: user.nit,
+                        nrc: user.nrc,
+                        nombre: user.name,
+                        codActividad: user.codactividad,
+                        descActividad: user.descactividad,
+                        telefono: user.numero_de_telefono,
+                        correo: user.correo_electronico,
+                        nombreComercial: user.nombre_comercial,
+                        tipoEstablecimiento: user.tipoestablecimiento,
+                        codEstableMH: content.codestablemh,
+                        codEstable: content.codestable,
+                        codPuntoVentaMH: content.codpuntoventamh,
+                        codPuntoVenta: content.codpuntoventa,
+                    },
+                    receptor: {
+                        codActividad: content.re_codactividad,
+                        direccion: {
+                            departamento: fixedDepartamento,
+                            municipio: fixedMunicipio,
+                            complemento: fixedComplemento,
+                        },
+                        nrc: content.re_nrc,
+                        descActividad: content.re_actividad_economica,
+                        correo: content.re_correo_electronico,
+                        tipoDocumento: content.re_tipodocumento,
+                        nombre: content.re_name,
+                        telefono: content.re_numero_telefono,
+                        numDocumento: content.re_numdocumento,
+                    },
+                    otrosDocumentos: content.otrosdocumentos,
+                    ventaTercero: content.ventatercero,
+                    cuerpoDocumento: Listitems,
+                    resumen: {
+                        condicionOperacion: content.condicionoperacion,
+                        totalIva: parseFloat(content.iva_percibido),
+                        saldoFavor: content.saldofavor,
+                        numPagoElectronico: content.numpagoelectronico,
+                        pagos: [
+                            {
+                                periodo: content.periodo,
+                                plazo: content.plazo,
+                                montoPago: content.montopago,
+                                codigo: content.codigo,
+                                referencia: content.referencia,
+                            },
+                        ],
+                        totalNoSuj: content.totalnosuj,
+                        tributos: content.tributos,
+                        totalLetras: content.cantidad_en_letras,
+                        totalExenta: content.totalexenta,
+                        subTotalVentas: content.subtotalventas,
+                        totalGravada: parseFloat(content.total_agravada),
+                        montoTotalOperacion: content.montototaloperacion,
+                        descuNoSuj: content.descunosuj,
+                        descuExenta: content.descuexenta,
+                        descuGravada: content.descugravada,
+                        porcentajeDescuento: content.porcentajedescuento,
+                        totalDescu: parseFloat(content.monto_global_de_descuento),
+                        subTotal: parseFloat(content.subtotal),
+                        ivaRete1: parseFloat(content.iva_retenido),
+                        reteRenta: parseFloat(content.retencion_de_renta),
+                        totalNoGravado: content.totalnogravado,
+                        totalPagar: parseFloat(content.total_a_pagar),
+                    },
+                    extension: {
+                        docuEntrega: content.documento_e,
+                        nombRecibe: content.documento_r,
+                        observaciones: content.observaciones,
+                        placaVehiculo: content.placavehiculo,
+                        nombEntrega: content.responsable_emisor,
+                        docuRecibe: content.documento_receptor,
+                    },
+                    apendice: content.apendice,
+                };
+            }
+
+            if (content.tipo === "03") {
+                const tributocf = content.tributocf.split("|");
+
+                data = {
+                    identificacion: {
+                        version: parseInt(content.version),
+                        ambiente: content.ambiente,
+                        tipoDte: content.tipo,
+                        numeroControl: content.numero_de_control,
+                        codigoGeneracion: content.codigo_de_generacion,
+                        tipoModelo: parseInt(content.modelo_de_factura),
+                        tipoOperacion: parseInt(content.tipo_de_transmision),
+                        fecEmi: content.fecha_y_hora_de_generacion,
+                        horEmi: content.horemi,
+                        tipoMoneda: content.tipomoneda,
+                        tipoContingencia: content.tipocontingencia,
+                        motivoContin: content.motivocontin,
+                    },
+                    documentoRelacionado: content.documentorelacionado,
+                    emisor: {
+                        direccion: {
+                            municipio: user.municipio,
+                            departamento: user.departamento,
+                            complemento: user.direccion,
+                        },
+                        nit: user.nit,
+                        nrc: user.nrc,
+                        nombre: user.name,
+                        codActividad: user.codactividad,
+                        descActividad: user.descactividad,
+                        telefono: user.numero_de_telefono,
+                        correo: user.correo_electronico,
+                        nombreComercial: user.nombre_comercial,
+                        tipoEstablecimiento: user.tipoestablecimiento,
+                        codEstableMH: content.codestablemh,
+                        codEstable: content.codestable,
+                        codPuntoVentaMH: content.codpuntoventamh,
+                        codPuntoVenta: content.codpuntoventa,
+                    },
+                    receptor: {
+                        codActividad: content.re_codactividad,
+                        direccion: {
+                            departamento: fixedDepartamento,
+                            municipio: fixedMunicipio,
+                            complemento: fixedComplemento,
+                        },
+                        nrc: content.re_nrc,
+                        descActividad: content.re_actividad_economica,
+                        correo: content.re_correo_electronico,
+                        nombre: content.re_name,
+                        telefono: content.re_numero_telefono,
+                        nombreComercial: content.re_numdocumento,
+                        nit: content.re_nit,
+                    },
+                    otrosDocumentos: content.otrosdocumentos,
+                    ventaTercero: content.ventatercero,
+                    cuerpoDocumento: Listitems,
+                    resumen: {
+                        condicionOperacion: content.condicionoperacion,
+                        saldoFavor: content.saldofavor,
+                        numPagoElectronico: content.numpagoelectronico,
+                        pagos: [
+                            {
+                                periodo: content.periodo,
+                                plazo: content.plazo,
+                                montoPago: content.montopago,
+                                codigo: content.codigo,
+                                referencia: content.referencia,
+                            },
+                        ],
+                        totalNoSuj: content.totalnosuj,
+                        tributos: [
+                            {
+                                codigo: tributocf[0],
+                                descripcion: tributocf[1],
+                                valor: parseFloat(tributocf[2]),
+                            },
+                        ],
+                        totalLetras: content.cantidad_en_letras,
+                        totalExenta: content.totalexenta,
+                        subTotalVentas: content.subtotalventas,
+                        totalGravada: parseFloat(content.total_agravada),
+                        montoTotalOperacion: content.montototaloperacion,
+                        descuNoSuj: content.descunosuj,
+                        descuExenta: content.descuexenta,
+                        descuGravada: content.descugravada,
+                        porcentajeDescuento: content.porcentajedescuento,
+                        totalDescu: parseFloat(content.monto_global_de_descuento),
+                        subTotal: parseFloat(content.subtotal),
+                        ivaRete1: parseFloat(content.iva_retenido),
+                        reteRenta: parseFloat(content.retencion_de_renta),
+                        totalNoGravado: content.totalnogravado,
+                        totalPagar: parseFloat(content.total_a_pagar),
+                        ivaPerci1: parseFloat(content.iva_percibido),
+                    },
+                    extension: {
+                        docuEntrega: content.documento_e,
+                        nombRecibe: content.documento_r,
+                        observaciones: content.observaciones,
+                        placaVehiculo: content.placavehiculo,
+                        nombEntrega: content.responsable_emisor,
+                        docuRecibe: content.documento_receptor,
+                    },
+                    apendice: content.apendice,
+                };
+            }
+
+            if (!data) {
+                autoFixMunicipioFormatoAttemptedRef.current = false;
+                return false;
+            }
+
+            const Firm = {
+                nit: user.nit,
+                activo: true,
+                passwordPri: user.passwordpri,
+                dteJson: data,
+            };
+
+            const responseFirm = await callFirmServiceByEmisor(Firm);
+            if (!responseFirm || responseFirm === undefined) {
+                toast.error("No se encontró firmador activo");
+                autoFixMunicipioFormatoAttemptedRef.current = false;
+                return false;
+            }
+
+            data.firma = responseFirm.body;
+            data.sellado = content.sellado;
+            data.sello = content.sello;
+
+            const responseUpdate = await PlantillaAPI.updateNoItems(
+                id_emisor,
+                data,
+                token,
+                data.identificacion.codigoGeneracion
+            );
+            console.log("AUTO-FIX content (plantilla):", data);
+            console.log("AUTO-FIX update response:", responseUpdate);
+
+            const parseintversion = parseInt(content.version);
+            const dataSendFixed = {
+                tipoDte: content.tipo,
+                ambiente: content.ambiente,
+                idEnvio: content.id_envio,
+                version: parseintversion,
+                codigoGeneracion: content.codigo_de_generacion,
+                documento: responseFirm.body,
+            };
+
+            const minisToken = resultAuthminis?.body?.token?.slice(7);
+            if (!minisToken) {
+                toast.error("No se pudo obtener token de MH para reenviar");
+                autoFixMunicipioFormatoAttemptedRef.current = false;
+                return false;
+            }
+
+            const isTestAmbiente = (user?.ambiente ?? content.ambiente) == "00";
+            const resendData = isTestAmbiente
+                ? await SendAPI.sendBill(dataSendFixed, minisToken)
+                : await SendAPI.sendBillprod(dataSendFixed, minisToken);
+
+            console.log("AUTO-FIX resend response:", resendData);
+
+            if (resendData?.estado === "PROCESADO") {
+                await PlantillaAPI.updatesend(
+                    id_emisor,
+                    true,
+                    resendData.selloRecibido,
+                    token,
+                    content.codigo_de_generacion
+                );
+                toast.success("Factura enviada (auto-fix municipio aplicado)");
+                setTimeout(() => window.location.reload(), 5000);
+                return true;
+            }
+
+            toast.error(`RECHAZADO ${resendData?.descripcionMsg || ""}`);
+            if (Array.isArray(resendData?.observaciones)) {
+                for (let i = 0; i < resendData.observaciones.length; i++) {
+                    toast.error(`Observación ${i + 1} ${resendData.observaciones[i]}`);
+                }
+            }
+
+            return false;
+        } catch (e) {
+            console.log(e);
+            toast.error("Error al auto-corregir municipio");
+            autoFixMunicipioFormatoAttemptedRef.current = false;
+            return false;
+        }
+    };
     useEffect(() => {
         if (content.tipo === "01") {
             setTipo("Factura");
