@@ -50,7 +50,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     }
 
     if (content.re_correo_electronico === ""
-      || content.re_correo_electronico === null) {
+      || content.re_correo_electronico === null
+      || content.re_correo_electronico?.trim() === "") {
       console.log("no email");
       setMailChecker(false);
     }
@@ -327,7 +328,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           direccion: content.re_direccion,
           nrc: content.re_nrc,
           descActividad: content.re_actividad_economica,
-          correo: content.re_correo_electronico,
+          correo: (content.re_correo_electronico || "").trim(),
           tipoDocumento: content.re_tipodocumento,
           nombre: content.re_name,
           telefono: content.re_numero_telefono,
@@ -444,7 +445,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         direccion: content.re_direccion,
         nrc: content.re_nrc,
         descActividad: content.re_actividad_economica,
-        correo: content.re_correo_electronico,
+        correo: (content.re_correo_electronico || "").trim(),
         tipoDocumento: content.re_tipodocumento,
         nombre: content.re_name,
         telefono: content.re_numero_telefono,
@@ -562,7 +563,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: null,
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             tipoDocumento: content.re_tipodocumento,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
@@ -670,7 +671,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
             nombreComercial: content.re_numdocumento,
@@ -782,7 +783,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               departamento: address[0],
               complemento: address[2]
             },
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             telefono: content.re_numero_telefono,
           },
           cuerpoDocumento: Listitems,
@@ -873,7 +874,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               departamento: address[0],
               complemento: address[2]
             },
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             telefono: content.re_numero_telefono,
           },
           ventaTercero: content.ventatercero,
@@ -988,7 +989,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               departamento: address[0],
               complemento: address[2]
             },
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             telefono: content.re_numero_telefono,
           },
           ventaTercero: content.ventatercero,
@@ -1112,7 +1113,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             descActividad: content.re_actividad_economica,
             nombreComercial: content.re_numdocumento,
             direccion: r_direccion,
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             telefono: content.re_numero_telefono,
           },
           cuerpoDocumento: Listitems,
@@ -1806,7 +1807,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
   const testmail = async () => {
 
-    if (content.re_correo_electronico === null || content.re_correo_electronico === "") {
+    if (content.re_correo_electronico === null || content.re_correo_electronico === "" || content.re_correo_electronico?.trim() === "") {
       toast.error("el receptor no tiene correo electronico");
       return
 
@@ -1820,7 +1821,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     const count = await PlantillaAPI.count(id_emisor, content.tipo, token);
 
     /* Sending the email */
-    if (content.re_correo_electronico === null) {
+    if (content.re_correo_electronico === null || content.re_correo_electronico?.trim() === "") {
       toast.error("el receptor no tiene correo electronico");
 
       return
@@ -2096,7 +2097,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             tipoDocumento: content.re_tipodocumento,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
@@ -2197,7 +2198,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico || "").trim(),
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
             nombreComercial: content.re_numdocumento,
