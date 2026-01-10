@@ -218,265 +218,234 @@ const sendPDF = async(req, res) => {
             .text(`${plantillaDB.fecha_y_hora_de_generacion} - ${plantillaDB.horemi}`, 250, yscale + 150)
             .text('Normal', 540, yscale + 150);
 
+        const safeText = (value) => {
+            if (value === null || value === undefined) return '';
+            return String(value);
+        };
+
+        const titleCaseWords = (input) => {
+            const text = safeText(input).trim();
+            if (!text) return '';
+            return text
+                .split(/\s+/)
+                .filter(Boolean)
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+                .join(' ');
+        };
+
+        const formatEmisorName = (userDB) => {
+            const parts = safeText(userDB.name).trim().split(/\s+/).filter(Boolean);
+            const take = (userDB.id === 16 || userDB.id === 17) ? 3 : 4;
+            return titleCaseWords(parts.slice(0, take).join(' '));
+        };
+
+        const mapTipoEstablecimiento = (code) => {
+            const t = safeText(code);
+            if (t === '20') return 'Otro';
+            if (t === '01') return 'Sucursal / Agencia';
+            if (t === '02') return 'Casa matriz';
+            if (t === '04') return 'Bodega';
+            if (t === '07') return 'Predio y/o patio';
+            return t;
+        };
+
+        const parseDireccionPipe = (direccion) => {
+            const raw = safeText(direccion);
+            if (!raw) return '';
+            if (!raw.includes('|')) return raw;
+            const parts = raw.split('|');
+            return (parts[2] ?? raw).toString();
+        };
+
+        const buildEmisorRows = (userDB) => {
+            const tipoEst = mapTipoEstablecimiento(userDB.tipoestablecimiento);
+
+            const nombre = (userDB.id === 4 || userDB.id === 9)
+                ? 'HM Clinic S.A de C.V'
+                : formatEmisorName(userDB);
+
+            let actividad = 'Servicios médicos';
+            if (userDB.id === 4 || userDB.id === 9) actividad = 'Clínicas médicas';
+            if (userDB.id === 10) actividad = 'Servicios de sauna/estéticos';
+            if (userDB.id === 6) actividad = 'Servicios de sauna/estéticos';
+            if (userDB.id === 7 || userDB.id === 12) actividad = 'Servicios de Odontología';
+
+            const rows = [
+                { label: 'Nombre o razón social:', value: nombre },
+                { label: 'NIT:', value: safeText(userDB.nit) },
+                { label: 'NRC:', value: safeText(userDB.nrc) },
+                { label: 'Actividad económica:', value: actividad },
+                { label: 'Dirección:', value: safeText(userDB.direccion) },
+                { label: 'Correo electrónico:', value: safeText(userDB.correo_electronico) },
+                { label: 'Nombre comercial:', value: safeText(userDB.nombre_comercial) },
+                { label: 'Tipo de establecimiento:', value: tipoEst },
+            ];
+
+            return rows.filter(r => safeText(r.value).trim().length > 0);
+        };
+
+        const buildReceptorRows = (plantillaDB) => {
+            const tipo = safeText(plantillaDB.tipo);
+            const nombre = safeText(plantillaDB.re_name);
+
+            if (tipo === '01') {
+                let docLabel = 'DOC:';
+                const numDoc = safeText(plantillaDB.re_numdocumento);
+                if (numDoc.includes('-')) docLabel = 'DUI:';
+                else if (numDoc) docLabel = 'NRC:';
+
+                const rows = [
+                    { label: 'Nombre o razón social:', value: nombre },
+                    { label: docLabel, value: numDoc },
+                    { label: 'Dirección:', value: safeText(plantillaDB.re_direccion) },
+                    { label: 'Correo electrónico:', value: safeText(plantillaDB.re_correo_electronico) },
+                ];
+                return rows.filter(r => safeText(r.value).trim().length > 0);
+            }
+
+            if (tipo === '14') {
+                const rows = [
+                    { label: 'Nombre o razón social:', value: nombre },
+                    { label: 'DOC:', value: safeText(plantillaDB.re_numdocumento) },
+                    { label: 'Dirección:', value: parseDireccionPipe(plantillaDB.re_direccion) },
+                    { label: 'Correo electrónico:', value: safeText(plantillaDB.re_correo_electronico) },
+                ];
+                return rows.filter(r => safeText(r.value).trim().length > 0);
+            }
+
+            const direccion = (tipo === '03' || tipo === '08')
+                ? safeText(plantillaDB.complemento)
+                : parseDireccionPipe(plantillaDB.re_direccion);
+
+            const rows = [
+                { label: 'Nombre o razón social:', value: nombre },
+                { label: 'NIT:', value: safeText(plantillaDB.re_nit) },
+                { label: 'NRC:', value: safeText(plantillaDB.re_nrc) },
+                { label: 'Actividad económica:', value: safeText(plantillaDB.re_actividad_economica) },
+                { label: 'Dirección:', value: direccion },
+                { label: 'Correo electrónico:', value: safeText(plantillaDB.re_correo_electronico) },
+            ];
+
+            return rows.filter(r => safeText(r.value).trim().length > 0);
+        };
+
+        const measureInfoBlockHeight = (pdfDoc, title, rows, opts) => {
+            const {
+                width,
+                paddingX,
+                paddingTop,
+                paddingBottom,
+                titleFontSize,
+                labelFontSize,
+                valueFontSize,
+                labelWidth,
+                rowGap,
+                titleGap,
+            } = opts;
+
+            const contentWidth = width - (paddingX * 2);
+            const valueWidth = Math.max(10, contentWidth - labelWidth);
+
+            pdfDoc.font('Helvetica-Bold').fontSize(titleFontSize);
+            const titleHeight = pdfDoc.heightOfString(title, { width: contentWidth });
+
+            let total = paddingTop + titleHeight + titleGap;
+            for (const row of rows) {
+                pdfDoc.font('Helvetica-Bold').fontSize(labelFontSize);
+                const labelH = pdfDoc.heightOfString(safeText(row.label), { width: labelWidth });
+                pdfDoc.font('Helvetica').fontSize(valueFontSize);
+                const valueH = pdfDoc.heightOfString(safeText(row.value), { width: valueWidth });
+                total += Math.max(labelH, valueH) + rowGap;
+            }
+            total += paddingBottom;
+            return Math.ceil(total);
+        };
+
+        const drawInfoBlock = (pdfDoc, title, x, y, width, height, rows, opts) => {
+            const {
+                paddingX,
+                paddingTop,
+                titleFontSize,
+                labelFontSize,
+                valueFontSize,
+                labelWidth,
+                rowGap,
+                titleGap,
+                bgColor,
+                borderColor,
+                textColor,
+                cornerRadius,
+            } = opts;
+
+            pdfDoc.roundedRect(x, y, width, height, cornerRadius).fill(bgColor).stroke(borderColor);
+
+            const contentX = x + paddingX;
+            const contentY = y + paddingTop;
+            const contentWidth = width - (paddingX * 2);
+            const valueX = contentX + labelWidth;
+            const valueWidth = Math.max(10, contentWidth - labelWidth);
+
+            pdfDoc.fillColor(textColor);
+            pdfDoc.font('Helvetica-Bold').fontSize(titleFontSize).text(title, contentX, contentY);
+
+            let cursorY = contentY + pdfDoc.heightOfString(title, { width: contentWidth }) + titleGap;
+
+            for (const row of rows) {
+                const label = safeText(row.label);
+                const value = safeText(row.value);
+
+                pdfDoc.font('Helvetica-Bold').fontSize(labelFontSize).text(label, contentX, cursorY, { width: labelWidth });
+                pdfDoc.font('Helvetica').fontSize(valueFontSize).text(value, valueX, cursorY, { width: valueWidth });
+
+                const labelH = pdfDoc.heightOfString(label, { width: labelWidth });
+                const valueH = pdfDoc.heightOfString(value, { width: valueWidth });
+                cursorY += Math.max(labelH, valueH) + rowGap;
+            }
+        };
+
         const infoX = 40;
         const infoY = 270;
-        pdfDoc.roundedRect(infoX, infoY, 250, 150, 10).fill('#EAEAEA').stroke('#000');
-        pdfDoc.roundedRect(infoX + 270, infoY, 250, 150, 10).fill('#EAEAEA').stroke('#000');
 
-        pdfDoc.fontSize(10).font('Helvetica-Bold').fillColor('#1E3256')
-            .text('EMISOR', infoX + 10, infoY + 8);
-
-        const truncateText = (text, maxLength) => {
-            if (text === null) {
-                return '';
-            }
-            if (text.length > maxLength) {
-                return text.slice(0, maxLength - 3) + '...';
-            }
-            return text;
+        const infoBlockOpts = {
+            width: 250,
+            paddingX: 10,
+            paddingTop: 8,
+            paddingBottom: 10,
+            titleFontSize: 10,
+            labelFontSize: 9,
+            valueFontSize: 9,
+            labelWidth: 105,
+            rowGap: 3,
+            titleGap: 6,
+            bgColor: '#EAEAEA',
+            borderColor: '#000',
+            textColor: '#1E3256',
+            cornerRadius: 10,
         };
 
-                let newname = ""
-        if (userDB.id === 16 || userDB.id === 17 ) {
-            const name = userDB.name.split(" ");
-        const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
-        const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
-        const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
-        newname = `${name1} ${name2} ${name3} `;
-        }
-        else{
-        const name = userDB.name.split(" ");
-        const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
-        const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
-        const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
-        const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
-        newname = `${name1} ${name2} ${name3} ${name4}`;
+        const emisorRows = buildEmisorRows(userDB);
+        const receptorRows = buildReceptorRows(plantillaDB);
+
+        const emisorHeight = measureInfoBlockHeight(pdfDoc, 'EMISOR', emisorRows, infoBlockOpts);
+        const receptorHeight = measureInfoBlockHeight(pdfDoc, 'RECEPTOR', receptorRows, infoBlockOpts);
+
+        const maxBlockHeight = Math.max(emisorHeight, receptorHeight);
+        const blocksBottomNeeded = infoY + maxBlockHeight + 40;
+
+        const blocksY = (blocksBottomNeeded > 770) ? 50 : infoY;
+        if (blocksBottomNeeded > 770) {
+            pdfDoc.addPage();
         }
 
-        const truncatedNombreORazonSocial = truncateText(newname, 20);
-        const truncatedDireccion = truncateText(userDB.direccion, 34);
+        drawInfoBlock(pdfDoc, 'EMISOR', infoX, blocksY, infoBlockOpts.width, emisorHeight, emisorRows, infoBlockOpts);
+        drawInfoBlock(pdfDoc, 'RECEPTOR', infoX + 270, blocksY, infoBlockOpts.width, receptorHeight, receptorRows, infoBlockOpts);
 
-        if (userDB.tipoestablecimiento === "20") {
-            userDB.tipoestablecimiento = "Otro";
-        } else if (userDB.tipoestablecimiento === "01") {
-            userDB.tipoestablecimiento = "Sucursal / Agencia";
-        } else if (userDB.tipoestablecimiento === "02") {
-            userDB.tipoestablecimiento = "Casa matriz";
-        } else if (userDB.tipoestablecimiento === "04") {
-            userDB.tipoestablecimiento = "Bodega";
-        } else if (userDB.tipoestablecimiento === "07") {
-            userDB.tipoestablecimiento = "Predio y/o patio";
-        }
+        const blocksBottomY = blocksY + maxBlockHeight;
 
+        // Add services section (debajo del bloque más alto)
+        pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, blocksBottomY + 10, { underline: true });
 
-        if (userDB.id === 4 || userDB.id === 9) {
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text("HM Clinic S.A de C.V", infoX + 122, infoY + 25)
-                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Clínicas médicas', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
-                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
-
-        }else if (userDB.id === 10 ) {
-
-
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
-                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios de sauna/estéticos', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
-                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
-
-        }else if (userDB.id === 12 || userDB.id === 7) {
-
-
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
-                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios de Odontología', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
-                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
-
-        } else {
-            pdfDoc.fontSize(10).fillColor('#1E3256')
-                .fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 10, infoY + 25).font('Helvetica').fontSize(10).text(truncatedNombreORazonSocial, infoX + 122, infoY + 25)
-                .font('Helvetica-Bold').text('NIT:', infoX + 10, infoY + 40).font('Helvetica').text(`${userDB.nit}`, infoX + 30, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 10, infoY + 55).font('Helvetica').text(`${userDB.nrc}`, infoX + 37, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 10, infoY + 70).font('Helvetica').text('Servicios médicos', infoX + 115, infoY + 70) /* UQMEMADO SERVICIOS MEDICOS */
-                .font('Helvetica-Bold').text('Dirección:', infoX + 10, infoY + 85).font('Helvetica').text(truncatedDireccion, infoX + 60, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 10, infoY + 100).font('Helvetica').text(`${userDB.correo_electronico}`, infoX + 104, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 10, infoY + 115).font('Helvetica').text(`${userDB.nombre_comercial}`, infoX + 102, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 10, infoY + 130).font('Helvetica').text(`${userDB.tipoestablecimiento}`, infoX + 128, infoY + 130);
-
-        }
-        const receptorNombreORazonSocial = (plantillaDB.re_name ?? '').toString();
-        const splitIntoMaxTwoLines = (text, maxChars) => {
-            const safeText = (text ?? '').toString().trim();
-            if (safeText.length <= maxChars) return [safeText];
-
-            // Try to break on the last space before the limit; fallback to hard split.
-            const before = safeText.slice(0, maxChars + 1);
-            let breakAt = before.lastIndexOf(' ');
-            if (breakAt < 1) breakAt = maxChars;
-
-            const line1 = safeText.slice(0, breakAt).trim();
-            const line2 = safeText.slice(breakAt).trim();
-            return [line1, line2];
-        };
-        const receptorNombreLines = splitIntoMaxTwoLines(receptorNombreORazonSocial, 23);
-        const truncatedDireccionReceptor = truncateText(plantillaDB.re_direccion, 34);
-
-        pdfDoc.font('Helvetica-Bold').text('RECEPTOR', infoX + 280, infoY + 8);
-
-        if (plantillaDB.tipo === "01") {
-            let re_numdocumentostring = 'DOC';
-            if (plantillaDB.re_numdocumento.includes('-')) {
-                re_numdocumentostring = 'DUI: ';
-            } else if (plantillaDB.re_numdocumento.includes('-') === false) {
-                re_numdocumentostring = 'NRC: ';
-            }
-
-            pdfDoc.fontSize(10).fillColor('#1E3256');
-            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
-            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
-            if (receptorNombreLines[1]) {
-                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
-            }
-
-            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_numdocumento}`, infoX + 303, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-
-        } else if (plantillaDB.tipo === "03") {
-            const re_numdocumentostring = 'NIT: ';
-
-            const truncatedDireccionReceptor = truncateText(plantillaDB.complemento, 34);
-
-            pdfDoc.fontSize(10).fillColor('#1E3256');
-            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
-            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
-            if (receptorNombreLines[1]) {
-                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
-            }
-
-            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica').text(`${plantillaDB.re_actividad_economica}`, infoX + 385, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-
-        } else if (plantillaDB.tipo === "14") {
-            let re_numdocumentostring = 'DOC';
-            /* i have my address like 01  02|08|direccion and i just need direccion*/
-            const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
-
-            pdfDoc.fontSize(10).fillColor('#1E3256');
-            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
-            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
-            if (receptorNombreLines[1]) {
-                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
-            }
-
-            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`: ${plantillaDB.re_numdocumento}`, infoX + 303, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text(' ', infoX + 307, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text(' ', infoX + 385, infoY + 70)
-                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-
-        } else if (plantillaDB.tipo === "05") {
-            const re_numdocumentostring = 'NIT: ';
-
-            const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
-
-            pdfDoc.fontSize(10).fillColor('#1E3256');
-            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
-            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
-            if (receptorNombreLines[1]) {
-                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
-            }
-
-            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica').text(`${plantillaDB.re_actividad_economica}`, infoX + 385, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-
-        } else if (plantillaDB.tipo === "06") {
-            const re_numdocumentostring = 'NIT: ';
-
-            const UserAddress = plantillaDB.re_direccion.split("|");
-            const truncatedDireccionReceptor = truncateText(UserAddress[2], 34);
-
-            pdfDoc.fontSize(10).fillColor('#1E3256');
-            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
-            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
-            if (receptorNombreLines[1]) {
-                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
-            }
-
-            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica').text(`${plantillaDB.re_actividad_economica}`, infoX + 385, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-
-        } else if (plantillaDB.tipo === "08") {
-            const re_numdocumentostring = 'NIT: ';
-
-            const truncatedDireccionReceptor = truncateText(plantillaDB.complemento, 34);
-
-            pdfDoc.fontSize(10).fillColor('#1E3256');
-            pdfDoc.fontSize(10).font('Helvetica-Bold').text('Nombre o razón social:', infoX + 280, infoY + 25);
-            pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[0], infoX + 392, infoY + 25, { width: 165, lineBreak: false });
-            if (receptorNombreLines[1]) {
-                pdfDoc.font('Helvetica').fontSize(7).text(receptorNombreLines[1], infoX + 392, infoY + 35, { width: 165, lineBreak: false });
-            }
-
-            pdfDoc.font('Helvetica-Bold').fontSize(10).text(re_numdocumentostring, infoX + 280, infoY + 40).font('Helvetica').fontSize(10).text(`${plantillaDB.re_nit}`, infoX + 300, infoY + 40)
-                .font('Helvetica-Bold').text('NRC:', infoX + 280, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica').text(`${plantillaDB.re_nrc}`, infoX + 305, infoY + 55).font('Helvetica').text('', infoX + 307, infoY + 55)
-                .font('Helvetica-Bold').text('Actividad económica:', infoX + 280, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica').text(`${plantillaDB.re_actividad_economica}`, infoX + 385, infoY + 70).font('Helvetica').text('', infoX + 385, infoY + 70)
-                .font('Helvetica-Bold').text('Dirección:', infoX + 280, infoY + 85).font('Helvetica').text(truncatedDireccionReceptor, infoX + 330, infoY + 85)
-                .font('Helvetica-Bold').text('Correo electrónico:', infoX + 280, infoY + 100).font('Helvetica').text(`${plantillaDB.re_correo_electronico}`, infoX + 374, infoY + 100)
-                .font('Helvetica-Bold').text('Nombre comercial:', infoX + 280, infoY + 115).font('Helvetica').text('', infoX + 372, infoY + 115)
-                .font('Helvetica-Bold').text('Tipo de establecimiento:', infoX + 280, infoY + 130).font('Helvetica').text('', infoX + 398, infoY + 130);
-
-        }
-
-        // Add services section
-        pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, infoY + 160, { underline: true });
-
-        const servicesY = infoY + 190;
+        const servicesY = blocksBottomY + 40;
         const servicesX = 20;
         /*         pdfDoc.moveTo(30, servicesY - 20).lineTo(550, servicesY - 20).stroke('#000'); */
 

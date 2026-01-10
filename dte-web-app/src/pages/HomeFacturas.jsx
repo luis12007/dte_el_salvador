@@ -537,7 +537,7 @@ const HomeFacturas = () => {
 
   return (
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-8 box-border overflow-x-hidden">
-      <SidebarComponent visible={visible} />
+      <SidebarComponent visible={visible} setVisible={setVisible} />
 
       {/* Top bar */}
       <div className="sticky top-[66px] z-20 w-full bg-steelblue-300 text-white shadow-md">

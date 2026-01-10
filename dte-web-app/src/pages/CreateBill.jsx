@@ -178,24 +178,50 @@ const Clientes = () => {
       (total, item) => total + item.precioUni * item.cantidad,
       0
     );
-    const rawiva = Listitems.reduce(
-      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
-      0
-    );
-    // Round to two decimal places
-    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-    const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
+    // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
+    // Para otros usuarios: IVA ya está incluido en el precio
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    
+    let rawiva;
+    let roundedSubtotal;
+    let newtotal;
+    
+    if (isIvaOnTop) {
+      // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
+      rawiva = rawSubtotal * 0.13;
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
+      
+      setiva(roundediva.toFixed(2));
+      setSubtotal(roundedSubtotal.toFixed(2));
+      
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      setRentvalue(value_rent);
+      
+      // Total = subtotal + IVA - renta
+      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+      setTotal(newtotal);
+    } else {
+      // Cálculo original: IVA incluido en el precio
+      rawiva = Listitems.reduce(
+        (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
+        0
+      );
+      
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
 
+      setiva(roundediva.toFixed(2));
+      setSubtotal((roundedSubtotal - 0).toFixed(2));
 
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      setRentvalue(value_rent);
 
-    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
-    setRentvalue(value_rent)
-
-    var newtotal = (roundedSubtotal - value_rent).toFixed(2);
-    setTotal(newtotal)
+      newtotal = (roundedSubtotal - value_rent).toFixed(2);
+      setTotal(newtotal);
+    }
+    
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
@@ -298,27 +324,51 @@ const Clientes = () => {
       (total, item) => total + item.precioUni * item.cantidad,
       0
     );
-    const rawiva = Listitemstrack.reduce(
-      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
-      0
-    );
+
+    // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
+    // Para otros usuarios: IVA ya está incluido en el precio
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    
+    let rawiva;
+    let roundedSubtotal;
+    let newtotal;
+    
+    if (isIvaOnTop) {
+      // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
+      rawiva = rawSubtotal * 0.13;
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
+      
+      setiva(roundediva.toFixed(2));
+      setSubtotal(roundedSubtotal.toFixed(2));
+      
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      setRentvalue(value_rent);
+      
+      // Total = subtotal + IVA - renta
+      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+      setTotal(newtotal);
+    } else {
+      // Cálculo original: IVA incluido en el precio
+      rawiva = Listitemstrack.reduce(
+        (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
+        0
+      );
+      
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
+
+      setiva(rawiva.toFixed(2));
+      setSubtotal((roundedSubtotal - 0).toFixed(2));
+
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      setRentvalue(value_rent);
+
+      newtotal = (roundedSubtotal - value_rent).toFixed(2);
+      setTotal(newtotal);
+    }
     
     console.log("rawiva:", rawiva);
-    console.log("rawiva", rawiva);
-
-    // Round to two decimal places
-    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-    const roundediva = Math.round(rawiva * 100) / 100;
-
-
-    setiva(rawiva.toFixed(2)); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal - 0).toFixed(2)); // Set the rounded subtotal
-
-    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
-    setRentvalue(value_rent)
-
-    var newtotal = (roundedSubtotal - value_rent).toFixed(2);
-    setTotal(newtotal)
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
@@ -403,6 +453,28 @@ const Clientes = () => {
       console.log(error);
     }
 
+    /* Validación: Si el total supera $1000, se requieren datos del receptor */
+    if (parseFloat(total) > 1000) {
+      const receptorVacio = 
+        (!client.document || client.document === "") &&
+        (!client.name || client.name === "") &&
+        (!client.email || client.email === "") &&
+        (!client.address || client.address === "");
+      
+      if (receptorVacio) {
+        toast.error("El monto de la factura ($" + total + ") requiere datos del receptor (documento, nombre, correo y dirección)", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+          style: { zIndex: 200000 }
+        });
+        setIsSubmittingAdd(false);
+        return;
+      }
+    }
+
     /* Counting the sentences*/
     /* const count = await PlantillaAPI.count(id_emisor, "01", token) */
 
@@ -412,23 +484,20 @@ const Clientes = () => {
       const conditionoperationint = parseInt(payment.paymentType);
 
       if (client.documentType === "13") {
-        /* if has already - dont */
-        if (client.document === null || client.document === undefined) {
-          toast.error("Error el documento del cliente no puede estar vacío!")
-          setIsSubmittingAdd(false);
-          return;
-        }
-        if (client.document.includes("-")) {
-          toast.error("Error el documento del cliente no puede tener guiones!")
-          setIsSubmittingAdd(false);
-          return;
-        } else {
-          client.document = formatDUI(client.document);
+        /* if document provided, validate format; otherwise allow null */
+        if (client.document !== null && client.document !== undefined && client.document !== "") {
+          if (client.document.includes("-")) {
+            toast.error("Error el documento del cliente no puede tener guiones!")
+            setIsSubmittingAdd(false);
+            return;
+          } else {
+            client.document = formatDUI(client.document);
+          }
         }
       }
 
       /* validating the email form of email */
-      if (client.email !== null) {
+      if (client.email !== null && client.email !== undefined && client.email !== "") {
         if (!validateEmail(client.email)) {
           toast.error("Formato de correo electrónico no válido!", {
             position: "top-center",
@@ -544,17 +613,34 @@ const Clientes = () => {
       /* exento to agravado */
     if (valueexcenta == "" || valueexcenta == null) {
       
+    // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
+    // Para otros usuarios: IVA ya está incluido en el precio
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    
     const updatedListitems = Listitems.map(item => {
-    const priceunit = item.precioUni / 1.13;
-    const ivaperitemfinal = (item.precioUni * item.cantidad) / 1.13;
+    let priceunit;
+    let ivaperitemfinal;
+    let ivaItemcount;
+    
+    if (isIvaOnTop) {
+      // IVA hacia arriba: el precio es neto, IVA = precio * 0.13
+      priceunit = item.precioUni;
+      ivaperitemfinal = item.precioUni * item.cantidad;
+      ivaItemcount = ivaperitemfinal * 0.13;
+    } else {
+      // IVA incluido: extraer el valor neto dividiendo por 1.13
+      priceunit = item.precioUni / 1.13;
+      ivaperitemfinal = (item.precioUni * item.cantidad) / 1.13;
+      ivaItemcount = ivaperitemfinal * 0.13;
+    }
+    
     console.log("Priceunit", ivaperitemfinal);
-    const ivaItemcount = (ivaperitemfinal * 0.13);
       const updatedItem = {
         ...item,
         ventaGravada: (item.precioUni * item.cantidad).toFixed(2),
         ventaExenta: 0,
         tributos: null,
-        ivaItem: ivaperitemfinal * 0.13,
+        ivaItem: ivaItemcount,
         precioUni: item.precioUni.toFixed(2),
       };
       return updatedItem;
@@ -591,14 +677,14 @@ const Clientes = () => {
 
       }
 
-      if (client.name === "") {
-        toast.error("Factura no tiene nombre de cliente!");
-  setIsSubmittingAdd(false);
-        return;
-      }
+
 
       if (client.phone === "") {
         data.receptor.telefono = null;
+      }
+
+      if (client.email === "") {
+        data.receptor.correo = null;
       }
 
       if (client.address === "") {

@@ -50,8 +50,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     }
 
     if (content.re_correo_electronico === ""
-      || content.re_correo_electronico === null
-      || content.re_correo_electronico?.trim() === "") {
+      || content.re_correo_electronico === null) {
       console.log("no email");
       setMailChecker(false);
     }
@@ -328,7 +327,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           direccion: content.re_direccion,
           nrc: content.re_nrc,
           descActividad: content.re_actividad_economica,
-          correo: (content.re_correo_electronico || "").trim(),
+          correo: content.re_correo_electronico,
           tipoDocumento: content.re_tipodocumento,
           nombre: content.re_name,
           telefono: content.re_numero_telefono,
@@ -445,7 +444,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         direccion: content.re_direccion,
         nrc: content.re_nrc,
         descActividad: content.re_actividad_economica,
-        correo: (content.re_correo_electronico || "").trim(),
+        correo: content.re_correo_electronico,
         tipoDocumento: content.re_tipodocumento,
         nombre: content.re_name,
         telefono: content.re_numero_telefono,
@@ -519,6 +518,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const ValidateBillHandler = async () => { /* Firm DTE */
     /* -----------------CONST DATA--------------------------- */
     try {
+
+
       if (content.tipo == "01") {
         var data = {
           identificacion: {
@@ -563,7 +564,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: null,
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             tipoDocumento: content.re_tipodocumento,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
@@ -614,6 +615,10 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           },
           apendice: content.apendice,
         };
+
+        if (data.receptor.numDocumento === null || data.receptor.numDocumento === "") {
+          data.receptor = null;
+        }
 
       }
       if (content.tipo == "03") {
@@ -671,7 +676,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
             nombreComercial: content.re_numdocumento,
@@ -783,7 +788,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               departamento: address[0],
               complemento: address[2]
             },
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
           cuerpoDocumento: Listitems,
@@ -874,7 +879,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               departamento: address[0],
               complemento: address[2]
             },
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
           ventaTercero: content.ventatercero,
@@ -989,7 +994,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               departamento: address[0],
               complemento: address[2]
             },
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
           ventaTercero: content.ventatercero,
@@ -1113,7 +1118,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             descActividad: content.re_actividad_economica,
             nombreComercial: content.re_numdocumento,
             direccion: r_direccion,
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
           cuerpoDocumento: Listitems,
@@ -1770,7 +1775,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.receptor.direccion = content.re_direccion;
       }
 
-
       const response = await PlantillaAPI.updateNoItems(
         id_emisor,
         data,
@@ -1807,7 +1811,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
   const testmail = async () => {
 
-    if (content.re_correo_electronico === null || content.re_correo_electronico === "" || content.re_correo_electronico?.trim() === "") {
+    if (content.re_correo_electronico === null || content.re_correo_electronico === "") {
       toast.error("el receptor no tiene correo electronico");
       return
 
@@ -1821,7 +1825,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     const count = await PlantillaAPI.count(id_emisor, content.tipo, token);
 
     /* Sending the email */
-    if (content.re_correo_electronico === null || content.re_correo_electronico?.trim() === "") {
+    if (content.re_correo_electronico === null) {
       toast.error("el receptor no tiene correo electronico");
 
       return
@@ -2097,7 +2101,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             tipoDocumento: content.re_tipodocumento,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
@@ -2198,7 +2202,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: (content.re_correo_electronico || "").trim(),
+            correo: content.re_correo_electronico,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
             nombreComercial: content.re_numdocumento,
@@ -2424,7 +2428,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
 
           if (content.re_correo_electronico === null) {
-            toast.error("el receptor no tiene correo electronico");
+            toast.warning("el receptor no tiene correo electronico");
 
             setTimeout(() => {
               window.location.reload();
@@ -3404,7 +3408,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         <div className="space-y-1 min-w-0">
           <div className="text-lg font-bold break-words whitespace-normal">{content.re_name}</div>
-          <div className="text-base text-black break-all whitespace-normal">Documento: {content.re_nit ? content.re_nit : content.re_numdocumento}</div>
+          <div className="text-base text-black break-all whitespace-normal">Documento: {content.re_nit ? content.re_nit : content.re_numdocumento || '—'}</div>
           <div className="text-base text-black break-words whitespace-normal">Correo: {content.re_correo_electronico || '—'}</div>
           <div className="text-base text-black break-words whitespace-normal">Teléfono: {content.re_numero_telefono || '—'}</div>
           {

@@ -1601,14 +1601,7 @@ const BooksComponent = () => {
         item?.importacionesGravadasServicio ??
         item?.importacionesGravadasServicios ??
         0;
-      const creditoFiscal =
-        item?.credito_fiscal ??
-        item?.creditoFiscal ??
-        item?.iva_percibido ??
-        item?.resumen?.ivaPerci1 ??
-        item?.resumen?.totalIva ??
-        0;
-      const totalCompras =
+              const totalCompras =
         item?.total_compras ??
         item?.totalCompras ??
         item?.total_a_pagar ??
@@ -1616,6 +1609,7 @@ const BooksComponent = () => {
         item?.resumen?.totalPagar ??
         item?.resumen?.montoTotalOperacion ??
         0;
+      const creditoFiscal = (totalCompras / 1.13) * 0.13;
 
       return {
       "FECHA DE EMISIÓN DEL DOCUMENTO": formatToDMY(
@@ -2948,7 +2942,7 @@ const BooksComponent = () => {
       {/* Header Section */}
       <div className="fixed top-0 left-0 z-40">
         <HamburguerComponent sidebar={sidebar} open={visible} />
-        <SidebarComponent visible={visible} />
+        <SidebarComponent visible={visible} setVisible={setVisible} />
       </div>
 
       {/* Main Content */}

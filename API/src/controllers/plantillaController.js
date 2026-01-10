@@ -1972,16 +1972,16 @@ const updatePlantillaNoItems = async(req, res) => {
             /* --------------------------------------------------------- */
             /* RECEPTOR */
 
-            re_codactividad: plantilla.receptor.codActividad,
-            re_direccion: plantilla.receptor.direccion,
-            re_nit: plantilla.receptor.nit,
-            re_nrc: plantilla.receptor.nrc,
-            re_actividad_economica: plantilla.receptor.descActividad,
-            re_correo_electronico: plantilla.receptor.correo,
-            re_tipodocumento: plantilla.receptor.tipoDocumento,
-            re_name: plantilla.receptor.nombre,
-            re_numero_telefono: plantilla.receptor.telefono,
-            re_numdocumento: plantilla.receptor.numDocumento,
+            re_codactividad: plantilla?.receptor?.codActividad ?? null,
+            re_direccion: plantilla?.receptor?.direccion,
+            re_nit: plantilla?.receptor?.nit ?? null,
+            re_nrc: plantilla?.receptor?.nrc ?? null,
+            re_actividad_economica: plantilla?.receptor?.descActividad,
+            re_correo_electronico: plantilla?.receptor?.correo,
+            re_tipodocumento: plantilla?.receptor?.tipoDocumento,
+            re_name: plantilla?.receptor?.nombre ?? null,
+            re_numero_telefono: plantilla?.receptor?.telefono,
+            re_numdocumento: plantilla?.receptor?.numDocumento ?? null,
 
             /* --------------------------------------------------------- */
             /* OTROS DOCUMENTOS */

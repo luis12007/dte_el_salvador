@@ -638,8 +638,22 @@ const CrearCreditoFiscal = () => {
     const pricefloat = parseFloat(newContents.price);
     const typeitem = parseInt(newContents.type);
 
-    const priceunit = pricefloat / 1.13;
-    const ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
+    // Para usuarios 23 o 24: precio no incluye IVA, se suma encima
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    
+    let priceunit;
+    let ivaperitemfinal;
+    
+    if (isIvaOnTop) {
+      // El precio ingresado es el precio neto (sin IVA)
+      priceunit = pricefloat;
+      ivaperitemfinal = pricefloat * cuantityint;
+    } else {
+      // Cálculo original: el precio incluye IVA, se extrae
+      priceunit = pricefloat / 1.13;
+      ivaperitemfinal = (pricefloat * cuantityint) / 1.13;
+    }
+    
     const newItem = {
       codTributo: null,
       descripcion: newContents.description,
@@ -670,24 +684,48 @@ const CrearCreditoFiscal = () => {
       (total, item) => total + item.precioUni * item.cantidad,
       0
     );
-    const rawiva = Listitemstrack.reduce(
-      (total, item) => total + (item.ventaGravada * 0.13) ,
-      0
-    );
-    console.log("rawiva", rawiva);
-    // Round to two decimal places
-    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-    const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
-    setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
+    // isIvaOnTop ya fue declarado arriba
+    let rawiva;
+    let roundedSubtotal;
+    let roundediva;
+    let newtotal;
     
+    if (isIvaOnTop) {
+      // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
+      rawiva = rawSubtotal * 0.13;
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      roundediva = Math.round(rawiva * 100) / 100;
+      
+      setiva(roundediva.toFixed(2));
+      setSubtotal(roundedSubtotal.toFixed(2));
+      
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      console.log(value_rent);
+      setRentvalue(value_rent);
+      
+      // Total = subtotal + IVA - renta
+      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+      setTotal(newtotal);
+    } else {
+      // Cálculo original
+      rawiva = Listitemstrack.reduce(
+        (total, item) => total + (item.ventaGravada * 0.13),
+        0
+      );
+      console.log("rawiva", rawiva);
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      roundediva = Math.round(rawiva * 100) / 100;
 
-    const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
-    console.log(value_rent);
-    setRentvalue(value_rent)
-      const totalwithiva = roundedSubtotal + roundediva
-    setTotal((totalwithiva - value_rent).toFixed(2))
+      setiva(roundediva.toFixed(2));
+      setSubtotal(rawSubtotal.toFixed(2));
+
+      const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
+      console.log(value_rent);
+      setRentvalue(value_rent);
+      const totalwithiva = roundedSubtotal + roundediva;
+      setTotal((totalwithiva - value_rent).toFixed(2));
+    }
 
     console.log("Subtotal", subtotal);
     console.log("Total", total);
@@ -716,22 +754,46 @@ const CrearCreditoFiscal = () => {
       (total, item) => total + item.precioUni * item.cantidad,
       0
     );
-    const rawiva = Listitems.reduce(
-      (total, item) => total + (item.ventaGravada * 0.13) ,
-      0
-    );
-    // Round to two decimal places
-    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-    const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva); // Set the rounded subtotal
-    setSubtotal(rawSubtotal.toFixed(2)); // Set the rounded subtotal
+    // Para usuarios 23 o 24: IVA se suma encima
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    
+    let rawiva;
+    let roundedSubtotal;
+    let roundediva;
+    let newtotal;
+    
+    if (isIvaOnTop) {
+      rawiva = rawSubtotal * 0.13;
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      roundediva = Math.round(rawiva * 100) / 100;
+      
+      setiva(roundediva.toFixed(2));
+      setSubtotal(roundedSubtotal.toFixed(2));
+      
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      console.log(value_rent);
+      setRentvalue(value_rent);
+      
+      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+      setTotal(newtotal);
+    } else {
+      rawiva = Listitems.reduce(
+        (total, item) => total + (item.ventaGravada * 0.13),
+        0
+      );
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      roundediva = Math.round(rawiva * 100) / 100;
 
-    const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
-    console.log(value_rent);
-    setRentvalue(value_rent)
-      const totalwithiva = roundedSubtotal + roundediva
-    setTotal((totalwithiva - value_rent).toFixed(2))
+      setiva(roundediva);
+      setSubtotal(rawSubtotal.toFixed(2));
+
+      const value_rent = ((rawSubtotal * percentage) / 100).toFixed(2);
+      console.log(value_rent);
+      setRentvalue(value_rent);
+      const totalwithiva = roundedSubtotal + roundediva;
+      setTotal((totalwithiva - value_rent).toFixed(2));
+    }
 
     console.log("Subtotal", subtotal);
     console.log("Total", total);
