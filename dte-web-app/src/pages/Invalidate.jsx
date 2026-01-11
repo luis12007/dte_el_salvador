@@ -201,7 +201,7 @@ const Invalidate = () => {
 
     return (
         <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-[33px] pr-[22px] box-border ch:items-center">
-            <SidebarComponent visible={visible} />
+            <SidebarComponent visible={visible} setVisible={setVisible} />
             
             <div className="relative flex flex-row items-center justify-between w-full">
   <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xs">Se permite invalidar luego de enviar:</h1>

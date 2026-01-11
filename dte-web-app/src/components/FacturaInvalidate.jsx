@@ -29,6 +29,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
   const [usuario, setUser] = useState([]);
   const [mailchecker, setMailChecker] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [formattedTotal, setFormattedTotal] = useState("");
   const fecAnula = new Date().toISOString().split('T')[0]; // Gets current date in "YYYY-MM-DD" format
   const horAnula = new Date().toLocaleTimeString('en-US', {
     hour12: false, // 24-hour format
@@ -130,11 +131,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
     console.log("content");
     console.log(content);
 
-
-
-
-
-
+    setFormattedTotal(content.total_a_pagar.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")); // 1,000
 
   }, []);
 
@@ -762,67 +759,39 @@ const FacturaInvalidate = ({ key, content, user }) => {
 
 
   return (
-    <div className="flex w-full self-stretch rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex-col items-center ml-2 pb-3 box-border my-6  text-black font-inria-sans ">
-      <header className="self-stretch  rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-1 pb-0 pr-[10px] pl-[15px] box-border text-xl text-black font-inria-sans ">
-        <div className="flex flex-col  items-start justify-start pt-1 px-0 pb-0">
-
-          <h1 className="m-0 relative text-inherit font-bold z-[3] mb-2">{tipo}</h1>
+    <div className="w-full max-w-full mx-0 bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-3 sm:px-5 py-4 sm:py-5 my-6 text-black font-inria-sans overflow-hidden break-words box-border">
+      <header className="flex items-center justify-between min-w-0 w-full">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-gainsboro-200 text-black border border-gray-300">
+            {tipo || 'Documento'}
+          </span>
         </div>
-
-
       </header>
 
-      <div className="">
-        <div className=""></div>
-      </div>
-      <div className="self-stretch flex flex-row items-center justify-center  py-0 px-[10px] box-border">
-        <div className="flex flex-col justify-center self-center w-full">
-          <div className="flex-1 flex px-4 flex-col items-center justify-center  pt-[7px]  pb-0">
-            <div className="self-stretch  flex flex-col items-start justify-start gap-[7px_0px]">
-              <div className="relative  whitespace-nowrap z-[1]">
-                {content.re_name}
-              </div>
-              <div className="self-stretch  h-px relative box-border z-[1] border-t-[1px] border-solid border-black" />
-              <div className="relative whitespace-nowrap z-[1]">
-                {/* re_nit if it is null re_numdocumento */}
-                Documento: {content.re_nit ? content.re_nit : content.re_numdocumento}
-              </div>
-              <div className="relative whitespace-nowrap z-[1]">
-                Correo: {content.re_correo_electronico}
-              </div>
-              <div className="relative whitespace-nowrap z-[1]">
-                Teléfono: {content.re_numero_telefono}
-              </div>
-              {(id_emisor == 6 || id_emisor == 10) && (
-                <>
-                  <div className="relative  z-[1]">
-                    Código de generación: {content.codigo_de_generacion}
-                  </div>
-                  <div className="relative  z-[1]">
-                    Número de control: {content.numero_de_control}
-                  </div>
-                </>
-              )}
-            </div>
-            
+      <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+        <div className="space-y-1 min-w-0">
+          <div className="text-lg font-bold break-words whitespace-normal">{content.re_name}</div>
+          <div className="text-base text-black break-all whitespace-normal">Documento: {content.re_nit ? content.re_nit : content.re_numdocumento || '—'}</div>
+          <div className="text-base text-black break-words whitespace-normal">Correo: {content.re_correo_electronico || '—'}</div>
+          <div className="text-base text-black break-words whitespace-normal">Teléfono: {content.re_numero_telefono || '—'}</div>
+          <div className="text-sm text-black space-y-0.5">
+            <div>Código de generación: {content.codigo_de_generacion}</div>
+            <div>Número de control: {content.numero_de_control}</div>
           </div>
-          <div className="flex-1 flex w-full  pt-4 flex-col items-center justify-center gap-[8px_0px]">
-            <button
-              className="cursor-pointer [border:none] px-3 py-1 bg-gay-100 rounded-mini shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap z-[1] hover:bg-gainsboro-100">
-              <b className="relative text-11xl font-inria-sans text-black text-left whitespace-nowrap z-[2]">
-                TOTAL: ${content.total_a_pagar}
-              </b>
-            </button>
-            <div className="w-full  flex pt-4 gap-[0px_12px]">
-              <div className="flex-grow flex justify-center">
-                {sendedebutton}
-              </div>
-            </div>
+        </div>
+        <div className="flex md:items-end md:justify-end min-w-0">
+          <div className="inline-flex items-center gap-2 bg-gainsboro-200 px-3 py-2 rounded-lg border border-gray-300">
+            <span className="text-sm font-medium text-black">TOTAL</span>
+            <span className="text-lg font-bold tracking-wide">${formattedTotal}</span>
           </div>
         </div>
       </div>
 
-{isLoading && (
+      <div className="mt-5 flex justify-center">
+        {sendedebutton}
+      </div>
+
+      {isLoading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="loader"></div>
         </div>

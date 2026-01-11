@@ -549,22 +549,30 @@ const CrearCreditoFiscal = () => {
   /* USEEFFECT */
   useEffect(() => {
     const fetchData = async () => {
-      const response = await UserService.getUserInfo(id_emisor, token);
-      console.log("User Data");
-      if (response.payment === false) {
-        toast.error("Por favor, complete el pago para continuar", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined
-        });
+      try {
+        const response = await UserService.getUserInfo(id_emisor, token);
+        console.log("User Data");
+        console.log(response);
+        
+        if (!response || response.payment === false || response.payment === undefined) {
+          toast.error("Por favor, complete el pago para continuar", {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined
+          });
+          navigate("/principal");
+          return;
+        }
+        setUserinfo(response);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Error al obtener información del usuario");
         navigate("/principal");
-    }
-      console.log(response);
-      setUserinfo(response);
+      }
     };
     fetchData();
   }, []);
