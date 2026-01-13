@@ -564,7 +564,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: null,
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: content.re_correo_electronico,
+            correo: (content.re_correo_electronico).trim(),
             tipoDocumento: content.re_tipodocumento,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,

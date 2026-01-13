@@ -1437,6 +1437,11 @@ const CrearCreditoFiscal = () => {
 
 
   const validateEmail = (email) => {
+        // Rechazar si contiene espacios
+    if (email.includes(' ')) {
+      return false;
+    }
+    
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };

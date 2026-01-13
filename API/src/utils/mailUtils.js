@@ -1139,7 +1139,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                }  else if (userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36) {
+                }  else if (userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 27|| userDB.id === 28 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36) {
                     mailOptions = {
                         from: 'mysoftwaresv@gmail.com',
                         to: plantillaDB.re_correo_electronico,
@@ -1300,7 +1300,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             fs.unlinkSync(pdfPath);
                         }
                     });
-                }else if (userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36) {
+                }else if (userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26|| userDB.id === 27 || userDB.id === 28 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36) {
                     const transporter = nodemailer.createTransport({
                         service: 'gmail',
                         auth: {

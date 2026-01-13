@@ -499,7 +499,7 @@ const Clientes = () => {
       /* validating the email form of email */
       if (client.email !== null && client.email !== undefined && client.email !== "") {
         if (!validateEmail(client.email)) {
-          toast.error("Formato de correo electrónico no válido!", {
+          toast.error("Formato de correo electrónico no válido o tiene espacios!", {
             position: "top-center",
             autoClose: 3000, // Auto close after 3 seconds
             hideProgressBar: false, // Display the progress bar
@@ -772,6 +772,10 @@ const Clientes = () => {
 
   /* Logic of validating email */
   const validateEmail = (email) => {
+    // Rechazar si contiene espacios
+    if (email.includes(' ')) {
+      return false;
+    }
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
