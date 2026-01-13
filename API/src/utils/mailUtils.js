@@ -984,12 +984,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1002,12 +1002,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica Renovare!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1020,12 +1020,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1038,12 +1038,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1056,12 +1056,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1074,12 +1074,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1092,12 +1092,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1110,12 +1110,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1128,12 +1128,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
@@ -1146,12 +1146,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                         subject: `DTE de parte de ${user.name}`,
                         html: '<h3>¡DTE facturacion electronica MySoftwareSV!</h3>',
                         attachments: [{
-                                filename: 'DTE.pdf',
+                                filename: `${plantillaDB.codigo_de_generacion}.pdf`,
                                 path: pdfPath,
                                 encoding: 'base64'
                             },
                             {
-                                filename: 'DTE.json', // Name of the JSON file
+                                filename: `${plantillaDB.codigo_de_generacion}.json`, // Name of the JSON file
                                 path: jsonPath, // Path to the JSON file
                                 encoding: 'base64'
                             }
