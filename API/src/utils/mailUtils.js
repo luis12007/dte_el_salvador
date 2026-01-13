@@ -958,7 +958,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         /* Vars for the json */
         const jsonContent = JSON.stringify(json, null, 2); // Replace `yourJsonObject` with the actual JSON data you want to send
-        const jsonPath = path.join(__dirname, `${user.name} ${plantilla.re_name}.json`);
+        const jsonPath = path.join(__dirname, `${plantillaDB.codigo_de_generacion}.json`);
 
 
 
@@ -966,7 +966,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         fs.writeFileSync(jsonPath, jsonContent);
 
         // Create the document PDF
-        const pdfPath = path.join(__dirname, `${user.name} ${plantilla.re_name}.pdf`);
+        const pdfPath = path.join(__dirname, `${plantillaDB.codigo_de_generacion}.pdf`);
 
         const pdfDoc = new PDFDocument({
             size: 'A4',
