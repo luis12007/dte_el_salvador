@@ -235,7 +235,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
         tipoDocumento: content.re_tipodocumento,
         numDocumento: content.re_numdocumento,
         nombre: content.re_name,
-        telefono: content.re_numero_telefono,
+        telefono: content.re_numero_telefono, 
         correo: content.re_correo_electronico
       },
       motivo: {
