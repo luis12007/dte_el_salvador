@@ -19,7 +19,6 @@ const sendMailFactura = async (req, res) => {
   console.log(response);
   console.log("Email sent");
 
-
 }
 
 */

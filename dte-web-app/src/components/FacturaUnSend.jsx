@@ -3,8 +3,8 @@ import checkimg from "../assets/imgs/marca-de-verificacion.png";
 import Firmservice from "../services/Firm";
 import PlantillaAPI from "../services/PlantillaService";
 import SendAPI from "../services/SendService";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BillsxItemsAPI from "../services/BIllxitemsService";
 import SendEmail from "../services/SendMailService";
 import downloadPDF from "../services/DownloadPDF";
@@ -17,7 +17,6 @@ import direct from "../assets/imgs/direct.png";
 import signature from "../assets/imgs/signature.png";
 import UserService from "../services/UserServices";
 import EmisorService from "../services/emisor";
-
 
 const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const [tipo, setTipo] = useState("");
@@ -33,7 +32,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const deleteInFlightRef = useRef(false);
   const autoFixMunicipioFormatoAttemptedRef = useRef(false);
 
-
   useEffect(() => {
     if (content.tipo === "01") {
       setTipo("Factura");
@@ -45,19 +43,24 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       setTipo("Nota de Crédito");
     } else if (content.tipo === "06") {
       setTipo("Nota de Debito");
-    }else if (content.tipo === "08") {
+    } else if (content.tipo === "08") {
       setTipo("Comprobante de Liquidación");
     }
 
-    if (content.re_correo_electronico === ""
-      || content.re_correo_electronico === null) {
+    if (
+      content.re_correo_electronico === "" ||
+      content.re_correo_electronico === null
+    ) {
       console.log("no email");
       setMailChecker(false);
     }
 
     /* Find service per factura */
     const itemsdata = async () => {
-      const data = await BillsxItemsAPI.getlist(token, content.codigo_de_generacion);
+      const data = await BillsxItemsAPI.getlist(
+        token,
+        content.codigo_de_generacion
+      );
       console.log("data");
       console.log(data);
       data.map((item) => {
@@ -67,7 +70,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       });
 
       if (content.tipo === "03") {
-        
         const newItems = data.map((item) => {
           const newItem = {
             codTributo: item.codtributo,
@@ -91,9 +93,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         });
         console.log(newItems);
         setItems(newItems);
-
       } else if (content.tipo === "01") {
-
         if (!data[0]?.tributos || data[0]?.tributos === null) {
           const newItems = data.map((item) => {
             const newItem = {
@@ -118,13 +118,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             return newItem;
           });
 
-
           console.log(newItems);
           setItems(newItems);
         } else {
           const newItems = data.map((item) => {
-            const arr = []
-            arr.push(String(item.tributos))
+            const arr = [];
+            arr.push(String(item.tributos));
             const newItem = {
               codTributo: item.codtributo,
               descripcion: item.descripcion,
@@ -147,15 +146,10 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             return newItem;
           });
 
-
           console.log(newItems);
           setItems(newItems);
         }
-
-
       } else if (content.tipo === "14") {
-
-
         const newItems = data.map((item) => {
           const newItem = {
             numItem: item.numitem,
@@ -171,12 +165,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           return newItem;
         });
 
-
         console.log(newItems);
         setItems(newItems);
       } else if (content.tipo === "05") {
-
-
         const newItems = data.map((item) => {
           const newItem = {
             codTributo: item.codtributo,
@@ -196,13 +187,10 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           };
           return newItem;
         });
-
 
         console.log(newItems);
         setItems(newItems);
       } else if (content.tipo === "06") {
-
-
         const newItems = data.map((item) => {
           const newItem = {
             codTributo: item.codtributo,
@@ -223,16 +211,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           return newItem;
         });
 
-
         console.log(newItems);
         setItems(newItems);
-      }else if (content.tipo === "08") {
-
-
+      } else if (content.tipo === "08") {
         const newItems = data.map((item) => {
-            /* here start form 1 and sum 1 each iteration to put numitem */
-            let numItem = 1;
-          const tributosNorm = (t) => (t?.[2] ? t : (t ? [String(t)] : null));
+          /* here start form 1 and sum 1 each iteration to put numitem */
+          let numItem = 1;
+          const tributosNorm = (t) => (t?.[2] ? t : t ? [String(t)] : null);
           const newItem = {
             numItem: numItem++,
             tipoDte: item.tipodte,
@@ -243,9 +228,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             ventaExenta: item.ventaexenta,
             ventaGravada: item.ventagravada,
             exportaciones: 0,
-            tributos: tributosNorm(item.tributos),/* REVIEW */
-              ivaItem: item.ivaitem/* item.ivaitem */,/* REVIEW */
-            obsItem: item.obsitem
+            tributos: tributosNorm(item.tributos) /* REVIEW */,
+            ivaItem: item.ivaitem /* item.ivaitem */ /* REVIEW */,
+            obsItem: item.obsitem,
 
             /* codTributo: item.codtributo,
             descripcion: item.descripcion,
@@ -260,26 +245,23 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           return newItem;
         });
 
-
         console.log(newItems);
         setItems(newItems);
       }
-
     };
     itemsdata();
     console.log("user");
     console.log(user);
-    
-    setUser(user)
+
+    setUser(user);
 
     console.log("content");
     console.log(content);
 
-    setFormattedTotal(content.total_a_pagar.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")); // 1,000
-
+    setFormattedTotal(
+      content.total_a_pagar.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    ); // 1,000
   }, []);
-
-
 
   const EditBillHandler = () => {
     if (content.tipo === "01") {
@@ -304,7 +286,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           direccion: {
             municipio: user.municipio,
             departamento: user.departamento,
-            complemento: user.direccion
+            complemento: user.direccion,
           },
           nit: user.nit,
           nrc: user.nrc,
@@ -320,7 +302,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           codEstableMH: content.codestablemh,
           codEstable: content.codestable,
           codPuntoVentaMH: content.codpuntoventamh,
-          codPuntoVenta: content.codpuntoventa
+          codPuntoVenta: content.codpuntoventa,
         },
         receptor: {
           codActividad: content.re_codactividad,
@@ -331,24 +313,24 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           tipoDocumento: content.re_tipodocumento,
           nombre: content.re_name,
           telefono: content.re_numero_telefono,
-          numDocumento: content.re_numdocumento
+          numDocumento: content.re_numdocumento,
         },
         otrosDocumentos: content.otrosdocumentos,
         ventaTercero: content.ventatercero,
         cuerpoDocumento: Listitems,
         resumen: {
           condicionOperacion: content.condicionoperacion,
-          totalIva: parseFloat(content.iva_percibido),/* pending */
+          totalIva: parseFloat(content.iva_percibido) /* pending */,
           saldoFavor: content.saldofavor,
           numPagoElectronico: content.numpagoelectronico,
           pagos: [
-            {/* TODO: ADD MORE PAYMENTS */
-              periodo: content.periodo,
+            {
+              /* TODO: ADD MORE PAYMENTS */ periodo: content.periodo,
               plazo: content.plazo,
               montoPago: content.montopago,
               codigo: content.codigo,
-              referencia: content.referencia
-            }
+              referencia: content.referencia,
+            },
           ],
           totalNoSuj: content.totalnosuj,
           tributos: content.tributos,
@@ -366,7 +348,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           ivaRete1: parseFloat(content.iva_retenido),
           reteRenta: parseFloat(content.retencion_de_renta),
           totalNoGravado: content.totalnogravado,
-          totalPagar: parseFloat(content.total_a_pagar)
+          totalPagar: parseFloat(content.total_a_pagar),
         },
         extension: {
           docuEntrega: content.documento_e,
@@ -384,7 +366,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       console.log("---------------resultado--------------");
 
       navigate(`/editar/factura/${content.codigo_de_generacion}`);
-
     } else if (content.tipo === "03") {
       navigate(`/editar/CreditoFiscal/${content.codigo_de_generacion}`);
     } else if (content.tipo === "14") {
@@ -396,7 +377,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     } else if (content.tipo === "08") {
       navigate(`/editar/CL/${content.codigo_de_generacion}`);
     }
-
   };
 
   const DownloadBillHandler = async () => {
@@ -421,7 +401,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         direccion: {
           municipio: user.municipio,
           departamento: user.departamento,
-          complemento: user.direccion
+          complemento: user.direccion,
         },
         nit: user.nit,
         nrc: user.nrc,
@@ -437,7 +417,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         codEstableMH: content.codestablemh,
         codEstable: content.codestable,
         codPuntoVentaMH: content.codpuntoventamh,
-        codPuntoVenta: content.codpuntoventa
+        codPuntoVenta: content.codpuntoventa,
       },
       receptor: {
         codActividad: content.re_codactividad,
@@ -448,24 +428,24 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         tipoDocumento: content.re_tipodocumento,
         nombre: content.re_name,
         telefono: content.re_numero_telefono,
-        numDocumento: content.re_numdocumento
+        numDocumento: content.re_numdocumento,
       },
       otrosDocumentos: content.otrosdocumentos,
       ventaTercero: content.ventatercero,
       cuerpoDocumento: Listitems,
       resumen: {
         condicionOperacion: content.condicionoperacion,
-        totalIva: parseFloat(content.iva_percibido),/* pending */
+        totalIva: parseFloat(content.iva_percibido) /* pending */,
         saldoFavor: content.saldofavor,
         numPagoElectronico: content.numpagoelectronico,
         pagos: [
-          {/* TODO: ADD MORE PAYMENTS */
-            periodo: content.periodo,
+          {
+            /* TODO: ADD MORE PAYMENTS */ periodo: content.periodo,
             plazo: content.plazo,
             montoPago: content.montopago,
             codigo: content.codigo,
-            referencia: content.referencia
-          }
+            referencia: content.referencia,
+          },
         ],
         totalNoSuj: content.totalnosuj,
         tributos: content.tributos,
@@ -483,7 +463,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         ivaRete1: parseFloat(content.iva_retenido),
         reteRenta: parseFloat(content.retencion_de_renta),
         totalNoGravado: content.totalnogravado,
-        totalPagar: parseFloat(content.total_a_pagar)
+        totalPagar: parseFloat(content.total_a_pagar),
       },
       extension: {
         docuEntrega: content.documento_e,
@@ -509,17 +489,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     downloadPDF(data, id_emisor, data.identificacion.codigoGeneracion, token);
     toast.success("Descargando factura");
     /* Calling the API to send the email */
-
-
   };
 
-
-
-  const ValidateBillHandler = async () => { /* Firm DTE */
+  const ValidateBillHandler = async () => {
+    /* Firm DTE */
     /* -----------------CONST DATA--------------------------- */
     try {
-
-
       if (content.tipo == "01") {
         var data = {
           identificacion: {
@@ -541,7 +516,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: user.municipio,
               departamento: user.departamento,
-              complemento: user.direccion
+              complemento: user.direccion,
             },
             nit: user.nit,
             nrc: user.nrc,
@@ -557,35 +532,35 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             codEstableMH: content.codestablemh,
             codEstable: content.codestable,
             codPuntoVentaMH: content.codpuntoventamh,
-            codPuntoVenta: content.codpuntoventa
+            codPuntoVenta: content.codpuntoventa,
           },
           receptor: {
             codActividad: content.re_codactividad,
             direccion: null,
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
-            correo: (content.re_correo_electronico).trim(),
+            correo: content.re_correo_electronico.trim(),
             tipoDocumento: content.re_tipodocumento,
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
-            numDocumento: content.re_numdocumento
+            numDocumento: content.re_numdocumento,
           },
           otrosDocumentos: content.otrosdocumentos,
           ventaTercero: content.ventatercero,
           cuerpoDocumento: Listitems,
           resumen: {
             condicionOperacion: content.condicionoperacion,
-            totalIva: parseFloat(content.iva_percibido),/* pending */
+            totalIva: parseFloat(content.iva_percibido) /* pending */,
             saldoFavor: content.saldofavor,
             numPagoElectronico: content.numpagoelectronico,
             pagos: [
-              {/* TODO: ADD MORE PAYMENTS */
-                periodo: content.periodo,
+              {
+                /* TODO: ADD MORE PAYMENTS */ periodo: content.periodo,
                 plazo: content.plazo,
                 montoPago: content.montopago,
                 codigo: content.codigo,
-                referencia: content.referencia
-              }
+                referencia: content.referencia,
+              },
             ],
             totalNoSuj: content.totalnosuj,
             tributos: content.tributos,
@@ -603,7 +578,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             ivaRete1: parseFloat(content.iva_retenido),
             reteRenta: parseFloat(content.retencion_de_renta),
             totalNoGravado: content.totalnogravado,
-            totalPagar: parseFloat(content.total_a_pagar)
+            totalPagar: parseFloat(content.total_a_pagar),
           },
           extension: {
             docuEntrega: content.documento_e,
@@ -616,10 +591,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           apendice: content.apendice,
         };
 
-        if (data.receptor.numDocumento === null || data.receptor.numDocumento === "") {
+        if (
+          data.receptor.numDocumento === null ||
+          data.receptor.numDocumento === ""
+        ) {
           data.receptor = null;
         }
-
       }
       if (content.tipo == "03") {
         /* Split in this structure direccion: {
@@ -649,7 +626,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: user.municipio,
               departamento: user.departamento,
-              complemento: user.direccion
+              complemento: user.direccion,
             },
             nit: user.nit,
             nrc: user.nrc,
@@ -665,14 +642,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             codEstableMH: content.codestablemh,
             codEstable: content.codestable,
             codPuntoVentaMH: content.codpuntoventamh,
-            codPuntoVenta: content.codpuntoventa
+            codPuntoVenta: content.codpuntoventa,
           },
           receptor: {
             codActividad: content.re_codactividad,
             direccion: {
               municipio: content.municipio,
               departamento: content.departamento,
-              complemento: content.complemento
+              complemento: content.complemento,
             },
             nrc: content.re_nrc,
             descActividad: content.re_actividad_economica,
@@ -680,7 +657,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             nombre: content.re_name,
             telefono: content.re_numero_telefono,
             nombreComercial: content.re_numdocumento,
-            nit: content.re_nit
+            nit: content.re_nit,
           },
           otrosDocumentos: content.otrosdocumentos,
           ventaTercero: content.ventatercero,
@@ -690,20 +667,22 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             saldoFavor: content.saldofavor,
             numPagoElectronico: content.numpagoelectronico,
             pagos: [
-              {/* TODO: ADD MORE PAYMENTS */
-                periodo: content.periodo,
+              {
+                /* TODO: ADD MORE PAYMENTS */ periodo: content.periodo,
                 plazo: content.plazo,
                 montoPago: content.montopago,
                 codigo: content.codigo,
-                referencia: content.referencia
-              }
+                referencia: content.referencia,
+              },
             ],
             totalNoSuj: content.totalnosuj,
-            tributos: [{
-              codigo: tributocf[0],
-              descripcion: tributocf[1],
-              valor: parseFloat(tributocf[2])
-            }],
+            tributos: [
+              {
+                codigo: tributocf[0],
+                descripcion: tributocf[1],
+                valor: parseFloat(tributocf[2]),
+              },
+            ],
             totalLetras: content.cantidad_en_letras,
             totalExenta: content.totalexenta,
             subTotalVentas: content.subtotalventas,
@@ -761,7 +740,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: user.municipio,
               departamento: user.departamento,
-              complemento: user.direccion
+              complemento: user.direccion,
             },
             nit: user.nit,
             nrc: user.nrc,
@@ -775,7 +754,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             codEstableMH: content.codestablemh,
             codEstable: content.codestable,
             codPuntoVentaMH: content.codpuntoventamh,
-            codPuntoVenta: content.codpuntoventa
+            codPuntoVenta: content.codpuntoventa,
           },
           sujetoExcluido: {
             tipoDocumento: content.re_tipodocumento,
@@ -786,14 +765,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: address[1],
               departamento: address[0],
-              complemento: address[2]
+              complemento: address[2],
             },
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
           cuerpoDocumento: Listitems,
           resumen: {
-
             totalCompra: content.montototaloperacion,
             descu: content.descuexenta,
             totalDescu: parseFloat(content.monto_global_de_descuento),
@@ -804,16 +782,15 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             totalLetras: content.cantidad_en_letras,
             condicionOperacion: Number(content.codigo),
             pagos: [
-              {/* TODO: ADD MORE PAYMENTS */
-                periodo: content.periodo,
+              {
+                /* TODO: ADD MORE PAYMENTS */ periodo: content.periodo,
                 plazo: content.plazo,
                 montoPago: content.montopago,
                 codigo: content.codigo,
-                referencia: content.referencia
-              }
+                referencia: content.referencia,
+              },
             ],
             observaciones: content.observaciones,
-
           },
           apendice: content.apendice,
         };
@@ -828,7 +805,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         const address = content.re_direccion.split("|");
         const tributocf = content.tributocf.split("|");
-        console.log(tipodedocumento)
+        console.log(tipodedocumento);
         var data = {
           identificacion: {
             version: parseInt(content.version),
@@ -844,14 +821,15 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             tipoContingencia: content.tipocontingencia,
             motivoContin: content.motivocontin,
           },
-          documentoRelacionado: [{
-            tipoDocumento: tipoDocumento,
-            tipoGeneracion: Number(tipoGeneracion),
-            numeroDocumento: numeroDocumento,
-            fechaEmision: fechaEmision
-          }],
+          documentoRelacionado: [
+            {
+              tipoDocumento: tipoDocumento,
+              tipoGeneracion: Number(tipoGeneracion),
+              numeroDocumento: numeroDocumento,
+              fechaEmision: fechaEmision,
+            },
+          ],
           emisor: {
-
             nit: user.nit,
             nrc: user.nrc,
             nombre: user.name,
@@ -862,7 +840,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: user.municipio,
               departamento: user.departamento,
-              complemento: user.direccion
+              complemento: user.direccion,
             },
             telefono: user.numero_de_telefono,
             correo: user.correo_electronico,
@@ -877,7 +855,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: address[1],
               departamento: address[0],
-              complemento: address[2]
+              complemento: address[2],
             },
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
@@ -892,11 +870,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             descuNoSuj: content.descunosuj,
             descuExenta: content.descuexenta,
             totalDescu: parseFloat(content.monto_global_de_descuento),
-            tributos: [{
-              codigo: tributocf[0],
-              descripcion: tributocf[1],
-              valor: parseFloat(tributocf[2])
-            }],
+            tributos: [
+              {
+                codigo: tributocf[0],
+                descripcion: tributocf[1],
+                valor: parseFloat(tributocf[2]),
+              },
+            ],
             subTotal: parseFloat(content.subtotal),
             ivaPerci1: parseFloat(content.iva_percibido),
             ivaRete1: parseFloat(content.iva_retenido),
@@ -943,7 +923,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         const address = content.re_direccion.split("|");
         const tributocf = content.tributocf.split("|");
-        console.log(tipodedocumento)
+        console.log(tipodedocumento);
         var data = {
           identificacion: {
             version: parseInt(content.version),
@@ -959,14 +939,15 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             tipoContingencia: content.tipocontingencia,
             motivoContin: content.motivocontin,
           },
-          documentoRelacionado: [{
-            tipoDocumento: tipoDocumento,
-            tipoGeneracion: Number(tipoGeneracion),
-            numeroDocumento: numeroDocumento,
-            fechaEmision: fechaEmision
-          }],
+          documentoRelacionado: [
+            {
+              tipoDocumento: tipoDocumento,
+              tipoGeneracion: Number(tipoGeneracion),
+              numeroDocumento: numeroDocumento,
+              fechaEmision: fechaEmision,
+            },
+          ],
           emisor: {
-
             nit: user.nit,
             nrc: user.nrc,
             nombre: user.name,
@@ -977,7 +958,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: user.municipio,
               departamento: user.departamento,
-              complemento: user.direccion
+              complemento: user.direccion,
             },
             telefono: user.numero_de_telefono,
             correo: user.correo_electronico,
@@ -992,7 +973,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: address[1],
               departamento: address[0],
-              complemento: address[2]
+              complemento: address[2],
             },
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
@@ -1007,11 +988,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             descuNoSuj: content.descunosuj,
             descuExenta: content.descuexenta,
             totalDescu: parseFloat(content.monto_global_de_descuento),
-            tributos: [{
-              codigo: tributocf[0],
-              descripcion: tributocf[1],
-              valor: parseFloat(tributocf[2])
-            }],
+            tributos: [
+              {
+                codigo: tributocf[0],
+                descripcion: tributocf[1],
+                valor: parseFloat(tributocf[2]),
+              },
+            ],
             subTotal: parseFloat(content.subtotal),
             ivaPerci1: parseFloat(content.iva_percibido),
             ivaRete1: parseFloat(content.iva_retenido),
@@ -1062,12 +1045,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         const r_direccion = {
           municipio: address[1],
           departamento: address[0],
-          complemento: address[2]
+          complemento: address[2],
         };
 
         /* if address[0] is just "2" i will change it to "02" dinamically*/
-        console.log("---------------------------------------")
-        console.log(address)
+        console.log("---------------------------------------");
+        console.log(address);
         var data = {
           identificacion: {
             version: parseInt(content.version),
@@ -1088,7 +1071,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             fechaEmision: fechaEmision
           }], */
           emisor: {
-
             nit: user.nit,
             nrc: user.nrc,
             nombre: user.name,
@@ -1099,16 +1081,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             direccion: {
               municipio: user.municipio,
               departamento: user.departamento,
-              complemento: user.direccion
+              complemento: user.direccion,
             },
             telefono: user.numero_de_telefono,
             correo: user.correo_electronico,
 
-                        /* TODO: Just in case establecimiento  */
+            /* TODO: Just in case establecimiento  */
             codEstableMH: content.codestablemh,
             codEstable: content.codestable,
             codPuntoVentaMH: content.codpuntoventamh,
-            codPuntoVenta: content.codpuntoventa
+            codPuntoVenta: content.codpuntoventa,
           },
           receptor: {
             nit: content.re_nit,
@@ -1127,11 +1109,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             totalExenta: content.totalexenta,
             totalGravada: parseFloat(content.total_agravada),
             subTotalVentas: content.subtotalventas,
-            tributos: [{
-              codigo: tributocf[0],
-              descripcion: tributocf[1],
-              valor: parseFloat(tributocf[2])
-            }],
+            tributos: [
+              {
+                codigo: tributocf[0],
+                descripcion: tributocf[1],
+                valor: parseFloat(tributocf[2]),
+              },
+            ],
             montoTotalOperacion: content.montototaloperacion,
             totalLetras: content.cantidad_en_letras,
             condicionOperacion: content.condicionoperacion,
@@ -1166,8 +1150,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         };
       }
 
-        console.log("--------------------C DE LIQUIDACION-------------------")
-        console.log(data)
+      console.log("--------------------C DE LIQUIDACION-------------------");
+      console.log(data);
 
       console.log("---------------resultado--------------");
       console.log(data);
@@ -1187,41 +1171,39 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       const responseFirm = null;
       if (id_emisor == 1 || id_emisor == 2) {
         const responseFirm = await Firmservice.create(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
 
         if (responseFirm === undefined) {
           toast.error("No se encontró firmador activo");
-          return
+          return;
         }
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-
 
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
       }
       if (id_emisor == 3) {
         const responseFirm = await Firmservice.create_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
 
         if (responseFirm === undefined) {
           toast.error("No se encontró firmador activo");
-          return
+          return;
         }
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-
 
         console.log("---------------resultado of firm server--------------");
         console.log(responseFirm);
       }
       if (id_emisor == 4) {
         const responseFirm = await Firmservice.HM_Clinic(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1229,7 +1211,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
 
@@ -1238,7 +1220,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       }
       if (id_emisor == 9) {
         const responseFirm = await Firmservice.HM_Clinic_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1246,7 +1228,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
 
@@ -1255,7 +1237,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       }
       if (id_emisor == 5) {
         const responseFirm = await Firmservice.DR_julio_HM(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1263,7 +1245,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
 
@@ -1273,7 +1255,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
       if (id_emisor == 8) {
         const responseFirm = await Firmservice.DR_julio_HM_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1281,7 +1263,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
 
@@ -1291,7 +1273,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
       if (id_emisor == 6) {
         const responseFirm = await Firmservice.DR_VIDES(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1299,14 +1281,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 10) {
         const responseFirm = await Firmservice.DR_VIDES_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1314,15 +1296,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
-
       if (id_emisor == 11) {
         const responseFirm = await Firmservice.SANDR_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1330,31 +1311,31 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 7) {
         const responseFirm = await Firmservice.OSEGUEDA(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
         data.sello = content.sello;
-        console.log(content.re_direccion)
+        console.log(content.re_direccion);
 
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 12) {
         const responseFirm = await Firmservice.OSEGUEDA_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1362,14 +1343,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 14) {
         const responseFirm = await Firmservice.ICP(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1377,14 +1358,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 13) {
         const responseFirm = await Firmservice.ICP_PROD(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1392,14 +1373,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 15) {
         const responseFirm = await Firmservice.RINO_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1407,14 +1388,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 16) {
         const responseFirm = await Firmservice.GINE_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1422,14 +1403,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 17) {
         const responseFirm = await Firmservice.GINE_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1437,14 +1418,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 18) {
         const responseFirm = await Firmservice.RINO_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1452,14 +1433,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 19) {
         const responseFirm = await Firmservice.Jorge_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1467,14 +1448,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 20) {
         const responseFirm = await Firmservice.Jorge_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1482,16 +1463,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 21) {
-        console.log("Firmando en Koala test")
-        console.log(Firm)
+        console.log("Firmando en Koala test");
+        console.log(Firm);
         const responseFirm = await Firmservice.Koala_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1499,9 +1480,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else if (content.tipo == "08") {
+        } else if (content.tipo == "08") {
           const address = content.re_direccion.split("|");
-                    if (address[0].length == 1) {
+          if (address[0].length == 1) {
             address[0] = "0" + address[0];
           }
           if (address[1]?.length == 1) {
@@ -1510,18 +1491,18 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           data.receptor.direccion = {
             municipio: address[1],
             departamento: address[0],
-            complemento: address[2]
+            complemento: address[2],
           };
-        }else {
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 22) {
-                console.log("Firmando en Koala test")
-        console.log(Firm)
+        console.log("Firmando en Koala test");
+        console.log(Firm);
         const responseFirm = await Firmservice.Koala_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1529,7 +1510,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else if (content.tipo == "08") {
+        } else if (content.tipo == "08") {
           const address = content.re_direccion.split("|");
 
           /*  */
@@ -1542,16 +1523,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           data.receptor.direccion = {
             municipio: address[1],
             departamento: address[0],
-            complemento: address[2]
+            complemento: address[2],
           };
-        }else {
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 23) {
         const responseFirm = await Firmservice.default_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1559,14 +1540,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 24) {
         const responseFirm = await Firmservice.default_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1574,14 +1555,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 25) {
         const responseFirm = await Firmservice.default_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1589,14 +1570,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 26) {
         const responseFirm = await Firmservice.default_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1604,14 +1585,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 27) {
         const responseFirm = await Firmservice.default_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1619,14 +1600,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 28) {
         const responseFirm = await Firmservice.default_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1634,14 +1615,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
-          data.receptor.direccion = content.re_direccion;
+        } else if (data.receptor) {
+          data.receptor.direccion = content.re_direccion ;
         }
       }
 
       if (id_emisor == 29) {
         const responseFirm = await Firmservice.default_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1649,14 +1630,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 30) {
         const responseFirm = await Firmservice.default_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1664,14 +1645,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 31) {
         const responseFirm = await Firmservice.default_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1679,14 +1660,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 32) {
         const responseFirm = await Firmservice.default_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1694,14 +1675,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 33) {
         const responseFirm = await Firmservice.default_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1709,14 +1690,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 34) {
         const responseFirm = await Firmservice.default_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1724,14 +1705,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 35) {
         const responseFirm = await Firmservice.default_test(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1739,14 +1720,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
       if (id_emisor == 36) {
         const responseFirm = await Firmservice.default_prod(Firm);
-        console.log("firm response")
+        console.log("firm response");
         console.log(responseFirm);
         data.firma = responseFirm.body;
         data.sellado = content.sellado;
@@ -1754,25 +1735,21 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         if (content.tipo == "14") {
           const address = content.re_direccion.split("|");
           data.sujetoExcluido.direccion = address[2];
-        }else{
+        } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
       }
 
-
-
-
       if (id_emisor > 36) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
-        return
+        return;
       }
 
-
-
-      // update the bill without the items 
-      if (responseFirm) {
+      // update the bill without the items
+      if (responseFirm && data.receptor) {
         data.receptor.direccion = content.re_direccion;
+        data.receptor.correo = content.re_correo_electronico;
       }
 
       const response = await PlantillaAPI.updateNoItems(
@@ -1788,33 +1765,27 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         toast.success("Factura firmada");
 
         /* wait 5 seconds */
-          setTimeout(() => {
+        setTimeout(() => {
           window.location.reload();
-
-        }, 3000); 
-
-
-
-
+        }, 3000);
       } else {
         console.log("error");
         toast.error("Error al actualizar factura");
       }
       /*  window.location.reload();  */
     } catch (error) {
-      console.log(error)
-      toast.error("Dispositivo no autorizado para firmar")
+      console.log(error);
+      toast.error("Dispositivo no autorizado para firmar");
     }
-
   };
 
-
   const testmail = async () => {
-
-    if (content.re_correo_electronico === null || content.re_correo_electronico === "") {
+    if (
+      content.re_correo_electronico === null ||
+      content.re_correo_electronico === ""
+    ) {
       toast.error("el receptor no tiene correo electronico");
-      return
-
+      return;
     }
     console.log("testmail");
     console.log("SendBillHandler");
@@ -1828,43 +1799,48 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     if (content.re_correo_electronico === null) {
       toast.error("el receptor no tiene correo electronico");
 
-      return
+      return;
     }
 
-    if(id_emisor == 7 || id_emisor == 12){
+    if (id_emisor == 7 || id_emisor == 12) {
       console.log("---------------enviando--------------");
-    console.log(content);
-    console.log(token);
-    console.log(id_emisor);
-    const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+      console.log(content);
+      console.log(token);
+      console.log(id_emisor);
+      const sendEmailFactura = await SendEmail.sendBillOsegueda(
+        id_emisor,
+        content,
+        token
+      );
 
-    console.log("---------------resultado de mail--------------");
-    console.log(sendEmailFactura);
+      console.log("---------------resultado de mail--------------");
+      console.log(sendEmailFactura);
 
-    if (sendEmailFactura.message === "Email sent") {
-      toast.success("Email enviado");
-    } else {
-      toast.error("No enviado problema");
-    }
+      if (sendEmailFactura.message === "Email sent") {
+        toast.success("Email enviado");
+      } else {
+        toast.error("No enviado problema");
+      }
     } else {
       console.log("---------------enviando--------------");
-    console.log(content);
-    console.log(token);
-    console.log(id_emisor);
-    const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
+      console.log(content);
+      console.log(token);
+      console.log(id_emisor);
+      const sendEmailFactura = await SendEmail.sendBill(
+        id_emisor,
+        content,
+        token
+      );
 
-    console.log("---------------resultado de mail--------------");
-    console.log(sendEmailFactura);
+      console.log("---------------resultado de mail--------------");
+      console.log(sendEmailFactura);
 
-    if (sendEmailFactura.message === "Email sent") {
-      toast.success("Email enviado");
-    } else {
-      toast.error("No enviado problema");
+      if (sendEmailFactura.message === "Email sent") {
+        toast.success("Email enviado");
+      } else {
+        toast.error("No enviado problema");
+      }
     }
-    }
-
-
-
 
     /* 
         const parseintversion = parseInt(content.version);
@@ -1876,7 +1852,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           codigoGeneracion: content.codigo_de_generacion,
           documento: content.firm,
         }; */
-
 
     /* try {
       console.log(dataSend);
@@ -1899,13 +1874,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     } */
 
     /* Call the services */
+  };
 
-
-
-  }
-
-  const MUNICIPIO_FORMAT_ERROR = "Campo #/receptor/direccion/municipio no cumple el formato requerido";
-  const DEPARTAMENTO_FORMAT_ERROR = "Campo #/receptor/direccion/departamento no cumple el formato requerido";
+  const MUNICIPIO_FORMAT_ERROR =
+    "Campo #/receptor/direccion/municipio no cumple el formato requerido";
+  const DEPARTAMENTO_FORMAT_ERROR =
+    "Campo #/receptor/direccion/departamento no cumple el formato requerido";
 
   const DEFAULT_RECEPTOR_DEPARTAMENTO = "06";
   const DEFAULT_RECEPTOR_MUNICIPIO = "23";
@@ -1925,18 +1899,24 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     const expectedMunicipio = normalize(MUNICIPIO_FORMAT_ERROR);
     const expectedDepartamento = normalize(DEPARTAMENTO_FORMAT_ERROR);
 
-    const observaciones = Array.isArray(senddata.observaciones) ? senddata.observaciones : [];
+    const observaciones = Array.isArray(senddata.observaciones)
+      ? senddata.observaciones
+      : [];
     const obsHit = observaciones.some((o) => {
       const n = normalize(o);
-      return n === expectedMunicipio || n.includes(expectedMunicipio) || n === expectedDepartamento || n.includes(expectedDepartamento);
+      return (
+        n === expectedMunicipio ||
+        n.includes(expectedMunicipio) ||
+        n === expectedDepartamento ||
+        n.includes(expectedDepartamento)
+      );
     });
 
     if (obsHit) return true;
 
     const desc = normalize(senddata.descripcionMsg);
     return (
-      desc.includes(expectedMunicipio) ||
-      desc.includes(expectedDepartamento)
+      desc.includes(expectedMunicipio) || desc.includes(expectedDepartamento)
     );
   };
 
@@ -1987,11 +1967,17 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   };
 
   const getReceptorComplemento = () => {
-    if (typeof content?.complemento === "string" && content.complemento.trim() !== "") {
+    if (
+      typeof content?.complemento === "string" &&
+      content.complemento.trim() !== ""
+    ) {
       return content.complemento;
     }
 
-    if (typeof content?.re_direccion === "string" && content.re_direccion.includes("|")) {
+    if (
+      typeof content?.re_direccion === "string" &&
+      content.re_direccion.includes("|")
+    ) {
       const parts = content.re_direccion.split("|");
       if (parts.length >= 3 && parts[2]) return parts[2];
     }
@@ -2366,8 +2352,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     const parseintversion = parseInt(content.version);
 
     if (content.tipo === "01") {
-      const dataSend = { /* TODO: SEND */
-        tipoDte: content.tipo,
+      const dataSend = {
+        /* TODO: SEND */ tipoDte: content.tipo,
         ambiente: content.ambiente,
         idEnvio: content.id_envio,
         version: parseintversion,
@@ -2382,43 +2368,51 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         /* ADD token minis */
         var resultAuthminis = null;
-        if(user.ambiente == "00"){
-        resultAuthminis = await LoginAPI.loginMinis(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      } else {
-        resultAuthminis = await LoginAPI.loginMinis_prod(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      }
+        if (user.ambiente == "00") {
+          resultAuthminis = await LoginAPI.loginMinis(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        } else {
+          resultAuthminis = await LoginAPI.loginMinis_prod(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
           toast.error("Error en la autenticación, vuelve a intentar");
-          return
+          return;
         }
 
         var senddata = null;
         if (user.ambiente == "00") {
-        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
-        console.log(senddata);
+          senddata = await SendAPI.sendBill(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
+          console.log(senddata);
         } else {
-          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          senddata = await SendAPI.sendBillprod(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
           console.log(senddata);
         }
 
-
-
-
         if (senddata.estado === "PROCESADO") {
-          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          const response = await PlantillaAPI.updatesend(
+            id_emisor,
+            true,
+            senddata.selloRecibido,
+            token,
+            content.codigo_de_generacion
+          );
           console.log("edited");
           console.log(response);
           setIsLoading(false);
-
 
           toast.success("Factura enviada al ministerio");
 
@@ -2426,65 +2420,73 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
           /* Sending the email */
 
-
           if (content.re_correo_electronico === null) {
             toast.warning("el receptor no tiene correo electronico");
 
             setTimeout(() => {
               window.location.reload();
-
             }, 9000);
-            return
+            return;
           }
           if (id_emisor == 7 || id_emisor == 12) {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBillOsegueda(
+              id_emisor,
+              content,
+              token
+            );
 
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
 
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado, problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           } else {
-            toast.error("No enviado, problema");
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBill(
+              id_emisor,
+              content,
+              token
+            );
+
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
+
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        } else {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
-
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
-
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
-          } else {
-            toast.error("No enviado problema");
-          }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        }
-
         }
         setIsLoading(false);
 
-
-        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+        if (
+          senddata.descripcionMsg ==
+          "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR"
+        ) {
           toast.warning(`La factura ya fue enviada`);
-        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (
+          senddata.observaciones[0] ==
+          "Faltan datos en peticion para procesar informacion"
+        ) {
           toast.info(`No se encontró firma`);
         } else {
           if (isDireccionFormatoRechazoCase(senddata)) {
@@ -2503,18 +2505,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         }
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
-
-
-
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error("Error al enviar la factura no autorizado");
       }
-
-
     } else if (content.tipo === "03") {
-      const dataSend = { /* TODO: SEND */
-        tipoDte: content.tipo,
+      const dataSend = {
+        /* TODO: SEND */ tipoDte: content.tipo,
         ambiente: content.ambiente,
         idEnvio: content.id_envio,
         version: parseintversion,
@@ -2529,43 +2526,56 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         /* ADD token minis */
         var resultAuthminis = null;
-        if(user.ambiente == "00"){
-        resultAuthminis = await LoginAPI.loginMinis(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      } else {
-        resultAuthminis = await LoginAPI.loginMinis_prod(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      }
+        if (user.ambiente == "00") {
+          resultAuthminis = await LoginAPI.loginMinis(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        } else {
+          resultAuthminis = await LoginAPI.loginMinis_prod(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
           toast.success("Error en la autenticación, vuelve a intentar");
-          return
+          return;
         }
 
         var senddata = null;
         if (user.ambiente == "00") {
-        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
-        console.log(senddata);
+          senddata = await SendAPI.sendBill(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
+          console.log(senddata);
         } else {
-          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          senddata = await SendAPI.sendBillprod(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
           console.log(senddata);
         }
 
-
-
         if (senddata.estado === "PROCESADO") {
-          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          const response = await PlantillaAPI.updatesend(
+            id_emisor,
+            true,
+            senddata.selloRecibido,
+            token,
+            content.codigo_de_generacion
+          );
           console.log("edited");
           console.log(response);
           setIsLoading(false);
 
-          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          const responseincrement = await UserService.id_enviopus1(
+            id_emisor,
+            token
+          );
           console.log("incremented");
           console.log(responseincrement);
 
@@ -2578,58 +2588,69 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
             setTimeout(() => {
               window.location.reload();
-
             }, 9000);
-            return
+            return;
           }
 
           if (id_emisor == 7 || id_emisor == 12) {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBillOsegueda(
+              id_emisor,
+              content,
+              token
+            );
 
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
 
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado, problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           } else {
-            toast.error("No enviado, problema");
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBill(
+              id_emisor,
+              content,
+              token
+            );
+
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
+
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        } else {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
-
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
-
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
-          } else {
-            toast.error("No enviado problema");
-          }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        }
         }
         setIsLoading(false);
 
-        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+        if (
+          senddata.descripcionMsg ==
+          "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR"
+        ) {
           toast.warning(`La factura ya fue enviada`);
-        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (
+          senddata.observaciones[0] ==
+          "Faltan datos en peticion para procesar informacion"
+        ) {
           toast.info(`No se encontró firma`);
         } else {
           if (isDireccionFormatoRechazoCase(senddata)) {
@@ -2649,16 +2670,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
-
-
-
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error("Error al enviar la factura no autorizado");
       }
     } else if (content.tipo === "14") {
-      const dataSend = { /* TODO: SEND */
-        tipoDte: content.tipo,
+      const dataSend = {
+        /* TODO: SEND */ tipoDte: content.tipo,
         ambiente: content.ambiente,
         idEnvio: content.id_envio,
         version: parseintversion,
@@ -2673,42 +2691,56 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         /* ADD token minis */
         var resultAuthminis = null;
-        if(user.ambiente == "00"){
-        resultAuthminis = await LoginAPI.loginMinis(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      } else {
-        resultAuthminis = await LoginAPI.loginMinis_prod(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      }
+        if (user.ambiente == "00") {
+          resultAuthminis = await LoginAPI.loginMinis(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        } else {
+          resultAuthminis = await LoginAPI.loginMinis_prod(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
           toast.success("Error en la autenticación, vuelve a intentar");
-          return
+          return;
         }
 
         var senddata = null;
         if (user.ambiente == "00") {
-        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
-        console.log(senddata);
+          senddata = await SendAPI.sendBill(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
+          console.log(senddata);
         } else {
-          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          senddata = await SendAPI.sendBillprod(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
           console.log(senddata);
         }
 
-
         if (senddata.estado === "PROCESADO") {
-          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          const response = await PlantillaAPI.updatesend(
+            id_emisor,
+            true,
+            senddata.selloRecibido,
+            token,
+            content.codigo_de_generacion
+          );
           console.log("edited");
           console.log(response);
           setIsLoading(false);
 
-          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          const responseincrement = await UserService.id_enviopus1(
+            id_emisor,
+            token
+          );
           console.log("incremented");
           console.log(responseincrement);
 
@@ -2721,48 +2753,59 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
             setTimeout(() => {
               window.location.reload();
-
             }, 9000);
-            return
+            return;
           }
 
-          if(id_emisor == 7 || id_emisor == 12){
+          if (id_emisor == 7 || id_emisor == 12) {
             console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBillOsegueda(
+              id_emisor,
+              content,
+              token
+            );
 
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
 
-          /*  window.location.reload(); */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
+            /*  window.location.reload(); */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           } else {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBill(
+              id_emisor,
+              content,
+              token
+            );
 
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
 
-          /*  window.location.reload(); */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
+            /*  window.location.reload(); */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           }
         }
         setIsLoading(false);
 
-        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+        if (
+          senddata.descripcionMsg ==
+          "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR"
+        ) {
           toast.warning(`La factura ya fue enviada`);
-        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (
+          senddata.observaciones[0] ==
+          "Faltan datos en peticion para procesar informacion"
+        ) {
           toast.info(`No se encontró firma`);
         } else {
           if (senddata.estado === "RECHAZADO")
@@ -2775,16 +2818,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
-
-
-
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error("Error al enviar la factura no autorizado");
       }
     } else if (content.tipo === "05") {
-      const dataSend = { /* TODO: SEND */
-        tipoDte: content.tipo,
+      const dataSend = {
+        /* TODO: SEND */ tipoDte: content.tipo,
         ambiente: content.ambiente,
         idEnvio: content.id_envio,
         version: parseintversion,
@@ -2800,42 +2840,56 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         /* ADD token minis */
         /* ADD token minis */
         var resultAuthminis = null;
-        if(user.ambiente == "00"){
-        resultAuthminis = await LoginAPI.loginMinis(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      } else {
-        resultAuthminis = await LoginAPI.loginMinis_prod(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      }
+        if (user.ambiente == "00") {
+          resultAuthminis = await LoginAPI.loginMinis(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        } else {
+          resultAuthminis = await LoginAPI.loginMinis_prod(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
           toast.success("Error en la autenticación, vuelve a intentar");
-          return
+          return;
         }
 
         var senddata = null;
         if (user.ambiente == "00") {
-        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
-        console.log(senddata);
+          senddata = await SendAPI.sendBill(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
+          console.log(senddata);
         } else {
-          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          senddata = await SendAPI.sendBillprod(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
           console.log(senddata);
         }
 
-
         if (senddata.estado === "PROCESADO") {
-          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          const response = await PlantillaAPI.updatesend(
+            id_emisor,
+            true,
+            senddata.selloRecibido,
+            token,
+            content.codigo_de_generacion
+          );
           console.log("edited");
           console.log(response);
           setIsLoading(false);
 
-          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          const responseincrement = await UserService.id_enviopus1(
+            id_emisor,
+            token
+          );
           console.log("incremented");
           console.log(responseincrement);
 
@@ -2848,62 +2902,72 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
             setTimeout(() => {
               window.location.reload();
-
             }, 9000);
-            return
+            return;
           }
 
           if (id_emisor == 7 || id_emisor == 12) {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBillOsegueda(
+              id_emisor,
+              content,
+              token
+            );
 
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
 
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado, problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           } else {
-            toast.error("No enviado, problema");
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBill(
+              id_emisor,
+              content,
+              token
+            );
+
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
+
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        } else {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
-
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
-
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
-          } else {
-            toast.error("No enviado problema");
-          }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        }
         }
 
         setIsLoading(false);
-        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+        if (
+          senddata.descripcionMsg ==
+          "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR"
+        ) {
           toast.error(`La factura ya fue enviada`);
-        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (
+          senddata.observaciones[0] ==
+          "Faltan datos en peticion para procesar informacion"
+        ) {
           toast.info(`No se encontró firma`);
         } else {
           if (senddata.estado === "RECHAZADO")
-
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
           console.log(senddata.observaciones);
           for (let i = 0; i < senddata.observaciones.length; i++) {
@@ -2913,16 +2977,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
-
-
-
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error("Error al enviar la factura no autorizado");
       }
     } else if (content.tipo === "06") {
-      const dataSend = { /* TODO: SEND */
-        tipoDte: content.tipo,
+      const dataSend = {
+        /* TODO: SEND */ tipoDte: content.tipo,
         ambiente: content.ambiente,
         idEnvio: content.id_envio,
         version: parseintversion,
@@ -2937,43 +2998,56 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         /* ADD token minis */
         var resultAuthminis = null;
-        if(user.ambiente == "00"){
-        resultAuthminis = await LoginAPI.loginMinis(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      } else {
-        resultAuthminis = await LoginAPI.loginMinis_prod(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      }
+        if (user.ambiente == "00") {
+          resultAuthminis = await LoginAPI.loginMinis(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        } else {
+          resultAuthminis = await LoginAPI.loginMinis_prod(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
           toast.success("Error en la autenticación, vuelve a intentar");
-          return
+          return;
         }
 
         var senddata = null;
         if (user.ambiente == "00") {
-        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
-        console.log(senddata);
+          senddata = await SendAPI.sendBill(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
+          console.log(senddata);
         } else {
-          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          senddata = await SendAPI.sendBillprod(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
           console.log(senddata);
         }
 
-
-
         if (senddata.estado === "PROCESADO") {
-          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          const response = await PlantillaAPI.updatesend(
+            id_emisor,
+            true,
+            senddata.selloRecibido,
+            token,
+            content.codigo_de_generacion
+          );
           console.log("edited");
           console.log(response);
           setIsLoading(false);
 
-          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          const responseincrement = await UserService.id_enviopus1(
+            id_emisor,
+            token
+          );
           console.log("incremented");
           console.log(responseincrement);
 
@@ -2986,58 +3060,69 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
             setTimeout(() => {
               window.location.reload();
-
             }, 9000);
-            return
+            return;
           }
 
           if (id_emisor == 7 || id_emisor == 12) {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBillOsegueda(
+              id_emisor,
+              content,
+              token
+            );
 
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
 
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado, problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           } else {
-            toast.error("No enviado, problema");
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBill(
+              id_emisor,
+              content,
+              token
+            );
+
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
+
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        } else {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
-
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
-
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
-          } else {
-            toast.error("No enviado problema");
-          }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        }
         }
 
         setIsLoading(false);
-        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+        if (
+          senddata.descripcionMsg ==
+          "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR"
+        ) {
           toast.error(`La factura ya fue enviada`);
-        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (
+          senddata.observaciones[0] ==
+          "Faltan datos en peticion para procesar informacion"
+        ) {
           toast.info(`No se encontró firma`);
         } else {
           if (senddata.estado === "RECHAZADO")
@@ -3050,16 +3135,13 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
-
-
-
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error("Error al enviar la factura no autorizado");
       }
-    }else if (content.tipo === "08") {
-      const dataSend = { /* TODO: SEND */
-        tipoDte: content.tipo,
+    } else if (content.tipo === "08") {
+      const dataSend = {
+        /* TODO: SEND */ tipoDte: content.tipo,
         ambiente: content.ambiente,
         idEnvio: content.id_envio,
         version: parseintversion,
@@ -3074,43 +3156,56 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         /* ADD token minis */
         var resultAuthminis = null;
-        if(user.ambiente == "00"){
-        resultAuthminis = await LoginAPI.loginMinis(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      } else {
-        resultAuthminis = await LoginAPI.loginMinis_prod(
-          user.nit,
-          user.codigo_hacienda,
-          "MysoftwareSv"
-        );
-      }
+        if (user.ambiente == "00") {
+          resultAuthminis = await LoginAPI.loginMinis(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        } else {
+          resultAuthminis = await LoginAPI.loginMinis_prod(
+            user.nit,
+            user.codigo_hacienda,
+            "MysoftwareSv"
+          );
+        }
         console.log(resultAuthminis);
         if (resultAuthminis.status != "OK") {
           toast.success("Error en la autenticación, vuelve a intentar");
-          return
+          return;
         }
 
         var senddata = null;
         if (user.ambiente == "00") {
-        senddata = await SendAPI.sendBill(dataSend, resultAuthminis.body.token.slice(7));
-        console.log(senddata);
+          senddata = await SendAPI.sendBill(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
+          console.log(senddata);
         } else {
-          senddata = await SendAPI.sendBillprod(dataSend, resultAuthminis.body.token.slice(7));
+          senddata = await SendAPI.sendBillprod(
+            dataSend,
+            resultAuthminis.body.token.slice(7)
+          );
           console.log(senddata);
         }
 
-
-
         if (senddata.estado === "PROCESADO") {
-          const response = await PlantillaAPI.updatesend(id_emisor, true, senddata.selloRecibido, token, content.codigo_de_generacion);
+          const response = await PlantillaAPI.updatesend(
+            id_emisor,
+            true,
+            senddata.selloRecibido,
+            token,
+            content.codigo_de_generacion
+          );
           console.log("edited");
           console.log(response);
           setIsLoading(false);
 
-          const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+          const responseincrement = await UserService.id_enviopus1(
+            id_emisor,
+            token
+          );
           console.log("incremented");
           console.log(responseincrement);
 
@@ -3123,58 +3218,69 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
             setTimeout(() => {
               window.location.reload();
-
             }, 9000);
-            return
+            return;
           }
 
           if (id_emisor == 7 || id_emisor == 12) {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBillOsegueda(id_emisor, content, token);
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBillOsegueda(
+              id_emisor,
+              content,
+              token
+            );
 
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
 
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado, problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           } else {
-            toast.error("No enviado, problema");
+            console.log("---------------enviando email--------------");
+            console.log(content);
+            console.log(token);
+            console.log(id_emisor);
+            const sendEmailFactura = await SendEmail.sendBill(
+              id_emisor,
+              content,
+              token
+            );
+
+            console.log("---------------resultado de mail--------------");
+            console.log(sendEmailFactura);
+
+            if (sendEmailFactura.message === "Email sent") {
+              toast.success("Email enviado");
+            } else {
+              toast.error("No enviado problema");
+            }
+            /* wait for 5 seconds */
+            setTimeout(() => {
+              window.location.reload();
+            }, 9000);
           }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        } else {
-          console.log("---------------enviando email--------------");
-          console.log(content);
-          console.log(token);
-          console.log(id_emisor);
-          const sendEmailFactura = await SendEmail.sendBill(id_emisor, content, token);
-
-          console.log("---------------resultado de mail--------------");
-          console.log(sendEmailFactura);
-
-          if (sendEmailFactura.message === "Email sent") {
-            toast.success("Email enviado");
-          } else {
-            toast.error("No enviado problema");
-          }
-          /* wait for 5 seconds */
-          setTimeout(() => {
-            window.location.reload();
-
-          }, 9000);
-        }
         }
 
         setIsLoading(false);
-        if (senddata.descripcionMsg == "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR") {
+        if (
+          senddata.descripcionMsg ==
+          "[identificacion.codigoGeneracion] YA EXISTE UN REGISTRO CON ESE VALOR"
+        ) {
           toast.error(`La factura ya fue enviada`);
-        } else if (senddata.observaciones[0] == "Faltan datos en peticion para procesar informacion") {
+        } else if (
+          senddata.observaciones[0] ==
+          "Faltan datos en peticion para procesar informacion"
+        ) {
           toast.info(`No se encontró firma`);
         } else {
           if (senddata.estado === "RECHAZADO")
@@ -3187,15 +3293,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
         console.log("---------------resultado--------------");
         console.log(senddata.estado);
-
-
-
       } catch (error) {
-        console.log(error)
+        console.log(error);
         toast.error("Error al enviar la factura no autorizado");
       }
     }
-
   };
 
   // Determine the button color and additional content based on `content.firm`
@@ -3208,8 +3310,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         className={`relative w-full h-12 md:h-12 cursor-pointer [border:none] px-3 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
         <img src={checkimg} alt="Tick" className="w-7 h-7" />
-        <img src={signature} className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none" alt="" />
-
+        <img
+          src={signature}
+          className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none"
+          alt=""
+        />
       </button>
     </div>
   ) : (
@@ -3231,12 +3336,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         onClick={SendBillHandler}
         className={`relative w-full h-12 md:h-12 cursor-pointer [border:none] px-6 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
-
         <img src={checkimg} alt="Tick" className="w-[30px] h-[30px]" />
-        <img src={direct} className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none" alt="" />
-
-
-
+        <img
+          src={direct}
+          className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none"
+          alt=""
+        />
       </button>
     </div>
   ) : (
@@ -3253,8 +3358,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           <div className="loader"></div>
         </div>
       )}
-
-
     </div>
   );
 
@@ -3264,9 +3367,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         onClick={testmail}
         className={`relative w-full h-12 md:h-12 cursor-pointer [border:none] px-3 ${buttonStyle} rounded-lg flex items-center justify-center z-[2] hover:bg-lightgray-100`}
       >
-        <img src={mailchecker ? checkimg : cross} alt={mailchecker ? "Tick" : "Cross"} className="w-[30px] h-[30px]" />
-        <img src={mailimg} className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none" alt="Mail" />
-
+        <img
+          src={mailchecker ? checkimg : cross}
+          alt={mailchecker ? "Tick" : "Cross"}
+          className="w-[30px] h-[30px]"
+        />
+        <img
+          src={mailimg}
+          className="h-7 w-7 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30 pointer-events-none"
+          alt="Mail"
+        />
       </button>
     </div>
   ) : (
@@ -3290,7 +3400,10 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     deleteInFlightRef.current = true;
     console.log("DeleteBillHandler");
     try {
-      const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
+      const response = await PlantillaAPI.deletePlantillabyCodeGeneration(
+        content.codigo_de_generacion,
+        token
+      );
       console.log("deleted");
       console.log(response);
       if (response.message === "plantilla eliminado") {
@@ -3306,7 +3419,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           console.error("Error al decrementar contadores:", e);
         }
         toast.success("Plantilla eliminada");
-/*         setTimeout(() => {
+        /*         setTimeout(() => {
           window.location.reload();
         }, 2000); */
       } else {
@@ -3347,14 +3460,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   };
 
   return (
-  <div className="w-full max-w-full mx-0 bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-3 sm:px-5 py-4 sm:py-5 my-6 text-black font-inria-sans overflow-hidden break-words box-border">
-    <header className="flex items-center justify-between min-w-0 w-full">
+    <div className="w-full max-w-full mx-0 bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-3 sm:px-5 py-4 sm:py-5 my-6 text-black font-inria-sans overflow-hidden break-words box-border">
+      <header className="flex items-center justify-between min-w-0 w-full">
         <div className="flex items-center gap-3 min-w-0">
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-gainsboro-200 text-black border border-gray-300">
-            {tipo || 'Documento'}
+            {tipo || "Documento"}
           </span>
         </div>
-  <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {/* <img
             className="w-[33px] h-[33px] relative object-cover z-[3]"
             loading="lazy"
@@ -3375,7 +3488,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             />
           </button>
           <button
-            className={`h-8 w-8 flex items-center justify-center rounded-md ${isActivedownload ? 'bg-gainsboro-200' : 'hover:bg-gainsboro-200'} transition`}
+            className={`h-8 w-8 flex items-center justify-center rounded-md ${
+              isActivedownload ? "bg-gainsboro-200" : "hover:bg-gainsboro-200"
+            } transition`}
             onClick={handleClickdownload}
             title="Descargar"
           >
@@ -3387,30 +3502,43 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             />
           </button>
           <button
-            className={`h-8 w-8 flex items-center justify-center rounded-md ${(!canDelete || isActivecross) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gainsboro-200'} transition`}
-            onClick={canDelete && !isActivecross ? handelrisActivecross : (e) => e.preventDefault()}
+            className={`h-8 w-8 flex items-center justify-center rounded-md ${
+              !canDelete || isActivecross
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gainsboro-200"
+            } transition`}
+            onClick={
+              canDelete && !isActivecross
+                ? handelrisActivecross
+                : (e) => e.preventDefault()
+            }
             disabled={!canDelete || isActivecross}
-            title={canDelete ? 'Eliminar factura' : 'Sólo la última factura no sellada se puede eliminar'}
+            title={
+              canDelete
+                ? "Eliminar factura"
+                : "Sólo la última factura no sellada se puede eliminar"
+            }
           >
-            <img
-              className="h-5 w-5"
-              loading="lazy"
-              alt="Eliminar"
-              src={imgx}
-            />
+            <img className="h-5 w-5" loading="lazy" alt="Eliminar" src={imgx} />
           </button>
-
-
         </div>
-
       </header>
 
       <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         <div className="space-y-1 min-w-0">
-          <div className="text-lg font-bold break-words whitespace-normal">{content.re_name}</div>
-          <div className="text-base text-black break-all whitespace-normal">Documento: {content.re_nit ? content.re_nit : content.re_numdocumento || '—'}</div>
-          <div className="text-base text-black break-words whitespace-normal">Correo: {content.re_correo_electronico || '—'}</div>
-          <div className="text-base text-black break-words whitespace-normal">Teléfono: {content.re_numero_telefono || '—'}</div>
+          <div className="text-lg font-bold break-words whitespace-normal">
+            {content.re_name}
+          </div>
+          <div className="text-base text-black break-all whitespace-normal">
+            Documento:{" "}
+            {content.re_nit ? content.re_nit : content.re_numdocumento || "—"}
+          </div>
+          <div className="text-base text-black break-words whitespace-normal">
+            Correo: {content.re_correo_electronico || "—"}
+          </div>
+          <div className="text-base text-black break-words whitespace-normal">
+            Teléfono: {content.re_numero_telefono || "—"}
+          </div>
           {
             <div className="text-sm text-black space-y-0.5">
               <div>Código de generación: {content.codigo_de_generacion}</div>
@@ -3421,16 +3549,24 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         <div className="flex md:items-end md:justify-end min-w-0">
           <div className="inline-flex items-center gap-2 bg-gainsboro-200 px-3 py-2 rounded-lg border border-gray-300">
             <span className="text-sm font-medium text-black">TOTAL</span>
-            <span className="text-lg font-bold tracking-wide">${formattedTotal}</span>
+            <span className="text-lg font-bold tracking-wide">
+              ${formattedTotal}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Footer actions: stack on mobile; on larger screens, center button is wider */}
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-5 items-center gap-3">
-        <div className="sm:col-span-1 flex w-full justify-start">{firmbutton}</div>
-        <div className="sm:col-span-3 flex w-full justify-center">{sendedebutton}</div>
-        <div className="sm:col-span-1 flex w-full justify-end">{testbutton}</div>
+        <div className="sm:col-span-1 flex w-full justify-start">
+          {firmbutton}
+        </div>
+        <div className="sm:col-span-3 flex w-full justify-center">
+          {sendedebutton}
+        </div>
+        <div className="sm:col-span-1 flex w-full justify-end">
+          {testbutton}
+        </div>
       </div>
     </div>
   );
