@@ -1238,51 +1238,133 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
 
         if (userDB.tipoestablecimiento === "20") {
             userDB.tipoestablecimiento = "Otro";
-        } else if (userDB.tipoestablecimiento === "01") {
-            // Add sender and receiver information (dinámico, sin truncar)
-            const infoX = 40;
-            const infoY = 270;
+        }
 
-            const infoBlockOpts = {
-                width: 250,
-                paddingX: 10,
-                paddingTop: 8,
-                paddingBottom: 10,
-                titleFontSize: 10,
-                labelFontSize: 9,
-                valueFontSize: 9,
-                labelWidth: 105,
-                rowGap: 3,
-                titleGap: 6,
-                bgColor: '#EAEAEA',
-                borderColor: '#000',
-                textColor: '#1E3256',
-                cornerRadius: 10,
-            };
+        // Add sender and receiver information (dinámico, sin truncar)
+        const infoBlockOpts = {
+            width: 250,
+            paddingX: 10,
+            paddingTop: 8,
+            paddingBottom: 10,
+            titleFontSize: 10,
+            labelFontSize: 9,
+            valueFontSize: 9,
+            labelWidth: 105,
+            rowGap: 3,
+            titleGap: 6,
+            bgColor: '#EAEAEA',
+            borderColor: '#000',
+            textColor: '#1E3256',
+            cornerRadius: 10,
+        };
 
-            const emisorRows = buildEmisorRows(userDB);
-            const receptorRows = buildReceptorRows(plantillaDB);
+        const emisorRows = buildEmisorRows(userDB);
+        const receptorRows = buildReceptorRows(plantillaDB);
 
-            const emisorHeight = measureInfoBlockHeight(pdfDoc, 'EMISOR', emisorRows, infoBlockOpts);
-            const receptorHeight = measureInfoBlockHeight(pdfDoc, 'RECEPTOR', receptorRows, infoBlockOpts);
-            const maxBlockHeight = Math.max(emisorHeight, receptorHeight);
+        const emisorHeight = measureInfoBlockHeight(pdfDoc, 'EMISOR', emisorRows, infoBlockOpts);
+        const receptorHeight = measureInfoBlockHeight(pdfDoc, 'RECEPTOR', receptorRows, infoBlockOpts);
+        const maxBlockHeight = Math.max(emisorHeight, receptorHeight);
 
-            // Si no cabe, saltar a nueva página
-            const blocksBottomNeeded = infoY + maxBlockHeight + 40;
-            const blocksY = (blocksBottomNeeded > 770) ? 50 : infoY;
-            if (blocksBottomNeeded > 770) {
+        // Si no cabe, saltar a nueva página
+        const blocksBottomNeeded = infoY + maxBlockHeight + 40;
+        const blocksY = (blocksBottomNeeded > 770) ? 50 : infoY;
+        if (blocksBottomNeeded > 770) {
+            pdfDoc.addPage();
+        }
+
+        drawInfoBlock(pdfDoc, 'EMISOR', infoX, blocksY, infoBlockOpts.width, emisorHeight, emisorRows, infoBlockOpts);
+        drawInfoBlock(pdfDoc, 'RECEPTOR', infoX + 270, blocksY, infoBlockOpts.width, receptorHeight, receptorRows, infoBlockOpts);
+
+        const blocksBottomY = blocksY + maxBlockHeight;
+
+        // Add services section (debajo del bloque más alto)
+        pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, blocksBottomY + 10, { underline: true });
+
+        const servicesY = blocksBottomY + 40;
+        const servicesX = 20;
+
+        pdfDoc
+            .fontSize(10)
+            .fillColor('#000000')
+            .text('N°', servicesX, servicesY)
+            .text('Cant.', servicesX + 20, servicesY)
+            .text('Código', servicesX + 70, servicesY)
+            .text('Descripción', servicesX + 110, servicesY)
+            .text('Unitario', servicesX + 240, servicesY)
+            .text('Descuento', servicesX + 290, servicesY)
+            .text('No Sujetas', servicesX + 350, servicesY)
+            .text('Gravadas', servicesX + 410, servicesY)
+            .text('Ventas Exentas', servicesX + 470, servicesY);
+
+        const checkAndAddNewPageItems = (pdfDoc, yPos, threshold, newY) => {
+            if (yPos > threshold) {
                 pdfDoc.addPage();
+                return newY;
+            }
+            return yPos;
+        };
+
+        let y = servicesY + 20;
+        let numcounter = 1;
+
+        // Ajuste: envolver descripción y calcular altura dinámica por fila
+        const descColX = servicesX + 110;
+        const descColWidth = 120;
+        const baseRowHeight = 20;
+
+        itemsDB.forEach(item => {
+            const desc = (item.descripcion || '').toString();
+            const descHeight = pdfDoc.heightOfString(desc, { width: descColWidth, align: 'left' });
+            const rowHeight = Math.max(baseRowHeight, Math.ceil(descHeight / baseRowHeight) * baseRowHeight);
+
+            if (y + rowHeight > 770) {
+                pdfDoc.addPage();
+                y = 20;
             }
 
-            drawInfoBlock(pdfDoc, 'EMISOR', infoX, blocksY, infoBlockOpts.width, emisorHeight, emisorRows, infoBlockOpts);
-            drawInfoBlock(pdfDoc, 'RECEPTOR', infoX + 270, blocksY, infoBlockOpts.width, receptorHeight, receptorRows, infoBlockOpts);
+            pdfDoc
+                .text(numcounter, servicesX, y)
+                .text(item.cantidad, servicesX + 20, y)
+                .text(item.codigo, servicesX + 70, y);
 
-            const blocksBottomY = blocksY + maxBlockHeight;
+            pdfDoc.text(desc, descColX, y, { width: descColWidth, align: 'left' });
 
-            // Add services section (debajo del bloque más alto)
-            pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, blocksBottomY + 10, { underline: true });
+            pdfDoc
+                .text(item.preciouni, servicesX + 240, y)
+                .text(item.montodescu, servicesX + 290, y)
+                .text(item.ventanosuj, servicesX + 350, y)
+                .text((parseFloat(item.preciouni) * parseFloat(item.cantidad)).toFixed(2), servicesX + 410, y)
+                .text(item.ventaexenta, servicesX + 470, y);
 
-            const servicesY = blocksBottomY + 40;
+            numcounter += 1;
+            y += rowHeight;
+        });
+
+        pdfDoc.moveTo(30, servicesY - 10).lineTo(550, servicesY - 10).stroke('#000');
+        pdfDoc.moveTo(30, y).lineTo(550, y).stroke('#000');
+
+        const checkAndAddNewPage = (pdfDoc, yPos) => {
+            if (yPos > 540) {
+                pdfDoc.addPage();
+                return 30;
+            }
+            return yPos;
+        };
+        y = checkAndAddNewPage(pdfDoc, y);
+
+        pdfDoc.roundedRect(20, y + 30, 210, 140, 10).fill('#EAEAEA').stroke('#000');
+
+        pdfDoc.fillColor('#1E3256').fontSize(13).text('Observaciones', 30, y + 40);
+
+        // Define funcenter function for text wrapping
+        const funcenter = (text, startY, startX, maxCharsPerLine = 40, lineHeight = 15, maxChars = 400) => {
+            // Handle null or undefined text
+            if (!text) {
+                text = '';
+            }
+            // Truncate text if it exceeds the maximum number of characters
+            const truncatedText = text.length > maxChars ? text.slice(0, maxChars) : text;
+
             // Set font size
             pdfDoc.fontSize(10).fillColor('#000000');
 
@@ -1299,8 +1381,9 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
             }
         };
 
-        // Example usage
-        funcenter(plantillaDB.observaciones, y + 55, 30);
+        // Example usage - handle null/undefined observaciones
+        funcenter(plantillaDB.observaciones || '', y + 55, 30);
+
         var ivaper = Number(plantillaDB.iva_percibido)
 
         if (plantillaDB.tipo === "03") {
