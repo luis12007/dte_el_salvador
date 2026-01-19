@@ -176,7 +176,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
       },
       receptor: {
         tipoDocumento: content.re_tipodocumento,
-        numDocumento: content.re_numdocumento,
+        numDocumento: !content.re_numdocumento ? null : content.re_numdocumento,
         numFacturador: null,
         nombre: content.re_name,
         telefono: content.re_numero_telefono,
@@ -232,8 +232,8 @@ const FacturaInvalidate = ({ key, content, user }) => {
         fecEmi: content.fecha_y_hora_de_generacion,
         montoIva: parseFloat(content.iva_percibido),
         codigoGeneracionR: null,
-        tipoDocumento: content.re_tipodocumento,
-        numDocumento: content.re_numdocumento,
+        tipoDocumento: !content.re_numdocumento ? null : content.re_tipodocumento,
+        numDocumento: !content.re_numdocumento ? null : content.re_numdocumento,
         nombre: content.re_name,
         telefono: content.re_numero_telefono, 
         correo: content.re_correo_electronico
@@ -771,7 +771,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
       <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         <div className="space-y-1 min-w-0">
           <div className="text-lg font-bold break-words whitespace-normal">{content.re_name}</div>
-          <div className="text-base text-black break-all whitespace-normal">Documento: {content.re_nit ? content.re_nit : content.re_numdocumento || '—'}</div>
+          <div className="text-base text-black break-all whitespace-normal">Documento: {content.re_nit ? content.re_nit : !content.re_numdocumento ? '—' : content.re_numdocumento}</div>
           <div className="text-base text-black break-words whitespace-normal">Correo: {content.re_correo_electronico || '—'}</div>
           <div className="text-base text-black break-words whitespace-normal">Teléfono: {content.re_numero_telefono || '—'}</div>
           <div className="text-sm text-black space-y-0.5">
