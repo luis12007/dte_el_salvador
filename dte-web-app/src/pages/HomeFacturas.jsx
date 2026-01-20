@@ -374,26 +374,49 @@ const HomeFacturas = () => {
   };
 
   const groupItemsByDate = (items) => {
-    const grouped = items.reduce((acc, item) => {
-      const date = item.fecha_y_hora_de_generacion.split(" ")[0]; // Extract the date part
-      if (!acc[date]) {
-        acc[date] = [];
+    try {
+      if (!Array.isArray(items)) {
+        toast.error("Error al agrupar facturas: datos inválidos", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          draggable: true,
+        });
+        return {};
       }
-      acc[date].push(item);
-      return acc;
-    }, {});
 
-    // Sort items within each date group by full datetime (newest first)
-    Object.keys(grouped).forEach(date => {
-      grouped[date].sort((a, b) => {
-        // Create full datetime for precise sorting
-        const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
-        const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
-        return dateTimeB - dateTimeA; // Newest first within the same date
+      const grouped = items.reduce((acc, item) => {
+        const date = item.fecha_y_hora_de_generacion.split(" ")[0]; // Extract the date part
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(item);
+        return acc;
+      }, {});
+
+      // Sort items within each date group by full datetime (newest first)
+      Object.keys(grouped).forEach(date => {
+        grouped[date].sort((a, b) => {
+          // Create full datetime for precise sorting
+          const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
+          const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
+          return dateTimeB - dateTimeA; // Newest first within the same date
+        });
       });
-    });
 
-    return grouped;
+      return grouped;
+    } catch (error) {
+      console.error("Error en groupItemsByDate:", error);
+      toast.error("Error al agrupar facturas por fecha", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        draggable: true,
+      });
+      return {};
+    }
   };
 
   // Determinar si la factura más reciente global (por fecha y hora) no está sellada.
