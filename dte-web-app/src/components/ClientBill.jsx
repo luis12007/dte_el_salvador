@@ -83,7 +83,7 @@ const DocumentTypeFrame = ({
                   <input
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2] no-spinner"
                     placeholder="Documento sin guiones ni espacios"
-                    type="Number"
+                    type={client.documentType === "03" ? "text" : "Number"}
                     value={client.document}
                     onChange={(e) => handleChange("document", e.target.value)}
                   />

@@ -25,7 +25,8 @@ const Perfil = () => {
     { code: "86203", desc: "Servicios médicos" },
     { code: "86201", desc: "Clínicas médicas" },
     { code: "96091", desc: "clínicas médicas, Spa" },
-    { code: "96092", desc: "Servicios n.c.p." }
+    { code: "96092", desc: "Servicios n.c.p." },
+    { code: "86901", desc: "Servicios de análisis y estudios de diagnóstico" },
   ];
 
   useEffect(() => {
@@ -76,6 +77,9 @@ const Perfil = () => {
 
     if(result.message === "Usuario actualizado correctamente"){
       toast.success('Usuario actualizado correctamente')
+      setTimeout(() => {
+        navigate('/principal')
+      }, 3000)
     }
 
     
@@ -98,6 +102,9 @@ const Perfil = () => {
       console.log(result2)
       if(result2.message === "Usuario creado correctamente"){
         toast.success('Usuario creado correctamente')
+        setTimeout(() => {
+          navigate('/principal')
+        }, 1500)
       }
     }
   }

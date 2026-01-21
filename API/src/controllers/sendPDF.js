@@ -152,6 +152,19 @@ const sendPDF = async(req, res) => {
                         pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(9).text('Factura por cuenta de:', 30, yscale + 100, { align: 'left' })
 
+        }else if (userDB.id === 25 || userDB.id === 26) {
+            if (userDB.codactividad === "86203") {
+            pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('Servicios Médicos', 80, yscale + 30, { align: 'left' })
+            } else if (userDB.codactividad === "45100") {
+                            pdfDoc.fontSize(8).font('Helvetica').fillColor('#1E3256')
+                .fontSize(15).text('Venta de vehículos automotores', 35, yscale + 30, { align: 'left' })
+            } else if (userDB.codactividad === "86901") {
+                pdfDoc.fontSize(8).font('Helvetica').fillColor('#1E3256')
+                    .fontSize(15).text('Servicios de análisis y estudios de diagnóstico', 20, yscale + 30, { align: 'center', width: 250 })
+
+            }
+            
         }  else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MÉDICOS', 70, yscale + 30, { align: 'left' })

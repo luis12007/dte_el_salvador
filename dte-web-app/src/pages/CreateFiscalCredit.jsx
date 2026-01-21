@@ -1112,6 +1112,8 @@ const CrearCreditoFiscal = () => {
       id_envio: userinfo.id_envio,
     };
 
+    
+
     if (client.phone === "") {
       data.receptor.telefono = null;
     }

@@ -612,6 +612,8 @@ const Clientes = () => {
 
       /* exento to agravado */
     if (valueexcenta == "" || valueexcenta == null) {
+
+
       
     // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
     // Para otros usuarios: IVA ya está incluido en el precio
@@ -661,6 +663,18 @@ const Clientes = () => {
         console.log(rawiva);
         const subtotalplusiva = rawSubtotal + rawiva;
         const totalpagar = rawSubtotal - rentvalue;
+        if (isIvaOnTop) {
+        data.resumen.totalIva = rawiva.toFixed(2);
+        data.resumen.totalGravada = (rawSubtotal + rawiva).toFixed(2);
+        data.resumen.subTotal = (rawSubtotal + rawiva).toFixed(2);
+        data.resumen.subTotalVentas = (rawSubtotal + rawiva).toFixed(2);
+        data.resumen.pagos[0].montoPago = (rawSubtotal + rawiva).toFixed(2);
+        data.resumen.totalExenta = 0;
+        data.resumen.montoTotalOperacion = (rawSubtotal + rawiva).toFixed(2);
+        data.resumen.totalPagar = ((totalpagar - parseFloat(ivaretenido)) + rawiva).toFixed(2);
+
+        data.resumen.totalLetras = convertirDineroALetras(Number(total + rawiva).toFixed(2));
+        }else{
         data.resumen.totalIva = rawiva.toFixed(2);
         data.resumen.totalGravada = rawSubtotal.toFixed(2);
         data.resumen.subTotal = rawSubtotal.toFixed(2);
@@ -671,6 +685,10 @@ const Clientes = () => {
 
         data.resumen.totalLetras = convertirDineroALetras(Number(total).toFixed(2));
         data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
+        }
+
+
+        
 
         
         data.cuerpoDocumento = updatedListitems;
@@ -1153,7 +1171,7 @@ const Clientes = () => {
       {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Total a Pagar" data={total} */}
-      <TreeNode text="Subtotal" data={subtotal} />
+      <TreeNode text="Subtotal" data={(id_emisor === "23" || id_emisor === "24") ? (parseFloat(subtotal) + parseFloat(iva)).toFixed(2) : subtotal} />
       <TreeNode text="IVA" data={iva} />
       {isivareten1percent && <TreeNode text="IVA Retenido" data={ivaretenido} />}
       <TreeNode text="Renta Retenida" data={rentvalue} />
