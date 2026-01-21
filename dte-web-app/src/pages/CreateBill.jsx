@@ -7,7 +7,7 @@ import TableOfContents from "../components/TableOfContentsWithDelete";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import AdvanceItemsComponentOnComponent from "../components/AdvanceItemsOnComponentl";
-import AdvanceItemsComponent from "../components/AdvanceNoItemsComponent";
+import AdvanceItemsComponentFacturas from "../components/AdvanceNoItemsComponent_jusbill";
 import TableOfContentsNew from "../components/TableOfContentsNew";
 import Firmservice from "../services/Firm";
 import PlantillaService from "../services/PlantillaService";
@@ -1156,7 +1156,7 @@ const Clientes = () => {
           items={items}
         />
       ) : (
-        <AdvanceItemsComponent
+        <AdvanceItemsComponentFacturas
           handleSelectChangeItemsClient={handleSelectChangeItemsClient}
           itemshandleRemove={itemshandleRemove}
           itemshandleAdd={itemshandleAdd}
