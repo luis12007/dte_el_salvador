@@ -1478,7 +1478,7 @@ const CrearCreditoFiscal = () => {
   };
 
   const handleIvaReten1Toggle = () => {
-    const ivaReten1Value = ((Number(subtotal) / 1.13) * 0.01);
+    const ivaReten1Value = ((Number(total) / 1.13) * 0.01);
     
     if (isivareten1percent) {
       // If currently active, deactivate: add back the 1% to total
@@ -1591,7 +1591,7 @@ const CrearCreditoFiscal = () => {
       
       <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
-      {isivareten1percent && <TreeNode text="IVA Retenido" data={(subtotal * 0.01).toFixed(2)} />}
+      {isivareten1percent && <TreeNode text="IVA Retenido" data={((Number(total) / 1.13) * 0.01).toFixed(2)} />}
       <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
 
