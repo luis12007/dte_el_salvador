@@ -376,13 +376,8 @@ const HomeFacturas = () => {
   const groupItemsByDate = (items) => {
     try {
       if (!Array.isArray(items)) {
-        toast.error("Error al agrupar facturas: datos inválidos", {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-        });
+        toast.error("Error al agrupar facturas: datos inválidos");
+        setTimeout(() => navigate("/ingresar"), 3000);
         return {};
       }
 
@@ -668,20 +663,19 @@ const HomeFacturas = () => {
           <div className="loader"></div>
         </div>
       )}
-      {/* Excel button moved to top bar for better UX */}
-      <ToastContainer />
-  <HamburguerComponent sidebar={toggleSidebar} open={visible} />
+      <HamburguerComponent sidebar={toggleSidebar} open={visible} />
       <ToastContainer
         position="top-center"
         autoClose={5000}
         hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
+        newestOnTop
+        closeOnClick
         rtl={false}
         pauseOnFocusLoss={false}
-        draggable={true}
-        pauseOnHover={true}
+        draggable
+        pauseOnHover={false}
         theme="light"
+        limit={3}
       />
     </div>
   );
