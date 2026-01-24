@@ -1045,7 +1045,7 @@ const Clientes = () => {
 
   const handleIvaReten1Toggle = () => {
     if (!isivareten1percent) {
-      const ivaRet = ((total /1.13) * 0.01).toFixed(2);
+      const ivaRet = ((subtotal /1.13) * 0.01).toFixed(2);
       setIvaRetenido(ivaRet);
       setTotal((total - parseFloat(ivaRet)).toFixed(2));
     } else {

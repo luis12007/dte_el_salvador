@@ -1740,6 +1740,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           data.sujetoExcluido.direccion = address[2];
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
+          
         }
       }
 
@@ -1753,6 +1754,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       if (responseFirm && data.receptor) {
         data.receptor.direccion = content.re_direccion;
         data.receptor.correo = content.re_correo_electronico;
+        data.receptor.nombre = content.re_name;
+        data.receptor.telefono = content.re_numero_telefono;
+      }
+      if (!data.receptor) {
+        data.receptor = {
+          direccion: content.re_direccion,
+          correo: content.re_correo_electronico,
+          nombre: content.re_name,
+          telefono: content.re_numero_telefono,
+        };
       }
 
       const response = await PlantillaAPI.updateNoItems(
