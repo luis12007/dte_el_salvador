@@ -16,8 +16,28 @@ body {
 html,
 body,
 #root {
-  height: 100%;
+  min-height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: auto;
   overflow-x: hidden;
+}
+
+html {
+  background-color: #395576; /* steelblue-300 - match your main bg color */
+}
+
+body {
+  background-color: #395576;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  background-color: #395576;
+  flex: 1;
 }
 
 /* Animaciones personalizadas - Simplificadas */
