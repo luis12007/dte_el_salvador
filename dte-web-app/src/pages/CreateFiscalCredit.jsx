@@ -999,10 +999,20 @@ const CrearCreditoFiscal = () => {
 
           
     /* tofixed(2) to every item in values precioUni and ventaGravada*/
+      const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+
+    if (isIvaOnTop){
     Listitems.forEach((item) => {
       item.precioUni = Number(item.precioUni).toFixed(2);
       item.ventaGravada = Number(item.ventaGravada).toFixed(2);
     });
+    }else {
+    Listitems.forEach((item) => {
+      item.precioUni = Number(item.precioUni).toFixed(2);
+      item.ventaGravada = Number(item.ventaGravada).toFixed(2);
+    });
+    }
+
 
     const totaloperation = (Number(subtotal) + Number(iva));
     var data = {
@@ -1294,32 +1304,31 @@ const CrearCreditoFiscal = () => {
   }
 
   const convertirDineroALetras = (cantidad) => {
+    try {
+      const cantidadNum = parseFloat(cantidad);
+      if (isNaN(cantidadNum) || cantidadNum === 0) {
+        return "CERO DÓLARES";
+      }
 
-    // Asegurarse de que la cantidad tenga como máximo dos decimales
-    const cantidadRedondeada = Math.round(cantidad * 100) / 100;
-    const partes = cantidadRedondeada.toFixed(2).split("."); // Divide la parte entera de los decimales
+      const cantidadRedondeada = Math.round(cantidadNum * 100) / 100;
+      const partes = cantidadRedondeada.toFixed(2).split(".");
+      const dolares = parseInt(partes[0], 10);
+      const centavos = parseInt(partes[1], 10);
 
-    const dolares = parseInt(partes[0], 10); // Parte entera
-    const centavos = parseInt(partes[1], 10); // Parte decimal
+      const dolaresEnLetras = convertirNumeroALetras(dolares);
 
-    if (dolares > Number.MAX_SAFE_INTEGER) {
-      throw new Error(
-        "La cantidad en dólares es demasiado grande para convertir."
-      );
+      let resultado = `${dolaresEnLetras} ${dolares === 1 ? "DÓLAR" : "DÓLARES"}`;
+
+      if (centavos > 0) {
+        const centavosEnLetras = convertirNumeroALetras(centavos);
+        resultado += ` CON ${centavosEnLetras} ${centavos === 1 ? "CENTAVO" : "CENTAVOS"}`;
+      }
+
+      return resultado;
+    } catch (error) {
+      console.error("Error al convertir número a letras:", error);
+      return "ERROR EN CONVERSIÓN";
     }
-
-    // Convierte las partes a palabras
-    const dolaresEnLetras = convertirNumeroALetras(dolares);
-    const centavosEnLetras = convertirNumeroALetras(centavos);
-
-    // Construye la representación en palabras
-    let resultado = `${dolaresEnLetras} DÓLARES`;
-
-    if (centavos > 0) {
-      resultado += ` CON ${centavosEnLetras} CENTAVOS`;
-    }
-
-    return resultado;
   };
 
   const convertirNumeroALetras = (numero) => {
@@ -1363,6 +1372,8 @@ const CrearCreditoFiscal = () => {
 
     if (numero === 0) return "CERO";
 
+    if (numero < 0) return "MENOS " + convertirNumeroALetras(Math.abs(numero));
+
     if (numero < 10) return unidades[numero];
 
     if (numero < 16) return especiales[numero - 10];
@@ -1396,8 +1407,7 @@ const CrearCreditoFiscal = () => {
       );
     }
 
-    if (numero < 1000000000000) {
-      // Hasta 999,999,999,999 (casi un billón)
+    if (numero < 1000000000) {
       const millones = Math.floor(numero / 1000000);
       const resto = numero % 1000000;
       return (
@@ -1408,8 +1418,29 @@ const CrearCreditoFiscal = () => {
       );
     }
 
-    // Fallback para números extremadamente grandes
-    return "CANTIDAD MUY GRANDE";
+    if (numero < 1000000000000) {
+      const miles_millones = Math.floor(numero / 1000000000);
+      const resto = numero % 1000000000;
+      return (
+        convertirNumeroALetras(miles_millones) + " MIL MILLONES" +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
+
+    if (numero < 1000000000000000) {
+      const billones = Math.floor(numero / 1000000000000);
+      const resto = numero % 1000000000000;
+      return (
+        (billones === 1
+          ? "UN BILLÓN"
+          : convertirNumeroALetras(billones) + " BILLONES") +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
+
+    const exponente = Math.floor(Math.log10(numero));
+    const base = numero / Math.pow(10, exponente);
+    return `${convertirNumeroALetras(Math.round(base))} POR DIEZ A LA ${convertirNumeroALetras(exponente)}`;
   };
 
   const handleSelectClient = (event) => {

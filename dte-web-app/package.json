@@ -12,6 +12,7 @@
     "exceljs": "^4.4.0",
     "ionic": "^5.4.16",
     "jszip": "^3.10.1",
+    "numero-a-letras": "^1.0.6",
     "postcss": "^8.4.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

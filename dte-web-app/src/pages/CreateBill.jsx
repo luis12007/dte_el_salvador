@@ -21,7 +21,7 @@ import "./style.css";
 
 const Clientes = () => {
   const [selectedOption, setSelectedOption] = useState("");
-  const [isVisibleClient, setIsVisibleClient] = useState(false);
+  const [isVisibleClient, setIsVisibleClient] = useState(false);       
   const [CF, setCF] = useState(false);
   const [Items, setItems] = useState(false);
   const token = localStorage.getItem("token");
@@ -35,17 +35,16 @@ const Clientes = () => {
   const [rentvalue, setRentvalue] = useState(0);
   const [isActivated, setIsActivated] = useState(false);
   const [valueexcenta, setValueexcenta] = useState("");
-      const [isLoading, setIsLoading] = useState(false);
-      const [codepayment, setCodepayment] = useState("01");
+  const [isLoading, setIsLoading] = useState(false);
+  const [codepayment, setCodepayment] = useState("01");
   const [isSubmittingAdd, setIsSubmittingAdd] = useState(false);
   // Estado para IVA retenido 1%
   const [isivareten1percent, setIsivareten1percent] = useState(false);
   const [ivaretenido, setIvaRetenido] = useState(0);
-  
 
   const toggleButton = (event) => {
     event.preventDefault();
-    if(isActivated == true){
+    if (isActivated == true) {
       setValueexcenta("");
     }
     setIsActivated(!isActivated);
@@ -56,7 +55,7 @@ const Clientes = () => {
       console.log("Fetching user info");
       console.log("ID Emisor:", id_emisor);
       console.log("Token:", token);
-      
+
       const response = await UserService.getUserInfo(id_emisor, token);
       console.log("User Data");
       console.log(response);
@@ -67,7 +66,7 @@ const Clientes = () => {
           hideProgressBar: false, // Display the progress bar
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast
-          style: { zIndex: 200000 } // Correct way to set z-index
+          style: { zIndex: 200000 }, // Correct way to set z-index
         });
         navigate("/ingresar");
       }
@@ -93,7 +92,7 @@ const Clientes = () => {
 
   // Importante: toISOString() usa UTC y puede adelantar o atrasar la fecha local.
   // Construimos la fecha local (YYYY-MM-DD) manualmente para evitar el desfase de un día.
-  const todayDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const todayDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
   const [time, setTime] = useState({
     date: todayDate,
     time: time24Hour.toString(),
@@ -176,39 +175,43 @@ const Clientes = () => {
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
     const rawSubtotal = Listitems.reduce(
       (total, item) => total + item.precioUni * item.cantidad,
-      0
+      0,
     );
 
     // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
     // Para otros usuarios: IVA ya está incluido en el precio
     const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
-    
+
     let rawiva;
     let roundedSubtotal;
     let newtotal;
-    
+
     if (isIvaOnTop) {
       // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
       rawiva = rawSubtotal * 0.13;
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
       const roundediva = Math.round(rawiva * 100) / 100;
-      
+
       setiva(roundediva.toFixed(2));
       setSubtotal(roundedSubtotal.toFixed(2));
-      
+
       const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
       setRentvalue(value_rent);
-      
+
       // Total = subtotal + IVA - renta
-      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+      newtotal = (
+        roundedSubtotal +
+        roundediva -
+        parseFloat(value_rent)
+      ).toFixed(2);
       setTotal(newtotal);
     } else {
       // Cálculo original: IVA incluido en el precio
       rawiva = Listitems.reduce(
-        (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
-        0
+        (total, item) => total + (item.ventaExenta / 1.13) * 0.13,
+        0,
       );
-      
+
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
       const roundediva = Math.round(rawiva * 100) / 100;
 
@@ -221,16 +224,13 @@ const Clientes = () => {
       newtotal = (roundedSubtotal - value_rent).toFixed(2);
       setTotal(newtotal);
     }
-    
+
     console.log("Subtotal", subtotal);
     console.log("Total", total);
   };
 
-
-  
   /* Adding factura without IVA */
   const itemshandleAdd = (newContents) => {
-
     if (newContents.price === "") {
       toast.error("Item no tiene precio!", {
         position: "top-center",
@@ -238,9 +238,9 @@ const Clientes = () => {
         hideProgressBar: false, // Display the progress bar
         closeOnClick: true, // Close the toast when clicked
         draggable: true, // Allow dragging the toast
-        style: { zIndex: 200000 } // Correct way to set z-index
+        style: { zIndex: 200000 }, // Correct way to set z-index
       });
-      return
+      return;
     }
 
     if (newContents.cuantity === "") {
@@ -250,9 +250,9 @@ const Clientes = () => {
         hideProgressBar: false, // Display the progress bar
         closeOnClick: true, // Close the toast when clicked
         draggable: true, // Allow dragging the toast
-        style: { zIndex: 200000 } // Correct way to set z-index
+        style: { zIndex: 200000 }, // Correct way to set z-index
       });
-      return
+      return;
     }
 
     if (newContents.description === "") {
@@ -262,11 +262,10 @@ const Clientes = () => {
         hideProgressBar: false, // Display the progress bar
         closeOnClick: true, // Close the toast when clicked
         draggable: true, // Allow dragging the toast
-        style: { zIndex: 200000 } // Correct way to set z-index
+        style: { zIndex: 200000 }, // Correct way to set z-index
       });
-      return
+      return;
     }
-
 
     var type = "bienes";
     if (newContents.type === "1") {
@@ -322,39 +321,43 @@ const Clientes = () => {
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
     const rawSubtotal = Listitemstrack.reduce(
       (total, item) => total + item.precioUni * item.cantidad,
-      0
+      0,
     );
 
     // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
     // Para otros usuarios: IVA ya está incluido en el precio
     const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
-    
+
     let rawiva;
     let roundedSubtotal;
     let newtotal;
-    
+
     if (isIvaOnTop) {
       // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
       rawiva = rawSubtotal * 0.13;
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
       const roundediva = Math.round(rawiva * 100) / 100;
-      
+
       setiva(roundediva.toFixed(2));
       setSubtotal(roundedSubtotal.toFixed(2));
-      
+
       const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
       setRentvalue(value_rent);
-      
+
       // Total = subtotal + IVA - renta
-      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+      newtotal = (
+        roundedSubtotal +
+        roundediva -
+        parseFloat(value_rent)
+      ).toFixed(2);
       setTotal(newtotal);
     } else {
       // Cálculo original: IVA incluido en el precio
       rawiva = Listitemstrack.reduce(
-        (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
-        0
+        (total, item) => total + (item.ventaExenta / 1.13) * 0.13,
+        0,
       );
-      
+
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
       const roundediva = Math.round(rawiva * 100) / 100;
 
@@ -367,7 +370,7 @@ const Clientes = () => {
       newtotal = (roundedSubtotal - value_rent).toFixed(2);
       setTotal(newtotal);
     }
-    
+
     console.log("rawiva:", rawiva);
     console.log("Subtotal", subtotal);
     console.log("Total", total);
@@ -375,12 +378,11 @@ const Clientes = () => {
 
   const itemsAdvancehandleRemove = (index) => {
     setitemsAdvance((prevContents) =>
-      prevContents.filter((_, i) => i !== index)
+      prevContents.filter((_, i) => i !== index),
     );
   };
 
   const itemsAdvancehandleAdd = (newContents) => {
-    
     setitemsAdvance((prevContents) => [
       ...prevContents,
       {
@@ -394,15 +396,12 @@ const Clientes = () => {
         taxes: newContents.taxes,
       },
     ]);
-
   };
-
 
   /* ---------------------------------------------------------- */
   const addBillHandler = async (event) => {
     event.preventDefault();
-  setIsSubmittingAdd(true);
-
+    setIsSubmittingAdd(true);
 
     try {
       /* EmisorService */
@@ -414,9 +413,9 @@ const Clientes = () => {
           hideProgressBar: false, // Display the progress bar
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast,
-          style: { zIndex: 200000 } // Correct way to set z-index
+          style: { zIndex: 200000 }, // Correct way to set z-index
         });
-  setIsSubmittingAdd(false);
+        setIsSubmittingAdd(false);
         return;
       }
       console.log("document");
@@ -428,10 +427,9 @@ const Clientes = () => {
           hideProgressBar: false, // Display the progress bar
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast,
-          style: { zIndex: 200000 } // Correct way to set z-index
-
+          style: { zIndex: 200000 }, // Correct way to set z-index
         });
-  setIsSubmittingAdd(false);
+        setIsSubmittingAdd(false);
         return;
       }
       if (time.date === "") {
@@ -441,35 +439,37 @@ const Clientes = () => {
           hideProgressBar: false, // Display the progress bar
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast
-          style: { zIndex: 200000 } // Correct way to set z-index
-
+          style: { zIndex: 200000 }, // Correct way to set z-index
         });
-  setIsSubmittingAdd(false);
+        setIsSubmittingAdd(false);
         return;
-
       }
-
     } catch (error) {
       console.log(error);
     }
 
     /* Validación: Si el total supera $1000, se requieren datos del receptor */
     if (parseFloat(total) > 1000) {
-      const receptorVacio = 
+      const receptorVacio =
         (!client.document || client.document === "") &&
         (!client.name || client.name === "") &&
         (!client.email || client.email === "") &&
         (!client.address || client.address === "");
-      
+
       if (receptorVacio) {
-        toast.error("El monto de la factura ($" + total + ") requiere datos del receptor (documento, nombre, correo y dirección)", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          draggable: true,
-          style: { zIndex: 200000 }
-        });
+        toast.error(
+          "El monto de la factura ($" +
+            total +
+            ") requiere datos del receptor (documento, nombre, correo y dirección)",
+          {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            draggable: true,
+            style: { zIndex: 200000 },
+          },
+        );
         setIsSubmittingAdd(false);
         return;
       }
@@ -485,9 +485,15 @@ const Clientes = () => {
 
       if (client.documentType === "13") {
         /* if document provided, validate format; otherwise allow null */
-        if (client.document !== null && client.document !== undefined && client.document !== "") {
+        if (
+          client.document !== null &&
+          client.document !== undefined &&
+          client.document !== ""
+        ) {
           if (client.document.includes("-")) {
-            toast.error("Error el documento del cliente no puede tener guiones!")
+            toast.error(
+              "Error el documento del cliente no puede tener guiones!",
+            );
             setIsSubmittingAdd(false);
             return;
           } else {
@@ -497,24 +503,30 @@ const Clientes = () => {
       }
 
       /* validating the email form of email */
-      if (client.email !== null && client.email !== undefined && client.email !== "") {
+      if (
+        client.email !== null &&
+        client.email !== undefined &&
+        client.email !== ""
+      ) {
         if (!validateEmail(client.email)) {
-          toast.error("Formato de correo electrónico no válido o tiene espacios!", {
-            position: "top-center",
-            autoClose: 3000, // Auto close after 3 seconds
-            hideProgressBar: false, // Display the progress bar
-            closeOnClick: true, // Close the toast when clicked
-            draggable: true, // Allow dragging the toast
-            style: { zIndex: 200000 } // Correct way to set z-index
-          });
+          toast.error(
+            "Formato de correo electrónico no válido o tiene espacios!",
+            {
+              position: "top-center",
+              autoClose: 3000, // Auto close after 3 seconds
+              hideProgressBar: false, // Display the progress bar
+              closeOnClick: true, // Close the toast when clicked
+              draggable: true, // Allow dragging the toast
+              style: { zIndex: 200000 }, // Correct way to set z-index
+            },
+          );
           setIsSubmittingAdd(false);
           return;
         }
       }
 
       var data = {
-        identificacion:
-         {
+        identificacion: {
           version: 1,
           ambiente: userinfo.ambiente,
           tipoDte: "01",
@@ -611,91 +623,108 @@ const Clientes = () => {
       };
 
       /* exento to agravado */
-    if (valueexcenta == "" || valueexcenta == null) {
+      if (valueexcenta == "" || valueexcenta == null) {
+        // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
+        // Para otros usuarios: IVA ya está incluido en el precio
+        const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+
+        const updatedListitems = Listitems.map((item) => {
+          let priceunit;
+          let ivaperitemfinal;
+          let ivaItemcount;
+
+          if (isIvaOnTop) {
+            // IVA hacia arriba: el precio es neto, IVA = precio * 0.13
+            priceunit = item.precioUni;
+            ivaperitemfinal = item.precioUni * item.cantidad;
+            ivaItemcount = ivaperitemfinal * 0.13;
+        console.log("Priceunit", ivaperitemfinal);
+
+            const updatedItem = {
+              ...item,
+              ventaGravada: (
+                (item.precioUni + ivaItemcount) *
+                item.cantidad
+              ).toFixed(2),
+              ventaExenta: 0,
+              tributos: null,
+              ivaItem: ivaItemcount,
+              precioUni: (item.precioUni + ivaItemcount).toFixed(2),
+            };
+            return updatedItem;
+          } else {
+            // IVA incluido: extraer el valor neto dividiendo por 1.13
+            priceunit = item.precioUni / 1.13;
+            ivaperitemfinal = (item.precioUni * item.cantidad) / 1.13;
+            ivaItemcount = ivaperitemfinal * 0.13;
+        console.log("Priceunit", ivaperitemfinal);
+
+            const updatedItem = {
+              ...item,
+              ventaGravada: (item.precioUni * item.cantidad).toFixed(2),
+              ventaExenta: 0,
+              tributos: null,
+              ivaItem: ivaItemcount,
+              precioUni: item.precioUni.toFixed(2),
+            };
+            return updatedItem;
+          }
+
+        });
 
 
-      
-    // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
-    // Para otros usuarios: IVA ya está incluido en el precio
-    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
-    
-    const updatedListitems = Listitems.map(item => {
-    let priceunit;
-    let ivaperitemfinal;
-    let ivaItemcount;
-    
-    if (isIvaOnTop) {
-      // IVA hacia arriba: el precio es neto, IVA = precio * 0.13
-      priceunit = item.precioUni;
-      ivaperitemfinal = item.precioUni * item.cantidad;
-      ivaItemcount = ivaperitemfinal * 0.13;
-    } else {
-      // IVA incluido: extraer el valor neto dividiendo por 1.13
-      priceunit = item.precioUni / 1.13;
-      ivaperitemfinal = (item.precioUni * item.cantidad) / 1.13;
-      ivaItemcount = ivaperitemfinal * 0.13;
-    }
-    
-    console.log("Priceunit", ivaperitemfinal);
-      const updatedItem = {
-        ...item,
-        ventaGravada: (item.precioUni * item.cantidad).toFixed(2),
-        ventaExenta: 0,
-        tributos: null,
-        ivaItem: ivaItemcount,
-        precioUni: item.precioUni.toFixed(2),
-      };
-      return updatedItem;
-    });
-    console.log("UpdatedListitems");
-    console.log(updatedListitems);
+        console.log("UpdatedListitems");
+        console.log(updatedListitems);
 
-    const rawiva = updatedListitems.reduce(
-      (total, item) => total + Number(item.ivaItem),
-      0
-    );
+        const rawiva = updatedListitems.reduce(
+          (total, item) => total + Number(item.ivaItem),
+          0,
+        );
 
         const rawSubtotal = updatedListitems.reduce(
           (total, item) => total + item.precioUni * item.cantidad,
-          0
+          0,
         );
         console.log("Data");
         console.log(rawiva);
         const subtotalplusiva = rawSubtotal + rawiva;
         const totalpagar = rawSubtotal - rentvalue;
         if (isIvaOnTop) {
-        data.resumen.totalIva = rawiva.toFixed(2);
-        data.resumen.totalGravada = (rawSubtotal + rawiva).toFixed(2);
-        data.resumen.subTotal = (rawSubtotal + rawiva).toFixed(2);
-        data.resumen.subTotalVentas = (rawSubtotal + rawiva).toFixed(2);
-        data.resumen.pagos[0].montoPago = (rawSubtotal + rawiva).toFixed(2);
-        data.resumen.totalExenta = 0;
-        data.resumen.montoTotalOperacion = (rawSubtotal + rawiva).toFixed(2);
-        data.resumen.totalPagar = ((totalpagar - parseFloat(ivaretenido)) + rawiva).toFixed(2);
+          data.resumen.totalIva = rawiva.toFixed(2);
+          data.resumen.totalGravada = (rawSubtotal + rawiva).toFixed(2);
+          data.resumen.subTotal = (rawSubtotal + rawiva).toFixed(2);
+          data.resumen.subTotalVentas = (rawSubtotal + rawiva).toFixed(2);
+          data.resumen.pagos[0].montoPago = (rawSubtotal + rawiva).toFixed(2);
+          data.resumen.totalExenta = 0;
+          data.resumen.montoTotalOperacion = (rawSubtotal + rawiva).toFixed(2);
+          data.resumen.totalPagar = (
+            totalpagar -
+            parseFloat(ivaretenido) +
+            rawiva
+          ).toFixed(2);
 
-        data.resumen.totalLetras = convertirDineroALetras(Number(total + rawiva).toFixed(2));
-        }else{
-        data.resumen.totalIva = rawiva.toFixed(2);
-        data.resumen.totalGravada = rawSubtotal.toFixed(2);
-        data.resumen.subTotal = rawSubtotal.toFixed(2);
-        data.resumen.pagos[0].montoPago = rawSubtotal.toFixed(2);
-        data.resumen.totalExenta = 0;
-        data.resumen.montoTotalOperacion = rawSubtotal.toFixed(2);
-        data.resumen.totalPagar = (totalpagar - parseFloat(ivaretenido)).toFixed(2);
+          data.resumen.totalLetras = convertirDineroALetras(
+            Number(total + rawiva).toFixed(2),
+          );
+        } else {
+          data.resumen.totalIva = rawiva.toFixed(2);
+          data.resumen.totalGravada = rawSubtotal.toFixed(2);
+          data.resumen.subTotal = rawSubtotal.toFixed(2);
+          data.resumen.pagos[0].montoPago = rawSubtotal.toFixed(2);
+          data.resumen.totalExenta = 0;
+          data.resumen.montoTotalOperacion = rawSubtotal.toFixed(2);
+          data.resumen.totalPagar = (
+            totalpagar - parseFloat(ivaretenido)
+          ).toFixed(2);
 
-        data.resumen.totalLetras = convertirDineroALetras(Number(total).toFixed(2));
-        data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
+          data.resumen.totalLetras = convertirDineroALetras(
+            Number(total).toFixed(2),
+          );
+          data.resumen.subTotalVentas = rawSubtotal.toFixed(2);
         }
 
-
-        
-
-        
         data.cuerpoDocumento = updatedListitems;
-
       }
-
-
 
       if (client.phone === "") {
         data.receptor.telefono = null;
@@ -713,7 +742,10 @@ const Clientes = () => {
       console.log("Count Factura");
       console.log(response);
 
-      const responseincrement = await UserService.id_enviopus1(id_emisor, token);
+      const responseincrement = await UserService.id_enviopus1(
+        id_emisor,
+        token,
+      );
       console.log("incremented");
       console.log(responseincrement);
 
@@ -733,7 +765,7 @@ const Clientes = () => {
       const responsePlantilla = await PlantillaService.create(
         data,
         token,
-        id_emisor
+        id_emisor,
       );
       setIsLoading(false);
       console.log("PlantillaService - Create");
@@ -746,10 +778,9 @@ const Clientes = () => {
           closeOnClick: true, // Close the toast when clicked
           draggable: true, // Allow dragging the toast
         });
-  setIsSubmittingAdd(false);
+        setIsSubmittingAdd(false);
         return;
       }
-      
 
       if (responsePlantilla.message != "Error en el servidor") {
         toast.success("Factura creada!", {
@@ -762,11 +793,8 @@ const Clientes = () => {
 
         /* wait 5 seconds and navigate */
         setTimeout(() => {
-
           navigate("/facturas");
-
         }, 4000);
-
 
         return;
       }
@@ -782,7 +810,7 @@ const Clientes = () => {
         draggable: true, // Allow dragging the toast
       });
       console.log(error);
-  setIsSubmittingAdd(false);
+      setIsSubmittingAdd(false);
     }
   };
 
@@ -791,7 +819,7 @@ const Clientes = () => {
   /* Logic of validating email */
   const validateEmail = (email) => {
     // Rechazar si contiene espacios
-    if (email.includes(' ')) {
+    if (email.includes(" ")) {
       return false;
     }
     const re = /\S+@\S+\.\S+/;
@@ -847,9 +875,8 @@ const Clientes = () => {
         nrc: null,
         descActividad: "Otros",
       });
-    
     } else if (client.documentType == "37") {
-        setClient({
+      setClient({
         documentType: "37",
         name: clientset.name,
         document: clientset.otro,
@@ -907,33 +934,33 @@ const Clientes = () => {
   }
 
   const convertirDineroALetras = (cantidad) => {
+    try {
+      // Asegurarse de que la cantidad sea un número válido
+      const cantidadNum = parseFloat(cantidad);
+      if (isNaN(cantidadNum) || cantidadNum === 0) {
+        return "CERO DÓLARES";
+      }
 
+      // Redondear a 2 decimales
+      const cantidadRedondeada = Math.round(cantidadNum * 100) / 100;
+      const partes = cantidadRedondeada.toFixed(2).split(".");
+      const dolares = parseInt(partes[0], 10);
+      const centavos = parseInt(partes[1], 10);
 
-    // Asegurarse de que la cantidad tenga como máximo dos decimales
-    const cantidadRedondeada = Math.round(cantidad * 100) / 100;
-    const partes = cantidadRedondeada.toFixed(2).split("."); // Divide la parte entera de los decimales
+      const dolaresEnLetras = convertirNumeroALetras(dolares);
 
-    const dolares = parseInt(partes[0], 10); // Parte entera
-    const centavos = parseInt(partes[1], 10); // Parte decimal
+      let resultado = `${dolaresEnLetras} ${dolares === 1 ? "DÓLAR" : "DÓLARES"}`;
 
-    if (dolares > Number.MAX_SAFE_INTEGER) {
-      throw new Error(
-        "La cantidad en dólares es demasiado grande para convertir."
-      );
+      if (centavos > 0) {
+        const centavosEnLetras = convertirNumeroALetras(centavos);
+        resultado += ` CON ${centavosEnLetras} ${centavos === 1 ? "CENTAVO" : "CENTAVOS"}`;
+      }
+
+      return resultado;
+    } catch (error) {
+      console.error("Error al convertir número a letras:", error);
+      return "ERROR EN CONVERSIÓN";
     }
-
-    // Convierte las partes a palabras
-    const dolaresEnLetras = convertirNumeroALetras(dolares);
-    const centavosEnLetras = convertirNumeroALetras(centavos);
-
-    // Construye la representación en palabras
-    let resultado = `${dolaresEnLetras} DÓLARES`;
-
-    if (centavos > 0) {
-      resultado += ` CON ${centavosEnLetras} CENTAVOS`;
-    }
-
-    return resultado;
   };
 
   const convertirNumeroALetras = (numero) => {
@@ -977,6 +1004,8 @@ const Clientes = () => {
 
     if (numero === 0) return "CERO";
 
+    if (numero < 0) return "MENOS " + convertirNumeroALetras(Math.abs(numero));
+
     if (numero < 10) return unidades[numero];
 
     if (numero < 16) return especiales[numero - 10];
@@ -1010,8 +1039,7 @@ const Clientes = () => {
       );
     }
 
-    if (numero < 1000000000000) {
-      // Hasta 999,999,999,999 (casi un billón)
+    if (numero < 1000000000) {
       const millones = Math.floor(numero / 1000000);
       const resto = numero % 1000000;
       return (
@@ -1022,10 +1050,40 @@ const Clientes = () => {
       );
     }
 
-    // Fallback para números extremadamente grandes
-    return "CANTIDAD MUY GRANDE";
-  };
+    if (numero < 1000000000000) {
+      const miles_millones = Math.floor(numero / 1000000000);
+      const resto = numero % 1000000000;
+      return (
+        convertirNumeroALetras(miles_millones) + " MIL MILLONES" +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
 
+    if (numero < 1000000000000000) {
+      const billones = Math.floor(numero / 1000000000000);
+      const resto = numero % 1000000000000;
+      return (
+        (billones === 1
+          ? "UN BILLÓN"
+          : convertirNumeroALetras(billones) + " BILLONES") +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
+
+    if (numero < 1000000000000000000) {
+      const miles_billones = Math.floor(numero / 1000000000000000);
+      const resto = numero % 1000000000000000;
+      return (
+        convertirNumeroALetras(miles_billones) + " MIL BILLONES" +
+        (resto > 0 ? " " + convertirNumeroALetras(resto) : "")
+      );
+    }
+
+    // Para números aún más grandes, usar notación científica como respaldo
+    const exponente = Math.floor(Math.log10(numero));
+    const base = numero / Math.pow(10, exponente);
+    return `${convertirNumeroALetras(Math.round(base))} POR DIEZ A LA ${convertirNumeroALetras(exponente)}`;
+  };
 
   /* Function i will give it a number like 063842754 and it will gives me a string 06384275-4 */
   function formatDUI(num) {
@@ -1034,8 +1092,6 @@ const Clientes = () => {
   }
 
   /* examples of input and output */
-
-
 
   const handlePercentageChange = (e) => {
     setPercentage(e.target.value);
@@ -1047,11 +1103,13 @@ const Clientes = () => {
 
   const handleIvaReten1Toggle = () => {
     if (!isivareten1percent) {
-      const ivaRet = ((subtotal /1.13) * 0.01).toFixed(2);
+      const ivaRet = ((subtotal / 1.13) * 0.01).toFixed(2);
       setIvaRetenido(ivaRet);
       setTotal((total - parseFloat(ivaRet)).toFixed(2));
     } else {
-      setTotal((prev) => (parseFloat(prev) + parseFloat(ivaretenido)).toFixed(2));
+      setTotal((prev) =>
+        (parseFloat(prev) + parseFloat(ivaretenido)).toFixed(2),
+      );
       setIvaRetenido(0);
     }
     setIsivareten1percent(!isivareten1percent);
@@ -1072,7 +1130,6 @@ const Clientes = () => {
             <option value="NC">Nota de Crédito</option>
             <option value="ND">Nota de Débito</option>
             <option value="CI">Comprobante de liquidación</option>
-
           </select>
           {/* Your other elements */}
         </div>
@@ -1102,33 +1159,35 @@ const Clientes = () => {
               </div>
             </div>
             {/* Input de fecha con validación de usuario */}
-<div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
-  <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
-  <input
-    className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
-    placeholder="Fecha"
-    type="date"
-    value={time.date}
-    {...((id_emisor === "7" || id_emisor === "12")
-      ? {}
-      : { min: time.date, max: time.date })}
-    onChange={(e) => {
-      // Si el usuario es 7 o 12, permite cualquier fecha
-      if (id_emisor === "7" || id_emisor === "12") {
-        handleChangeTime("date", e.target.value);
-      } else {
-        // Para otros usuarios, solo permite la fecha de hoy
-        if (e.target.value === todayDate) {
-          handleChangeTime("date", e.target.value);
-        } else {
-          e.target.value = todayDate; // revertir
-          handleChangeTime("date", todayDate);
-        }
-      }
-    }}
-    {...((id_emisor === "7" || id_emisor === "12") ? {} : { readOnly: true })}
-  />
-</div>
+            <div className="self-stretch rounded-6xs box-border flex flex-row items-start justify-start pt-[3px] px-[7px] pb-1.5 max-w-full z-[1] border-[0.3px] border-solid border-gray-100">
+              <div className="h-[23px] w-[356px] relative rounded-6xs box-border hidden max-w-full border-[0.3px] border-solid border-gray-100" />
+              <input
+                className="w-full  [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
+                placeholder="Fecha"
+                type="date"
+                value={time.date}
+                {...(id_emisor === "7" || id_emisor === "12"
+                  ? {}
+                  : { min: time.date, max: time.date })}
+                onChange={(e) => {
+                  // Si el usuario es 7 o 12, permite cualquier fecha
+                  if (id_emisor === "7" || id_emisor === "12") {
+                    handleChangeTime("date", e.target.value);
+                  } else {
+                    // Para otros usuarios, solo permite la fecha de hoy
+                    if (e.target.value === todayDate) {
+                      handleChangeTime("date", e.target.value);
+                    } else {
+                      e.target.value = todayDate; // revertir
+                      handleChangeTime("date", todayDate);
+                    }
+                  }
+                }}
+                {...(id_emisor === "7" || id_emisor === "12"
+                  ? {}
+                  : { readOnly: true })}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -1173,9 +1232,18 @@ const Clientes = () => {
       {/* <TreeNode text="Subtotal" data={subtotal} />
       <TreeNode text="IVA" data={iva} />
       <TreeNode text="Total a Pagar" data={total} */}
-      <TreeNode text="Subtotal" data={(id_emisor === "23" || id_emisor === "24") ? (parseFloat(subtotal) + parseFloat(iva)).toFixed(2) : subtotal} />
+      <TreeNode
+        text="Subtotal"
+        data={
+          id_emisor === "23" || id_emisor === "24"
+            ? (parseFloat(subtotal) + parseFloat(iva)).toFixed(2)
+            : subtotal
+        }
+      />
       <TreeNode text="IVA" data={iva} />
-      {isivareten1percent && <TreeNode text="IVA Retenido" data={ivaretenido} />}
+      {isivareten1percent && (
+        <TreeNode text="IVA Retenido" data={ivaretenido} />
+      )}
       <TreeNode text="Renta Retenida" data={rentvalue} />
       <TreeNode text="Total a Pagar" data={total} />
 
@@ -1183,21 +1251,29 @@ const Clientes = () => {
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-5 box-border gap-[10px] max-w-full z-[1]">
           <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-center justify-between pt-[11px] px-[17px] pb-2 box-border relative max-w-full z-[2]">
-            <b className="relative z-[3] text-xs font-inria-sans text-black">IVA Retenido 1%</b>
+            <b className="relative z-[3] text-xs font-inria-sans text-black">
+              IVA Retenido 1%
+            </b>
           </div>
           <div className="max-w-full self-stretch px-[17px] py-4 flex flex-row items-center justify-center">
             <button
               type="button"
               onClick={handleIvaReten1Toggle}
               className={`cursor-pointer [border:none] pt-[13px] pb-3 px-8 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-start justify-start whitespace-nowrap ${
-                isivareten1percent ? 'bg-steelblue-200 hover:bg-steelblue-100' : 'bg-gray-400 hover:bg-gray-500'
+                isivareten1percent
+                  ? "bg-steelblue-200 hover:bg-steelblue-100"
+                  : "bg-gray-400 hover:bg-gray-500"
               } transition-colors`}
             >
-              <div className={`h-12 w-full absolute inset-0 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden ${
-                isivareten1percent ? 'bg-steelblue-200' : 'bg-gray-400'
-              }`} />
+              <div
+                className={`h-12 w-full absolute inset-0 rounded-3xs shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden ${
+                  isivareten1percent ? "bg-steelblue-200" : "bg-gray-400"
+                }`}
+              />
               <b className="h-[23px] relative text-mini inline-block font-inria-sans text-white text-left z-[1]">
-                {isivareten1percent ? "Desactivar Retención 1%" : "Activar Retención 1%"}
+                {isivareten1percent
+                  ? "Desactivar Retención 1%"
+                  : "Activar Retención 1%"}
               </b>
             </button>
           </div>
@@ -1205,7 +1281,6 @@ const Clientes = () => {
       </section>
 
       {/* Card para Renta Retenida (porcentaje editable) */}
-
 
       <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full ch:w-1/3 ch:self-center">
         <textarea
