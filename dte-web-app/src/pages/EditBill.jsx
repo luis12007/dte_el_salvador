@@ -319,7 +319,7 @@ const EditBill = () => {
     );
 
     // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
-    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
     
     let rawiva;
     let roundedSubtotal;
@@ -384,7 +384,7 @@ const EditBill = () => {
     );
 
     // Para usuarios 23 o 24: IVA se suma encima
-    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
     
     let rawiva;
     let roundedSubtotal;
@@ -771,7 +771,7 @@ const EditBill = () => {
       
       // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
       // Para otros usuarios: IVA ya está incluido en el precio
-      const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+      const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
       
       const updatedListitems = Listitems.map(item => {
       let priceunit;
