@@ -647,7 +647,7 @@ const CrearCreditoFiscal = () => {
     const typeitem = parseInt(newContents.type);
 
     // Para usuarios 23 o 24: precio no incluye IVA, se suma encima
-    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
     
     let priceunit;
     let ivaperitemfinal;
@@ -764,7 +764,7 @@ const CrearCreditoFiscal = () => {
     );
 
     // Para usuarios 23 o 24: IVA se suma encima
-    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
     
     let rawiva;
     let roundedSubtotal;
@@ -999,7 +999,7 @@ const CrearCreditoFiscal = () => {
 
           
     /* tofixed(2) to every item in values precioUni and ventaGravada*/
-      const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
+      const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
 
     if (isIvaOnTop){
     Listitems.forEach((item) => {

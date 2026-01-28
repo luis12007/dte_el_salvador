@@ -319,33 +319,40 @@ const EditBill = () => {
     );
 
     // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
-    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
-    
+    // Para otros usuarios: IVA ya está incluido en el precio
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+
     let rawiva;
     let roundedSubtotal;
-    let roundediva;
     let newtotal;
-    
+
     if (isIvaOnTop) {
+      // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
       rawiva = rawSubtotal * 0.13;
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      roundediva = Math.round(rawiva * 100) / 100;
-      
+      const roundediva = Math.round(rawiva * 100) / 100;
+
       setiva(roundediva.toFixed(2));
       setSubtotal(roundedSubtotal.toFixed(2));
-      
+
       const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
       setRentvalue(value_rent);
-      
-      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+
+      // Total = subtotal + IVA - renta
+      newtotal = (
+        roundedSubtotal +
+        roundediva -
+        parseFloat(value_rent)
+      ).toFixed(2);
       setTotal(newtotal);
     } else {
       rawiva = Listitemstrack.reduce(
         (total, item) => total + item.ivaItem * item.cantidad,
         0
       );
+
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      roundediva = Math.round(rawiva * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
 
       setiva(roundediva);
       console.log(roundedSubtotal);
@@ -354,7 +361,8 @@ const EditBill = () => {
       const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
       setRentvalue(value_rent);
 
-      setTotal((roundedSubtotal - value_rent).toFixed(2));
+      newtotal = (roundedSubtotal - value_rent).toFixed(2);
+      setTotal(newtotal);
     }
     console.log("ListitemsAdd");
     console.log(Listitems);
@@ -383,34 +391,42 @@ const EditBill = () => {
       0
     );
 
-    // Para usuarios 23 o 24: IVA se suma encima
-    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
-    
+    // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
+    // Para otros usuarios: IVA ya está incluido en el precio
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+
     let rawiva;
     let roundedSubtotal;
-    let roundediva;
     let newtotal;
-    
+
     if (isIvaOnTop) {
+      // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
       rawiva = rawSubtotal * 0.13;
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      roundediva = Math.round(rawiva * 100) / 100;
-      
+      const roundediva = Math.round(rawiva * 100) / 100;
+
       setiva(roundediva.toFixed(2));
       setSubtotal(roundedSubtotal.toFixed(2));
-      
+
       const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
       setRentvalue(value_rent);
-      
-      newtotal = (roundedSubtotal + roundediva - parseFloat(value_rent)).toFixed(2);
+
+      // Total = subtotal + IVA - renta
+      newtotal = (
+        roundedSubtotal +
+        roundediva -
+        parseFloat(value_rent)
+      ).toFixed(2);
       setTotal(newtotal);
     } else {
+      // Cálculo original: IVA incluido en el precio
       rawiva = Listitems.reduce(
-        (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
+        (total, item) => total + (item.ventaExenta / 1.13) * 0.13,
         0
       );
+
       roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-      roundediva = Math.round(rawiva * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
 
       setiva(roundediva.toFixed(2));
       setSubtotal((roundedSubtotal.toFixed(2)));
@@ -596,6 +612,7 @@ const EditBill = () => {
     ]);
 
     const Listitemstrack = [...Listitems, newItem];
+    console.log("Listitems", Listitemstrack);
 
     /* map all newitems and sum the  precioUni*cantidad */
     // Calcular el subtotal sumando el producto de precioUni y cantidad para cada artículo
@@ -603,25 +620,57 @@ const EditBill = () => {
       (total, item) => total + item.precioUni * item.cantidad,
       0
     );
-    const rawiva = Listitemstrack.reduce(
-      (total, item) => total + (((item.ventaExenta) / 1.13) * 0.13),
-      0
-    );
-    // Round to two decimal places
-    const roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
-    const roundediva = Math.round(rawiva * 100) / 100;
 
-    setiva(roundediva.toFixed(2)); // Set the rounded subtotal
-    setSubtotal((roundedSubtotal.toFixed(2))); // Set the rounded subtotal
+    // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
+    // Para otros usuarios: IVA ya está incluido en el precio
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
 
-    const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
-    setRentvalue(value_rent)
+    let rawiva;
+    let roundedSubtotal;
+    let newtotal;
 
-    setTotal((roundedSubtotal - value_rent).toFixed(2))
+    if (isIvaOnTop) {
+      // IVA hacia arriba: subtotal es el precio neto, IVA = subtotal * 0.13
+      rawiva = rawSubtotal * 0.13;
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
 
+      setiva(roundediva.toFixed(2));
+      setSubtotal(roundedSubtotal.toFixed(2));
 
-    console.log("ListitemsAddAfter")
-    console.log(Listitems)
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      setRentvalue(value_rent);
+
+      // Total = subtotal + IVA - renta
+      newtotal = (
+        roundedSubtotal +
+        roundediva -
+        parseFloat(value_rent)
+      ).toFixed(2);
+      setTotal(newtotal);
+    } else {
+      // Cálculo original: IVA incluido en el precio
+      rawiva = Listitemstrack.reduce(
+        (total, item) => total + (item.ventaExenta / 1.13) * 0.13,
+        0
+      );
+
+      roundedSubtotal = Math.round(rawSubtotal * 100) / 100;
+      const roundediva = Math.round(rawiva * 100) / 100;
+
+      setiva(roundediva.toFixed(2));
+      setSubtotal((roundedSubtotal.toFixed(2)));
+
+      const value_rent = ((roundedSubtotal * percentage) / 100).toFixed(2);
+      setRentvalue(value_rent);
+
+      newtotal = (roundedSubtotal - value_rent).toFixed(2);
+      setTotal(newtotal);
+    }
+
+    console.log("rawiva:", rawiva);
+    console.log("Subtotal", subtotal);
+    console.log("Total", total);
   };
 
 

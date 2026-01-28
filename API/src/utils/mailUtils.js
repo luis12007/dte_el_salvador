@@ -1747,21 +1747,21 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add sender and receiver information
         const infoX = 40;
-        const infoY = 270;
+        const infoY = 260;
         /* rectangle with radius rounded */
 
 
         const infoBlockOpts = {
             width: 250,
-            paddingX: 10,
-            paddingTop: 8,
-            paddingBottom: 10,
-            titleFontSize: 10,
-            labelFontSize: 9,
-            valueFontSize: 9,
-            labelWidth: 105,
-            rowGap: 3,
-            titleGap: 6,
+            paddingX: 8,
+            paddingTop: 5,
+            paddingBottom: 6,
+            titleFontSize: 8,
+            labelFontSize: 7,
+            valueFontSize: 7,
+            labelWidth: 90,
+            rowGap: 1,
+            titleGap: 3,
             bgColor: '#EAEAEA',
             borderColor: '#000',
             textColor: '#1E3256',
@@ -1788,14 +1788,14 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         const blocksBottomY = blocksY + maxBlockHeight;
 
         // Add services section (debajo del bloque más alto)
-        pdfDoc.fontSize(16).fillColor('#009A9A').text('SERVICIOS', 250, blocksBottomY + 10, { underline: true });
+        pdfDoc.fontSize(10).fillColor('#009A9A').text('SERVICIOS', 265, blocksBottomY + 10, { underline: true });
 
-        const servicesY = blocksBottomY + 40;
+        const servicesY = blocksBottomY + 35;
         const servicesX = 20;
 
         pdfDoc
-            .fontSize(10)
-            .fillColor('#000000')
+            .fontSize(7)
+            .fillColor('#1E3256')
             .text('N°', servicesX, servicesY)
             .text('Cant.', servicesX + 20, servicesY)
             .text('Código', servicesX + 70, servicesY)
@@ -1813,21 +1813,22 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             }
             return y;
         };
-        let y = servicesY + 20;
+        let y = servicesY + 12;
         let numcounter = 1;
 
         // Ajuste: envolver descripción y calcular altura dinámica por fila
         const descColX = servicesX + 110;
         const descColWidth = 120; // ancho de la columna de descripción
-        const baseRowHeight = 20; // altura base por fila
+        const baseRowHeight = 12; // altura base por fila
 
+        pdfDoc.fontSize(7); // Establecer fuente pequeña para items
         itemsDB.forEach(item => {
             const desc = (item.descripcion || '').toString();
             const descHeight = pdfDoc.heightOfString(desc, { width: descColWidth, align: 'left' });
             const rowHeight = Math.max(baseRowHeight, Math.ceil(descHeight / baseRowHeight) * baseRowHeight);
 
             // Saltar de página si la fila no cabe completa
-            if (y + rowHeight > 770) {
+            if (y + rowHeight > 550) {
                 pdfDoc.addPage();
                 y = 20;
             }
@@ -1853,12 +1854,12 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             y += rowHeight; // avanzar según altura real de la fila
         });
 
-        pdfDoc.moveTo(30, servicesY - 10).lineTo(550, servicesY - 10).stroke('#000');
+        pdfDoc.moveTo(30, servicesY - 5).lineTo(550, servicesY - 5).stroke('#000');
         pdfDoc.moveTo(30, y).lineTo(550, y).stroke('#000');
 
 
         const checkAndAddNewPage = (pdfDoc, y) => {
-            if (y > 540) {
+            if (y > 620) {
                 pdfDoc.addPage();
                 return 30;
             }
@@ -1867,14 +1868,17 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         // Check if a new page is needed and reset y if necessary
         y = checkAndAddNewPage(pdfDoc, y);
 
-        pdfDoc.roundedRect(20, y + 30, 210, 140, 10).fill('#EAEAEA').stroke('#000'); // Background box for sender
+        // Añadir espacio entre la tabla y el resumen
+        y = y + 15;
+
+        pdfDoc.roundedRect(20, y + 8, 200, 100, 8).fill('#EAEAEA').stroke('#000'); // Background box for sender
 
         /* Truncate the text */
 
 
 
-        pdfDoc.fillColor('#1E3256').fontSize(13).text('Observaciones', 30, y + 40);
-        const funcenter = (text, startY, startX, maxCharsPerLine = 40, lineHeight = 15, maxChars = 400) => {
+        pdfDoc.fillColor('#1E3256').fontSize(9).text('Observaciones', 28, y + 14);
+        const funcenter = (text, startY, startX, maxCharsPerLine = 45, lineHeight = 10, maxChars = 300) => {
             // Handle null or undefined text
             if (!text) {
                 text = '';
@@ -1883,7 +1887,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             const truncatedText = text.length > maxChars ? text.slice(0, maxChars) : text;
 
             // Set font size
-            pdfDoc.fontSize(10).fillColor('#000000');
+            pdfDoc.fontSize(7).fillColor('#000000');
 
             // Loop through the truncated text and slice it into lines
             for (let i = 0; i < truncatedText.length; i += maxCharsPerLine) {
@@ -1899,7 +1903,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         };
 
         // Example usage - handle null/undefined observaciones
-        funcenter(plantillaDB.observaciones || '', y + 55, 30);
+        funcenter(plantillaDB.observaciones || '', y + 26, 28);
         var ivaper = Number(plantillaDB.iva_percibido)
 
         if (plantillaDB.tipo === "03") {
@@ -1909,27 +1913,27 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             const ivaValor = iva[2];
 
 
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
+            pdfDoc.fontSize(10).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 5, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 57, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 31, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 44, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 18, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 70, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 83, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 96, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 109, { align: 'right' })
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 122, { align: 'right' });
         } else if (plantillaDB.tipo === "01") {
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
+            pdfDoc.fontSize(10).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 5, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${parseFloat(plantillaDB.iva_percibido).toFixed(2)}`, 300, y + 18, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 31, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 44, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 57, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 70, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 83, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 96, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 109, { align: 'right' })
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 122, { align: 'right' });
         } else if (plantillaDB.tipo === "14") {
             if (plantillaDB.total_agravada === null) {
                 plantillaDB.total_agravada = 0;
@@ -1938,40 +1942,40 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 plantillaDB.porcentajedescuento = 0;
 
             }
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada || 0).toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento || 0).toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
+            pdfDoc.fontSize(10).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 5, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 18, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada || 0).toFixed(2)}`, 300, y + 31, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotal).toFixed(2)}`, 300, y + 44, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento || 0).toFixed(2)}`, 300, y + 57, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 70, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 83, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 96, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 109, { align: 'right' })
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 122, { align: 'right' });
         } else if (plantillaDB.tipo === "05") {
 
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
+            pdfDoc.fontSize(10).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 5, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 57, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 31, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 44, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 18, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 70, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 83, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 96, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 109, { align: 'right' })
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 122, { align: 'right' });
         } else if (plantillaDB.tipo === "06") {
 
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text('Otros montos no afectados: $0.00', 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
+            pdfDoc.fontSize(10).fillColor('#1E3256').text(`Subtotal: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 5, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${ivaper.toFixed(2)}`, 300, y + 57, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 31, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 44, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 18, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 70, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 83, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 96, { align: 'right' })
+                .text('Otros montos no afectados: $0.00', 300, y + 109, { align: 'right' })
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 122, { align: 'right' });
         } else if (plantillaDB.tipo === "08") {
                         const iva = plantillaDB.tributocf.split('|');
             const ivaCodigo = iva[0];
@@ -1979,36 +1983,36 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             const ivaValor = iva[2];
 
 
-            pdfDoc.fontSize(14).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 10, { align: 'right' })
-                .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 90, { align: 'right' })
-                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 50, { align: 'right' })
-                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 70, { align: 'right' })
-                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 30, { align: 'right' })
-                .text(`IVA recibido: $0.00`, 300, y + 110, { align: 'right' })
-                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 130, { align: 'right' })
-                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 150, { align: 'right' })
-                .text(`Otros montos no afectados: $0.00`, 300, y + 170, { align: 'right' })
-                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 190, { align: 'right' });
+            pdfDoc.fontSize(10).fillColor('#1E3256').text(`Subtotal: ${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 5, { align: 'right' })
+                .text(`Impuesto valor agregado 13%: $${parseFloat(ivaValor).toFixed(2)}`, 300, y + 57, { align: 'right' })
+                .text(`Total gravado: $${parseFloat(plantillaDB.total_agravada).toFixed(2)}`, 300, y + 31, { align: 'right' })
+                .text(`Sumatoria de ventas: $${parseFloat(plantillaDB.subtotalventas).toFixed(2)}`, 300, y + 44, { align: 'right' })
+                .text(`Monto de descuento: $${parseFloat(plantillaDB.porcentajedescuento).toFixed(2)}`, 300, y + 18, { align: 'right' })
+                .text(`IVA recibido: $0.00`, 300, y + 70, { align: 'right' })
+                .text(`IVA retenido 1%: $${parseFloat(plantillaDB.iva_retenido).toFixed(2)}`, 300, y + 83, { align: 'right' })
+                .text(`Retención de renta 10%: $${parseFloat(plantillaDB.retencion_de_renta).toFixed(2)}`, 300, y + 96, { align: 'right' })
+                .text(`Otros montos no afectados: $0.00`, 300, y + 109, { align: 'right' })
+                .text(`Monto total de operación: $${parseFloat(plantillaDB.montototaloperacion).toFixed(2)}`, 300, y + 122, { align: 'right' });
         }
 
 
 
         /* pdfDoc.moveTo(500, 770).lineTo(580, 770).stroke('#000'); */
-        pdfDoc.moveTo(500, y + 230).lineTo(580, y + 230).stroke('#000');
-        pdfDoc.moveTo(500, y + 270).lineTo(580, y + 270).stroke('#000');
-        pdfDoc.fontSize(30).fillColor('#009A9A').text(`$${plantillaDB.total_a_pagar}`, 400, y + 238, { align: 'right' });
+        pdfDoc.moveTo(500, y + 135).lineTo(580, y + 135).stroke('#000');
+        pdfDoc.moveTo(500, y + 160).lineTo(580, y + 160).stroke('#000');
+        pdfDoc.fontSize(20).fillColor('#009A9A').text(`$${plantillaDB.total_a_pagar}`, 400, y + 140, { align: 'right' });
 
         const funcenter2 = (text, y, x) => {
             /* for and slice every 26 caracters */
-            for (let i = 0; i < text.length; i += 50) {
-                pdfDoc.fontSize(12).fillColor('#1E3256').text(text.slice(i, i + 50), x, y + (i / 50 * 15));
+            for (let i = 0; i < text.length; i += 55) {
+                pdfDoc.fontSize(8).fillColor('#1E3256').text(text.slice(i, i + 55), x, y + (i / 55 * 10));
             }
         }
 
 
-        funcenter2(plantillaDB.cantidad_en_letras, y + 235, 20);
-        pdfDoc.fontSize(12).fillColor('#1E3256').text(`Responsable emisor: ${plantillaDB.documento_e}`, 20, y + 180, );
-        pdfDoc.fontSize(12).fillColor('#1E3256').text(`Responsable receptor: ${plantillaDB.documento_r}`, 20, y + 200, );
+        funcenter2(plantillaDB.cantidad_en_letras, y + 140, 20);
+        pdfDoc.fontSize(8).fillColor('#1E3256').text(`Responsable emisor: ${plantillaDB.documento_e}`, 20, y + 115, );
+        pdfDoc.fontSize(8).fillColor('#1E3256').text(`Responsable receptor: ${plantillaDB.documento_r}`, 20, y + 125, );
         /* text in the bottom right bold */
 
 

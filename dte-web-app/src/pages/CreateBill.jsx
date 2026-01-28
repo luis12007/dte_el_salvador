@@ -180,7 +180,7 @@ const Clientes = () => {
 
     // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
     // Para otros usuarios: IVA ya está incluido en el precio
-    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
 
     let rawiva;
     let roundedSubtotal;
@@ -326,7 +326,7 @@ const Clientes = () => {
 
     // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
     // Para otros usuarios: IVA ya está incluido en el precio
-    const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
 
     let rawiva;
     let roundedSubtotal;
@@ -351,6 +351,8 @@ const Clientes = () => {
         parseFloat(value_rent)
       ).toFixed(2);
       setTotal(newtotal);
+
+      // setting 
     } else {
       // Cálculo original: IVA incluido en el precio
       rawiva = Listitemstrack.reduce(
@@ -626,7 +628,7 @@ const Clientes = () => {
       if (valueexcenta == "" || valueexcenta == null) {
         // Para usuarios 23 o 24: IVA se suma encima (precio no incluye IVA)
         // Para otros usuarios: IVA ya está incluido en el precio
-        const isIvaOnTop = id_emisor === "223" || id_emisor === "224";
+        const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
 
         const updatedListitems = Listitems.map((item) => {
           let priceunit;
@@ -634,10 +636,11 @@ const Clientes = () => {
           let ivaItemcount;
 
           if (isIvaOnTop) {
+            console.log("IVA on top true");
             // IVA hacia arriba: el precio es neto, IVA = precio * 0.13
             priceunit = item.precioUni;
-            ivaperitemfinal = item.precioUni * item.cantidad;
-            ivaItemcount = ivaperitemfinal * 0.13;
+            ivaperitemfinal = item.precioUni * 0.13;
+            ivaItemcount = ivaperitemfinal;
         console.log("Priceunit", ivaperitemfinal);
 
             const updatedItem = {
@@ -648,7 +651,7 @@ const Clientes = () => {
               ).toFixed(2),
               ventaExenta: 0,
               tributos: null,
-              ivaItem: ivaItemcount,
+              ivaItem: Number(ivaItemcount * item.cantidad).toFixed(2),
               precioUni: (item.precioUni + ivaItemcount).toFixed(2),
             };
             return updatedItem;
@@ -664,7 +667,7 @@ const Clientes = () => {
               ventaGravada: (item.precioUni * item.cantidad).toFixed(2),
               ventaExenta: 0,
               tributos: null,
-              ivaItem: ivaItemcount,
+              ivaItem: Number(ivaItemcount).toFixed(2),
               precioUni: item.precioUni.toFixed(2),
             };
             return updatedItem;
@@ -691,20 +694,19 @@ const Clientes = () => {
         const totalpagar = rawSubtotal - rentvalue;
         if (isIvaOnTop) {
           data.resumen.totalIva = rawiva.toFixed(2);
-          data.resumen.totalGravada = (rawSubtotal + rawiva).toFixed(2);
-          data.resumen.subTotal = (rawSubtotal + rawiva).toFixed(2);
-          data.resumen.subTotalVentas = (rawSubtotal + rawiva).toFixed(2);
-          data.resumen.pagos[0].montoPago = (rawSubtotal + rawiva).toFixed(2);
+          data.resumen.totalGravada = (rawSubtotal).toFixed(2);
+          data.resumen.subTotal = (rawSubtotal).toFixed(2);
+          data.resumen.subTotalVentas = (rawSubtotal).toFixed(2);
+          data.resumen.pagos[0].montoPago = (rawSubtotal).toFixed(2);
           data.resumen.totalExenta = 0;
-          data.resumen.montoTotalOperacion = (rawSubtotal + rawiva).toFixed(2);
+          data.resumen.montoTotalOperacion = (rawSubtotal).toFixed(2);
           data.resumen.totalPagar = (
             totalpagar -
-            parseFloat(ivaretenido) +
-            rawiva
+            parseFloat(ivaretenido)
           ).toFixed(2);
 
           data.resumen.totalLetras = convertirDineroALetras(
-            Number(total + rawiva).toFixed(2),
+            Number(total).toFixed(2),
           );
         } else {
           data.resumen.totalIva = rawiva.toFixed(2);
@@ -794,7 +796,7 @@ const Clientes = () => {
         /* wait 5 seconds and navigate */
         setTimeout(() => {
           navigate("/facturas");
-        }, 4000);
+        }, 4000); 
 
         return;
       }
@@ -1102,7 +1104,22 @@ const Clientes = () => {
   };
 
   const handleIvaReten1Toggle = () => {
-    if (!isivareten1percent) {
+
+    const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+    if (isIvaOnTop) {
+      if (!isivareten1percent) {
+      const ivaRet = ((subtotal) * 0.01).toFixed(2);
+      setIvaRetenido(ivaRet);
+      setTotal((total - parseFloat(ivaRet)).toFixed(2));
+    } else {
+      setTotal((prev) =>
+        (parseFloat(prev) + parseFloat(ivaretenido)).toFixed(2),
+      );
+      setIvaRetenido(0);
+    }
+    setIsivareten1percent(!isivareten1percent);
+    } else {
+      if (!isivareten1percent) {
       const ivaRet = ((subtotal / 1.13) * 0.01).toFixed(2);
       setIvaRetenido(ivaRet);
       setTotal((total - parseFloat(ivaRet)).toFixed(2));
@@ -1113,6 +1130,8 @@ const Clientes = () => {
       setIvaRetenido(0);
     }
     setIsivareten1percent(!isivareten1percent);
+    }
+    
   };
 
   return (
@@ -1235,7 +1254,7 @@ const Clientes = () => {
       <TreeNode
         text="Subtotal"
         data={
-          id_emisor === "223" || id_emisor === "224"
+          id_emisor === "23" || id_emisor === "24"
             ? (parseFloat(subtotal) + parseFloat(iva)).toFixed(2)
             : subtotal
         }
