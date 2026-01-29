@@ -578,7 +578,7 @@ const EditSujEx = () => {
         const rawSubtotal = Listitems.reduce((total, item) => total + (item.precioUni * item.cantidad), 0);
 
         // Para usuarios 23 o 24: IVA se suma encima
-        const isIvaOnTop = id_emisor === "23" || id_emisor === "24";
+        const isIvaOnTop = id_emisor === "223" || id_emisor === "242";
         
         let rawiva;
         let roundedSubtotal;
