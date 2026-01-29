@@ -1254,7 +1254,7 @@ const Clientes = () => {
       <TreeNode
         text="Subtotal"
         data={
-          id_emisor === "23" || id_emisor === "24"
+          id_emisor === "223" || id_emisor === "224"
             ? (parseFloat(subtotal) + parseFloat(iva)).toFixed(2)
             : subtotal
         }
