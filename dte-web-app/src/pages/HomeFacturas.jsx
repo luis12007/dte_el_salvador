@@ -27,6 +27,8 @@ const HomeFacturas = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [filterByc, setFilterBy] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+  const [showAllDates, setShowAllDates] = useState(false);
+  const INITIAL_DAYS_TO_SHOW = 10;
       const navigate = useNavigate();
   
 
@@ -626,7 +628,8 @@ const HomeFacturas = () => {
         ) : (
           <>
             {Array.isArray(items) && items.length > 0 ? (
-              sortedGroupedDates.map((date, index) => (
+              <>
+              {(showAllDates ? sortedGroupedDates : sortedGroupedDates.slice(0, INITIAL_DAYS_TO_SHOW)).map((date, index) => (
                 <div key={date} className="animate-slideInUp px-6">
                   <div className="flex items-center  justify-center mt-20">
                     <div className="inline-flex items-center gap-3 bg-slate-300 text-black px-4 py-2 rounded-full shadow-sm border border-gray-300 mx-3 sm:mx-0">
@@ -647,7 +650,21 @@ const HomeFacturas = () => {
                     </div>
                   ))}
                 </div>
-              ))
+              ))}
+              {/* Botón Mostrar más / Mostrar menos */}
+              {sortedGroupedDates.length > INITIAL_DAYS_TO_SHOW && (
+                <div className="flex justify-center my-8">
+                  <button
+                    onClick={() => setShowAllDates(!showAllDates)}
+                    className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg transition border border-white/30 shadow-md"
+                  >
+                    <span className="text-base font-medium">
+                      {showAllDates ? 'Mostrar menos' : `Mostrar más (${sortedGroupedDates.length - INITIAL_DAYS_TO_SHOW} días restantes)`}
+                    </span>
+                  </button>
+                </div>
+              )}
+              </>
             ) : (
               <div className="flex items-center justify-center my-4 rounded-lg animate-fadeIn">
                 <div className="flex flex-col items-center px-3 py-6 text-black">

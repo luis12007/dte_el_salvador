@@ -56,14 +56,19 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     }
 
     /* Find service per factura */
-    const itemsdata = async () => {
-      const data = await BillsxItemsAPI.getlist(
-        token,
-        content.codigo_de_generacion
-      );
-      console.log("data");
-      console.log(data);
-      data.map((item) => {
+    const itemsdata = async (retryCount = 0, maxRetries = 3) => {
+      try {
+        const data = await BillsxItemsAPI.getlist(
+          token,
+          content.codigo_de_generacion
+        );
+        console.log("data");
+        console.log(data);
+        if (!data || !Array.isArray(data)) {
+          console.warn("No se obtuvieron datos de items");
+          return;
+        }
+        data.map((item) => {
         delete item.id;
         delete item.id_items;
         delete item.id_facturas;
@@ -248,8 +253,19 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         console.log(newItems);
         setItems(newItems);
       }
+      } catch (error) {
+        console.error("Error en itemsdata:", error);
+        // Reintentar con espera exponencial si es error de recursos insuficientes
+        if (retryCount < maxRetries && (error.message === "Failed to fetch" || error.name === "TypeError")) {
+          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+          console.log(`Reintentando en ${delay/1000} segundos... (intento ${retryCount + 1}/${maxRetries})`);
+          setTimeout(() => itemsdata(retryCount + 1, maxRetries), delay);
+        }
+      }
     };
-    itemsdata();
+    // Agregar un pequeño delay aleatorio para evitar todas las llamadas al mismo tiempo
+    const randomDelay = Math.random() * 500;
+    setTimeout(() => itemsdata(), randomDelay);
     console.log("user");
     console.log(user);
 
