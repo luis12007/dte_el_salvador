@@ -234,7 +234,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
         codigoGeneracionR: null,
         tipoDocumento: !content.re_numdocumento ? null : content.re_tipodocumento,
         numDocumento: !content.re_numdocumento ? null : content.re_numdocumento,
-        nombre: content.re_name,
+        nombre: !content.re_numdocumento ? null : content.re_numdocumento,
         telefono: content.re_numero_telefono, 
         correo: content.re_correo_electronico
       },
