@@ -11,6 +11,7 @@ const GroupComponent = ({ visible, setVisible }) => {
   const GoProfileHandler = () => navigate("/perfil");
   const GoAddBillsHandler = () => navigate("/crear/factura");
   const GoClientsHandler = () => navigate("/clientes");
+  const GoProveedoresHandler = () => navigate("/proveedores");
   const GoAddServiceHandler = () => navigate("/items");
   const GoCancelBill = () => navigate("/invalidar");
   const GoBooksBill = () => navigate("/facturas/libros");
@@ -62,6 +63,13 @@ const GroupComponent = ({ visible, setVisible }) => {
           <button onClick={GoClientsHandler} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
             <img className="h-6 w-6 object-contain" alt="" src={customers} />
             <span className="text-sm text-gray-800 group-hover:text-sky-700">Receptores</span>
+          </button>
+
+          <button onClick={GoProveedoresHandler} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
+            <svg className="h-6 w-6 text-gray-600 group-hover:text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span className="text-sm text-gray-800 group-hover:text-sky-700">Proveedores</span>
           </button>
 
           <button onClick={GoProfileHandler} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">

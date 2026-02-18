@@ -26,6 +26,12 @@ const BooksComponent = () => {
   // Estado para el modal de edición de JSON
   const [isEditJsonModalOpen, setIsEditJsonModalOpen] = useState(false);
 
+  // Estados para editar compras (contador)
+  const [isComprasListModalOpen, setIsComprasListModalOpen] = useState(false);
+  const [comprasList, setComprasList] = useState([]);
+  const [selectedCompraForEdit, setSelectedCompraForEdit] = useState(null);
+  const [isEditCompraModalOpen, setIsEditCompraModalOpen] = useState(false);
+
   useEffect(() => {
     const fetchUser = async () => {
       const resultusers = await UserService.getUserInfo(user_id, token);
@@ -95,6 +101,22 @@ const BooksComponent = () => {
       exportRawCompras();
     }
 
+    if (book === "ALL_LIBROS") {
+      console.log("Descargando todos los libros");
+      downloadAllLibros();
+    }
+
+    if (book === "ALL_RAW") {
+      console.log("Descargando todas las exportaciones raw");
+      downloadAllRaw();
+    }
+
+    if (book === "EDIT_COMPRAS") {
+      console.log("Cargar compras para editar");
+      loadComprasForEdit();
+      return; // No cerrar el modal de fechas aquí, se cerrará después de cargar
+    }
+
     closeModal();
   };
 
@@ -104,6 +126,67 @@ const BooksComponent = () => {
     anexoCF();
     anexoSuex();
     anexoCompras();
+  };
+
+  const downloadAllLibros = async () => {
+    console.log("Descargando todos los libros...");
+    await LibroContribuyentes();
+    await LibroConsumidorFinal();
+    await LibroCompras();
+    toast.success("Todos los libros han sido generados");
+  };
+
+  const downloadAllRaw = async () => {
+    console.log("Descargando todas las exportaciones raw...");
+    await exportRawFactura();
+    await exportRawCreditoFiscal();
+    await exportRawSujetoExcluido();
+    await exportRawNotas();
+    await exportRawCompras();
+    toast.success("Todas las exportaciones raw han sido generadas");
+  };
+
+  // Función para cargar las compras y mostrar el modal de lista
+  const loadComprasForEdit = async () => {
+    if (startDate === "" || endDate === "") {
+      toast.error("Por favor seleccione un rango de fechas");
+      return;
+    }
+    
+    try {
+      const data = await PlantillaAPI.getcompras(user_id, token, startDate, endDate);
+      if (!data || data.length === 0) {
+        toast.info("No se encontraron compras para el rango de fechas seleccionado");
+        closeModal();
+        return;
+      }
+      setComprasList(data);
+      closeModal();
+      setIsComprasListModalOpen(true);
+    } catch (error) {
+      console.error("Error al cargar compras:", error);
+      toast.error("Error al cargar las compras");
+      closeModal();
+    }
+  };
+
+  // Función para actualizar una compra
+  const updateCompra = async (compraId, payload) => {
+    try {
+      const data = await PlantillaAPI.updatecompra(compraId, payload, token, user_id);
+      if (data.message === "compra actualizada" || data.success) {
+        toast.success("Compra actualizada con éxito");
+        // Actualizar la lista de compras
+        setComprasList(prev => prev.map(c => c._id === compraId ? { ...c, ...payload } : c));
+        setIsEditCompraModalOpen(false);
+        setSelectedCompraForEdit(null);
+      } else {
+        toast.error("Error al actualizar la compra");
+      }
+    } catch (error) {
+      console.error("Error al actualizar compra:", error);
+      toast.error("Error al actualizar la compra");
+    }
   };
 
   // Utilidades para exportación bruta a Excel (sin transformar)
@@ -2958,8 +3041,8 @@ const BooksComponent = () => {
         </div>
 
         {/* Reports Grid */}
-        <div className="w-full max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12">
+        <div className="w-full max-w-xl mx-auto">
+          <div className="grid grid-cols-1 gap-8 mb-12">
             {/* Anexos Card */}
             <div className="animate-fadeInUp animate-delay-100 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="text-center">
@@ -2981,8 +3064,29 @@ const BooksComponent = () => {
               </div>
             </div>
 
-            {/* Exportación Bruta (Todos los Documentos) */}
+            {/* Libros Contables Card - Todos los libros en una sola tarjeta */}
             <div className="animate-fadeInUp animate-delay-150 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">📚</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Libros Contables
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  Libro de Contribuyentes, Consumidor Final y Compras
+                </p>
+                <button
+                  onClick={() => openModal("ALL_LIBROS")}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Descargar los 3 Libros
+                </button>
+              </div>
+            </div>
+
+            {/* Exportación Bruta (Todos los Documentos) */}
+            <div className="animate-fadeInUp animate-delay-200 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="text-center">
                 <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">🧾</span>
@@ -2991,124 +3095,40 @@ const BooksComponent = () => {
                   Exportación de Documentos (Raw)
                 </h3>
                 <p className="text-gray-600 mb-6 text-sm">
-                  Facturas, Crédito Fiscal, Sujeto Excluido y Notas
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button
-                    onClick={() => openModal("RAW_FACT")}
-                    className="w-full bg-blue-500/90 hover:bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                  >
-                    Facturas (01)
-                  </button>
-                  <button
-                    onClick={() => openModal("RAW_CF")}
-                    className="w-full bg-indigo-500/90 hover:bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                  >
-                    Crédito Fiscal (03)
-                  </button>
-                  <button
-                    onClick={() => openModal("RAW_SUEX")}
-                    className="w-full bg-emerald-500/90 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                  >
-                    Sujeto Excluido (14)
-                  </button>
-                  <button
-                    onClick={() => openModal("RAW_NOTAS")}
-                    className="w-full bg-orange-500/90 hover:bg-orange-600 text-white px-4 py-2.5 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                  >
-                    Notas Débito/Crédito (05,06)
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Exportación Bruta de Compras */}
-            { <div className="animate-fadeInUp animate-delay-175 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">🛒</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  Exportación de Compras (Raw)
-                </h3>
-                <p className="text-gray-600 mb-6 text-sm">
-                  JSON de compras convertidas a Excel de columnas fijas
+                  Facturas, Crédito Fiscal, Sujeto Excluido, Notas y Compras
                 </p>
                 <button
-                  onClick={() => openModal("RAW_COMP")}
-                  className="w-full bg-amber-500/90 hover:bg-amber-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                  onClick={() => openModal("ALL_RAW")}
+                  className="w-full bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
                 >
-                  Compras (Raw)
-                </button>
-              </div>
-            </div> }
-
-            {/* Libro Contribuyentes Card */}
-            <div className="animate-fadeInUp animate-delay-200 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">📚</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  Libro de Contribuyentes
-                </h3>
-                <p className="text-gray-600 mb-6 text-sm">
-                  Registro de ventas a contribuyentes
-                </p>
-                <button
-                  onClick={() => openModal("LC")}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                >
-                  Generar Libro
+                  Descargar Todas los DTE formato (CSV)
                 </button>
               </div>
             </div>
 
-            {/* Libro Consumidor Final Card */}
-            <div className="animate-fadeInUp animate-delay-300 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            {/* Editar Compras Card - Solo para contador */}
+            <div className="animate-fadeInUp animate-delay-250 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
               <div className="text-center">
                 <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">🛒</span>
+                  <span className="text-3xl">✏️</span>
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  Libro Consumidor Final
+                  Editar Compras
                 </h3>
                 <p className="text-gray-600 mb-6 text-sm">
-                  Registro de ventas a consumidor final
+                  Editar información de facturas de compras
                 </p>
                 <button
-                  onClick={() => openModal("LCF")}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                  onClick={() => openModal("EDIT_COMPRAS")}
+                  className="w-full bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
                 >
-                  Generar Libro
+                  Editar Compras
                 </button>
               </div>
             </div>
-
-            {/* Libro Compras Card */}
-            { <div className="animate-fadeInUp animate-delay-400 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">📦</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  Libro de Compras
-                </h3>
-                <p className="text-gray-600 mb-6 text-sm">
-                  Registro de compras y crédito fiscal
-                </p>
-                <button
-                  onClick={() => openModal("LCOM")}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                >
-                  Generar Libro
-                </button>
-              </div>
-            </div> }
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8">
             <div className="animate-slideInUp animate-delay-500 bg-white rounded-xl shadow-lg p-6">
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -3292,6 +3312,111 @@ const BooksComponent = () => {
         </div>
       </div>
 
+      {/* Modal Lista de Compras para Editar */}
+      <Modal
+        isOpen={isComprasListModalOpen}
+        onRequestClose={() => setIsComprasListModalOpen(false)}
+        contentLabel="Lista de Compras"
+        className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60"
+      >
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 animate-zoomIn max-h-[90vh] flex flex-col">
+          {/* Modal Header */}
+          <div className="bg-purple-500 text-white p-4 sm:p-6 rounded-t-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold">
+                📋 Lista de Compras
+              </h2>
+              <button
+                onClick={() => setIsComprasListModalOpen(false)}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-1 rounded-full transition-all duration-200"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-purple-100 text-xs sm:text-sm mt-2">
+              Selecciona una compra para editar su información
+            </p>
+          </div>
+
+          {/* Modal Content - Lista de Compras */}
+          <div className="flex-1 overflow-y-auto p-4">
+            {comprasList.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">No hay compras para mostrar</p>
+            ) : (
+              <div className="space-y-3">
+                {comprasList.map((compra, idx) => {
+                  const codigoGen = compra?.identificacion?.codigoGeneracion || compra?.codigoGeneracion || compra?.codigo_de_generacion || "Sin código";
+                  const fecha = compra?.identificacion?.fecEmi || compra?.fecha || "Sin fecha";
+                  const proveedor = compra?.emisor?.nombre || compra?.nombreProveedor || "Sin proveedor";
+                  const total = compra?.resumen?.totalPagar || compra?.resumen?.montoTotalOperacion || compra?.total || "0.00";
+                  const tipoDte = compra?.identificacion?.tipoDte || compra?.tipoDte || compra?.tipo || "";
+                  
+                  return (
+                    <div
+                      key={compra._id || idx}
+                      onClick={() => {
+                        setSelectedCompraForEdit(compra);
+                        setIsEditCompraModalOpen(true);
+                      }}
+                      className="bg-gray-50 hover:bg-purple-50 border border-gray-200 hover:border-purple-300 rounded-lg p-4 cursor-pointer transition-all duration-200"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                              Tipo: {tipoDte}
+                            </span>
+                            <span className="text-xs text-gray-500">{fecha}</span>
+                          </div>
+                          <p className="font-semibold text-gray-800 text-sm">{proveedor}</p>
+                          <p className="text-xs text-gray-500 mt-1 truncate">Código: {codigoGen}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-purple-600">${parseFloat(total).toFixed(2)}</p>
+                          <span className="text-xs text-gray-400">Total</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Modal Footer */}
+          <div className="bg-gray-50 px-4 py-3 rounded-b-xl flex justify-end">
+            <button
+              onClick={() => setIsComprasListModalOpen(false)}
+              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal para Editar Compra Individual */}
+      <ModalEditJson
+        isOpen={isEditCompraModalOpen}
+        onRequestClose={() => {
+          setIsEditCompraModalOpen(false);
+          setSelectedCompraForEdit(null);
+        }}
+        jsonData={selectedCompraForEdit}
+        onSave={(newData) => setSelectedCompraForEdit(newData)}
+        primaryLabel="💾 Guardar Cambios"
+        onSaveBill={async (finalJson) => {
+          if (selectedCompraForEdit?._id) {
+            await updateCompra(selectedCompraForEdit._id, finalJson);
+          } else {
+            toast.error("No se puede identificar la compra para actualizar");
+          }
+        }}
+      />
+
       {/* Enhanced Modal */}
       <Modal
         isOpen={isModalOpen}
@@ -3370,7 +3495,7 @@ const BooksComponent = () => {
               onClick={handleDownload}
               className="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105 text-sm sm:text-base"
             >
-              📥 Descargar
+              {book === "EDIT_COMPRAS" ? "✏️ Editar" : "📥 Descargar"}
             </button>
           </div>
         </div>

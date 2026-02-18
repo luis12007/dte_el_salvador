@@ -5,14 +5,15 @@ import uuid
 import time
 from datetime import datetime
 
+""" INFO DE Saul"""
 # Variables that you will set at the beginning
-NIT = "06140903781287"  # Replace with your actual NIT
-PASSWORD_PRI = "Declaracion2026"  # Replace with your actual password
-CODIGO_HACIENDA = "M{Opt4$roCo"  # Replace with your actual code
+NIT = "06142012701170"  # Replace with your actual NIT
+PASSWORD_PRI = "cirujano2001"  # Replace with your actual password
+CODIGO_HACIENDA = ">0SsF&k57SYr0c["  # Replace with your actual code
 STARTING_NUMBER = 100  # Starting number for the numeroControl
 NUM_ITERATIONS = 100  # Number of times to run the script
 CODACTIVITY = "86203"  # Replace with your actual activity code
-NRC = "2060432"  # Replace with your actual NRC
+NRC = "1490638"  # Replace with your actual NRC
 
 
 def main():

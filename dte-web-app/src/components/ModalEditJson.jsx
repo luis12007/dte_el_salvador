@@ -1,6 +1,7 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
+import ProveedorService from "../services/ProveedorService";
 
 const cloneDeep = (value) => {
   if (typeof structuredClone === "function") return structuredClone(value);
@@ -114,6 +115,63 @@ const ModalEditJson = ({
   primaryLabel,
   onSaveBill,
 }) => {
+  // Estados para modal de proveedores
+  const [isProveedorModalOpen, setIsProveedorModalOpen] = useState(false);
+  const [proveedoresList, setProveedoresList] = useState([]);
+  const [proveedorSearchTerm, setProveedorSearchTerm] = useState("");
+  const [loadingProveedores, setLoadingProveedores] = useState(false);
+
+  // Cargar proveedores del sistema
+  const loadProveedores = async () => {
+    const user_id = localStorage.getItem("user_id");
+    const token = localStorage.getItem("token");
+    if (!user_id || !token) {
+      toast.error("No se encontró información de usuario");
+      return;
+    }
+    setLoadingProveedores(true);
+    try {
+      const data = await ProveedorService.Get_by_userid(user_id, token);
+      setProveedoresList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error al cargar proveedores:", error);
+      toast.error("Error al cargar proveedores");
+    } finally {
+      setLoadingProveedores(false);
+    }
+  };
+
+  // Filtrar proveedores por término de búsqueda
+  const filteredProveedores = useMemo(() => {
+    if (!proveedorSearchTerm.trim()) return proveedoresList;
+    const term = proveedorSearchTerm.toLowerCase();
+    return proveedoresList.filter((p) => {
+      const name = (p.name || "").toLowerCase();
+      const nit = (p.nit || "").toLowerCase();
+      const nrc = (p.nrc || "").toLowerCase();
+      return name.includes(term) || nit.includes(term) || nrc.includes(term);
+    });
+  }, [proveedoresList, proveedorSearchTerm]);
+
+  // Seleccionar proveedor y llenar los campos
+  const handleSelectProveedor = (proveedor) => {
+    setForm((prev) => ({
+      ...prev,
+      nitProveedor: safeStr(proveedor.nit || ""),
+      nrcProveedor: safeStr(proveedor.nrc || ""),
+      nombreProveedor: safeStr(proveedor.name || ""),
+      duiProveedor: safeStr(proveedor.dui || "000000000"),
+      // Campos de Renta
+      rentaTipoOperacion: safeStr(proveedor.tipo_operacion || prev.rentaTipoOperacion || "1"),
+      rentaClasificacion: safeStr(proveedor.clasificacion || prev.rentaClasificacion || "1"),
+      rentaSector: safeStr(proveedor.sector || prev.rentaSector || "1"),
+      rentaTipoCostoGasto: safeStr(proveedor.tipo_costo_gasto || prev.rentaTipoCostoGasto || "1"),
+    }));
+    setIsProveedorModalOpen(false);
+    setProveedorSearchTerm("");
+    toast.success(`Proveedor "${proveedor.name}" seleccionado`);
+  };
+
   const tipoOperacionOptions = useMemo(
     () => [
       { value: "1", label: "1 - Gravada" },
@@ -229,12 +287,12 @@ const ModalEditJson = ({
       iva: numStrOrZero(resumen.totalIva ?? ""),
       total: numStrOrZero(resumen.totalPagar ?? resumen.montoTotalOperacion ?? ""),
 
-      duiProveedor: safeStr(jsonData?.duiProveedor ?? ""),
+      duiProveedor: safeStr(jsonData?.duiProveedor ?? "") || "000000000",
 
-      rentaTipoOperacion: safeStr(jsonData?.rentaTipoOperacion ?? ""),
-      rentaClasificacion: safeStr(jsonData?.rentaClasificacion ?? ""),
-      rentaSector: safeStr(jsonData?.rentaSector ?? ""),
-      rentaTipoCostoGasto: safeStr(jsonData?.rentaTipoCostoGasto ?? ""),
+      rentaTipoOperacion: safeStr(jsonData?.rentaTipoOperacion ?? "") || "1",
+      rentaClasificacion: safeStr(jsonData?.rentaClasificacion ?? "") || "1",
+      rentaSector: safeStr(jsonData?.rentaSector ?? "") || "1",
+      rentaTipoCostoGasto: safeStr(jsonData?.rentaTipoCostoGasto ?? "") || "1",
       rentaNumeroAnexo: "3",
 
       items: items.map((it, idx) => ({
@@ -291,12 +349,12 @@ const ModalEditJson = ({
       iva: numStrOrZero(resumen.totalIva ?? ""),
       total: numStrOrZero(resumen.totalPagar ?? resumen.montoTotalOperacion ?? ""),
 
-      duiProveedor: safeStr(jsonData?.duiProveedor ?? ""),
+      duiProveedor: safeStr(jsonData?.duiProveedor ?? "") || "000000000",
 
-      rentaTipoOperacion: safeStr(jsonData?.rentaTipoOperacion ?? ""),
-      rentaClasificacion: safeStr(jsonData?.rentaClasificacion ?? ""),
-      rentaSector: safeStr(jsonData?.rentaSector ?? ""),
-      rentaTipoCostoGasto: safeStr(jsonData?.rentaTipoCostoGasto ?? ""),
+      rentaTipoOperacion: safeStr(jsonData?.rentaTipoOperacion ?? "") || "1",
+      rentaClasificacion: safeStr(jsonData?.rentaClasificacion ?? "") || "1",
+      rentaSector: safeStr(jsonData?.rentaSector ?? "") || "1",
+      rentaTipoCostoGasto: safeStr(jsonData?.rentaTipoCostoGasto ?? "") || "1",
       rentaNumeroAnexo: "3",
 
       items: items.map((it, idx) => ({
@@ -589,7 +647,22 @@ const ModalEditJson = ({
 
             <div className="bg-gray-50 rounded-xl p-5 sm:p-6 border border-gray-200 min-w-0">
               <div className="flex items-center justify-between mb-3">
-                <span className={sectionTitle}>Proveedor</span>
+                <div className="flex items-center gap-3">
+                  <span className={sectionTitle}>Proveedor</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      loadProveedores();
+                      setIsProveedorModalOpen(true);
+                    }}
+                    className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded-lg transition-all duration-200 flex items-center gap-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Buscar Proveedor
+                  </button>
+                </div>
                 <span className="text-[11px] text-gray-500">Emisor</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
@@ -1018,6 +1091,127 @@ const ModalEditJson = ({
           </button>
         </div>
       </div>
+
+      {/* Modal para seleccionar proveedor */}
+      <Modal
+        isOpen={isProveedorModalOpen}
+        onRequestClose={() => {
+          setIsProveedorModalOpen(false);
+          setProveedorSearchTerm("");
+        }}
+        contentLabel="Seleccionar Proveedor"
+        className="fixed inset-0 flex items-center justify-center p-4 z-[60]"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60 z-[59]"
+      >
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 animate-zoomIn overflow-hidden">
+          {/* Header */}
+          <div className="bg-blue-500 text-white px-5 py-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold">Seleccionar Proveedor</h3>
+              <button
+                onClick={() => {
+                  setIsProveedorModalOpen(false);
+                  setProveedorSearchTerm("");
+                }}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 p-1 rounded-full transition-all duration-200"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-blue-100 text-xs mt-1">
+              Selecciona un proveedor guardado en el sistema
+            </p>
+          </div>
+
+          {/* Búsqueda */}
+          <div className="p-4 border-b border-gray-200">
+            <input
+              type="text"
+              placeholder="Buscar por nombre, NIT o NRC..."
+              value={proveedorSearchTerm}
+              onChange={(e) => setProveedorSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            />
+          </div>
+
+          {/* Lista de proveedores */}
+          <div className="max-h-[300px] overflow-y-auto">
+            {loadingProveedores ? (
+              <div className="p-8 text-center text-gray-500">
+                <svg className="animate-spin h-8 w-8 mx-auto mb-2 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Cargando proveedores...
+              </div>
+            ) : filteredProveedores.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <p className="text-sm">No se encontraron proveedores</p>
+                {proveedorSearchTerm && (
+                  <p className="text-xs mt-1">Intenta con otro término de búsqueda</p>
+                )}
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-100">
+                {filteredProveedores.map((proveedor, index) => (
+                  <button
+                    key={proveedor.id || index}
+                    onClick={() => handleSelectProveedor(proveedor)}
+                    className="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors duration-150 focus:outline-none focus:bg-blue-50"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {proveedor.name || "Sin nombre"}
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-gray-500">
+                          {proveedor.nit && (
+                            <span>NIT: {proveedor.nit}</span>
+                          )}
+                          {proveedor.nrc && (
+                            <span>NRC: {proveedor.nrc}</span>
+                          )}
+                        </div>
+                      </div>
+                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-500">
+                {filteredProveedores.length} proveedor(es) encontrado(s)
+              </span>
+              <button
+                onClick={() => {
+                  setIsProveedorModalOpen(false);
+                  setProveedorSearchTerm("");
+                }}
+                className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-all duration-200"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </Modal>
   );
 };

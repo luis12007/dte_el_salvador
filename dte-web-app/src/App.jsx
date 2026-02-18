@@ -27,6 +27,8 @@ import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import CreateND from './pages/CreateND';
 import EditND from './pages/EditND';
 import BooksComponent from './components/BooksComponent';
+import ListProveedores from './pages/ListProveedores';
+import AddProveedor from './pages/AddProveedor';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateCR from './pages/CreateCR';
@@ -79,6 +81,8 @@ export default function App() {
         <Route path="/clientes" element={<Private><ListClients/></Private>}/>
         <Route path="/agregar/cliente" element={<Private><AddClient/></Private>}/>
 
+        <Route path="/proveedores" element={<Private><ListProveedores/></Private>}/>
+        <Route path="/agregar/proveedor" element={<Private><AddProveedor/></Private>}/>
 
         <Route path="/invalidar" element={<Private><Invalidate/></Private>}/> 
         <Route path="/descargar-dtes" element={<Private><DownloadDTEs/></Private>}/> 
