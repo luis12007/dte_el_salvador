@@ -101,7 +101,7 @@ const AddProveedor = () => {
       const response = await ProveedorService.Add(id_emisor, token, proveedor);
       console.log(response);
 
-      if (response.message === "Creado") {
+      if (response.message === "Creado" || response.message === "Proveedor creado") {
         toast.success("Proveedor agregado exitosamente");
         setTimeout(() => {
           navigate("/proveedores");

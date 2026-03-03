@@ -872,9 +872,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             descActividad: content.re_actividad_economica,
             nombreComercial: content.re_numdocumento,
             direccion: {
-              municipio: address[1],
-              departamento: address[0],
-              complemento: address[2],
+              municipio: content.municipio,
+              departamento: content.departamento,
+              complemento: content.complemento,
             },
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,

@@ -1139,7 +1139,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                             }
                         ]
                     };
-                }  else if (userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 27|| userDB.id === 28 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36) {
+                }  else if (userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 27|| userDB.id === 28 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36  || userDB.id === 37 || userDB.id === 38 || userDB.id === 39 || userDB.id === 40 || userDB.id === 41 || userDB.id === 42 || userDB.id === 43 || userDB.id === 44 || userDB.id === 45 || userDB.id === 46 || userDB.id === 47 || userDB.id === 48 || userDB.id === 49 || userDB.id === 50) {
                     mailOptions = {
                         from: 'mysoftwaresv@gmail.com',
                         to: plantillaDB.re_correo_electronico,
