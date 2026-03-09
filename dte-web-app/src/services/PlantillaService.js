@@ -47,7 +47,6 @@ const PlantillaAPI = {
     /* Create compras */
     createcompras: async(compra, token, id_emisor) => {
         try {
-
             const res = await fetch(`${BASE_URL}/compras/create`, {
                 method: 'POST',
                 headers: {

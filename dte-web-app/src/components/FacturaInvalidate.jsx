@@ -120,6 +120,30 @@ const FacturaInvalidate = ({ key, content, user }) => {
 
         console.log(newItems);
         setItems(newItems);
+      } else if (content.tipo === "14") {
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: null,
+            descripcion: item.descripcion,
+            uniMedida: 99,
+            codigo: null,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: null,
+            noGravado: 0,
+            psv: 0,
+            montoDescu: 0,
+            numeroDocumento: null,
+            precioUni: item.preciouni,
+            ventaGravada: 0,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: 0,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+        console.log(newItems);
+        setItems(newItems);
       }
 
     };
@@ -281,6 +305,53 @@ const FacturaInvalidate = ({ key, content, user }) => {
         codigoGeneracionR: null,
         tipoDocumento: "36",
         numDocumento: content.re_nit,
+        nombre: content.re_name,
+        telefono: content.re_numero_telefono,
+        correo: content.re_correo_electronico
+      },
+      motivo: {
+        tipoAnulacion: 2,
+        motivoAnulacion: "Error en los datos del documento",
+        nombreResponsable: user.name,
+        tipDocResponsable: "36",
+        numDocResponsable: user.nit,
+        nombreSolicita: user.name,
+        tipDocSolicita: "36",
+        numDocSolicita: user.nit
+      }
+    };
+  }
+  else if (content.tipo === "14"){
+      invalidation_obj = {
+      identificacion: {
+        version: 2,
+        ambiente: content.ambiente,
+        codigoGeneracion: myUuid,
+        fecAnula: fecAnula,
+        horAnula: horAnula
+      },
+      emisor: {
+        nit: user.nit,
+        nombre: user.name,
+        tipoEstablecimiento: user.tipoestablecimiento,
+        nomEstablecimiento: user.nombre_comercial,
+        telefono: user.numero_de_telefono,
+        correo: user.correo_electronico,
+        codEstableMH: null,
+        codEstable: null,
+        codPuntoVentaMH: null,
+        codPuntoVenta: null
+      },
+      documento: {
+        tipoDte: content.tipo,
+        codigoGeneracion: content.codigo_de_generacion,
+        selloRecibido: content.sello_de_recepcion,
+        numeroControl: content.numero_de_control,
+        fecEmi: content.fecha_y_hora_de_generacion,
+        montoIva: 0,
+        codigoGeneracionR: null,
+        tipoDocumento: content.re_tipodocumento,
+        numDocumento: content.re_numdocumento,
         nombre: content.re_name,
         telefono: content.re_numero_telefono,
         correo: content.re_correo_electronico

@@ -4,7 +4,28 @@ const cratecompra = async(req, res) => {
     console.log('create compras');
     try {
         const id_emisor = req.headers.id_emisor;
-        const plantilla = req.body ?? {};
+        // Soportar nuevo formato: { dte: { ... }, pdf: 'data:application/pdf;base64,...' }
+        const payload = req.body ?? {};
+        // plantilla puede venir como objeto o como string; permitir reasignar
+        let plantilla = payload.dte ?? payload;
+        let incomingPdf = payload.pdf ?? null;
+
+        // Si `plantilla` es un string que en realidad contiene JSON, parsearlo.
+        // Si `plantilla` es un data URI o un base64 grande, moverlo a `incomingPdf`.
+        if (typeof plantilla === 'string') {
+            const s = plantilla.trim();
+            if (s.startsWith('{') || s.startsWith('[')) {
+                try {
+                    plantilla = JSON.parse(s);
+                } catch (e) {
+                    // dejar como string si no parsea
+                }
+            } else if (s.startsWith('data:') || (s.length > 200 && /^[A-Za-z0-9+/=\r\n\s]+$/.test(s))) {
+                // Probablemente el cliente envió el PDF en `dte` por error
+                incomingPdf = incomingPdf || s;
+                plantilla = {};
+            }
+        }
 
         if (!id_emisor) {
             return res.status(400).json({ message: 'id_emisor header is required' });
@@ -57,7 +78,8 @@ const cratecompra = async(req, res) => {
         put('codigo_de_generacion', plantilla?.identificacion?.codigoGeneracion);
         put('modelo_de_factura', plantilla?.identificacion?.tipoModelo);
         put('tipo_de_transmision', plantilla?.identificacion?.tipoOperacion);
-        put('fecha_y_hora_de_generacion', plantilla?.identificacion?.fecEmi);
+        // fecha_y_hora_de_generacion: usar SIEMPRE la fecha actual (YYYY-MM-DD)
+        put('fecha_y_hora_de_generacion', new Date().toISOString().split('T')[0]);
         put('horemi', plantilla?.identificacion?.horEmi);
         put('tipomoneda', plantilla?.identificacion?.tipoMoneda);
         put('tipocontingencia', plantilla?.identificacion?.tipoContingencia);
@@ -158,7 +180,7 @@ const cratecompra = async(req, res) => {
         put('id_envio', plantilla?.id_envio);
 
         // Campos extra (PDF / Anexos compras-renta)
-        put('fecha', firstDefined(plantilla?.fecha, plantilla?.identificacion?.fecEmi));
+
 
         // Proveedor (normalmente el emisor del DTE)
         put('nit_proveedor', firstDefined(plantilla?.nit_proveedor, plantilla?.nitProveedor, plantilla?.emisor?.nit));
@@ -182,6 +204,52 @@ const cratecompra = async(req, res) => {
         putNumber('sector_renta', firstDefined(renta?.sector, plantilla?.sector_renta, plantilla?.sectorRenta));
         putNumber('tipo_costo_gasto_renta', firstDefined(renta?.tipo_costo_gasto, renta?.tipoCostoGasto, plantilla?.tipo_costo_gasto_renta, plantilla?.tipoCostoGastoRenta));
         put('numero_anexo', firstDefined(renta?.numero_anexo, renta?.numeroAnexo, plantilla?.numero_anexo, plantilla?.numeroAnexo));
+
+        // Guardar el JSON original del DTE y el PDF (base64 / data URI) cuando vengan
+        if (plantilla !== undefined && plantilla !== null) {
+            if (typeof plantilla === 'object') {
+                // Pasar el objeto para que Knex/pg lo serialice a JSON
+                put('dte', plantilla);
+            } else if (typeof plantilla === 'string') {
+                // Intentar parsear si es JSON; si no, guardarlo como string
+                try {
+                    const parsed = JSON.parse(plantilla);
+                    put('dte', parsed);
+                } catch (e) {
+                    put('dte', plantilla);
+                }
+            } else {
+                // otros tipos
+                put('dte', String(plantilla));
+            }
+        }
+
+        if (incomingPdf !== undefined && incomingPdf !== null) {
+            // Guardar el PDF dentro de un objeto JSON { data: 'data:...base64' }
+            const pdfObj = {};
+            if (typeof incomingPdf === 'string') {
+                pdfObj.data = incomingPdf;
+            } else if (typeof incomingPdf === 'object' && incomingPdf.data) {
+                pdfObj.data = incomingPdf.data;
+            } else {
+                pdfObj.data = String(incomingPdf);
+            }
+            put('pdf', pdfObj);
+        }
+
+        // Debug: mostrar claves y tipos de campos problemáticos antes de insertar
+        try {
+            console.log('purchase insert keys:', Object.keys(JsontoDB));
+            console.log('dte type:', typeof JsontoDB.dte, 'pdf type:', typeof JsontoDB.pdf);
+            if (JsontoDB.dte && typeof JsontoDB.dte === 'string') {
+                console.log('dte preview:', JsontoDB.dte.slice(0, 200));
+            }
+            if (JsontoDB.pdf && typeof JsontoDB.pdf === 'string') {
+                console.log('pdf preview:', JsontoDB.pdf.slice(0, 100));
+            }
+        } catch (e) {
+            console.log('error logging purchase preview', e);
+        }
 
         const result = await db('purchases').insert(JsontoDB);
         console.log(result);

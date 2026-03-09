@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import UserService from "../services/UserServices";
 import * as XLSX from "xlsx";
 import ExcelJS from "exceljs";
+import JSZip from "jszip";
 
 import ModalEditJson from "./ModalEditJson";
 
@@ -25,6 +26,15 @@ const BooksComponent = () => {
 
   // Estado para el modal de edición de JSON
   const [isEditJsonModalOpen, setIsEditJsonModalOpen] = useState(false);
+
+  // Estados para el modal de subida de compras (JSON + PDF)
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [pdfFile, setPdfFile] = useState(null);
+  const [jsonFile, setJsonFile] = useState(null);
+
+  // Estados para descargar archivos de compras
+  const [isDownloadComprasModalOpen, setIsDownloadComprasModalOpen] = useState(false);
+  const [downloadComprasList, setDownloadComprasList] = useState([]);
 
   // Estados para editar compras (contador)
   const [isComprasListModalOpen, setIsComprasListModalOpen] = useState(false);
@@ -69,10 +79,10 @@ const BooksComponent = () => {
       console.log("Libros de Consumidor Final");
       LibroConsumidorFinal();
     }
-    if (book === "LCOM") {
+    /* if (book === "LCOM") {
       console.log("Libros de Compras");
       LibroCompras();
-    }
+    } */
     if (book === "ANEX") {
       console.log("Anexos");
       Anexos();
@@ -96,10 +106,10 @@ const BooksComponent = () => {
       exportRawNotas();
     }
 
-    if (book === "RAW_COMP") {
+    /* if (book === "RAW_COMP") {
       console.log("Exportación bruta: Compras");
       exportRawCompras();
-    }
+    } */
 
     if (book === "ALL_LIBROS") {
       console.log("Descargando todos los libros");
@@ -111,10 +121,10 @@ const BooksComponent = () => {
       downloadAllRaw();
     }
 
-    if (book === "EDIT_COMPRAS") {
-      console.log("Cargar compras para editar");
-      loadComprasForEdit();
-      return; // No cerrar el modal de fechas aquí, se cerrará después de cargar
+    if (book === "DOWNLOAD_COMPRAS") {
+      console.log("Descargar archivos de compras");
+      loadComprasForDownload();
+      return;
     }
 
     closeModal();
@@ -125,14 +135,14 @@ const BooksComponent = () => {
     anexoBill();
     anexoCF();
     anexoSuex();
-    anexoCompras();
+    // anexoCompras();
   };
 
   const downloadAllLibros = async () => {
     console.log("Descargando todos los libros...");
     await LibroContribuyentes();
     await LibroConsumidorFinal();
-    await LibroCompras();
+    // await LibroCompras();
     toast.success("Todos los libros han sido generados");
   };
 
@@ -142,7 +152,7 @@ const BooksComponent = () => {
     await exportRawCreditoFiscal();
     await exportRawSujetoExcluido();
     await exportRawNotas();
-    await exportRawCompras();
+    // await exportRawCompras();
     toast.success("Todas las exportaciones raw han sido generadas");
   };
 
@@ -1197,38 +1207,147 @@ const BooksComponent = () => {
 
   /* ------------------------Buys-------------------------- */
 
-  const handleFileUpload = (event) => {
+  const handleJsonFileUpload = (event) => {
     const file = event.target.files[0];
+    if (!file) return;
+    setJsonFile(file);
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const json = JSON.parse(e.target.result);
         if (!json.identificacion) {
           toast.error("Archivo JSON no reconocido");
+          setJsonFile(null);
           return;
         }
         setJsonData(json);
         toast.info("Archivo JSON Reconocido");
       } catch (error) {
-        toast.error("Failed to parse JSON file");
+        toast.error("Error al leer el archivo JSON");
+        setJsonFile(null);
       }
     };
     reader.readAsText(file);
   };
 
-  const createcompras = async (payload = jsonData) => {
-    if (!payload) {
-      toast.error("No JSON data available");
+  const handlePdfFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.type !== "application/pdf") {
+      toast.error("El archivo debe ser un PDF");
       return;
     }
-    const data = await PlantillaAPI.createcompras(payload, token, user_id);
+    setPdfFile(file);
+    toast.info("Archivo PDF seleccionado");
+  };
+
+  const resetUploadModal = () => {
+    setIsUploadModalOpen(false);
+    setJsonData(null);
+    setJsonFile(null);
+    setPdfFile(null);
+  };
+
+  // Función para cargar compras y mostrar modal de descarga
+  const loadComprasForDownload = async () => {
+    if (startDate === "" || endDate === "") {
+      toast.error("Por favor seleccione un rango de fechas");
+      return;
+    }
+    try {
+      const data = await PlantillaAPI.getcompras(user_id, token, startDate, endDate);
+      if (!data || data.length === 0) {
+        toast.info("No se encontraron compras para el rango de fechas seleccionado");
+        closeModal();
+        return;
+      }
+      setDownloadComprasList(data);
+      closeModal();
+      setIsDownloadComprasModalOpen(true);
+    } catch (error) {
+      console.error("Error al cargar compras:", error);
+      toast.error("Error al cargar las compras");
+      closeModal();
+    }
+  };
+
+  // Descargar todas las compras como ZIP
+  const downloadAllComprasZip = async () => {
+    if (downloadComprasList.length === 0) {
+      toast.error("No hay compras para descargar");
+      return;
+    }
+    const zip = new JSZip();
+    const jsonFolder = zip.folder("json");
+    const pdfFolder = zip.folder("pdf");
+
+    downloadComprasList.forEach((compra, idx) => {
+      const nombre = (compra?.emisor?.nombre || compra?.em_name || "compra").replace(/[^a-zA-Z0-9_\-\s]/g, "");
+      const fecha = compra?.identificacion?.fecEmi || compra?.fecha || "sin-fecha";
+      const baseName = `${idx + 1}_${nombre}_${fecha}`;
+
+      // JSON (dte)
+      const dteData = compra?.dte || compra;
+      jsonFolder.file(`${baseName}.json`, JSON.stringify(dteData, null, 2));
+
+      // PDF - handle both string and { data: "..." } formats
+      const rawPdf = typeof compra?.pdf === "string" ? compra.pdf : compra?.pdf?.data;
+      if (rawPdf && typeof rawPdf === "string") {
+        let base64Data = rawPdf;
+        // Remove data URI prefix if present
+        if (base64Data.includes(",")) {
+          base64Data = base64Data.split(",")[1];
+        }
+        pdfFolder.file(`${baseName}.pdf`, base64Data, { base64: true });
+      }
+    });
+
+    try {
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Compras_${startDate}_${endDate}.zip`;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast.success("Archivo ZIP descargado con éxito");
+    } catch (error) {
+      console.error("Error al generar ZIP:", error);
+      toast.error("Error al generar el archivo ZIP");
+    }
+  };
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        // Keep the full data URI: "data:application/pdf;base64,..."
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const createcompras = async (payload = jsonData) => {
+    if (!payload) {
+      toast.error("No hay datos JSON disponibles");
+      return;
+    }
+    const body = { dte: payload };
+    if (pdfFile) {
+      body.pdf = await fileToBase64(pdfFile);
+    }
+
+    console.log("Body a enviar:", body);
+    const data = await PlantillaAPI.createcompras(body, token, user_id);
     console.log(data);
     if (data.message === "compra creada") {
       toast.success("Compra agregada con éxito");
+      resetUploadModal();
     } else {
       toast.error("Error al agregar la compra contacte al soporte");
     }
-    /* wait 5 seconds and reload */
     setTimeout(() => {
       window.location.reload();
     }, 7000);
@@ -3106,208 +3225,50 @@ const BooksComponent = () => {
               </div>
             </div>
 
-            {/* Editar Compras Card - Solo para contador */}
-            <div className="animate-fadeInUp animate-delay-250 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">✏️</span>
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-3">
-                  Editar Compras
-                </h3>
-                <p className="text-gray-600 mb-6 text-sm">
-                  Editar información de facturas de compras
-                </p>
-                <button
-                  onClick={() => openModal("EDIT_COMPRAS")}
-                  className="w-full bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                >
-                  Editar Compras
-                </button>
-              </div>
-            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-8">
-            <div className="animate-slideInUp animate-delay-500 bg-white rounded-xl shadow-lg p-6">
-              <div className="text-center mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {/* Card para abrir el modal de subida */}
+            <div className="animate-slideInUp animate-delay-500 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
                 <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">📁</span>
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
                   Subir Factura de Compras
                 </h3>
-                <p className="text-gray-600 text-sm">
-                  Importa facturas desde archivo JSON
+                <p className="text-gray-600 mb-6 text-sm">
+                  Sube el archivo JSON (DTE) y el PDF de la factura
                 </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors duration-200">
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    <div className="text-gray-400 mb-2">
-                      <span className="text-2xl">📄</span>
-                    </div>
-                    <span className="text-sm text-gray-600">
-                      Haz clic para seleccionar un archivo JSON
-                    </span>
-                  </label>
-                </div>
+                <button
+                  onClick={() => setIsUploadModalOpen(true)}
+                  className="w-full bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  📤 Subir Compra
+                </button>
               </div>
             </div>
 
-            {jsonData && (
-              <div className="animate-zoomIn bg-white rounded-xl shadow-lg p-6">
-                <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl">✅</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">
-                    Información del JSON
-                  </h3>
-                  {/* El llenado/edición ahora se hace desde el botón principal */}
+            {/* Card para descargar archivos de compras */}
+            <div className="animate-slideInUp animate-delay-600 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">📥</span>
                 </div>
-                
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-600">Emisor:</span>
-                      <span className="text-gray-800">{jsonData?.emisor?.nombre || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-600">Nombre comercial:</span>
-                      <span className="text-gray-800">{jsonData?.emisor?.nombreComercial || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-600">Receptor:</span>
-                      <span className="text-gray-800">{jsonData?.receptor?.nombre || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-600">Fecha:</span>
-                      <span className="text-gray-800">{jsonData?.identificacion?.fecEmi || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-600">Total:</span>
-                      <span className="text-gray-800 font-bold">${jsonData?.resumen?.montoTotalOperacion || 0}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Resumen</h4>
-                  <div className="space-y-2 text-xs sm:text-sm">
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">Total gravado:</span>
-                      <span className="text-gray-800">
-                        {jsonData?.resumen?.totalGravada != null ? `$${Number(jsonData.resumen.totalGravada).toFixed(2)}` : 'N/A'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">IVA (tributos o totalIva):</span>
-                      <span className="text-gray-800">
-                        {Array.isArray(jsonData?.resumen?.tributos) && jsonData.resumen.tributos.length > 0
-                          ? `$${jsonData.resumen.tributos.reduce((sum, t) => sum + (Number(t?.valor) || 0), 0).toFixed(2)}`
-                          : (jsonData?.resumen?.totalIva != null
-                              ? `$${Number(jsonData.resumen.totalIva).toFixed(2)}`
-                              : 'N/A')}
-                      </span>
-                    </div>
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">Total a pagar:</span>
-                      <span className="text-gray-800">
-                        {jsonData?.resumen?.totalPagar != null ? `$${Number(jsonData.resumen.totalPagar).toFixed(2)}` : 'N/A'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Identificadores</h4>
-                  <div className="space-y-2 text-xs sm:text-sm">
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">Código de generación:</span>
-                      <span className="text-gray-800 break-all">{jsonData?.identificacion?.codigoGeneracion || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">Correlativo (N°):</span>
-                      <span className="text-gray-800">
-                        {jsonData?.identificacion?.numeroControl?.split('-')?.pop() || 'N/A'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">Número de control:</span>
-                      <span className="text-gray-800 break-all">{jsonData?.identificacion?.numeroControl || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">Sello de recepción:</span>
-                      <span className="text-gray-800 break-all">{jsonData?.respuestaMh?.selloRecibido || jsonData?.selloRecepcion || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between gap-4">
-                      <span className="font-medium text-gray-600">Fecha/Hora emisión:</span>
-                      <span className="text-gray-800">
-                        {(jsonData?.identificacion?.fecEmi || 'N/A') + ' ' + (jsonData?.identificacion?.horEmi || '')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-semibold text-gray-700">Desglose de ítems</h4>
-                    <span className="text-xs text-gray-500">{jsonData?.cuerpoDocumento?.length || 0} ítem(s)</span>
-                  </div>
-                  <div className="max-h-56 overflow-y-auto text-xs">
-                    <div className="grid grid-cols-12 gap-2 py-2 border-b font-medium text-gray-600 sticky top-0 bg-gray-50">
-                      <div className="col-span-1">#</div>
-                      <div className="col-span-3">Código</div>
-                      <div className="col-span-5">Descripción</div>
-                      <div className="col-span-1 text-right">Cant.</div>
-                      <div className="col-span-2 text-right">Subtotal</div>
-                    </div>
-                    {Array.isArray(jsonData?.cuerpoDocumento) && jsonData.cuerpoDocumento.map((item, idx) => {
-                      const qty = Number(item?.cantidad) || 0;
-                      const pu = Number(item?.precioUni) || 0;
-                      const subtotal = (qty * pu).toFixed(2);
-                      return (
-                        <div key={idx} className="grid grid-cols-12 gap-2 py-2 border-b last:border-b-0 items-center">
-                          <div className="col-span-1 text-gray-700">{item?.numItem || idx + 1}</div>
-                          <div className="col-span-3 text-gray-700 truncate" title={item?.codigo || ''}>{item?.codigo || '-'}</div>
-                          <div className="col-span-5 text-gray-700 truncate" title={item?.descripcion || ''}>{item?.descripcion || '-'}</div>
-                          <div className="col-span-1 text-right text-gray-700">{qty}</div>
-                          <div className="col-span-2 text-right text-gray-700">${subtotal}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-                
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Descargar Compras
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  Descarga los archivos JSON y PDF de tus compras
+                </p>
                 <button
-                  onClick={() => setIsEditJsonModalOpen(true)}
-                  className="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                  onClick={() => openModal("DOWNLOAD_COMPRAS")}
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
                 >
-                  ✍️ Llenar campos restante
+                  📥 Descargar Archivos
                 </button>
-                {/* Modal para editar el JSON */}
-                <ModalEditJson
-                  isOpen={isEditJsonModalOpen}
-                  onRequestClose={() => setIsEditJsonModalOpen(false)}
-                  jsonData={jsonData}
-                  onSave={(newData) => setJsonData(newData)}
-                  primaryLabel="💾 Guardar Factura"
-                  onSaveBill={async (finalJson) => {
-                    await createcompras(finalJson);
-                    setIsEditJsonModalOpen(false);
-                  }}
-                />
               </div>
-            )} 
+            </div>
           </div>
         </div>
       </div>
@@ -3416,6 +3377,226 @@ const BooksComponent = () => {
           }
         }}
       />
+
+      {/* Modal de Descarga de Archivos de Compras */}
+      <Modal
+        isOpen={isDownloadComprasModalOpen}
+        onRequestClose={() => setIsDownloadComprasModalOpen(false)}
+        contentLabel="Descargar Compras"
+        className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60"
+      >
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 animate-zoomIn">
+          {/* Modal Header */}
+          <div className="bg-emerald-500 text-white p-4 sm:p-6 rounded-t-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold">
+                📥 Descargar Compras
+              </h2>
+              <button
+                onClick={() => setIsDownloadComprasModalOpen(false)}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-1 rounded-full transition-all duration-200"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Modal Content */}
+          <div className="p-4 sm:p-6">
+            <div className="text-center mb-4">
+              <span className="text-5xl">📦</span>
+              <p className="text-gray-700 font-semibold mt-3">
+                {downloadComprasList.length} compra(s) encontrada(s)
+              </p>
+              <p className="text-gray-500 text-sm mt-1">
+                Se generará un archivo ZIP con las carpetas <strong>json/</strong> y <strong>pdf/</strong>
+              </p>
+            </div>
+
+            {/* Preview list */}
+            <div className="max-h-48 overflow-y-auto bg-gray-50 rounded-lg p-3 space-y-2 mb-4">
+              {downloadComprasList.map((compra, idx) => {
+                const nombre = compra?.emisor?.nombre || compra?.em_name || "Sin proveedor";
+                const fecha = compra?.identificacion?.fecEmi || compra?.fecha || "";
+                const hasPdf = !!compra?.pdf;
+                return (
+                  <div key={compra._id || idx} className="flex justify-between items-center text-xs border-b border-gray-200 pb-1 last:border-0">
+                    <span className="text-gray-700 truncate flex-1">{idx + 1}. {nombre} - {fecha}</span>
+                    <div className="flex gap-1 ml-2">
+                      <span className="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded text-xs">JSON</span>
+                      {hasPdf && <span className="bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-xs">PDF</span>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl flex flex-col sm:flex-row gap-3 justify-end">
+            <button
+              onClick={() => setIsDownloadComprasModalOpen(false)}
+              className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 text-sm"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={downloadAllComprasZip}
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-all duration-200 text-sm"
+            >
+              📦 Descargar ZIP
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal de Subida de Compras (JSON + PDF) */}
+      <Modal
+        isOpen={isUploadModalOpen}
+        onRequestClose={resetUploadModal}
+        contentLabel="Subir Compra"
+        className="fixed inset-0 flex items-center justify-center p-4 z-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-60"
+      >
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 animate-zoomIn max-h-[90vh] flex flex-col">
+          {/* Modal Header */}
+          <div className="bg-indigo-500 text-white p-4 sm:p-6 rounded-t-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg sm:text-xl font-bold">
+                📤 Subir Factura de Compra
+              </h2>
+              <button
+                onClick={resetUploadModal}
+                className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-1 rounded-full transition-all duration-200"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-indigo-100 text-xs sm:text-sm mt-2">
+              Sube el archivo JSON (DTE) y el PDF de la factura
+            </p>
+          </div>
+
+          {/* Modal Content */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+            {/* Upload JSON */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📄 Archivo JSON (DTE)
+              </label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors duration-200 ${
+                  jsonFile ? "border-green-400 bg-green-50" : "border-gray-300 hover:border-indigo-400"
+                }`}
+              >
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={handleJsonFileUpload}
+                  className="hidden"
+                  id="json-upload"
+                />
+                <label htmlFor="json-upload" className="cursor-pointer">
+                  {jsonFile ? (
+                    <div>
+                      <span className="text-3xl">✅</span>
+                      <p className="text-sm text-green-700 font-medium mt-2">{jsonFile.name}</p>
+                      <p className="text-xs text-gray-500 mt-1">Clic para cambiar archivo</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className="text-3xl">📄</span>
+                      <p className="text-sm text-gray-600 mt-2">Haz clic para seleccionar un archivo JSON</p>
+                    </div>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            {/* Upload PDF */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                📑 Archivo PDF
+              </label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors duration-200 ${
+                  pdfFile ? "border-green-400 bg-green-50" : "border-gray-300 hover:border-indigo-400"
+                }`}
+              >
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={handlePdfFileUpload}
+                  className="hidden"
+                  id="pdf-upload"
+                />
+                <label htmlFor="pdf-upload" className="cursor-pointer">
+                  {pdfFile ? (
+                    <div>
+                      <span className="text-3xl">✅</span>
+                      <p className="text-sm text-green-700 font-medium mt-2">{pdfFile.name}</p>
+                      <p className="text-xs text-gray-500 mt-1">Clic para cambiar archivo</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className="text-3xl">📑</span>
+                      <p className="text-sm text-gray-600 mt-2">Haz clic para seleccionar un archivo PDF</p>
+                    </div>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            {/* JSON Preview */}
+            {jsonData && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Vista previa del JSON</h4>
+                <div className="space-y-2 text-xs sm:text-sm">
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600">Emisor:</span>
+                    <span className="text-gray-800">{jsonData?.emisor?.nombre || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600">Fecha:</span>
+                    <span className="text-gray-800">{jsonData?.identificacion?.fecEmi || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600">Total:</span>
+                    <span className="text-gray-800 font-bold">${jsonData?.resumen?.montoTotalOperacion || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium text-gray-600">Código:</span>
+                    <span className="text-gray-800 break-all text-xs">{jsonData?.identificacion?.codigoGeneracion || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Modal Footer */}
+          <div className="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 rounded-b-xl flex flex-col sm:flex-row gap-3 justify-end">
+            <button
+              onClick={resetUploadModal}
+              className="px-4 sm:px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-all duration-200 text-sm sm:text-base"
+            >
+              Cancelar
+            </button>
+            {jsonData && (
+              <button
+                onClick={() => createcompras(jsonData)}
+                className="px-4 sm:px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all duration-200 text-sm sm:text-base"
+              >
+                💾 Guardar Compra
+              </button>
+            )}
+          </div>
+        </div>
+      </Modal>
 
       {/* Enhanced Modal */}
       <Modal
