@@ -63,8 +63,38 @@ const sendPDF = async(req, res) => {
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
             const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
             const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
-            pdfDoc.fontSize(18).fillColor('#1E3256')
-                .text(`Dr. ${name1} ${name2} ${name3} ${name4}`, 30, yscale, { align: 'left' })
+
+            const fullName = `Dr. ${name1} ${name2} ${name3} ${name4}`;
+
+            // Draw name first (no horizontal shift)
+            pdfDoc.fontSize(18).fillColor('#1E3256');
+            const nameMeasureWidth = 350;
+            const nameHeight = pdfDoc.heightOfString(fullName, { width: nameMeasureWidth });
+
+            if (userDB.id === 34) {
+            pdfDoc.text(fullName, 45, yscale, { align: 'left' });
+            } else {
+                pdfDoc.text(fullName, 30, yscale, { align: 'left' });
+            }
+            // If emisor id is 34, add a faint image just under the name (no text shift)
+            if (userDB.id === 34) {
+                const leftImg = path.join(__dirname, '../assets/imgs/firstimg.png');
+                try {
+                    // position: slightly more to the left and moved 25% higher
+                    const imgX = 10; // keep current horizontal offset
+                    const baseY = yscale + Math.max(6, nameHeight) - 30; // baseline just under text
+                    const imgWidth = 115;
+                    const lift = Math.round(imgWidth * 0.50); // move up ~25% of image width as estimate
+                    const imgY = baseY - lift - 4; // higher position
+
+                    pdfDoc.save();
+                    pdfDoc.opacity(0.25); // a bit less fade (more visible)
+                    pdfDoc.image(leftImg, imgX, imgY, { width: imgWidth });
+                    pdfDoc.restore();
+                } catch (err) {
+                    console.error('Error adding left image for id 34:', err);
+                }
+            }
         } else if (userDB.id === 7 || userDB.id === 12  || userDB.id === 21 || userDB.id === 22 || userDB.id === 28 ||  userDB.id === 27) {
 
         }else if (userDB.id === 16 || userDB.id === 17) {
@@ -448,6 +478,28 @@ const sendPDF = async(req, res) => {
         const blocksY = (blocksBottomNeeded > 770) ? 50 : infoY;
         if (blocksBottomNeeded > 770) {
             pdfDoc.addPage();
+        }
+
+        // If emisor id is 34, add a faint full-page background image (displaced slightly lower)
+        if (userDB.id === 34) {
+            const bgImg = path.join(__dirname, '../assets/imgs/secondimg.jpeg');
+            try {
+                pdfDoc.save();
+                pdfDoc.opacity(0.18); // slightly stronger (less faded)
+                const pageWidth = (pdfDoc.page && pdfDoc.page.width) ? pdfDoc.page.width : 595.28;
+                const pageHeight = (pdfDoc.page && pdfDoc.page.height) ? pdfDoc.page.height : 841.89;
+                // start just after the top header rectangle (which is 250pt tall)
+                const headerBottom = 250;
+                const imgX = -10; // slightly left to cover edge
+                const imgY = headerBottom; // start right after header
+                const remainingHeight = Math.max(0, pageHeight - imgY - 20);
+                const extraHeight = Math.round(remainingHeight * 0.25); // increase height by ~25%
+                const imgHeight = remainingHeight + extraHeight;
+                pdfDoc.image(bgImg, imgX, imgY, { width: pageWidth + 20, height: imgHeight });
+                pdfDoc.restore();
+            } catch (err) {
+                console.error('Error adding background image for id 34:', err);
+            }
         }
 
         drawInfoBlock(pdfDoc, 'EMISOR', infoX, blocksY, infoBlockOpts.width, emisorHeight, emisorRows, infoBlockOpts);

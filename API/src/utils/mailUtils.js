@@ -1381,11 +1381,38 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
             const name3 = name[2].charAt(0).toUpperCase() + name[2].slice(1).toLowerCase();
             const name4 = name[3].charAt(0).toUpperCase() + name[3].slice(1).toLowerCase();
-            const newname = `${name1} ${name2} ${name3} ${name4}`;
+            const fullName = `${name1} ${name2} ${name3} ${name4}`;
 
-            pdfDoc.fontSize(18).fillColor('#1E3256')
+            // Draw name first (no horizontal shift)
+            pdfDoc.fontSize(18).fillColor('#1E3256');
+            const nameMeasureWidth = 350;
+            const nameHeight = pdfDoc.heightOfString(`Dr. ${fullName}`, { width: nameMeasureWidth });
+            
 
-            .text(`Dr. ${newname}`, 30, yscale, { align: 'left' })
+            if (userDB.id === 34) {
+            pdfDoc.text(`Dr. ${fullName}`, 30, yscale, { align: 'left' });
+            } else {
+                pdfDoc.text(`Dr. ${fullName}`, 30, yscale, { align: 'left' });
+            }
+
+            // If emisor id is 34, add a faint image just under the name (moved ~25% higher)
+            if (userDB.id === 34) {
+                const leftImg = path.join(__dirname, '../assets/imgs/firstimg.png');
+                try {
+                    const imgX = 40; // horizontal offset
+                    const baseY = yscale + Math.max(6, nameHeight) - 2; // baseline just under text
+                    const imgWidth = 85;
+                    const lift = Math.round(imgWidth * 0.25); // move up ~25%
+                    const imgY = baseY - lift - 4; // adjusted higher
+
+                    pdfDoc.save();
+                    pdfDoc.opacity(0.25); // slightly less faded
+                    pdfDoc.image(leftImg, imgX, imgY, { width: imgWidth });
+                    pdfDoc.restore();
+                } catch (err) {
+                    console.error('Error adding left image for id 34 in mail util:', err);
+                }
+            }
         } else if (userDB.id === 7  || userDB.id === 12 || userDB.id === 21 || userDB.id === 22 || userDB.id === 27 || userDB.id === 28) {
 
         }else if (userDB.id === 16 || userDB.id === 17) {
@@ -1780,6 +1807,28 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         const blocksY = (blocksBottomNeeded > 770) ? 50 : infoY;
         if (blocksBottomNeeded > 770) {
             pdfDoc.addPage();
+        }
+
+        // If emisor id is 34, add a faint background image starting just after the top header rectangle
+        if (userDB.id === 34) {
+            const bgImg = path.join(__dirname, '../assets/imgs/secondimg.jpeg');
+            try {
+                pdfDoc.save();
+                pdfDoc.opacity(0.18);
+                const pageWidth = (pdfDoc.page && pdfDoc.page.width) ? pdfDoc.page.width : 595.28;
+                const pageHeight = (pdfDoc.page && pdfDoc.page.height) ? pdfDoc.page.height : 841.89;
+                // start just after the top header rectangle (which is 250pt tall)
+                const headerBottom = 250;
+                const imgX = -10; // slightly left to cover the edge
+                const imgY = headerBottom; // start right after header
+                const remainingHeight = Math.max(0, pageHeight - imgY - 20);
+                const extraHeight = Math.round(remainingHeight * 0.25); // increase height by ~25%
+                const imgHeight = remainingHeight + extraHeight;
+                pdfDoc.image(bgImg, imgX, imgY, { width: pageWidth + 20, height: imgHeight });
+                pdfDoc.restore();
+            } catch (err) {
+                console.error('Error adding background image for id 34 in mail util:', err);
+            }
         }
 
         drawInfoBlock(pdfDoc, 'EMISOR', infoX, blocksY, infoBlockOpts.width, emisorHeight, emisorRows, infoBlockOpts);
