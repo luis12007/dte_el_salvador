@@ -1375,7 +1375,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
         // Add Doctor's information
         pdfDoc.font('src/assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf');
-        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 32 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36) {
+        if (userDB.id === 1 || userDB.id === 2 || userDB.id === 3 || userDB.id === 5 || userDB.id === 8 || userDB.id === 15 || userDB.id === 18 || userDB.id === 19 || userDB.id === 20 || userDB.id === 23 || userDB.id === 24 || userDB.id === 25 || userDB.id === 26 || userDB.id === 29 || userDB.id === 30  || userDB.id === 31 || userDB.id === 33 || userDB.id === 34 || userDB.id === 35 || userDB.id === 36) {
             const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
@@ -1415,7 +1415,18 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             }
         } else if (userDB.id === 7  || userDB.id === 12 || userDB.id === 21 || userDB.id === 22 || userDB.id === 27 || userDB.id === 28) {
 
-        }else if (userDB.id === 16 || userDB.id === 17) {
+        } else if (userDB.id === 32) {
+            const parts = (userDB.name || '').split(/\s+/).filter(Boolean);
+            const formattedParts = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase());
+            const fullName = formattedParts.join(' ');
+
+            // Draw name first (no horizontal shift)
+            pdfDoc.fontSize(15).fillColor('#1E3256');
+            const nameMeasureWidth = 450;
+            const nameHeight = pdfDoc.heightOfString(`Dra. ${fullName}`, { width: nameMeasureWidth });
+            pdfDoc.text(`Dra. ${fullName}`, 30, yscale, { align: 'left' });
+        }
+        else if (userDB.id === 16 || userDB.id === 17) {
 /* const name = userDB.name.split(" ");
             const name1 = name[0].charAt(0).toUpperCase() + name[0].slice(1).toLowerCase();
             const name2 = name[1].charAt(0).toUpperCase() + name[1].slice(1).toLowerCase();
