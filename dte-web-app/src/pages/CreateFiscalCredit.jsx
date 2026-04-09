@@ -593,6 +593,33 @@ const CrearCreditoFiscal = () => {
     minicipio: null,
   });
 
+  // Validación al cargar la página: normaliza `client.document` como DUI o NIT; si no es reconocible, forzar DUI
+  useEffect(() => {
+    try {
+      const d = client.document;
+      if (!d) return;
+      const digits = d.toString().replace(/\D/g, "");
+
+      const isDui = (s) => /^\d{9}$/.test(s);
+      const isNit = (s) => /^\d{13,14}$/.test(s) || /^\d{14}$/.test(s);
+
+      if (isDui(digits)) {
+        // Formatear DUI igual que en CreateBill
+        const formatted = digits.slice(0, -1) + "-" + digits.slice(-1);
+        setClient((prev) => ({ ...prev, document: formatted }));
+      } else if (isNit(digits)) {
+        setClient((prev) => ({ ...prev, document: digits }));
+      } else {
+        // No es oficial: dejar como DUI (guardar hasta 9 dígitos)
+        setClient((prev) => ({ ...prev, document: digits.slice(0, 9) || "" }));
+      }
+    } catch (e) {
+      console.warn("Error normalizando documento al cargar CreateFiscalCredit:", e);
+    }
+    // Ejecutar sólo en mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   /* PAYMENT */
   var [payment, setpayment] = useState({
     paymentType: "1",

@@ -3,7 +3,6 @@ import FrameComponent3 from "./SwitchON";
 import { useEffect } from "react";
 import { useState } from "react";
 const BillCF = ({handleSelectChangeCFClient, setClient , client}) => {
-
   useEffect(() => {
     setClient({
       documentType: null,
@@ -15,10 +14,36 @@ const BillCF = ({handleSelectChangeCFClient, setClient , client}) => {
       codActividad: null,
       nrc: null,
       descActividad: null,
-    })
+    });
 
-  }
-  , []);
+    // Validar y sanitizar al montar: aceptar solo DUI/NIT/Pasaporte/Otro
+    try {
+      const allowed = ["13", "36", "03", "37"];
+      const currentType = client.documentType || "13";
+      if (!allowed.includes(currentType)) {
+        setClient((prev) => ({ ...prev, documentType: "13" }));
+      }
+
+      const d = client.document;
+      if (d || d === 0) {
+        const digits = d.toString().replace(/\D/g, "");
+        if (currentType === "13") {
+          if (/^\d{9}$/.test(digits)) {
+            const formatted = digits.slice(0, -1) + "-" + digits.slice(-1);
+            setClient((prev) => ({ ...prev, document: formatted }));
+          } else {
+            setClient((prev) => ({ ...prev, document: digits.slice(0, 9) }));
+          }
+        } else if (currentType === "36") {
+          setClient((prev) => ({ ...prev, document: digits }));
+        } else {
+          setClient((prev) => ({ ...prev, document: digits.slice(0, 60) }));
+        }
+      }
+    } catch (e) {
+      console.warn("BillCF sanitize error:", e);
+    }
+  }, []);
 
   const changeHandler = (field,e) => {
 

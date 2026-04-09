@@ -1,5 +1,5 @@
 import FrameComponent3 from "./SwitchOFF";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const DocumentTypeFrame = ({
@@ -32,6 +32,27 @@ const DocumentTypeFrame = ({
         ...prevClient,
         [field]: value,
         descActividad: descActividaddata2,
+      }));
+      return;
+    }
+
+    // Sanitizar documento al escribir para evitar valores inesperados (autofill raro)
+    if (field == "document") {
+      let sanitized = value ? value.toString().trim() : "";
+      if (client.documentType === "13") {
+        // DUI: solo dígitos, longitud máxima 9
+        sanitized = sanitized.replace(/\D/g, "").slice(0, 9);
+      } else if (client.documentType === "36") {
+        // NIT: solo dígitos, longitud máxima 20
+        sanitized = sanitized.replace(/\D/g, "").slice(0, 20);
+      } else {
+        // Otros: limitar longitud
+        sanitized = sanitized.slice(0, 60);
+      }
+
+      setClient((prevClient) => ({
+        ...prevClient,
+        document: sanitized,
       }));
       return;
     }
@@ -81,9 +102,12 @@ const DocumentTypeFrame = ({
                 </div>
                 <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
                   <input
+                    name="client_document"
+                    autoComplete="off"
+                    inputMode={client.documentType === "13" ? "numeric" : "text"}
                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2] no-spinner"
                     placeholder="Documento sin guiones ni espacios"
-                    type={client.documentType === "03" ? "text" : "Number"}
+                    type="text"
                     value={client.document}
                     onChange={(e) => handleChange("document", e.target.value)}
                   />
@@ -100,6 +124,8 @@ const DocumentTypeFrame = ({
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
+                name="client_name"
+                autoComplete="off"
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
@@ -117,6 +143,8 @@ const DocumentTypeFrame = ({
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
+                name="client_phone"
+                autoComplete="off"
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
@@ -134,6 +162,8 @@ const DocumentTypeFrame = ({
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
+                name="client_email"
+                autoComplete="off"
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
@@ -151,6 +181,8 @@ const DocumentTypeFrame = ({
             </div>
             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100">
               <input
+                name="client_address"
+                autoComplete="off"
                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                 placeholder="datos personales datos personales"
                 type="text"
@@ -184,6 +216,43 @@ const DocumentTypeFrame = ({
       </div>
     </section>
   );
+};
+
+// Asegurar que `documentType` esté entre las opciones válidas y sanitizar `document`.
+// Esto evita que autofill/otros textos no deseados aparezcan.
+export const validateClientFields = (client, setClient) => {
+  useEffect(() => {
+    const allowed = ["13", "36", "03", "37"];
+    try {
+      if (!client) return;
+      if (!allowed.includes(client.documentType)) {
+        setClient((prev) => ({ ...prev, documentType: "13" }));
+        return;
+      }
+
+      const d = client.document;
+      if (!d && d !== 0) return;
+      const digits = d.toString().replace(/\D/g, "");
+
+      if (client.documentType === "13") {
+        if (/^\d{9}$/.test(digits)) {
+          const formatted = digits.slice(0, -1) + "-" + digits.slice(-1);
+          if (client.document !== formatted) setClient((prev) => ({ ...prev, document: formatted }));
+        } else {
+          const truncated = digits.slice(0, 9);
+          if (client.document !== truncated) setClient((prev) => ({ ...prev, document: truncated }));
+        }
+      } else if (client.documentType === "36") {
+        if (client.document !== digits) setClient((prev) => ({ ...prev, document: digits }));
+      } else {
+        const out = digits.slice(0, 60);
+        if (client.document !== out) setClient((prev) => ({ ...prev, document: out }));
+      }
+    } catch (e) {
+      console.warn("validateClientFields error:", e);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [client.documentType, client.document]);
 };
 
 export default DocumentTypeFrame;

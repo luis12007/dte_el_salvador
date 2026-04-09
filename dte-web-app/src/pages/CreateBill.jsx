@@ -111,6 +111,31 @@ const Clientes = () => {
     otro: null,
   });
 
+  // Validación al cargar la página: normaliza el documento (DUI/NIT) o fuerza DUI si no es reconocible
+  useEffect(() => {
+    try {
+      const d = client.document;
+      if (!d) return;
+      const digits = d.toString().replace(/\D/g, "");
+
+      const isDui = (s) => /^\d{9}$/.test(s);
+      const isNit = (s) => /^\d{13,14}$/.test(s) || /^\d{14}$/.test(s);
+
+      if (isDui(digits)) {
+        setClient((prev) => ({ ...prev, documentType: "13", document: formatDUI(digits) }));
+      } else if (isNit(digits)) {
+        setClient((prev) => ({ ...prev, documentType: "36", document: digits }));
+      } else {
+        // No es una versión oficial: dejar como DUI (tipo 13) y conservar solo los primeros 9 dígitos si existen
+        setClient((prev) => ({ ...prev, documentType: "13", document: digits.slice(0, 9) || "" }));
+      }
+    } catch (e) {
+      console.warn("Error normalizando documento al cargar CreateBill:", e);
+    }
+    // Ejecutar solo en mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   var [payment, setpayment] = useState({
     paymentType: "1",
     paymentmethod: "01",
@@ -869,7 +894,7 @@ const Clientes = () => {
       setClient({
         documentType: "36",
         name: clientset.name || "",
-        document: clientset.nit || "",
+        document: sanitizeDocument(clientset.nit, "36") || "",
         address: clientset.direccion || "",
         email: clientset.correo_electronico || "",
         phone: clientset.numero_telefono || "",
@@ -881,7 +906,7 @@ const Clientes = () => {
       setClient({
         documentType: "37",
         name: clientset.name,
-        document: clientset.otro,
+        document: sanitizeDocument(clientset.otro, "37"),
         address: clientset.direccion,
         email: clientset.correo_electronico,
         phone: clientset.numero_telefono,
@@ -893,7 +918,7 @@ const Clientes = () => {
       setClient({
         documentType: "13",
         name: clientset.name,
-        document: clientset.dui,
+        document: sanitizeDocument(clientset.dui, "13"),
         address: clientset.direccion,
         email: clientset.correo_electronico,
         phone: clientset.numero_telefono,
@@ -1093,6 +1118,21 @@ const Clientes = () => {
     return str.slice(0, -1) + "-" + str.slice(-1);
   }
 
+  // Sanitiza el documento según el tipo para evitar textos inesperados (autofill)
+  function sanitizeDocument(val, type) {
+    if (!val && val !== 0) return "";
+    let s = val.toString().trim();
+    if (type === "13") {
+      // DUI: solo dígitos, máximo 9
+      return s.replace(/\D/g, "").slice(0, 9);
+    }
+    if (type === "36") {
+      // NIT: solo dígitos, máximo 20
+      return s.replace(/\D/g, "").slice(0, 20);
+    }
+    return s.slice(0, 60);
+  }
+
   /* examples of input and output */
 
   const handlePercentageChange = (e) => {
@@ -1185,12 +1225,12 @@ const Clientes = () => {
                 placeholder="Fecha"
                 type="date"
                 value={time.date}
-                {...(id_emisor === "7" || id_emisor === "12"
+                {...(id_emisor === "7" || id_emisor === "12" || id_emisor === "24"
                   ? {}
                   : { min: time.date, max: time.date })}
                 onChange={(e) => {
                   // Si el usuario es 7 o 12, permite cualquier fecha
-                  if (id_emisor === "7" || id_emisor === "12") {
+                  if (id_emisor === "7" || id_emisor === "12" || id_emisor === "24") {
                     handleChangeTime("date", e.target.value);
                   } else {
                     // Para otros usuarios, solo permite la fecha de hoy
@@ -1202,7 +1242,7 @@ const Clientes = () => {
                     }
                   }
                 }}
-                {...(id_emisor === "7" || id_emisor === "12"
+                {...(id_emisor === "7" || id_emisor === "12" || id_emisor === "24"
                   ? {}
                   : { readOnly: true })}
               />
