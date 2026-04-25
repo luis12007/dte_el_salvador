@@ -1,5 +1,5 @@
 import FrameComponent3 from "./SwitchOFF";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const DocumentTypeFrame = ({
@@ -221,38 +221,36 @@ const DocumentTypeFrame = ({
 // Asegurar que `documentType` esté entre las opciones válidas y sanitizar `document`.
 // Esto evita que autofill/otros textos no deseados aparezcan.
 export const validateClientFields = (client, setClient) => {
-  useEffect(() => {
-    const allowed = ["13", "36", "03", "37"];
-    try {
-      if (!client) return;
-      if (!allowed.includes(client.documentType)) {
-        setClient((prev) => ({ ...prev, documentType: "13" }));
-        return;
-      }
+  const allowed = ["13", "36", "03", "37"];
 
-      const d = client.document;
-      if (!d && d !== 0) return;
-      const digits = d.toString().replace(/\D/g, "");
-
-      if (client.documentType === "13") {
-        if (/^\d{9}$/.test(digits)) {
-          const formatted = digits.slice(0, -1) + "-" + digits.slice(-1);
-          if (client.document !== formatted) setClient((prev) => ({ ...prev, document: formatted }));
-        } else {
-          const truncated = digits.slice(0, 9);
-          if (client.document !== truncated) setClient((prev) => ({ ...prev, document: truncated }));
-        }
-      } else if (client.documentType === "36") {
-        if (client.document !== digits) setClient((prev) => ({ ...prev, document: digits }));
-      } else {
-        const out = digits.slice(0, 60);
-        if (client.document !== out) setClient((prev) => ({ ...prev, document: out }));
-      }
-    } catch (e) {
-      console.warn("validateClientFields error:", e);
+  try {
+    if (!client) return;
+    if (!allowed.includes(client.documentType)) {
+      setClient((prev) => ({ ...prev, documentType: "13" }));
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [client.documentType, client.document]);
+
+    const d = client.document;
+    if (!d && d !== 0) return;
+    const digits = d.toString().replace(/\D/g, "");
+
+    if (client.documentType === "13") {
+      if (/^\d{9}$/.test(digits)) {
+        const formatted = digits.slice(0, -1) + "-" + digits.slice(-1);
+        if (client.document !== formatted) setClient((prev) => ({ ...prev, document: formatted }));
+      } else {
+        const truncated = digits.slice(0, 9);
+        if (client.document !== truncated) setClient((prev) => ({ ...prev, document: truncated }));
+      }
+    } else if (client.documentType === "36") {
+      if (client.document !== digits) setClient((prev) => ({ ...prev, document: digits }));
+    } else {
+      const out = digits.slice(0, 60);
+      if (client.document !== out) setClient((prev) => ({ ...prev, document: out }));
+    }
+  } catch (e) {
+    console.warn("validateClientFields error:", e);
+  }
 };
 
 export default DocumentTypeFrame;
