@@ -1,7 +1,3 @@
-// URLs del proxy CORS en tu servidor (via nginx)
-const BASE_URL_Proxy = "https://www.myspaceai.cloud/api";
-
-// URLs originales (solo referencia, no se usan con proxy)
 const BASE_URL_test = "https://apitest.dtes.mh.gob.sv/fesv";
 const BASE_URL_Prod = "https://api.dtes.mh.gob.sv/fesv";
 /* TODO: */
@@ -11,7 +7,7 @@ const SendAPI = {
     /* Sing the bill or CF */
 
     sendBill: async(plantilla, token) => {
-        const res = await fetch(`${BASE_URL_Proxy}/recepciondte`, {
+        const res = await fetch(`${BASE_URL_test}/recepciondte`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -25,7 +21,7 @@ const SendAPI = {
     },
 
     invalidatebill: async(plantilla, token) => {
-        const res = await fetch(`${BASE_URL_Proxy}/anulardte`, {
+        const res = await fetch(`${BASE_URL_test}/anulardte`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -39,9 +35,9 @@ const SendAPI = {
     },
 
     sendBillprod: async(plantilla, token) => {
-        console.log('[sendBillprod] Usando proxy:', `${BASE_URL_Proxy}/recepciondte`);
+        console.log('[sendBillprod] URL:', `${BASE_URL_Prod}/recepciondte`);
         console.log('[sendBillprod] payload:', plantilla);
-        const res = await fetch(`${BASE_URL_Proxy}/recepciondte`, {
+        const res = await fetch(`${BASE_URL_Prod}/recepciondte`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -57,8 +53,7 @@ const SendAPI = {
     },
 
     invalidatebillprod: async(plantilla, token) => {
-        console.log('[invalidatebillprod] Usando proxy:', `${BASE_URL_Proxy}/anulardte`);
-        const res = await fetch(`${BASE_URL_Proxy}/anulardte`, {
+        const res = await fetch(`${BASE_URL_Prod}/anulardte`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -68,7 +63,6 @@ const SendAPI = {
             body: JSON.stringify(plantilla)
         });
         const data = await res.json();
-        console.log('[invalidatebillprod] response:', data);
         return data;
     },
 
@@ -78,7 +72,7 @@ const SendAPI = {
     get: async(id, token) => {
         try {
 
-            const res = await fetch(`${BASE_URL_Proxy}/items/get/${id}`, {
+            const res = await fetch(`${BASE_URL_test}/items/get/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
