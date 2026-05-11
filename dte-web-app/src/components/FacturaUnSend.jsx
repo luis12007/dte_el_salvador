@@ -1981,6 +1981,16 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     );
   };
 
+  const HIDDEN_OBSERVACION = "[receptor.numDocumento] VALOR NO VALIDO";
+
+  const getVisibleObservaciones = (observaciones) => {
+    if (!Array.isArray(observaciones)) return [];
+
+    return observaciones.filter((observacion) => {
+      return String(observacion ?? "").trim() !== HIDDEN_OBSERVACION;
+    });
+  };
+
   const applyDefaultDireccionToContentForFallback = () => {
     const fixedComplemento = getReceptorComplemento();
 
@@ -2383,8 +2393,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
       toast.error(`RECHAZADO ${resendData?.descripcionMsg || ""}`);
       if (Array.isArray(resendData?.observaciones)) {
-        for (let i = 0; i < resendData.observaciones.length; i++) {
-          toast.warning(`motivo ${i + 1} ${resendData.observaciones[i]}`);
+        const visibleObservaciones = getVisibleObservaciones(
+          resendData.observaciones
+        );
+        for (let i = 0; i < visibleObservaciones.length; i++) {
+          toast.warning(`motivo ${i + 1} ${visibleObservaciones[i]}`);
         }
       }
 
@@ -2559,9 +2572,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           }
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-          console.log(senddata.observaciones);
-          for (let i = 0; i < senddata.observaciones.length; i++) {
-            toast.warning(`Observación ${i + 1} ${senddata.observaciones[i]}`);
+          const visibleObservaciones = getVisibleObservaciones(
+            senddata.observaciones
+          );
+          console.log(visibleObservaciones);
+          for (let i = 0; i < visibleObservaciones.length; i++) {
+            toast.warning(`Observación ${i + 1} ${visibleObservaciones[i]}`);
           }
         }
         console.log("---------------resultado--------------");
@@ -2723,9 +2739,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           }
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-          console.log(senddata.observaciones);
-          for (let i = 0; i < senddata.observaciones.length; i++) {
-            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          const visibleObservaciones = getVisibleObservaciones(
+            senddata.observaciones
+          );
+          console.log(visibleObservaciones);
+          for (let i = 0; i < visibleObservaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${visibleObservaciones[i]}`);
           }
         }
 
@@ -2871,9 +2890,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         } else {
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-          console.log(senddata.observaciones);
-          for (let i = 0; i < senddata.observaciones.length; i++) {
-            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          const visibleObservaciones = getVisibleObservaciones(
+            senddata.observaciones
+          );
+          console.log(visibleObservaciones);
+          for (let i = 0; i < visibleObservaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${visibleObservaciones[i]}`);
           }
         }
 
@@ -3030,9 +3052,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         } else {
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-          console.log(senddata.observaciones);
-          for (let i = 0; i < senddata.observaciones.length; i++) {
-            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          const visibleObservaciones = getVisibleObservaciones(
+            senddata.observaciones
+          );
+          console.log(visibleObservaciones);
+          for (let i = 0; i < visibleObservaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${visibleObservaciones[i]}`);
           }
         }
 
@@ -3188,9 +3213,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         } else {
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
-          console.log(senddata.observaciones);
-          for (let i = 0; i < senddata.observaciones.length; i++) {
-            toast.warning(`motivo ${i + 1} ${senddata.observaciones[i]}`);
+          const visibleObservaciones = getVisibleObservaciones(
+            senddata.observaciones
+          );
+          console.log(visibleObservaciones);
+          for (let i = 0; i < visibleObservaciones.length; i++) {
+            toast.warning(`motivo ${i + 1} ${visibleObservaciones[i]}`);
           }
         }
 
