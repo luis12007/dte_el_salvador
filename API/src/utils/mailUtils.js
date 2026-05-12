@@ -1666,10 +1666,15 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
             const nombre = safeText(plantillaDB.re_name);
 
             if (tipo === '01') {
-                let docLabel = 'DOC:';
                 const numDoc = safeText(plantillaDB.re_numdocumento);
-                if (numDoc.includes('-')) docLabel = 'DUI:';
-                else if (numDoc) docLabel = 'NRC:';
+                let docLabel = 'DOC:';
+                if (numDoc.includes('-')) {
+                    docLabel = 'DUI:';
+                } else {
+                    const numericDoc = numDoc.replace(/\D/g, '');
+                    if (numericDoc.length > 0 && numericDoc.length <= 7) docLabel = 'NRC:';
+                    else if (numericDoc.length > 7) docLabel = 'NIT:';
+                }
 
                 const rows = [
                     { label: 'Nombre o razón social:', value: nombre },
