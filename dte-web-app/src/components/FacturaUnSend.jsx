@@ -2570,6 +2570,83 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
               return;
             }
           }
+          // Fallback: si MH rechaza porque el numeroControl ya existe
+          if (
+            (senddata.descripcionMsg &&
+              (senddata.descripcionMsg.includes("numeroControl") ||
+                senddata.descripcionMsg.includes("identificacion.numeroControl"))) ||
+            senddata.codigoMsg === "004" ||
+            senddata.clasificaMsg === "11"
+          ) {
+            try {
+              toast.info("Firmando otra vez por validacion del ministerio");
+
+
+
+              // Obtener plantilla actual, actualizar numeroControl y re-firmar
+              const plantilla = await PlantillaAPI.getcodegeneration(
+                content.codigo_de_generacion,
+                token,
+              );
+
+              const incrementNumeroControl = (ctrl) => {
+                if (!ctrl || typeof ctrl !== "string") return ctrl;
+                const parts = ctrl.split("-");
+                const suffix = parts[parts.length - 1] || "0";
+                const n = parseInt(suffix.replace(/^0+/, "") || "0", 10) + 1;
+                const newSuffix = n.toString().padStart(suffix.length, "0");
+                parts[parts.length - 1] = newSuffix;
+                return parts.join("-");
+              };
+
+              const currentCtrl =
+                (plantilla && plantilla.numero_de_control) ||
+                (plantilla?.identificacion && plantilla.identificacion.numeroControl) ||
+                content.numero_de_control;
+
+              const newCtrl = incrementNumeroControl(currentCtrl);
+
+              if (plantilla) {
+                // actualizar ambos lugares por consistencia
+                plantilla.numero_de_control = newCtrl;
+                if (!plantilla.identificacion) plantilla.identificacion = {};
+                plantilla.identificacion.numeroControl = newCtrl;
+
+                // Preparar firma
+                const Firm = {
+                  nit: user.nit,
+                  activo: true,
+                  passwordPri: user.passwordpri,
+                  dteJson: plantilla,
+                };
+
+                const responseFirm = await callFirmServiceByEmisor(Firm);
+                if (responseFirm && responseFirm.body) {
+                  plantilla.firma = responseFirm.body;
+                  // Mantener sellado/sello si existían
+                  plantilla.sellado = plantilla.sellado || content.sellado;
+                  plantilla.sello = plantilla.sello || content.sello;
+
+                  // Guardar plantilla actualizada
+                  await PlantillaAPI.updateNoItems(
+                    id_emisor,
+                    plantilla,
+                    token,
+                    plantilla.identificacion.codigoGeneracion,
+                  );
+
+                  toast.success("Re-firmada. Recargando...");
+                  setTimeout(() => window.location.reload(), 4000);
+                  return;
+                } else {
+                  toast.error("No se pudo re-firmar la plantilla");
+                }
+              }
+            } catch (e) {
+              console.error("Fallback numeroControl error:", e);
+              toast.error("Error en fallback de numeroControl");
+            }
+          }
           if (senddata.estado === "RECHAZADO")
             toast.error(`RECHAZADO ${senddata.descripcionMsg}`);
           const visibleObservaciones = getVisibleObservaciones(
