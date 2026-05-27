@@ -1449,12 +1449,6 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
                 .text(`${userDB.name}`, 0, yscale + 30, { align: 'center', width: 300, continued: false })
 
         } else if (userDB.id === 39 || userDB.id === 40) {
-            const parts = (userDB.name || '').split(/\s+/).filter(Boolean);
-            const formattedParts = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase());
-            const fullName = formattedParts.join(' ');
-
-            pdfDoc.fontSize(15).fillColor('#1E3256')
-                .text(fullName, 0, yscale + 36, { align: 'center', width: 300, continued: false })
 
         } else {
             /* align in the middle of the left and center */
