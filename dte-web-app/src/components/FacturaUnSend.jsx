@@ -1791,7 +1791,38 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         }
       }
 
-      if (id_emisor > 40) {
+      if (id_emisor == 39) {
+        const responseFirm = await Firmservice.default_test(Firm);
+        console.log("firm response");
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        } else if (data.receptor) {
+          data.receptor.direccion = content.re_direccion;
+        }
+      }
+
+      if (id_emisor == 40) {
+        const responseFirm = await Firmservice.default_prod(Firm);
+        console.log("firm response");
+        console.log(responseFirm);
+        data.firma = responseFirm.body;
+        data.sellado = content.sellado;
+        data.sello = content.sello;
+        if (content.tipo == "14") {
+          const address = content.re_direccion.split("|");
+          data.sujetoExcluido.direccion = address[2];
+        } else if (data.receptor) {
+          data.receptor.direccion = content.re_direccion;
+          
+        }
+      }
+
+      if (id_emisor > 41) {
         const responseFirm = null;
         toast.error("No se encontró firmador registrado");
         return;
@@ -2092,6 +2123,10 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     if (id_emisor == 34) return await Firmservice.default_prod(Firm);
     if (id_emisor == 35) return await Firmservice.default_test(Firm);
     if (id_emisor == 36) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 37) return await Firmservice.default_test(Firm);
+    if (id_emisor == 38) return await Firmservice.default_prod(Firm);
+    if (id_emisor == 39) return await Firmservice.default_test(Firm);
+    if (id_emisor == 40) return await Firmservice.default_prod(Firm);
 
     toast.error("No se encontró firmador registrado");
     return null;

@@ -677,7 +677,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
       firmtoken = responseFirm.body;
     }
 
-       if (id_emisor == 37) {
+    if (id_emisor == 37) {
       const responseFirm = await Firmservice.default_test(Firm);
       console.log("firm response")
       console.log(responseFirm);
@@ -691,7 +691,21 @@ const FacturaInvalidate = ({ key, content, user }) => {
       firmtoken = responseFirm.body;
     }
 
-    if (id_emisor > 38) {
+    if (id_emisor == 39) {
+      const responseFirm = await Firmservice.default_test(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+    }
+
+    if (id_emisor == 40) {
+      const responseFirm = await Firmservice.default_prod(Firm);
+      console.log("firm response")
+      console.log(responseFirm);
+      firmtoken = responseFirm.body;
+    }
+
+    if (id_emisor > 41) {
       const responseFirm = null;
       toast.error("No se encontró firmador registrado");
       return

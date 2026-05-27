@@ -1524,6 +1524,35 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
             }
             
+                } else if (userDB.id === 39 || userDB.id === 40) {
+                    const parts = (userDB.name || '').split(/\s+/).filter(Boolean);
+                    const formattedParts = parts.map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase());
+                    const fullName = formattedParts.join(' ');
+                    const placeholderImg = path.join(__dirname, '../assets/imgs/pngwing.png');
+
+                    pdfDoc.fontSize(15).fillColor('#1E3256');
+                    const nameMeasureWidth = 300;
+                    const nameHeight = pdfDoc.heightOfString(fullName, { width: nameMeasureWidth });
+
+                    try {
+                        const imgWidth = 54;
+                        const imgX = 122;
+                        const imgY = yscale - 18;
+                        pdfDoc.save();
+                        pdfDoc.opacity(0.6);
+                        pdfDoc.image(placeholderImg, imgX, imgY, { width: imgWidth });
+                        pdfDoc.restore();
+                    } catch (err) {
+                        console.error('Error adding placeholder image for id 39/40 in mail util:', err);
+                    }
+
+                    pdfDoc.text(fullName, 0, yscale + 36, { align: 'center', width: 300 });
+                    pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
+                        .fontSize(6).text('SERVICIOS MÉDICOS', 0, yscale + 58, { align: 'center', width: 300 })
+                        .fontSize(9).text('Pje. 1, Block C, San Jacinto #6, Proy. Jardínes de La Vega,', 0, yscale + 70, { align: 'center', width: 300 })
+                        .fontSize(9).text('San Salvador, San Salvador.', 0, yscale + 84, { align: 'center', width: 300 })
+                        .fontSize(9).text('Cel .: 7170-4811', 0, yscale + 98, { align: 'center', width: 300 });
+
         }   else {
             pdfDoc.fontSize(10).font('Helvetica').fillColor('#1E3256')
                 .fontSize(15).text('SERVICIOS MÉDICOS', 70, yscale + 30, { align: 'left' })
