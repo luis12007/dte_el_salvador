@@ -513,8 +513,8 @@ const Clientes = () => {
       if (client.documentType === "13") {
         /* if document provided, validate format; otherwise allow null */
         if (
-          client.document !== null &&
-          client.document !== undefined &&
+          client.document !== null ||
+          client.document !== undefined ||
           client.document !== ""
         ) {
           if (client.document.includes("-")) {
