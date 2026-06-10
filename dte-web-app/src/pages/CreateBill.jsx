@@ -447,8 +447,9 @@ const Clientes = () => {
       }
       console.log("document");
       console.log(client.document);
-      if (client.document === "") {
-        toast.error("El documeno no puede tener guiones!", {
+      // Sólo validar guiones si el campo tiene contenido
+      if (client.document && client.document.toString().includes("-")) {
+        toast.error("Error: el documento del cliente no puede tener guiones!", {
           position: "top-center",
           autoClose: 3000, // Auto close after 3 seconds
           hideProgressBar: false, // Display the progress bar
@@ -512,14 +513,11 @@ const Clientes = () => {
 
       if (client.documentType === "13") {
         /* if document provided, validate format; otherwise allow null */
-        if (
-          client.document !== null ||
-          client.document !== undefined ||
-          client.document !== ""
-        ) {
-          if (client.document.includes("-")) {
+        if (client.document && client.document.toString().trim() !== "") {
+          if (client.document.toString().includes("-")) {
+            console.log("Client document with guion:", client.document);
             toast.error(
-              "Error el documento del cliente no puede tener guiones!",
+              "Error: el documento del cliente no puede tener guiones!",
             );
             setIsSubmittingAdd(false);
             return;

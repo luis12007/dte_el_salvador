@@ -55,7 +55,17 @@ const ClietnBillCredit = ({
       return;
     }
 
-    // Update the client state with the new value
+    // Si el campo es `nit` o `nrc`, permitir solo dígitos (eliminar guiones u otros)
+    if (field === "nit" || field === "nrc") {
+      const onlyDigits = (value || "").toString().replace(/\D/g, "");
+      setClient((prevClient) => ({
+        ...prevClient,
+        [field]: onlyDigits,
+      }));
+      return;
+    }
+
+    // Update the client state with the new value (otros campos)
     setClient((prevClient) => ({
       ...prevClient,
       [field]: value,
