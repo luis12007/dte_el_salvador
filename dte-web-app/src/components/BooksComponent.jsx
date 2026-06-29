@@ -106,6 +106,11 @@ const BooksComponent = () => {
       exportRawNotas();
     }
 
+    if (book === "RAW_DELETED") {
+      console.log("Exportación bruta: Eliminados e invalidados");
+      exportRawDeletedInvalidated();
+    }
+
     /* if (book === "RAW_COMP") {
       console.log("Exportación bruta: Compras");
       exportRawCompras();
@@ -721,6 +726,199 @@ const BooksComponent = () => {
       "NOTAS DÉBITO/CRÉDITO (Datos brutos)",
       "Notas (Raw)"
     );
+  };
+
+  const DELETED_HEADERS = [
+    "codigo_de_generacion",
+    "numero_de_control",
+    "sello_de_recepcion",
+    "monto",
+    "fecha",
+    "estado",
+  ];
+
+  const buildDeletedDateTime = (item) => {
+    const dateRaw = (item?.fecha_y_hora_de_generacion || item?.deleted_at || item?.fecha || "")
+      .toString()
+      .split("T")[0];
+    const timeRaw = (item?.horemi || item?.hora || "").toString();
+    let iso = "";
+    if (dateRaw && timeRaw) iso = `${dateRaw}T${timeRaw}`;
+    else if (dateRaw) iso = dateRaw;
+    else if (timeRaw) iso = `1970-01-01T${timeRaw}`;
+    const d = new Date(iso);
+    return isFinite(d.getTime()) ? d : new Date(0);
+  };
+
+  const mapItemToDeletedRow = (item) => ({
+    codigo_de_generacion:
+      item?.codigo_de_generacion ?? item?.codigoGeneracion ?? item?.codigo ?? "",
+    numero_de_control:
+      item?.numero_de_control ?? item?.numeroControl ?? "",
+    sello_de_recepcion:
+      item?.sello_de_recepcion ?? item?.selloRecepcion ?? item?.selloRecibido ?? "",
+    monto:
+      item?.monto ??
+      item?.total_a_pagar ??
+      item?.montototaloperacion ??
+      item?.subtotal ??
+      0,
+    fecha:
+      (item?.fecha_y_hora_de_generacion || item?.deleted_at || item?.fecha || "")
+        .toString()
+        .split("T")[0],
+    estado: item?.sello_de_recepcion || item?.selloRecepcion || item?.selloRecibido ? "invalidado" : "eliminado / no enviado",
+  });
+
+  const generateDeletedExcel = async (data, title, filenameBase) => {
+    if (!data || !data.length) {
+      toast.info("No hay datos para exportar");
+      return;
+    }
+
+    const sorted = [...data].sort((a, b) => buildDeletedDateTime(a) - buildDeletedDateTime(b));
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Datos");
+
+    const addMergedHeader = (text, opts = {}) => {
+      const r = worksheet.addRow([text]);
+      const rowIndex = r.number;
+      worksheet.mergeCells(rowIndex, 1, rowIndex, Math.max(1, DELETED_HEADERS.length));
+      const cell = worksheet.getCell(rowIndex, 1);
+      cell.style = {
+        font: { bold: opts.bold ?? true, size: opts.size ?? 16, name: "Arial" },
+        alignment: {
+          horizontal: opts.align ?? "center",
+          vertical: "middle",
+          wrapText: true,
+        },
+      };
+      r.height = opts.height ?? 25;
+    };
+
+    addMergedHeader(title, { size: 18 });
+    addMergedHeader(`${user?.name ?? ""}`, {
+      bold: true,
+      size: 14,
+      align: "left",
+    });
+    addMergedHeader(`Fecha: ${startDate} al ${endDate}`, {
+      bold: false,
+      size: 12,
+      align: "left",
+    });
+    addMergedHeader(`NRC: ${user?.nrc ?? ""}`, {
+      bold: false,
+      size: 12,
+      align: "left",
+    });
+    worksheet.addRow([""]);
+
+    const headerRow = worksheet.addRow(DELETED_HEADERS);
+    headerRow.eachCell((cell) => {
+      cell.style = {
+        font: { bold: true, color: { argb: "FFFFFFFF" } },
+        fill: {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FF4F81BD" },
+        },
+        alignment: { horizontal: "center", vertical: "middle", wrapText: true },
+        border: {
+          top: { style: "medium", color: { argb: "FF000000" } },
+          left: { style: "medium", color: { argb: "FF000000" } },
+          bottom: { style: "medium", color: { argb: "FF000000" } },
+          right: { style: "medium", color: { argb: "FF000000" } },
+        },
+      };
+    });
+    headerRow.height = 36;
+
+    sorted.forEach((item) => {
+      const mapped = mapItemToDeletedRow(item);
+      const row = worksheet.addRow(DELETED_HEADERS.map((h) => mapped[h] ?? ""));
+      row.eachCell((cell) => {
+        cell.style = {
+          alignment: { horizontal: "left", vertical: "middle", wrapText: true },
+          border: {
+            top: { style: "thin", color: { argb: "FF000000" } },
+            left: { style: "thin", color: { argb: "FF000000" } },
+            bottom: { style: "thin", color: { argb: "FF000000" } },
+            right: { style: "thin", color: { argb: "FF000000" } },
+          },
+        };
+      });
+      row.height = 36;
+    });
+
+    worksheet.columns = DELETED_HEADERS.map(() => ({ width: 24 }));
+
+    try {
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${filenameBase} ${startDate} - ${endDate}.xlsx`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+      toast.success("Archivo creado con éxito");
+    } catch (error) {
+      console.error("Error generating Excel file:", error);
+      toast.error("Error al crear el archivo");
+    }
+  };
+
+  const exportRawDeletedInvalidated = async () => {
+    try {
+      const [deletedData, invalidatedData] = await Promise.all([
+        PlantillaAPI.getdeleted(user_id, token, startDate, endDate),
+        PlantillaAPI.getinvalidated
+          ? PlantillaAPI.getinvalidated(user_id, token, startDate, endDate)
+          : Promise.resolve([]),
+      ]);
+
+      const arrDeleted = Array.isArray(deletedData) ? deletedData : [];
+      const arrInvalidated = Array.isArray(invalidatedData) ? invalidatedData : [];
+
+      const combined = [...arrDeleted, ...arrInvalidated];
+      if (combined.length === 0) {
+        toast.info(
+          "No se encontraron datos para el rango de fechas seleccionado - Eliminados e invalidados"
+        );
+        return;
+      }
+
+      // Dedupe por codigo_de_generacion preferiendo objetos con sello de recepcion
+      const mapByCode = new Map();
+      combined.forEach((it) => {
+        const code = it?.codigo_de_generacion || it?.codigoGeneracion || it?.codigo;
+        if (!code) return;
+        const existing = mapByCode.get(code);
+        if (!existing) {
+          mapByCode.set(code, it);
+        } else {
+          // si el nuevo tiene sello de recepcion y el existente no, reemplaza
+          const newHasSello = !!(it?.sello_de_recepcion || it?.selloRecepcion || it?.selloRecibido);
+          const existingHasSello = !!(existing?.sello_de_recepcion || existing?.selloRecepcion || existing?.selloRecibido);
+          if (newHasSello && !existingHasSello) mapByCode.set(code, it);
+        }
+      });
+
+      const merged = Array.from(mapByCode.values());
+
+      await generateDeletedExcel(
+        merged,
+        "ELIMINADOS E INVALIDADOS (Datos brutos)",
+        "Eliminados e invalidados (Raw)"
+      );
+    } catch (error) {
+      console.error('Error fetching deleted/invalidated:', error);
+      toast.error('Error al obtener datos de eliminados/invalidados');
+    }
   };
 
   // Exportación bruta de Compras (esquema específico)
@@ -1986,6 +2184,7 @@ const BooksComponent = () => {
       "NÚMERO DE CONTROL INTERNO SISTEMA FORMULARIO ÚNICO":
         item.codigo_de_generacion,
       "NOMBRE DEL CLIENTE MANDANTE O MANDATARIO": item.re_name,
+      "NIT DEL CLIENTE": item.re_nit,
       "NRC DEL CLIENTE": item.re_nrc,
       "VENTAS EXENTAS": item.totalexenta || 0,
       "VENTAS INTERNAS GRAVADAS": item.total_agravada || 0,
@@ -2054,6 +2253,7 @@ const BooksComponent = () => {
       "NÚMERO DE CORRELATIVO PREEIMPRESO",
       "NÚMERO DE CONTROL INTERNO SISTEMA FORMULARIO ÚNICO",
       "NOMBRE DEL CLIENTE MANDANTE O MANDATARIO",
+      "NIT DEL CLIENTE",
       "NRC DEL CLIENTE",
       "VENTAS EXENTAS",
       "VENTAS INTERNAS GRAVADAS",
@@ -3221,6 +3421,27 @@ const BooksComponent = () => {
                   className="w-full bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
                 >
                   Descargar Todas los DTE formato (CSV)
+                </button>
+              </div>
+            </div>
+
+            {/* Eliminados e invalidados */}
+            <div className="animate-fadeInUp animate-delay-250 bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🗑️</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-3">
+                  Eliminados e Invalidados
+                </h3>
+                <p className="text-gray-600 mb-6 text-sm">
+                  Exporta a Excel los documentos eliminados o invalidados
+                </p>
+                <button
+                  onClick={() => openModal("RAW_DELETED")}
+                  className="w-full bg-rose-500 hover:bg-rose-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Descargar Excel
                 </button>
               </div>
             </div>

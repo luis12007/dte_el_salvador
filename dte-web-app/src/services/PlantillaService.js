@@ -132,6 +132,33 @@ const PlantillaAPI = {
         }
     },
 
+    getdeleted: async(id, token, start, end) => {
+        try {
+            const res = await fetch(`${BASE_URL}/deleted/get/range/${id}/${start}/${end}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+    getinvalidated: async(id, token, start, end) => {
+        try {
+            const res = await fetch(`${BASE_URL}/invalidated/get/range/${id}/${start}/${end}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
+
     /* Get by type wheader is type 0 or 1 */
     getByUserIdAndType: async(id, token, type) => {
         try {

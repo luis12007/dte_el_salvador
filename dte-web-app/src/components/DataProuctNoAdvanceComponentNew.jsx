@@ -61,12 +61,18 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                             <span className="text-black">{`Cantidad `}</span>
                             <span className="text-tomato">*</span>
                         </div>
-                        <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
+                            <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
                             <input
-                            onChange={(e) => setcuantity(e.target.value)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value === "" || Number(value) >= 0) {
+                                    setcuantity(value);
+                                }
+                            }}
                                 className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                                 placeholder="###"
                                 type="number"
+                                min="0"
                                 value={cuantity}
                             />
 
@@ -93,10 +99,16 @@ const DataProductNoAdvanceComponentNew = ({itemshandleAdd}) => {
                             </div>
                             <div className="self-stretch px-2 h-[23px] relative rounded-6xs box-border z-[1] border-[0.3px] border-solid border-gray-100" >
                                 <input
-                                onChange={(e) => setPrice(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === "" || Number(value) >= 0) {
+                                        setPrice(value);
+                                    }
+                                }}
                                     className="w-full [border:none] [outline:none] font-inria-sans text-xs bg-[transparent] h-3.5 relative text-darkslategray text-left inline-block p-0 z-[2]"
                                     placeholder="###"
                                     type="number"
+                                    min="0"
                                     value={price}
                                 />
                             </div>

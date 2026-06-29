@@ -22,7 +22,11 @@ const port = 3000;
 // Middleware
 const corsOptions = {
     /* adding origin https://cliente-production-e629.up.railway.app and localhost 8080 */
-    origin: ['https://cliente-production-e629.up.railway.app', 'http://localhost:8080'], // Origen permitido
+    origin: [
+        'https://cliente-production-e629.up.railway.app',
+        'https://intuitive-bravery-production.up.railway.app',
+        'http://localhost:8080'
+    ], // Origenes permitidos
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos HTTP permitidos
     credentials: false, // Indica si se permiten credenciales
     optionsSuccessStatus: 204, // Estado para respuestas exitosas de opciones
