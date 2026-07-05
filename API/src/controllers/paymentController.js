@@ -370,6 +370,8 @@ const adminListClients = async (req, res) => {
     const users = await db('usuario as u')
       .leftJoin('emisor as e', 'e.id_usuario', 'u.id')
       .leftJoin('subscription_config as sc', 'sc.user_id', 'u.id')
+      // Solo clientes en producción (ambiente '01'); '00' es pruebas.
+      .where('u.ambiente', '01')
       .select(
         'u.id as user_id',
         'u.usuario as username',

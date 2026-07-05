@@ -5,6 +5,8 @@ import hamburgerimg from '../assets/imgs/hamburguerimg.png'
 import SidebarComponent from '../components/SideBarComponent';
 import HamburguerComponent from '../components/HamburguerComponent';
 import AnnouncementService from '../services/AnnouncementService';
+import PaymentBlockedModal from '../components/PaymentBlockedModal';
+import usePaymentBlock from '../hooks/usePaymentBlock';
 
 import list from '../assets/imgs/portapapeles.png';
 
@@ -22,6 +24,9 @@ const Home = () => {
   // Anuncio / changelogs: se muestra una sola vez por versión a cada cliente.
   const [announcement, setAnnouncement] = useState(null);
   const [showAnnouncement, setShowAnnouncement] = useState(false);
+
+  // Bloqueo por falta de pago (cuenta vencida).
+  const { modalOpen: paymentBlockedOpen, closeModal: closePaymentBlocked, guard: guardPayment } = usePaymentBlock();
 
   useEffect(() => {
     const fetchAnnouncement = async () => {
@@ -63,7 +68,8 @@ const Home = () => {
     navigate("/testadmin/changelog");
   }
 
-  const CreateBillHandler = () => {
+  const CreateBillHandler = async () => {
+    if (await guardPayment()) return; // Cuenta vencida: no puede crear facturas
     navigate("/crear/factura");
   }
 
@@ -73,6 +79,9 @@ const Home = () => {
 
   return (
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col items-center justify-center relative animate-fadeIn">
+      {/* Modal de cuenta bloqueada por falta de pago */}
+      <PaymentBlockedModal open={paymentBlockedOpen} onClose={closePaymentBlocked} />
+
       {/* Modal de anuncio / changelogs */}
       {showAnnouncement && announcement && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">

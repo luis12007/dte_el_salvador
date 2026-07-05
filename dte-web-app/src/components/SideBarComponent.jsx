@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import PaymentBlockedModal from "./PaymentBlockedModal";
+import usePaymentBlock from "../hooks/usePaymentBlock";
 
 // Icono genérico (heroicon-style, stroke currentColor).
 const Icon = ({ d, className = "h-5 w-5" }) => (
@@ -43,7 +45,7 @@ const GroupComponent = ({ visible, setVisible }) => {
       icon: PATHS.doc,
       items: [
         { label: "Lista de DTE", path: "/facturas", icon: PATHS.list },
-        { label: "Crear DTE", path: "/crear/factura", icon: PATHS.plus },
+        { label: "Crear DTE", path: "/crear/factura", icon: PATHS.plus, guard: true },
         { label: "Invalidar DTE", path: "/invalidar", icon: PATHS.ban },
       ],
     },
@@ -102,7 +104,15 @@ const GroupComponent = ({ visible, setVisible }) => {
 
   const toggle = (key) => setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  const go = (path) => {
+  // Bloqueo por falta de pago (cuenta vencida).
+  const { modalOpen: paymentBlockedOpen, closeModal: closePaymentBlocked, guard: guardPayment } = usePaymentBlock();
+
+  const go = async (item) => {
+    const path = typeof item === "string" ? item : item.path;
+    const needsGuard = typeof item === "object" && item.guard;
+    if (needsGuard && (await guardPayment())) {
+      return; // Cuenta vencida: no puede crear
+    }
     navigate(path);
     setVisible(false);
   };
@@ -111,6 +121,9 @@ const GroupComponent = ({ visible, setVisible }) => {
 
   return (
     <>
+      {/* Modal de cuenta bloqueada por falta de pago */}
+      <PaymentBlockedModal open={paymentBlockedOpen} onClose={closePaymentBlocked} />
+
       {/* Overlay para cerrar al hacer click afuera */}
       {visible && (
         <div
@@ -186,7 +199,7 @@ const GroupComponent = ({ visible, setVisible }) => {
                       {section.items.map((item) => (
                         <button
                           key={item.path}
-                          onClick={() => go(item.path)}
+                          onClick={() => go(item)}
                           className={`w-full flex items-center gap-3 rounded-lg px-3 py-2 transition ${
                             isActive(item.path)
                               ? "bg-blue-50 text-steelblue-300 font-semibold"
