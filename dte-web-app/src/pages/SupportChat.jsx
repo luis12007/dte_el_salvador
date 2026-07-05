@@ -241,9 +241,9 @@ const SupportChat = ({ mode = 'user' }) => {
     : 'Escribe aquí tu duda y soporte te responderá en este mismo chat.';
 
   return (
-    <div className="min-h-screen bg-steelblue-300 text-slate-900 pt-[66px] pb-8">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px]">
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl xl:min-h-[calc(100vh-170px)] xl:max-h-[calc(100vh-170px)]">
+    <div className="h-[calc(100dvh-66px)] min-h-[calc(100dvh-66px)] overflow-hidden bg-steelblue-300 text-slate-900 pt-[66px]">
+      <div className="mx-auto flex h-full max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px]">
+        <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
           <header className="border-b border-gray-200 bg-gradient-to-r from-steelblue-300 via-steelblue-200 to-deepskyblue px-5 py-4 sm:px-6">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -260,9 +260,9 @@ const SupportChat = ({ mode = 'user' }) => {
             </div>
           </header>
 
-          <div className="grid min-h-[calc(100vh-170px)] lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)]">
+          <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)]">
             {isAdmin && (
-              <aside className="border-r border-gray-200 bg-white p-4 sm:p-5 lg:flex lg:flex-col lg:gap-4 xl:sticky xl:top-[66px] xl:max-h-[calc(100vh-170px)] xl:overflow-y-auto">
+              <aside className="min-h-0 border-r border-gray-200 bg-white p-4 sm:p-5 lg:flex lg:flex-col lg:gap-4 lg:overflow-y-auto">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Conversaciones</h2>
                   <span className="rounded-full bg-steelblue-100 px-3 py-1 text-xs text-white">{threads.length}</span>
@@ -302,7 +302,7 @@ const SupportChat = ({ mode = 'user' }) => {
               </aside>
             )}
 
-            <section className="flex min-h-0 flex-col bg-white xl:max-h-[calc(100vh-170px)]">
+            <section className="flex min-h-0 min-w-0 flex-col bg-white">
               <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -317,7 +317,7 @@ const SupportChat = ({ mode = 'user' }) => {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto bg-slate-50 px-4 py-5 sm:px-6">
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-slate-50 px-4 py-5 sm:px-6">
                 {loading ? (
                   <div className="flex min-h-[320px] items-center justify-center">
                     <div className="flex flex-col items-center gap-3 text-slate-500">
@@ -326,13 +326,13 @@ const SupportChat = ({ mode = 'user' }) => {
                     </div>
                   </div>
                 ) : messages.length > 0 ? (
-                  <div className="space-y-4">
+                  <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
                     {messages.map((message) => {
                       const parsedContent = parseMessageContent(message.message);
                       const isOwnMessage = message.sender_role === currentRole;
                       return (
                         <article key={message.id} className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[85%] rounded-3xl px-4 py-3 shadow-sm ${isOwnMessage ? 'bg-steelblue-300 text-white' : 'bg-white text-slate-800 border border-gray-200'}`}>
+                          <div className={`max-w-[min(85%,42rem)] rounded-3xl px-4 py-3 shadow-sm ${isOwnMessage ? 'bg-steelblue-300 text-white' : 'border border-gray-200 bg-white text-slate-800'}`}>
                             <div className="mb-1 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] opacity-80">
                               <span>{message.sender_name}</span>
                               <span>{new Date(message.created_at).toLocaleString('es-ES')}</span>
@@ -382,12 +382,12 @@ const SupportChat = ({ mode = 'user' }) => {
                   </div>
                 )}
                 <form onSubmit={handleSend} className="flex flex-col gap-3 sm:flex-row xl:flex-nowrap">
-                  <div className="flex flex-1 flex-col gap-3 sm:flex-row xl:flex-nowrap">
+                  <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row xl:flex-nowrap">
                     <textarea
                       value={draft}
                       onChange={(event) => setDraft(event.target.value)}
                       rows={3}
-                      className="min-h-[92px] w-full flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-steelblue-200 focus:ring-2 focus:ring-steelblue-100"
+                      className="min-h-[92px] w-full flex-1 resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-steelblue-200 focus:ring-2 focus:ring-steelblue-100"
                       placeholder={isAdmin ? 'Responder al usuario...' : 'Escribe tu mensaje de soporte...'}
                     />
                     <div className="flex gap-2 sm:w-44 sm:flex-col xl:w-48">

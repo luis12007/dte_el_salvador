@@ -2,9 +2,12 @@ const db = require('../db/db');
 
 const getRequestRole = (user = {}) => user.role ?? user.rol ?? user.id_rol ?? user.tipo_usuario ?? user.tipoUsuario ?? user.user_role ?? null;
 
-const isRoleOne = (user = {}) => Number(getRequestRole(user)) === 1;
+const isSupportAdmin = (user = {}) => {
+  const role = getRequestRole(user);
+  return Number(role) === 1 || Number(user.id) === 1;
+};
 
-const canAccessThread = (req, userId) => isRoleOne(req.user) || String(req.user?.id) === String(userId);
+const canAccessThread = (req, userId) => isSupportAdmin(req.user) || String(req.user?.id) === String(userId);
 
 const getSupportMessages = async (req, res) => {
   const userId = req.params.userId;
@@ -27,7 +30,7 @@ const getSupportMessages = async (req, res) => {
 };
 
 const getSupportThreads = async (req, res) => {
-  if (!isRoleOne(req.user)) {
+  if (!isSupportAdmin(req.user)) {
     return res.status(403).json({ message: 'No autorizado' });
   }
 
@@ -86,7 +89,7 @@ const sendSupportMessage = async (req, res) => {
     return res.status(400).json({ message: 'El mensaje es obligatorio' });
   }
 
-  const senderRole = isRoleOne(req.user) ? 'support' : 'user';
+  const senderRole = isSupportAdmin(req.user) ? 'support' : 'user';
 
   try {
     const payload = {
@@ -117,7 +120,7 @@ const markThreadRead = async (req, res) => {
     return res.status(403).json({ message: 'No autorizado' });
   }
 
-  const readerRole = isRoleOne(req.user) ? 'support' : 'user';
+  const readerRole = isSupportAdmin(req.user) ? 'support' : 'user';
 
   try {
     const query = db('support_chat_messages').where({ user_id: userId });
