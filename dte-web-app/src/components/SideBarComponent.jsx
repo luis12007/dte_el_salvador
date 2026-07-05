@@ -16,6 +16,7 @@ const GroupComponent = ({ visible, setVisible }) => {
   const GoCancelBill = () => navigate("/invalidar");
   const GoBooksBill = () => navigate("/facturas/libros");
   const GoDownloadDTEs = () => navigate("/descargar-dtes");
+  const GoSupportChat = () => navigate("/soporte");
   const CloseHandler = () => navigate("/ingresar");
 
   return (
@@ -85,6 +86,13 @@ const GroupComponent = ({ visible, setVisible }) => {
           <button onClick={GoDownloadDTEs} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
             <img className="h-6 w-6 object-contain" alt="" src="/descargar@2x.png" />
             <span className="text-sm text-gray-800 group-hover:text-sky-700">Descargar DTEs</span>
+          </button>
+
+          <button onClick={GoSupportChat} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
+            <svg className="h-6 w-6 text-gray-600 group-hover:text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h8m-8 4h5m1 5l-3 3-3-3h-2a4 4 0 01-4-4V6a4 4 0 014-4h12a4 4 0 014 4v8a4 4 0 01-4 4h-3z" />
+            </svg>
+            <span className="text-sm text-gray-800 group-hover:text-sky-700">Soporte / Chat</span>
           </button>
 
           <div className="pt-2 mt-2 border-t">

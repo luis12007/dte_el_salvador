@@ -21,8 +21,7 @@ const Home = () => {
   };
 
   const SupportHandler = () => {
-    /* window.open("https://wa.link/h382bz", "_blank"); */
-    navigate("/facturas");
+    navigate("/soporte");
   }
 
   const CreateBillHandler = () => {
@@ -108,7 +107,7 @@ const Home = () => {
         </header>
 
         {/* Botones principales */}
-        <div className="w-full max-w-md flex flex-col items-center gap-10 mt-8 animate-slideInUp animate-delay-600">
+        <div className="w-full max-w-md flex flex-col items-center gap-4 mt-8 animate-slideInUp animate-delay-600">
           <button
             className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 mb-2 hover:scale-105 hover:shadow-2xl hover:bg-blue-50 active:scale-95 transition-all duration-300 group"
             onClick={CreateBillHandler}
@@ -124,7 +123,7 @@ const Home = () => {
           </button>
           <button
             className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 hover:scale-105 hover:shadow-2xl hover:bg-green-50 active:scale-95 transition-all duration-300 group"
-            onClick={SupportHandler}
+            onClick={() => navigate("/facturas")}
           >
             <img
               className="h-10 w-10 object-contain mr-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
@@ -133,6 +132,19 @@ const Home = () => {
             />
             <span className="text-xl font-inter text-black transition-all duration-300 group-hover:text-green-600 group-hover:font-semibold">
               Lista de Facturas
+            </span>
+          </button>
+          <button
+            className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 hover:scale-105 hover:shadow-2xl hover:bg-cyan-50 active:scale-95 transition-all duration-300 group"
+            onClick={SupportHandler}
+          >
+            <img
+              className="h-10 w-10 object-contain mr-4 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+              alt=""
+              src="/usuario-1@2x.png"
+            />
+            <span className="text-xl font-inter text-black transition-all duration-300 group-hover:text-green-600 group-hover:font-semibold">
+              Soporte / Chat
             </span>
           </button>
         </div>

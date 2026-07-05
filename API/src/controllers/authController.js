@@ -14,6 +14,8 @@ const login = async(req, res) => {
 
 
         if (user) {
+            const userRole = user.role ?? user.rol ?? user.id_rol ?? user.tipo_usuario ?? user.tipoUsuario ?? user.user_role ?? null;
+
             // Generar un token JWT si las credenciales son válidas
             const token = jwt.sign(user, "Motroco120072ñs1wa", { expiresIn: '200h' });
 
@@ -24,6 +26,8 @@ const login = async(req, res) => {
                 token,
                 username: user.usuario,
                 ambiente: user.ambiente,
+                role: userRole,
+                rol: userRole,
                 payment: user.payment,
 
             });

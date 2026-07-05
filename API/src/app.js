@@ -15,6 +15,7 @@ const sellarRoutes = require('./routes/sellarRoutes');
 const mailRoutes = require('./routes/mailRoutes');
 const comprasRoutes = require('./routes/comprasRoutes');
 const proveedorRoutes = require('./routes/proveedorRoutes');
+const supportChatRoutes = require('./routes/supportChatRoutes');
 const app = express();
 const port = 3000;
 
@@ -49,6 +50,8 @@ app.use('/emisor', usuarioRoutes);
 app.use('/mail', mailRoutes);
 app.use('/compras', comprasRoutes);
 app.use('/proveedor', proveedorRoutes);
+app.use('/support-chat', supportChatRoutes);
+app.use('/api/support-chat', supportChatRoutes);
 app.use('/deleted', plantillasDeleted);
 app.use('/invalidated', plantillasInvalidated);
 

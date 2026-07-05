@@ -17,9 +17,13 @@ const Login_LH = () => {
     console.log(result);
     
     if (result.status === "success") {
+      const userRole = result.role ?? result.rol ?? result.id_rol ?? result.tipo_usuario ?? result.tipoUsuario ?? result.user_role;
       localStorage.setItem("token", result.token);
       localStorage.setItem("user_id", result.user_id);
       localStorage.setItem("username", result.username);
+      if (userRole !== undefined && userRole !== null && userRole !== '') {
+        localStorage.setItem("user_role", String(userRole));
+      }
       navigate("/principal");
       return
 
