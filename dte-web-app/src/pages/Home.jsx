@@ -1,22 +1,54 @@
-import Homeimg from '../assets/imgs/homeimg.webp'         
-import { useState } from 'react';
+import Homeimg from '../assets/imgs/homeimg.webp'
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import hamburgerimg from '../assets/imgs/hamburguerimg.png'
 import SidebarComponent from '../components/SideBarComponent';
 import HamburguerComponent from '../components/HamburguerComponent';
+import AnnouncementService from '../services/AnnouncementService';
 
 import list from '../assets/imgs/portapapeles.png';
 
 const Home = () => {
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   const ambiente = localStorage.getItem("ambiente");
   const userNumber = localStorage.getItem("userNumber");
   const currentUserId = Number(localStorage.getItem('user_id'));
   const currentUserRole = Number(localStorage.getItem('user_role') || localStorage.getItem('role') || localStorage.getItem('rol'));
   const isSupportAdmin = currentUserId === 1 || currentUserRole === 1;
-  
+
+  // Anuncio / changelogs: se muestra una sola vez por versión a cada cliente.
+  const [announcement, setAnnouncement] = useState(null);
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
+
+  useEffect(() => {
+    const fetchAnnouncement = async () => {
+      try {
+        const data = await AnnouncementService.getCurrent(token);
+        if (data && data.enabled && data.message && String(data.message).trim()) {
+          const seenVersion = Number(localStorage.getItem('announcement_seen_version') || 0);
+          if (Number(data.version) !== seenVersion) {
+            setAnnouncement(data);
+            setShowAnnouncement(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error al obtener el anuncio', error);
+      }
+    };
+
+    fetchAnnouncement();
+  }, [token]);
+
+  const closeAnnouncement = () => {
+    if (announcement) {
+      localStorage.setItem('announcement_seen_version', String(announcement.version));
+    }
+    setShowAnnouncement(false);
+  };
+
   const getAmbienteText = (ambienteValue) => {
     if (ambienteValue === "01") return "PRODUCCIÓN";
     if (ambienteValue === "00") return "PRUEBAS";
@@ -25,6 +57,10 @@ const Home = () => {
 
   const SupportHandler = () => {
     navigate(isSupportAdmin ? "/testadmin/support-chat" : "/soporte");
+  }
+
+  const ChangelogAdminHandler = () => {
+    navigate("/testadmin/changelog");
   }
 
   const CreateBillHandler = () => {
@@ -37,6 +73,33 @@ const Home = () => {
 
   return (
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col items-center justify-center relative animate-fadeIn">
+      {/* Modal de anuncio / changelogs */}
+      {showAnnouncement && announcement && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl ring-1 ring-black/5 overflow-hidden animate-fadeInUp">
+            <div className="bg-steelblue-300 px-6 py-4 flex items-center gap-3">
+              <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+              </svg>
+              <h2 className="text-lg font-bold text-white">Novedades y actualizaciones</h2>
+            </div>
+            <div className="px-6 py-5 max-h-[50vh] overflow-y-auto">
+              <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">
+                {announcement.message}
+              </p>
+            </div>
+            <div className="px-6 pb-5">
+              <button
+                onClick={closeAnnouncement}
+                className="w-full bg-steelblue-300 hover:bg-steelblue-200 text-white font-semibold py-2.5 rounded-xl transition"
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hamburguer y Sidebar fuera del flujo principal */}
       <div className="absolute top-0 left-0 z-20 animate-slideInLeft">
   <HamburguerComponent sidebar={sidebar} open={visible} />
@@ -150,6 +213,20 @@ const Home = () => {
               {isSupportAdmin ? 'Panel de soporte' : 'Soporte / Chat'}
             </span>
           </button>
+
+          {isSupportAdmin && (
+            <button
+              className="w-full flex flex-row items-center bg-white rounded-xl shadow-lg px-6 py-4 hover:scale-105 hover:shadow-2xl hover:bg-amber-50 active:scale-95 transition-all duration-300 group border border-amber-100"
+              onClick={ChangelogAdminHandler}
+            >
+              <svg className="h-10 w-10 mr-4 text-steelblue-300 transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+              </svg>
+              <span className="text-xl font-inter text-black transition-all duration-300 group-hover:text-amber-600 group-hover:font-semibold">
+                Anuncio / Changelogs
+              </span>
+            </button>
+          )}
         </div>
 
         {/* Footer */}

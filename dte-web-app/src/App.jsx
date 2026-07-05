@@ -35,6 +35,9 @@ import CreateCR from './pages/CreateCR';
 import CreateCI from './pages/CreateCI';
 import DownloadDTEs from './pages/DownloadDTEs';
 import SupportChat from './pages/SupportChat';
+import AnnouncementAdmin from './pages/AnnouncementAdmin';
+import PagoServicio from './pages/PagoServicio';
+import PaymentsAdmin from './pages/PaymentsAdmin';
 
 /* http://localhost:3000/#/ingresar the example route */
 export default function App() {
@@ -91,6 +94,9 @@ export default function App() {
         <Route path="/perfil" element={<Private><Profile/></Private>}/>
         <Route path="/soporte" element={<Private><SupportChat mode="user" /></Private>}/>
         <Route path="/testadmin/support-chat" element={<Private><SupportChat mode="admin" /></Private>}/>
+        <Route path="/testadmin/changelog" element={<Private><AnnouncementAdmin /></Private>}/>
+        <Route path="/pago" element={<Private><PagoServicio /></Private>}/>
+        <Route path="/testadmin/pagos" element={<Private><PaymentsAdmin /></Private>}/>
 
         <Route path="/sidebar" element={<Private><Sidebar/></Private>}/>
 
