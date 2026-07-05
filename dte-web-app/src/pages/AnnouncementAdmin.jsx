@@ -7,8 +7,8 @@ import AnnouncementService from '../services/AnnouncementService';
 const AnnouncementAdmin = () => {
   const token = localStorage.getItem('token');
   const currentUserId = Number(localStorage.getItem('user_id'));
-  const currentUserRole = Number(localStorage.getItem('user_role') || localStorage.getItem('role') || localStorage.getItem('rol'));
-  const isAdmin = currentUserId === 1 || currentUserRole === 1;
+  // Solo el usuario id 1 puede administrar el anuncio.
+  const isAdmin = currentUserId === 1;
   const navigate = useNavigate();
 
   const [message, setMessage] = useState('');

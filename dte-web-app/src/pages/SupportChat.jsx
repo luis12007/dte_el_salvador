@@ -2,44 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SupportChatService from '../services/SupportChatService';
 
-const decodeJwtPayload = (token) => {
-  if (!token) {
-    return null;
-  }
-
-  const parts = token.split('.');
-  if (parts.length < 2) {
-    return null;
-  }
-
-  try {
-    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
-    return JSON.parse(window.atob(padded));
-  } catch (error) {
-    console.error('Error al decodificar el token', error);
-    return null;
-  }
-};
-
-const getCurrentUserRole = () => {
-  const storedRole = localStorage.getItem('user_role') || localStorage.getItem('role') || localStorage.getItem('rol');
-
-  if (storedRole !== null && storedRole !== '') {
-    const parsedRole = Number(storedRole);
-    return Number.isNaN(parsedRole) ? storedRole : parsedRole;
-  }
-
-  const token = localStorage.getItem('token');
-  const decodedToken = decodeJwtPayload(token);
-
-  if (!decodedToken) {
-    return null;
-  }
-
-  return decodedToken.role ?? decodedToken.rol ?? decodedToken.id_rol ?? decodedToken.tipo_usuario ?? decodedToken.tipoUsuario ?? decodedToken.user_role ?? null;
-};
-
 const parseMessageContent = (rawMessage) => {
   if (!rawMessage) {
     return { text: '', attachment: null };
@@ -69,8 +31,8 @@ const SupportChat = ({ mode = 'user' }) => {
   const userId = localStorage.getItem('user_id');
   const username = localStorage.getItem('username') || 'Usuario';
   const navigate = useNavigate();
-  const currentUserRole = getCurrentUserRole();
-  const isAdmin = mode === 'admin' || Number(currentUserRole) === 1 || Number(userId) === 1;
+  // Solo el usuario id 1 puede usar el panel de soporte (modo admin).
+  const isAdmin = mode === 'admin' && Number(userId) === 1;
   const currentRole = isAdmin ? 'support' : 'user';
 
   const [threads, setThreads] = useState([]);
@@ -148,6 +110,12 @@ const SupportChat = ({ mode = 'user' }) => {
       return;
     }
 
+    // El panel de soporte (modo admin) es exclusivo del usuario id 1.
+    if (mode === 'admin' && Number(userId) !== 1) {
+      navigate('/soporte');
+      return;
+    }
+
     if (!isAdmin) {
       setSelectedUserId(userId);
       loadMessages(userId);
@@ -155,7 +123,7 @@ const SupportChat = ({ mode = 'user' }) => {
     }
 
     loadThreads();
-  }, [isAdmin, navigate, token, userId]);
+  }, [isAdmin, mode, navigate, token, userId]);
 
   useEffect(() => {
     if (!selectedUserId) {

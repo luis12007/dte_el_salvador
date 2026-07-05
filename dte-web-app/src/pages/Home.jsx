@@ -16,8 +16,8 @@ const Home = () => {
   const ambiente = localStorage.getItem("ambiente");
   const userNumber = localStorage.getItem("userNumber");
   const currentUserId = Number(localStorage.getItem('user_id'));
-  const currentUserRole = Number(localStorage.getItem('user_role') || localStorage.getItem('role') || localStorage.getItem('rol'));
-  const isSupportAdmin = currentUserId === 1 || currentUserRole === 1;
+  // Solo el usuario id 1 es administrador (paneles de soporte, pagos y anuncios).
+  const isSupportAdmin = currentUserId === 1;
 
   // Anuncio / changelogs: se muestra una sola vez por versión a cada cliente.
   const [announcement, setAnnouncement] = useState(null);
