@@ -17,6 +17,8 @@ import direct from "../assets/imgs/direct.png";
 import signature from "../assets/imgs/signature.png";
 import UserService from "../services/UserServices";
 import EmisorService from "../services/emisor";
+import PaymentBlockedModal from "./PaymentBlockedModal";
+import usePaymentBlock from "../hooks/usePaymentBlock";
 
 const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const [tipo, setTipo] = useState("");
@@ -31,6 +33,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const [formattedTotal, setFormattedTotal] = useState("");
   const deleteInFlightRef = useRef(false);
   const autoFixMunicipioFormatoAttemptedRef = useRef(false);
+  // Bloqueo por falta de pago (cuenta vencida): no permite firmar/enviar.
+  const { modalOpen: paymentBlockedOpen, closeModal: closePaymentBlocked, guard: guardPayment } = usePaymentBlock();
 
   useEffect(() => {
     if (content.tipo === "01") {
@@ -509,6 +513,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
   const ValidateBillHandler = async () => {
     /* Firm DTE */
+    // Cuenta vencida por falta de pago: no puede firmar ni enviar al ministerio.
+    if (await guardPayment()) return;
     /* -----------------CONST DATA--------------------------- */
     try {
       if (content.tipo == "01") {
@@ -3662,6 +3668,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
   return (
     <div className="w-full max-w-full mx-0 bg-white rounded-xl shadow-sm ring-1 ring-black/5 px-3 sm:px-5 py-4 sm:py-5 my-6 text-black font-inria-sans overflow-hidden break-words box-border">
+      <PaymentBlockedModal open={paymentBlockedOpen} onClose={closePaymentBlocked} />
       <header className="flex items-center justify-between min-w-0 w-full">
         <div className="flex items-center gap-3 min-w-0">
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-semibold bg-gainsboro-200 text-black border border-gray-300">
