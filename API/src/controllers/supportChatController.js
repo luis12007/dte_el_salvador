@@ -1,4 +1,22 @@
 const db = require('../db/db');
+const { notifyFirstSupportMessage } = require('../utils/supportNotifications');
+
+// Inicio del día (00:00 hora El Salvador, UTC-6) expresado en UTC.
+const getSVStartOfDayUTC = () => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/El_Salvador',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+    .formatToParts(new Date())
+    .reduce((acc, part) => {
+      acc[part.type] = part.value;
+      return acc;
+    }, {});
+  // Medianoche en El Salvador = 06:00 UTC del mismo día.
+  return new Date(`${parts.year}-${parts.month}-${parts.day}T06:00:00.000Z`);
+};
 
 const getRequestRole = (user = {}) => user.role ?? user.rol ?? user.id_rol ?? user.tipo_usuario ?? user.tipoUsuario ?? user.user_role ?? null;
 
@@ -105,6 +123,31 @@ const sendSupportMessage = async (req, res) => {
     const [createdMessage] = await db('support_chat_messages')
       .returning('*')
       .insert(payload);
+
+    // Si es el primer mensaje del día de un cliente, notificar por correo.
+    if (senderRole === 'user') {
+      try {
+        const startOfDay = getSVStartOfDayUTC();
+        const [{ count: todayCount } = {}] = await db('support_chat_messages')
+          .where({ user_id: userId, sender_role: 'user' })
+          .andWhere('created_at', '>=', startOfDay)
+          .count('* as count');
+
+        if (Number(todayCount) === 1) {
+          // Fire-and-forget: un fallo de correo no debe romper el guardado.
+          notifyFirstSupportMessage({
+            userId,
+            senderName: createdMessage.sender_name,
+            message: createdMessage.message,
+            createdAt: createdMessage.created_at,
+          }).catch((mailError) => {
+            console.error('Error al notificar primer mensaje de soporte por correo', mailError);
+          });
+        }
+      } catch (notifyError) {
+        console.error('Error al verificar el primer mensaje del día', notifyError);
+      }
+    }
 
     return res.status(201).json(createdMessage);
   } catch (error) {
