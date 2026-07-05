@@ -95,7 +95,25 @@ const PlantillaAPI = {
                 }
             });
             const data = await res.json();
+            return data;
+        } catch (error) {
+            console.log(error);
+        }
+    },
 
+    getByUserIdPaginated: async(id, token, page = 1, limit = 20) => {
+        try {
+            const params = new URLSearchParams({
+                page: String(page),
+                limit: String(limit),
+            });
+
+            const res = await fetch(`${BASE_URL}/plantillas/get/${id}?${params.toString()}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
             return data;
         } catch (error) {
             console.log(error);

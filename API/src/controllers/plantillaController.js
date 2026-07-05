@@ -999,14 +999,42 @@ const insertarFacturasxItems = async(facturasxitems) => {
 const getPlantillasByUserId = async(req, res) => {
     console.log("getPlantillasByUserId");
     const usuarioid = req.params.id;
+    const page = Number(req.query.page);
+    const limit = Number(req.query.limit);
+
     try {
-        //return all plantillas by user id
-        const plantilla = await db("plantilla").where({ id_emisor: usuarioid });
-        if (!plantilla) {
-            return res.status(404).json({ message: "plantilla no encontrado" });
+        const baseQuery = db("plantilla")
+            .where({ id_emisor: usuarioid })
+            .orderBy([
+                { column: "fecha_y_hora_de_generacion", order: "desc" },
+                { column: "horemi", order: "desc" },
+            ]);
+
+        if (!Number.isFinite(page) && !Number.isFinite(limit)) {
+            const plantilla = await baseQuery;
+            if (!plantilla) {
+                return res.status(404).json({ message: "plantilla no encontrado" });
+            }
+            console.log(plantilla);
+            return res.status(200).json(plantilla);
         }
-        console.log(plantilla);
-        res.status(200).json(plantilla);
+
+        const currentPage = Number.isFinite(page) && page > 0 ? page : 1;
+        const currentLimit = Number.isFinite(limit) && limit > 0 ? limit : 20;
+        const offset = (currentPage - 1) * currentLimit;
+
+        const rows = await baseQuery.clone().limit(currentLimit + 1).offset(offset);
+        const hasMore = rows.length > currentLimit;
+        const items = hasMore ? rows.slice(0, currentLimit) : rows;
+
+        return res.status(200).json({
+            items,
+            pagination: {
+                page: currentPage,
+                limit: currentLimit,
+                hasMore,
+            },
+        });
     } catch (error) {
         console.error("Error al obtener plantilla por ID", error);
         res.status(500).json({ message: "Error en el servidor" });

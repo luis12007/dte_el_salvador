@@ -18,6 +18,7 @@ import ExcelJS from 'exceljs';
 const HomeFacturas = () => {
   const token = localStorage.getItem("token");
   const user_id = localStorage.getItem("user_id");
+  const PAGE_SIZE = 20;
   const [items, setItems] = useState([]);
   const tokenminis = localStorage.getItem("tokenminis");
   const [user, setUser] = useState({});
@@ -26,16 +27,83 @@ const HomeFacturas = () => {
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [filterByc, setFilterBy] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
-  const [showAllDates, setShowAllDates] = useState(false);
-  const INITIAL_DAYS_TO_SHOW = 10;
-      const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [isFiltered, setIsFiltered] = useState(false);
+  const navigate = useNavigate();
   
 
   // Sidebar visibility toggle
   const [visible, setVisible] = useState(false);
   const toggleSidebar = () => {
     setVisible(!visible);
+  };
+
+  const sortItemsByDateTime = (list = []) => {
+    return [...list].sort((a, b) => {
+      const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
+      const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
+      return dateTimeB - dateTimeA;
+    });
+  };
+
+  const mergeUniqueItems = (previousItems, newItems) => {
+    const merged = new Map();
+
+    [...previousItems, ...newItems].forEach((item) => {
+      if (item && item.codigo_de_generacion) {
+        merged.set(item.codigo_de_generacion, item);
+      }
+    });
+
+    return sortItemsByDateTime(Array.from(merged.values()));
+  };
+
+  const normalizePaginatedResponse = (response) => {
+    if (Array.isArray(response)) {
+      return {
+        items: response,
+        hasMore: false,
+      };
+    }
+
+    return {
+      items: Array.isArray(response?.items) ? response.items : [],
+      hasMore: Boolean(response?.pagination?.hasMore),
+    };
+  };
+
+  const loadBillsPage = async ({ page = 1, reset = false } = {}) => {
+    try {
+      if (reset) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+
+      const response = await PlantillaAPI.getByUserIdPaginated(user_id, token, page, PAGE_SIZE);
+      const { items: pageItems, hasMore: pageHasMore } = normalizePaginatedResponse(response);
+
+      setItems((previousItems) => {
+        const nextItems = reset ? pageItems : mergeUniqueItems(previousItems, pageItems);
+        return sortItemsByDateTime(nextItems);
+      });
+      setHasMore(pageHasMore);
+      setCurrentPage(page);
+      return pageItems;
+    } catch (error) {
+      console.error("Error loading paginated bills:", error);
+      toast.error("Error al cargar las facturas");
+      if (reset) {
+        setItems([]);
+      }
+      setHasMore(false);
+      return [];
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   };
 
   // Data fetching
@@ -60,27 +128,8 @@ const HomeFacturas = () => {
                 navigate("/ingresar");
             }
         setUser(resultusers);
-        const result = await PlantillaAPI.getByUserId(user_id, token);
-        console.log("result");
-        console.log(result);
-        
-        /* organize the results by fecha_y_hora_de_generacion desc with better sorting */
-        if (result && Array.isArray(result)) {
-          result.sort((a, b) => {
-            // Create full datetime for comparison
-            const dateA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
-            const dateB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
-            return dateB - dateA; // Newest first
-          });
-        }
-        
-        setItems(result || []); // Default to empty array
+          await loadBillsPage({ page: 1, reset: true });
 
-        if (result !== null || result.length) {
-        setLoading(false);
-        setIsLoading(false);
-        
-        }
         if (tokenminis === "undefined" || tokenminis === null) {
           const resultAuthminis = await LoginAPI.loginMinis(
             resultusers.nit,
@@ -128,19 +177,18 @@ const HomeFacturas = () => {
 
 
   const excelHandler = async () => {
-    if (!items.length) {
+    const exportSource = isFiltered ? items : await PlantillaAPI.getByUserId(user_id, token);
+    const itemsToExport = Array.isArray(exportSource) ? exportSource : items;
+
+    if (!itemsToExport.length) {
       toast.info("No se encontraron datos para el rango de fechas seleccionado - Facturas");
       return;
     }
     console.log('Exporting to Excel...');
-    console.log(items)
+    console.log(itemsToExport)
 
     // Sort items by datetime before exporting to maintain order in Excel
-    const sortedItems = [...items].sort((a, b) => {
-      const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
-      const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
-      return dateTimeB - dateTimeA; // Newest first
-    });
+    const sortedItems = sortItemsByDateTime(itemsToExport);
 
     const transformedData = sortedItems.map((item, index) => ({
       'FECHA DE EMISIÓN DEL DOCUMENTO': item.fecha_y_hora_de_generacion,
@@ -159,7 +207,7 @@ const HomeFacturas = () => {
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Facturas');
-    const { firstDate, mostRecentDate } = findFirstAndMostRecentDate(items);
+    const { firstDate, mostRecentDate } = findFirstAndMostRecentDate(sortedItems);
 
     // Add header rows
     const headerRows = [
@@ -512,13 +560,11 @@ const HomeFacturas = () => {
       
       // Sort filtered items by fecha_y_hora_de_generacion and horemi desc
       if (newItems && Array.isArray(newItems)) {
-        newItems.sort((a, b) => {
-          // Create full datetime for precise sorting
-          const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
-          const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
-          return dateTimeB - dateTimeA; // Newest first
-        });
+        newItems = sortItemsByDateTime(newItems);
       }
+      setIsFiltered(true);
+      setHasMore(false);
+      setCurrentPage(1);
       
     } catch (error) {
       console.error('Error fetching filtered items:', error);
@@ -528,6 +574,14 @@ const HomeFacturas = () => {
     console.log('Filtered items:', newItems);
     setItems(newItems || []);
     setLoading(false);
+  };
+
+  const handleShowMore = async () => {
+    if (loadingMore || !hasMore) {
+      return;
+    }
+
+    await loadBillsPage({ page: currentPage + 1, reset: false });
   };
 
 
@@ -629,7 +683,7 @@ const HomeFacturas = () => {
           <>
             {Array.isArray(items) && items.length > 0 ? (
               <>
-              {(showAllDates ? sortedGroupedDates : sortedGroupedDates.slice(0, INITIAL_DAYS_TO_SHOW)).map((date, index) => (
+              {sortedGroupedDates.map((date, index) => (
                 <div key={date} className="animate-slideInUp px-6">
                   <div className="flex items-center  justify-center mt-20">
                     <div className="inline-flex items-center gap-3 bg-slate-300 text-black px-4 py-2 rounded-full shadow-sm border border-gray-300 mx-3 sm:mx-0">
@@ -651,15 +705,15 @@ const HomeFacturas = () => {
                   ))}
                 </div>
               ))}
-              {/* Botón Mostrar más / Mostrar menos */}
-              {sortedGroupedDates.length > INITIAL_DAYS_TO_SHOW && (
+              {hasMore && (
                 <div className="flex justify-center my-8">
                   <button
-                    onClick={() => setShowAllDates(!showAllDates)}
-                    className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg transition border border-white/30 shadow-md"
+                    onClick={handleShowMore}
+                    disabled={loadingMore}
+                    className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg transition border border-white/30 shadow-md"
                   >
                     <span className="text-base font-medium">
-                      {showAllDates ? 'Mostrar menos' : `Mostrar más (${sortedGroupedDates.length - INITIAL_DAYS_TO_SHOW} días restantes)`}
+                      {loadingMore ? 'Cargando más...' : 'Mostrar más'}
                     </span>
                   </button>
                 </div>
@@ -675,11 +729,6 @@ const HomeFacturas = () => {
           </>
         )}
       </section>
-      {isLoading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="loader"></div>
-        </div>
-      )}
       <HamburguerComponent sidebar={toggleSidebar} open={visible} />
       <ToastContainer
         position="top-center"
