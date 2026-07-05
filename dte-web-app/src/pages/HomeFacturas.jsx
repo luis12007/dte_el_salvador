@@ -24,6 +24,10 @@ const buildPaymentNotice = (status) => {
 
   switch (status.state) {
     case 'al_dia':
+      // El mensaje de "al día" solo se muestra alrededor del día de pago (14, 15 y 16).
+      if (![14, 15, 16].includes(status.dayOfMonth)) {
+        return null;
+      }
       return { type: 'success', message: 'Su cuenta está al día. ¡Gracias!' };
     case 'proximo':
       return {

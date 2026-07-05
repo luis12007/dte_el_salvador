@@ -157,8 +157,10 @@ const PagoServicio = () => {
   const TabButton = ({ id, label }) => (
     <button
       onClick={() => setTab(id)}
-      className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
-        tab === id ? 'bg-white text-steelblue-300 shadow-sm' : 'text-white/80 hover:text-white'
+      className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition ${
+        tab === id
+          ? 'bg-steelblue-300 text-white shadow-sm'
+          : 'text-slate-600 hover:bg-white hover:text-slate-900'
       }`}
     >
       {label}
@@ -206,7 +208,7 @@ const PagoServicio = () => {
             </div>
 
             {/* Tabs */}
-            <div className="mb-5 flex gap-1 rounded-xl bg-steelblue-300 p-1">
+            <div className="mb-5 flex gap-1 rounded-xl border border-gray-200 bg-slate-100 p-1">
               <TabButton id="transfer" label="Transferencia" />
               <TabButton id="card" label="Tarjeta" />
               <TabButton id="history" label="Historial" />
