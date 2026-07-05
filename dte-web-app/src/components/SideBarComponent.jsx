@@ -16,8 +16,12 @@ const GroupComponent = ({ visible, setVisible }) => {
   const GoCancelBill = () => navigate("/invalidar");
   const GoBooksBill = () => navigate("/facturas/libros");
   const GoDownloadDTEs = () => navigate("/descargar-dtes");
-  const GoSupportChat = () => navigate("/soporte");
+  const GoSupportChat = () => navigate(isSupportAdmin ? "/testadmin/support-chat" : "/soporte");
+  const GoSupportAdmin = () => navigate("/testadmin/support-chat");
   const CloseHandler = () => navigate("/ingresar");
+  const currentUserId = Number(localStorage.getItem('user_id'));
+  const currentUserRole = Number(localStorage.getItem('user_role') || localStorage.getItem('role') || localStorage.getItem('rol'));
+  const isSupportAdmin = currentUserId === 1 || currentUserRole === 1;
 
   return (
     <>
@@ -94,6 +98,15 @@ const GroupComponent = ({ visible, setVisible }) => {
             </svg>
             <span className="text-sm text-gray-800 group-hover:text-sky-700">Soporte / Chat</span>
           </button>
+
+          {isSupportAdmin && (
+            <button onClick={GoSupportAdmin} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-50 transition group border border-blue-100 bg-blue-50/60">
+              <svg className="h-6 w-6 text-steelblue-300 group-hover:text-steelblue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-3.314 0-6 2.239-6 5v3h12v-3c0-2.761-2.686-5-6-5zm0 0V6m-4 0h8" />
+              </svg>
+              <span className="text-sm text-gray-800 group-hover:text-steelblue-300 font-semibold">Panel de soporte</span>
+            </button>
+          )}
 
           <div className="pt-2 mt-2 border-t">
             <button onClick={CloseHandler} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-red-50 transition group">

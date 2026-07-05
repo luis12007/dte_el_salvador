@@ -16,6 +16,7 @@ const mailRoutes = require('./routes/mailRoutes');
 const comprasRoutes = require('./routes/comprasRoutes');
 const proveedorRoutes = require('./routes/proveedorRoutes');
 const supportChatRoutes = require('./routes/supportChatRoutes');
+const db = require('./db/db');
 const app = express();
 const port = 3000;
 
@@ -57,6 +58,18 @@ app.use('/invalidated', plantillasInvalidated);
 
 
 // Start the server
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
-});
+const startServer = async () => {
+    try {
+        await db.migrate.latest();
+        console.log('Database migrations are up to date.');
+    } catch (error) {
+        console.error('Error running database migrations', error);
+        process.exit(1);
+    }
+
+    app.listen(port, () => {
+        console.log(`Server listening at http://localhost:${port}`);
+    });
+};
+
+startServer();

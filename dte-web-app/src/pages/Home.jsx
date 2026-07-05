@@ -13,6 +13,9 @@ const Home = () => {
   const username = localStorage.getItem("username");
   const ambiente = localStorage.getItem("ambiente");
   const userNumber = localStorage.getItem("userNumber");
+  const currentUserId = Number(localStorage.getItem('user_id'));
+  const currentUserRole = Number(localStorage.getItem('user_role') || localStorage.getItem('role') || localStorage.getItem('rol'));
+  const isSupportAdmin = currentUserId === 1 || currentUserRole === 1;
   
   const getAmbienteText = (ambienteValue) => {
     if (ambienteValue === "01") return "PRODUCCIÓN";
@@ -21,7 +24,7 @@ const Home = () => {
   };
 
   const SupportHandler = () => {
-    navigate("/soporte");
+    navigate(isSupportAdmin ? "/testadmin/support-chat" : "/soporte");
   }
 
   const CreateBillHandler = () => {
@@ -144,7 +147,7 @@ const Home = () => {
               src="/usuario-1@2x.png"
             />
             <span className="text-xl font-inter text-black transition-all duration-300 group-hover:text-green-600 group-hover:font-semibold">
-              Soporte / Chat
+              {isSupportAdmin ? 'Panel de soporte' : 'Soporte / Chat'}
             </span>
           </button>
         </div>

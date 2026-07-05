@@ -242,8 +242,8 @@ const SupportChat = ({ mode = 'user' }) => {
 
   return (
     <div className="min-h-screen bg-steelblue-300 text-slate-900 pt-[66px] pb-8">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px]">
+        <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl xl:min-h-[calc(100vh-170px)] xl:max-h-[calc(100vh-170px)]">
           <header className="border-b border-gray-200 bg-gradient-to-r from-steelblue-300 via-steelblue-200 to-deepskyblue px-5 py-4 sm:px-6">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -260,9 +260,9 @@ const SupportChat = ({ mode = 'user' }) => {
             </div>
           </header>
 
-          <div className="grid min-h-[calc(100vh-170px)] lg:grid-cols-[340px_minmax(0,1fr)]">
+          <div className="grid min-h-[calc(100vh-170px)] lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)]">
             {isAdmin && (
-              <aside className="border-r border-gray-200 bg-white p-4 sm:p-5 lg:flex lg:flex-col lg:gap-4">
+              <aside className="border-r border-gray-200 bg-white p-4 sm:p-5 lg:flex lg:flex-col lg:gap-4 xl:sticky xl:top-[66px] xl:max-h-[calc(100vh-170px)] xl:overflow-y-auto">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Conversaciones</h2>
                   <span className="rounded-full bg-steelblue-100 px-3 py-1 text-xs text-white">{threads.length}</span>
@@ -302,7 +302,7 @@ const SupportChat = ({ mode = 'user' }) => {
               </aside>
             )}
 
-            <section className="flex min-h-0 flex-col bg-white">
+            <section className="flex min-h-0 flex-col bg-white xl:max-h-[calc(100vh-170px)]">
               <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -381,16 +381,16 @@ const SupportChat = ({ mode = 'user' }) => {
                     </button>
                   </div>
                 )}
-                <form onSubmit={handleSend} className="flex flex-col gap-3 sm:flex-row">
-                  <div className="flex flex-1 flex-col gap-3 sm:flex-row">
+                <form onSubmit={handleSend} className="flex flex-col gap-3 sm:flex-row xl:flex-nowrap">
+                  <div className="flex flex-1 flex-col gap-3 sm:flex-row xl:flex-nowrap">
                     <textarea
                       value={draft}
                       onChange={(event) => setDraft(event.target.value)}
                       rows={3}
-                      className="min-h-[92px] flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-steelblue-200 focus:ring-2 focus:ring-steelblue-100"
+                      className="min-h-[92px] w-full flex-1 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-steelblue-200 focus:ring-2 focus:ring-steelblue-100"
                       placeholder={isAdmin ? 'Responder al usuario...' : 'Escribe tu mensaje de soporte...'}
                     />
-                    <div className="flex gap-2 sm:w-44 sm:flex-col">
+                    <div className="flex gap-2 sm:w-44 sm:flex-col xl:w-48">
                       <button
                         type="button"
                         onClick={openAttachmentPicker}
