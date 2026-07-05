@@ -5,6 +5,7 @@ import HamburguerComponent from "../components/HamburguerComponent";
 import SidebarComponent from "../components/SideBarComponent";
 import PlantillaAPI from "../services/PlantillaService";
 import UserService from "../services/UserServices";
+import PaymentService from "../services/PaymentService";
 import { useNavigate } from "react-router-dom";
 import LoginAPI from "../services/Loginservices";
 import * as XLSX from "xlsx";
@@ -14,6 +15,37 @@ import FilterModal from "../components/FilterModal";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ExcelJS from 'exceljs';
+
+// Construye el mensaje y tipo de toast según el estado del ciclo de pago.
+const buildPaymentNotice = (status) => {
+  if (!status || !status.state) {
+    return null;
+  }
+
+  switch (status.state) {
+    case 'al_dia':
+      return { type: 'success', message: 'Su cuenta está al día. ¡Gracias!' };
+    case 'proximo':
+      return {
+        type: 'info',
+        message: `Su pago es en ${status.daysUntilDue} día${status.daysUntilDue === 1 ? '' : 's'} (vence el 15).`,
+      };
+    case 'dia_de_pago':
+      return { type: 'warning', message: 'Hoy es el día de pago de su usuario.' };
+    case 'pendiente':
+      return {
+        type: 'error',
+        message: `Su usuario tiene pendiente el pago del servicio. En ${status.daysUntilBlock} día${status.daysUntilBlock === 1 ? '' : 's'} se bloqueará la cuenta hasta la confirmación del pago.`,
+      };
+    case 'vencido':
+      return {
+        type: 'error',
+        message: 'Su cuenta está pendiente de pago. Realice el pago para reactivar el servicio.',
+      };
+    default:
+      return null;
+  }
+};
 
 const HomeFacturas = () => {
   const token = localStorage.getItem("token");
@@ -128,6 +160,30 @@ const HomeFacturas = () => {
                 navigate("/ingresar");
             }
         setUser(resultusers);
+
+        // Notificación del ciclo de pago: solo la primera vez que se entra
+        // a la pantalla en esta sesión.
+        try {
+          const noticeKey = `payment_notice_shown_${user_id}`;
+          if (!sessionStorage.getItem(noticeKey)) {
+            const status = await PaymentService.getStatus(user_id, token);
+            const notice = buildPaymentNotice(status);
+            if (notice) {
+              const toastFn = toast[notice.type] || toast.info;
+              toastFn(notice.message, {
+                position: "top-center",
+                autoClose: notice.type === 'error' ? 8000 : 5000,
+                closeOnClick: true,
+                draggable: true,
+                style: { zIndex: 200000 },
+              });
+            }
+            sessionStorage.setItem(noticeKey, '1');
+          }
+        } catch (paymentError) {
+          console.error("Error al obtener el estado de pago:", paymentError);
+        }
+
           await loadBillsPage({ page: 1, reset: true });
 
         if (tokenminis === "undefined" || tokenminis === null) {

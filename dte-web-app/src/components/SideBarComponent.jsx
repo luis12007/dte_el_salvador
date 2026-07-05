@@ -18,10 +18,13 @@ const GroupComponent = ({ visible, setVisible }) => {
   const GoDownloadDTEs = () => navigate("/descargar-dtes");
   const GoSupportChat = () => navigate(isSupportAdmin ? "/testadmin/support-chat" : "/soporte");
   const GoSupportAdmin = () => navigate("/testadmin/support-chat");
+  const GoPagoServicio = () => navigate("/pago");
+  const GoPagosAdmin = () => navigate("/testadmin/pagos");
   const CloseHandler = () => navigate("/ingresar");
   const currentUserId = Number(localStorage.getItem('user_id'));
   const currentUserRole = Number(localStorage.getItem('user_role') || localStorage.getItem('role') || localStorage.getItem('rol'));
   const isSupportAdmin = currentUserId === 1 || currentUserRole === 1;
+  const isMainAdmin = currentUserId === 1;
 
   return (
     <>
@@ -92,12 +95,28 @@ const GroupComponent = ({ visible, setVisible }) => {
             <span className="text-sm text-gray-800 group-hover:text-sky-700">Descargar DTEs</span>
           </button>
 
+          <button onClick={GoPagoServicio} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
+            <svg className="h-6 w-6 text-gray-600 group-hover:text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+            </svg>
+            <span className="text-sm text-gray-800 group-hover:text-sky-700">Pago de servicio</span>
+          </button>
+
           <button onClick={GoSupportChat} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-slate-100 transition group">
             <svg className="h-6 w-6 text-gray-600 group-hover:text-sky-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h8m-8 4h5m1 5l-3 3-3-3h-2a4 4 0 01-4-4V6a4 4 0 014-4h12a4 4 0 014 4v8a4 4 0 01-4 4h-3z" />
             </svg>
             <span className="text-sm text-gray-800 group-hover:text-sky-700">Soporte / Chat</span>
           </button>
+
+          {isMainAdmin && (
+            <button onClick={GoPagosAdmin} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-50 transition group border border-blue-100 bg-blue-50/60">
+              <svg className="h-6 w-6 text-steelblue-300 group-hover:text-steelblue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m-6 4h6m-6 4h4M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z" />
+              </svg>
+              <span className="text-sm text-gray-800 group-hover:text-steelblue-300 font-semibold">Pagos (admin)</span>
+            </button>
+          )}
 
           {isSupportAdmin && (
             <button onClick={GoSupportAdmin} className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-blue-50 transition group border border-blue-100 bg-blue-50/60">

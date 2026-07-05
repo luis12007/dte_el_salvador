@@ -84,6 +84,7 @@ const SupportChat = ({ mode = 'user' }) => {
 
   const bottomRef = useRef(null);
   const attachmentInputRef = useRef(null);
+  const composerRef = useRef(null);
 
   const activeThreadLabel = useMemo(() => {
     if (isAdmin) {
@@ -211,7 +212,7 @@ const SupportChat = ({ mode = 'user' }) => {
   const handleSend = async (event) => {
     event.preventDefault();
 
-    if (!draft.trim() || !selectedUserId) {
+    if ((!draft.trim() && !attachment) || !selectedUserId) {
       return;
     }
 
@@ -224,6 +225,9 @@ const SupportChat = ({ mode = 'user' }) => {
       await SupportChatService.sendMessage(token, selectedUserId, payload);
       setDraft('');
       setAttachment(null);
+      if (composerRef.current) {
+        composerRef.current.style.height = 'auto';
+      }
       await loadMessages(selectedUserId);
       if (isAdmin) {
         await loadThreads();
@@ -236,40 +240,73 @@ const SupportChat = ({ mode = 'user' }) => {
     }
   };
 
-  const chatSubtitle = isAdmin
-    ? 'Selecciona una conversación y responde desde soporte.'
-    : 'Escribe aquí tu duda y soporte te responderá en este mismo chat.';
+  const handleComposerInput = (event) => {
+    setDraft(event.target.value);
+    const el = event.target;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+  };
+
+  const handleComposerKeyDown = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSend(event);
+    }
+  };
+
+  const formatMessageTime = (value) => {
+    try {
+      return new Date(value).toLocaleString('es-ES', {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return '';
+    }
+  };
+
+  const canSend = Boolean((draft.trim() || attachment) && selectedUserId);
 
   return (
-    <div className="h-[calc(100dvh-66px)] min-h-[calc(100dvh-66px)] overflow-hidden bg-steelblue-300 text-slate-900 pt-[66px]">
-      <div className="mx-auto flex h-full max-w-7xl px-4 sm:px-6 lg:px-8 2xl:max-w-[1600px]">
-        <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl">
-          <header className="border-b border-gray-200 bg-gradient-to-r from-steelblue-300 via-steelblue-200 to-deepskyblue px-5 py-4 sm:px-6">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-white/80">Centro de soporte</p>
-                <h1 className="mt-1 text-2xl sm:text-3xl font-semibold text-white">Chat {isAdmin ? 'de soporte' : 'con soporte'}</h1>
-                <p className="mt-1 text-sm text-white/90 max-w-2xl">{chatSubtitle}</p>
+    <div className="flex h-[calc(100dvh-66px)] min-h-[calc(100dvh-66px)] flex-col overflow-hidden bg-steelblue-300 pt-[66px]">
+      <div className={`mx-auto flex h-full w-full px-3 py-3 sm:px-6 sm:py-5 lg:px-8 ${isAdmin ? 'max-w-7xl 2xl:max-w-[1600px]' : 'max-w-3xl'}`}>
+        <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-white/20 bg-white shadow-2xl">
+          {/* Header */}
+          <header className="flex items-center justify-between gap-3 border-b border-gray-100 bg-steelblue-300 px-4 py-3 sm:px-6 sm:py-4">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25 sm:h-11 sm:w-11">
+                <svg className="h-5 w-5 text-white sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h8m-8 4h5m1 5l-3 3-3-3h-2a4 4 0 01-4-4V6a4 4 0 014-4h12a4 4 0 014 4v8a4 4 0 01-4 4h-3z" />
+                </svg>
               </div>
-              <button
-                onClick={() => navigate('/principal')}
-                className="rounded-full border border-white/30 bg-white/15 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/25"
-              >
-                Volver
-              </button>
+              <div className="min-w-0">
+                <h1 className="truncate text-base font-semibold leading-tight text-white sm:text-lg">
+                  {isAdmin ? 'Panel de soporte' : 'Soporte'}
+                </h1>
+                <div className="flex items-center gap-1.5 text-xs text-white/80">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+                  <span className="truncate">
+                    {isAdmin ? activeThreadLabel : 'En línea · te responderemos aquí'}
+                  </span>
+                </div>
+              </div>
             </div>
+            <button
+              onClick={() => navigate('/principal')}
+              className="shrink-0 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/25 sm:px-4 sm:py-2 sm:text-sm"
+            >
+              Volver
+            </button>
           </header>
 
-          <div className="grid min-h-0 flex-1 overflow-hidden lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)]">
+          <div className={`grid min-h-0 flex-1 overflow-hidden ${isAdmin ? 'lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[340px_minmax(0,1fr)]' : ''}`}>
             {isAdmin && (
-              <aside className="min-h-0 border-r border-gray-200 bg-white p-4 sm:p-5 lg:flex lg:flex-col lg:gap-4 lg:overflow-y-auto">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-600">Conversaciones</h2>
-                  <span className="rounded-full bg-steelblue-100 px-3 py-1 text-xs text-white">{threads.length}</span>
-                </div>
-                <div className="rounded-2xl border border-gray-200 bg-slate-50 p-3 text-sm text-slate-600 lg:block">
-                  <p className="font-semibold text-slate-900">Panel de soporte</p>
-                  <p className="mt-1 text-xs leading-5">Aquí puedes cambiar entre chats de clientes, responder y revisar mensajes anteriores.</p>
+              <aside className="hidden min-h-0 flex-col gap-3 border-r border-gray-100 bg-white p-4 lg:flex lg:overflow-y-auto">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Conversaciones</h2>
+                  <span className="rounded-full bg-steelblue-300 px-2.5 py-0.5 text-xs font-medium text-white">{threads.length}</span>
                 </div>
                 <div className="space-y-2">
                   {threads.length > 0 ? (
@@ -279,7 +316,7 @@ const SupportChat = ({ mode = 'user' }) => {
                         <button
                           key={thread.user_id}
                           onClick={() => setSelectedUserId(String(thread.user_id))}
-                          className={`w-full rounded-2xl border px-4 py-3 text-left transition ${isActive ? 'border-steelblue-200 bg-blue-50' : 'border-gray-200 bg-white hover:bg-slate-50'}`}
+                          className={`w-full rounded-xl border px-4 py-3 text-left transition ${isActive ? 'border-steelblue-200 bg-blue-50' : 'border-gray-100 bg-white hover:bg-slate-50'}`}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
@@ -294,7 +331,7 @@ const SupportChat = ({ mode = 'user' }) => {
                       );
                     })
                   ) : (
-                    <div className="rounded-2xl border border-dashed border-gray-200 bg-slate-50 p-4 text-sm text-slate-500">
+                    <div className="rounded-xl border border-dashed border-gray-200 bg-slate-50 p-4 text-sm text-slate-500">
                       No hay conversaciones aún.
                     </div>
                   )}
@@ -303,48 +340,72 @@ const SupportChat = ({ mode = 'user' }) => {
             )}
 
             <section className="flex min-h-0 min-w-0 flex-col bg-white">
-              <div className="border-b border-gray-200 px-5 py-4 sm:px-6">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Conversación activa</p>
-                    <h2 className="text-lg font-semibold text-slate-900">{activeThreadLabel}</h2>
-                  </div>
-                  {!isAdmin && (
-                    <div className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
-                      Soporte responderá aquí
-                    </div>
-                  )}
+              {/* Selector de conversación en móvil (admin) */}
+              {isAdmin && (
+                <div className="border-b border-gray-100 px-3 py-2.5 sm:px-6 lg:hidden">
+                  <select
+                    value={selectedUserId}
+                    onChange={(event) => setSelectedUserId(event.target.value)}
+                    className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-steelblue-200"
+                  >
+                    <option value="">Selecciona una conversación</option>
+                    {threads.map((thread) => (
+                      <option key={thread.user_id} value={String(thread.user_id)}>
+                        {(thread.sender_name || `Usuario #${thread.user_id}`)}{thread.unread_count > 0 ? ` (${thread.unread_count})` : ''}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </div>
+              )}
 
-              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-slate-50 px-4 py-5 sm:px-6">
+              {/* Mensajes */}
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-slate-50 px-3 py-4 sm:px-6 sm:py-6">
                 {loading ? (
-                  <div className="flex min-h-[320px] items-center justify-center">
-                    <div className="flex flex-col items-center gap-3 text-slate-500">
-                      <div className="h-10 w-10 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
-                      <span>Cargando chat...</span>
+                  <div className="flex min-h-[280px] items-center justify-center">
+                    <div className="flex flex-col items-center gap-3 text-slate-400">
+                      <div className="h-9 w-9 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
+                      <span className="text-sm">Cargando chat...</span>
                     </div>
                   </div>
                 ) : messages.length > 0 ? (
-                  <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
+                  <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
                     {messages.map((message) => {
                       const parsedContent = parseMessageContent(message.message);
                       const isOwnMessage = message.sender_role === currentRole;
                       return (
                         <article key={message.id} className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[min(85%,42rem)] rounded-3xl px-4 py-3 shadow-sm ${isOwnMessage ? 'bg-steelblue-300 text-white' : 'border border-gray-200 bg-white text-slate-800'}`}>
-                            <div className="mb-1 flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] opacity-80">
-                              <span>{message.sender_name}</span>
-                              <span>{new Date(message.created_at).toLocaleString('es-ES')}</span>
+                          <div className={`max-w-[82%] sm:max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'} flex flex-col`}>
+                            {!isOwnMessage && (
+                              <span className="mb-1 px-1 text-[11px] font-medium text-slate-400">{message.sender_name}</span>
+                            )}
+                            <div
+                              className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${
+                                isOwnMessage
+                                  ? 'rounded-br-md bg-steelblue-300 text-white'
+                                  : 'rounded-bl-md border border-gray-100 bg-white text-slate-800'
+                              }`}
+                            >
+                              {parsedContent.text && (
+                                <p className="whitespace-pre-wrap break-words">{parsedContent.text}</p>
+                              )}
+                              {parsedContent.attachment?.dataUrl && (
+                                <a
+                                  href={parsedContent.attachment.dataUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={`block overflow-hidden rounded-xl ${parsedContent.text ? 'mt-2' : ''} ${isOwnMessage ? 'bg-white/10' : 'bg-black/5'}`}
+                                >
+                                  <img
+                                    src={parsedContent.attachment.dataUrl}
+                                    alt={parsedContent.attachment.name || 'Adjunto'}
+                                    className="max-h-64 w-full object-cover"
+                                  />
+                                </a>
+                              )}
                             </div>
-                            {parsedContent.text && (
-                              <p className="whitespace-pre-wrap text-sm leading-6">{parsedContent.text}</p>
-                            )}
-                            {parsedContent.attachment?.dataUrl && (
-                              <a href={parsedContent.attachment.dataUrl} target="_blank" rel="noreferrer" className="mt-3 block overflow-hidden rounded-2xl border border-white/20 bg-black/5">
-                                <img src={parsedContent.attachment.dataUrl} alt={parsedContent.attachment.name || 'Adjunto'} className="max-h-72 w-full object-cover" />
-                              </a>
-                            )}
+                            <span className={`mt-1 px-1 text-[10px] text-slate-400 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
+                              {formatMessageTime(message.created_at)}
+                            </span>
                           </div>
                         </article>
                       );
@@ -352,17 +413,25 @@ const SupportChat = ({ mode = 'user' }) => {
                     <div ref={bottomRef} />
                   </div>
                 ) : (
-                  <div className="flex min-h-[320px] items-center justify-center">
-                    <div className="rounded-3xl border border-dashed border-gray-200 bg-white px-6 py-8 text-center text-slate-500">
-                      <p className="text-base font-medium text-slate-900">Todavía no hay mensajes</p>
-                      <p className="mt-1 text-sm">Envía el primer mensaje para abrir el hilo.</p>
+                  <div className="flex min-h-[280px] items-center justify-center px-4">
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-steelblue-100/40 text-steelblue-300">
+                        <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h8m-8 4h5m1 5l-3 3-3-3h-2a4 4 0 01-4-4V6a4 4 0 014-4h12a4 4 0 014 4v8a4 4 0 01-4 4h-3z" />
+                        </svg>
+                      </div>
+                      <p className="text-base font-medium text-slate-800">Todavía no hay mensajes</p>
+                      <p className="text-sm text-slate-500">
+                        {isAdmin ? 'Selecciona o responde una conversación.' : 'Escribe tu duda y soporte te responderá aquí.'}
+                      </p>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="border-t border-gray-200 bg-white px-4 py-4 sm:px-6">
-                {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
+              {/* Composer */}
+              <div className="border-t border-gray-100 bg-white px-3 py-3 sm:px-6 sm:py-4">
+                {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
                 <input
                   ref={attachmentInputRef}
                   type="file"
@@ -371,42 +440,58 @@ const SupportChat = ({ mode = 'user' }) => {
                   onChange={handleAttachmentChange}
                 />
                 {attachment && (
-                  <div className="mb-3 flex items-center justify-between gap-3 rounded-2xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-slate-900">{attachment.name}</p>
+                  <div className="mb-2 flex items-center gap-3 rounded-xl border border-gray-100 bg-slate-50 px-3 py-2">
+                    {attachment.dataUrl && (
+                      <img src={attachment.dataUrl} alt={attachment.name} className="h-10 w-10 shrink-0 rounded-lg object-cover" />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-slate-900">{attachment.name}</p>
                       <p className="text-xs text-slate-500">Imagen lista para enviar</p>
                     </div>
-                    <button type="button" onClick={removeAttachment} className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-red-600 shadow-sm ring-1 ring-gray-200 transition hover:bg-red-50">
+                    <button
+                      type="button"
+                      onClick={removeAttachment}
+                      className="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                    >
                       Quitar
                     </button>
                   </div>
                 )}
-                <form onSubmit={handleSend} className="flex flex-col gap-3 sm:flex-row xl:flex-nowrap">
-                  <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row xl:flex-nowrap">
-                    <textarea
-                      value={draft}
-                      onChange={(event) => setDraft(event.target.value)}
-                      rows={3}
-                      className="min-h-[92px] w-full flex-1 resize-none rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-steelblue-200 focus:ring-2 focus:ring-steelblue-100"
-                      placeholder={isAdmin ? 'Responder al usuario...' : 'Escribe tu mensaje de soporte...'}
-                    />
-                    <div className="flex gap-2 sm:w-44 sm:flex-col xl:w-48">
-                      <button
-                        type="button"
-                        onClick={openAttachmentPicker}
-                        className="inline-flex items-center justify-center rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-                      >
-                        Subir foto
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={sending || (!draft.trim() && !attachment)}
-                        className="inline-flex items-center justify-center rounded-2xl bg-steelblue-300 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-steelblue-300/20 transition hover:bg-steelblue-200 disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {sending ? 'Enviando...' : 'Enviar'}
-                      </button>
-                    </div>
-                  </div>
+                <form onSubmit={handleSend} className="flex items-end gap-2">
+                  <button
+                    type="button"
+                    onClick={openAttachmentPicker}
+                    title="Adjuntar imagen"
+                    aria-label="Adjuntar imagen"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-steelblue-300"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                  </button>
+                  <textarea
+                    ref={composerRef}
+                    value={draft}
+                    onChange={handleComposerInput}
+                    onKeyDown={handleComposerKeyDown}
+                    rows={1}
+                    className="max-h-32 min-h-[44px] w-full flex-1 resize-none rounded-2xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 outline-none transition focus:border-steelblue-200 focus:ring-2 focus:ring-steelblue-100"
+                    placeholder={isAdmin ? 'Responder al usuario...' : 'Escribe tu mensaje...'}
+                  />
+                  <button
+                    type="submit"
+                    disabled={sending || !canSend}
+                    aria-label="Enviar mensaje"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-steelblue-300 text-white shadow-lg shadow-steelblue-300/20 transition hover:bg-steelblue-200 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {sending ? (
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    ) : (
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l0-14M5 12l7-7 7 7" />
+                      </svg>
+                    )}
+                  </button>
                 </form>
               </div>
             </section>
