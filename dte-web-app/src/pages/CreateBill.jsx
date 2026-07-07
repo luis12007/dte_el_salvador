@@ -109,6 +109,11 @@ const Clientes = () => {
     nrc: null,
     descActividad: "Otros",
     otro: null,
+    // Campos SOLO para el PDF de la factura (no se envían al Ministerio de Hacienda).
+    // Opcionales en Consumidor Final.
+    pdfNrc: null,
+    pdfCodActividad: null,
+    pdfDescActividad: null,
   });
 
   // Validación al cargar la página: normaliza el documento (DUI/NIT) o fuerza DUI si no es reconocible
@@ -598,6 +603,11 @@ const Clientes = () => {
           nombre: client.name,
           telefono: client.phone,
           numDocumento: client.document,
+          // Campos SOLO para el PDF (columnas pdf_* en BD). No alteran el JSON
+          // que se firma / envía al Ministerio de Hacienda.
+          pdfNrc: client.pdfNrc,
+          pdfCodActividad: client.pdfCodActividad,
+          pdfDescActividad: client.pdfDescActividad,
         },
         otrosDocumentos: null,
         ventaTercero: null,

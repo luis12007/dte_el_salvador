@@ -386,6 +386,9 @@ const sendPDF = async(req, res) => {
                 const rows = [
                     { label: 'Nombre o razón social:', value: nombre },
                     { label: docLabel, value: numDoc },
+                    // NRC y actividad económica son opcionales en Consumidor Final: solo se muestran si existen.
+                    { label: 'NRC:', value: safeText(plantillaDB.pdf_nrc) },
+                    { label: 'Actividad económica:', value: safeText(plantillaDB.pdf_actividad_economica) },
                     { label: 'Dirección:', value: safeText(plantillaDB.re_direccion) },
                     { label: 'Correo electrónico:', value: safeText(plantillaDB.re_correo_electronico) },
                 ];
