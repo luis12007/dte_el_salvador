@@ -390,6 +390,7 @@ const sendPDF = async(req, res) => {
                     { label: 'NRC:', value: safeText(plantillaDB.pdf_nrc) },
                     { label: 'Actividad económica:', value: safeText(plantillaDB.pdf_actividad_economica) },
                     { label: 'Dirección:', value: safeText(plantillaDB.re_direccion) },
+                    { label: 'Teléfono:', value: safeText(plantillaDB.re_numero_telefono) },
                     { label: 'Correo electrónico:', value: safeText(plantillaDB.re_correo_electronico) },
                 ];
                 return rows.filter(r => safeText(r.value).trim().length > 0);
