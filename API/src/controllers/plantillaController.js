@@ -216,6 +216,10 @@ const plantillacreate = async(req, res) => {
             re_name: plantilla.receptor.nombre,
             re_numero_telefono: plantilla.receptor.telefono,
             re_numdocumento: plantilla.receptor.numDocumento,
+            /* NRC y actividad economica del receptor SOLO para el PDF (no se envian al MH) */
+            pdf_nrc: plantilla.receptor.pdfNrc,
+            pdf_cod_actividad: plantilla.receptor.pdfCodActividad,
+            pdf_actividad_economica: plantilla.receptor.pdfDescActividad,
 
             /* --------------------------------------------------------- */
             /* OTROS DOCUMENTOS */
@@ -1229,6 +1233,10 @@ const updatePlantilla = async(req, res) => {
             re_name: plantilla.receptor.nombre,
             re_numero_telefono: plantilla.receptor.telefono,
             re_numdocumento: plantilla.receptor.numDocumento,
+            /* NRC y actividad economica del receptor SOLO para el PDF (no se envian al MH) */
+            pdf_nrc: plantilla.receptor.pdfNrc,
+            pdf_cod_actividad: plantilla.receptor.pdfCodActividad,
+            pdf_actividad_economica: plantilla.receptor.pdfDescActividad,
 
             /* --------------------------------------------------------- */
             /* OTROS DOCUMENTOS */
@@ -2010,6 +2018,10 @@ const updatePlantillaNoItems = async(req, res) => {
             re_name: plantilla?.receptor?.nombre ?? null,
             re_numero_telefono: plantilla?.receptor?.telefono,
             re_numdocumento: plantilla?.receptor?.numDocumento ?? null,
+            /* NRC y actividad economica del receptor SOLO para el PDF (no se envian al MH) */
+            pdf_nrc: plantilla?.receptor?.pdfNrc ?? null,
+            pdf_cod_actividad: plantilla?.receptor?.pdfCodActividad ?? null,
+            pdf_actividad_economica: plantilla?.receptor?.pdfDescActividad ?? null,
 
             /* --------------------------------------------------------- */
             /* OTROS DOCUMENTOS */
