@@ -67,6 +67,10 @@ const EditBill = () => {
     codActividad: "10005",
     nrc: null,
     descActividad: "Otros",
+    // Campos SOLO para el PDF (no se envían al Ministerio de Hacienda). Opcionales.
+    pdfNrc: null,
+    pdfCodActividad: null,
+    pdfDescActividad: null,
   });
 
   /* ToEdit */
@@ -154,7 +158,11 @@ const EditBill = () => {
                 responsePlantilla.plantilla[0].re_codactividad || "10005",
               nrc: responsePlantilla.plantilla[0].re_nrc || null,
               descActividad:
-                responsePlantilla.plantilla[0].re_actividad_economica || "Otros"
+                responsePlantilla.plantilla[0].re_actividad_economica || "Otros",
+              // Campos opcionales del PDF: se cargan tal cual desde la BD.
+              pdfNrc: responsePlantilla.plantilla[0].pdf_nrc || null,
+              pdfCodActividad: responsePlantilla.plantilla[0].pdf_cod_actividad || null,
+              pdfDescActividad: responsePlantilla.plantilla[0].pdf_actividad_economica || null,
             });
           } else {
             setClient({
@@ -170,6 +178,10 @@ const EditBill = () => {
               nrc: responsePlantilla.plantilla[0].re_nrc || null,
               descActividad:
                 responsePlantilla.plantilla[0].re_actividad_economica || "Otros",
+              // Campos opcionales del PDF: se cargan tal cual desde la BD.
+              pdfNrc: responsePlantilla.plantilla[0].pdf_nrc || null,
+              pdfCodActividad: responsePlantilla.plantilla[0].pdf_cod_actividad || null,
+              pdfDescActividad: responsePlantilla.plantilla[0].pdf_actividad_economica || null,
             })
           };
           const retencionDeRenta = Number(responsePlantilla.plantilla[0].retencion_de_renta);
@@ -763,6 +775,11 @@ const EditBill = () => {
         nombre: client.name,
         telefono: client.phone,
         numDocumento: client.document,
+        // Campos SOLO para el PDF (columnas pdf_* en BD). No alteran el JSON
+        // que se firma / envía al Ministerio de Hacienda.
+        pdfNrc: client.pdfNrc,
+        pdfCodActividad: client.pdfCodActividad,
+        pdfDescActividad: client.pdfDescActividad,
       },
       otrosDocumentos: null,
       ventaTercero: null,

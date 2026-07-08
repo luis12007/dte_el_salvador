@@ -217,9 +217,9 @@ const plantillacreate = async(req, res) => {
             re_numero_telefono: plantilla.receptor.telefono,
             re_numdocumento: plantilla.receptor.numDocumento,
             /* NRC y actividad economica del receptor SOLO para el PDF (no se envian al MH) */
-            pdf_nrc: plantilla.receptor.pdfNrc,
-            pdf_cod_actividad: plantilla.receptor.pdfCodActividad,
-            pdf_actividad_economica: plantilla.receptor.pdfDescActividad,
+            pdf_nrc: plantilla.receptor.pdfNrc ?? null,
+            pdf_cod_actividad: plantilla.receptor.pdfCodActividad ?? null,
+            pdf_actividad_economica: plantilla.receptor.pdfDescActividad ?? null,
 
             /* --------------------------------------------------------- */
             /* OTROS DOCUMENTOS */
@@ -1734,11 +1734,12 @@ const updatePlantilla = async(req, res) => {
         if (!plantilla) {
             return res.status(404).json({ message: "plantilla no encontrado" });
         }
-        // Preservar NRC / actividad economica del PDF si la actualizacion no los trae
-        // (p.ej. al firmar, que reenvia la plantilla sin estos campos). Evita que se borren.
-        if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc == null) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
-        if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad == null) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
-        if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica == null) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
+        // Preservar NRC / actividad economica del PDF SOLO si la actualizacion no los trae
+        // (undefined, p.ej. al firmar). Si el usuario los limpia al editar llegan como null
+        // y se respetan (se borran). Evita que se pierdan al firmar.
+        if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc === undefined) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
+        if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad === undefined) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
+        if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica === undefined) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
         await db("plantilla")
             .where({ codigo_de_generacion: codigo_de_generacion })
             .update(JsontoDB);
@@ -2023,10 +2024,12 @@ const updatePlantillaNoItems = async(req, res) => {
             re_name: plantilla?.receptor?.nombre ?? null,
             re_numero_telefono: plantilla?.receptor?.telefono,
             re_numdocumento: plantilla?.receptor?.numDocumento ?? null,
-            /* NRC y actividad economica del receptor SOLO para el PDF (no se envian al MH) */
-            pdf_nrc: plantilla?.receptor?.pdfNrc ?? null,
-            pdf_cod_actividad: plantilla?.receptor?.pdfCodActividad ?? null,
-            pdf_actividad_economica: plantilla?.receptor?.pdfDescActividad ?? null,
+            /* NRC y actividad economica del receptor SOLO para el PDF (no se envian al MH).
+               Se dejan en undefined si la actualizacion no los trae (p.ej. al firmar) para
+               poder preservar el valor existente mas abajo; null explicito si el usuario los limpia. */
+            pdf_nrc: plantilla?.receptor?.pdfNrc,
+            pdf_cod_actividad: plantilla?.receptor?.pdfCodActividad,
+            pdf_actividad_economica: plantilla?.receptor?.pdfDescActividad,
 
             /* --------------------------------------------------------- */
             /* OTROS DOCUMENTOS */
@@ -2459,11 +2462,12 @@ const updatePlantillaNoItems = async(req, res) => {
         if (!plantilla) {
             return res.status(404).json({ message: 'plantilla no encontrado' });
         }
-        // Preservar NRC / actividad economica del PDF si la actualizacion no los trae
-        // (p.ej. al firmar, que reenvia la plantilla sin estos campos). Evita que se borren.
-        if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc == null) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
-        if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad == null) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
-        if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica == null) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
+        // Preservar NRC / actividad economica del PDF SOLO si la actualizacion no los trae
+        // (undefined, p.ej. al firmar). Si el usuario los limpia al editar llegan como null
+        // y se respetan (se borran). Evita que se pierdan al firmar.
+        if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc === undefined) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
+        if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad === undefined) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
+        if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica === undefined) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
         await db('plantilla').where({ codigo_de_generacion: codigo_de_generacion }).update(JsontoDB);
         res.status(200).json({ message: 'plantilla actualizado' });
     } catch (error) {
