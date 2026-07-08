@@ -1740,6 +1740,9 @@ const updatePlantilla = async(req, res) => {
         if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc === undefined) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
         if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad === undefined) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
         if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica === undefined) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
+        // Preservar la direccion (tipo 01) si la actualizacion no la trae como string
+        // (al firmar, receptor.direccion llega como objeto para el MH). Evita que se borre en el PDF.
+        if (JsontoDB.tipo === "01" && typeof JsontoDB.re_direccion !== "string") JsontoDB.re_direccion = plantilla.re_direccion ?? null;
         await db("plantilla")
             .where({ codigo_de_generacion: codigo_de_generacion })
             .update(JsontoDB);
@@ -2468,6 +2471,9 @@ const updatePlantillaNoItems = async(req, res) => {
         if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc === undefined) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
         if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad === undefined) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
         if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica === undefined) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
+        // Preservar la direccion (tipo 01) si la actualizacion no la trae como string
+        // (al firmar, receptor.direccion llega como objeto para el MH). Evita que se borre en el PDF.
+        if (JsontoDB.tipo === "01" && typeof JsontoDB.re_direccion !== "string") JsontoDB.re_direccion = plantilla.re_direccion ?? null;
         await db('plantilla').where({ codigo_de_generacion: codigo_de_generacion }).update(JsontoDB);
         res.status(200).json({ message: 'plantilla actualizado' });
     } catch (error) {
