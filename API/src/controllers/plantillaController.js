@@ -1734,6 +1734,11 @@ const updatePlantilla = async(req, res) => {
         if (!plantilla) {
             return res.status(404).json({ message: "plantilla no encontrado" });
         }
+        // Preservar NRC / actividad economica del PDF si la actualizacion no los trae
+        // (p.ej. al firmar, que reenvia la plantilla sin estos campos). Evita que se borren.
+        if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc == null) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
+        if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad == null) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
+        if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica == null) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
         await db("plantilla")
             .where({ codigo_de_generacion: codigo_de_generacion })
             .update(JsontoDB);
@@ -2454,6 +2459,11 @@ const updatePlantillaNoItems = async(req, res) => {
         if (!plantilla) {
             return res.status(404).json({ message: 'plantilla no encontrado' });
         }
+        // Preservar NRC / actividad economica del PDF si la actualizacion no los trae
+        // (p.ej. al firmar, que reenvia la plantilla sin estos campos). Evita que se borren.
+        if ('pdf_nrc' in JsontoDB && JsontoDB.pdf_nrc == null) JsontoDB.pdf_nrc = plantilla.pdf_nrc ?? null;
+        if ('pdf_cod_actividad' in JsontoDB && JsontoDB.pdf_cod_actividad == null) JsontoDB.pdf_cod_actividad = plantilla.pdf_cod_actividad ?? null;
+        if ('pdf_actividad_economica' in JsontoDB && JsontoDB.pdf_actividad_economica == null) JsontoDB.pdf_actividad_economica = plantilla.pdf_actividad_economica ?? null;
         await db('plantilla').where({ codigo_de_generacion: codigo_de_generacion }).update(JsontoDB);
         res.status(200).json({ message: 'plantilla actualizado' });
     } catch (error) {
