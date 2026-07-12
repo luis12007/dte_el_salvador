@@ -11,7 +11,7 @@ const SendAPI = {
     /* Sing the bill or CF */
 
     sendBill: async(plantilla, token) => {
-        const res = await fetch(`${BASE_URL_Proxy}/recepciondte`, {
+        const res = await fetch(`${BASE_URL_Proxy}/recepciondtest`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -25,7 +25,7 @@ const SendAPI = {
     },
 
     invalidatebill: async(plantilla, token) => {
-        const res = await fetch(`${BASE_URL_Proxy}/anulardte`, {
+        const res = await fetch(`${BASE_URL_Proxy}/anulardtest`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token}`,

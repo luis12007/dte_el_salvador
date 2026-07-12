@@ -1853,6 +1853,11 @@ const DeletePlantillaById = async(req, res) => {
             // Prepare backup object. Avoid inserting the original PK if present.
             const backup = { ...plantilla };
 
+            // Remove PDF-only fields that don't exist in deleted table
+            delete backup.pdf_nrc;
+            delete backup.pdf_cod_actividad;
+            delete backup.pdf_actividad_economica;
+
             // Add deletion timestamp
             backup.deleted_at = new Date().toISOString();
 
