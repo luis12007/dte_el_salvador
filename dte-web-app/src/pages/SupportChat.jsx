@@ -40,6 +40,7 @@ const SupportChat = ({ mode = 'user' }) => {
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
   const [loading, setLoading] = useState(true);
+  const [initialLoad, setInitialLoad] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [attachment, setAttachment] = useState(null);
@@ -86,7 +87,9 @@ const SupportChat = ({ mode = 'user' }) => {
     }
 
     try {
-      setLoading(true);
+      if (initialLoad) {
+        setLoading(true);
+      }
       const data = await SupportChatService.getMessages(token, threadUserId);
       setMessages(Array.isArray(data) ? data : []);
       await SupportChatService.markThreadRead(token, threadUserId);
@@ -100,7 +103,10 @@ const SupportChat = ({ mode = 'user' }) => {
       console.error('Error al cargar mensajes', messagesError);
       setError('No se pudieron cargar los mensajes.');
     } finally {
-      setLoading(false);
+      if (initialLoad) {
+        setLoading(false);
+        setInitialLoad(false);
+      }
     }
   };
 
@@ -330,10 +336,7 @@ const SupportChat = ({ mode = 'user' }) => {
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-slate-50 px-3 py-4 sm:px-6 sm:py-6">
                 {loading ? (
                   <div className="flex min-h-[280px] items-center justify-center">
-                    <div className="flex flex-col items-center gap-3 text-slate-400">
-                      <div className="h-9 w-9 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
-                      <span className="text-sm">Cargando chat...</span>
-                    </div>
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
                   </div>
                 ) : messages.length > 0 ? (
                   <div className="mx-auto flex w-full max-w-3xl flex-col gap-3">
