@@ -107,6 +107,10 @@ const SupportChat = ({ mode = 'user' }) => {
         setLoading(false);
         setInitialLoad(false);
       }
+      // Scroll al fondo después de cargar
+      setTimeout(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 0);
     }
   };
 
@@ -136,6 +140,7 @@ const SupportChat = ({ mode = 'user' }) => {
       return;
     }
 
+    setInitialLoad(true);
     loadMessages(selectedUserId);
 
     const intervalId = setInterval(() => {
@@ -334,7 +339,7 @@ const SupportChat = ({ mode = 'user' }) => {
 
               {/* Mensajes */}
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden bg-slate-50 px-3 py-4 sm:px-6 sm:py-6">
-                {loading ? (
+                {loading && messages.length === 0 ? (
                   <div className="flex min-h-[280px] items-center justify-center">
                     <div className="h-8 w-8 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
                   </div>
