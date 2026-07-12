@@ -80,6 +80,43 @@ const getSubscriptionAmount = async (userId) => {
   return { amount: PLACEHOLDER_AMOUNT, active: true, configured: false };
 };
 
+// Verifica si hay pagos pendientes en los últimos 2 meses
+const hasPendingPreviousPayments = async (userId, currentPeriod) => {
+  try {
+    const [year, month] = currentPeriod.split('-').map(Number);
+    const previousMonths = [];
+
+    // Mes anterior
+    let prevMonth = month - 1;
+    let prevYear = year;
+    if (prevMonth < 1) {
+      prevMonth = 12;
+      prevYear -= 1;
+    }
+    previousMonths.push(`${prevYear}-${String(prevMonth).padStart(2, '0')}`);
+
+    // 2 meses atrás
+    prevMonth -= 1;
+    if (prevMonth < 1) {
+      prevMonth = 12;
+      prevYear -= 1;
+    }
+    previousMonths.push(`${prevYear}-${String(prevMonth).padStart(2, '0')}`);
+
+    // Busca pagos pendientes en esos períodos
+    const pending = await db('service_payments')
+      .where({ user_id: userId })
+      .whereIn('period', previousMonths)
+      .where('status', 'pending')
+      .first();
+
+    return Boolean(pending);
+  } catch (error) {
+    console.error('Error al verificar pagos pendientes anteriores', error);
+    return false;
+  }
+};
+
 // -------------------------------------------------------------------------
 // Estado del ciclo de pago (usado por las notificaciones).
 // -------------------------------------------------------------------------
@@ -98,6 +135,13 @@ const getPaymentStatus = async (req, res) => {
     const paid = Boolean(confirmed);
     const derived = deriveState(paid, parts.day);
 
+    // Bloquea si hay pagos pendientes en los últimos 2 meses
+    const hasPendingPrevious = await hasPendingPreviousPayments(userId, parts.period);
+    if (hasPendingPrevious) {
+      derived.blocked = true;
+      derived.state = 'vencido';
+    }
+
     return res.status(200).json({
       period: parts.period,
       dueDay: DUE_DAY,
@@ -105,6 +149,7 @@ const getPaymentStatus = async (req, res) => {
       blockDay: BLOCK_DAY,
       dayOfMonth: parts.day,
       paid,
+      hasPendingPreviousPayments: hasPendingPrevious,
       ...derived,
     });
   } catch (error) {

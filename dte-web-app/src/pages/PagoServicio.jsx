@@ -4,21 +4,21 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PaymentService from '../services/PaymentService';
 
-// Cuentas bancarias placeholder (editar cuando estén las reales).
+// Cuentas bancarias para transferencias
 const BANK_ACCOUNTS = [
   {
-    bank: 'Banco Agrícola',
-    type: 'Cuenta Corriente',
-    number: '0000-0000-0000',
-    holder: 'MySoftware SV, S.A. de C.V.',
-    doc: 'NIT 0000-000000-000-0',
+    bank: 'Bancoagrícola',
+    type: 'Cuenta de Ahorro',
+    number: '3118283428',
+    holder: 'LUIS HERNANDEZ',
+    doc: '',
   },
   {
-    bank: 'Banco Cuscatlán',
+    bank: 'Banco de América Central',
     type: 'Cuenta de Ahorro',
-    number: '1111-1111-1111',
-    holder: 'MySoftware SV, S.A. de C.V.',
-    doc: 'NIT 0000-000000-000-0',
+    number: '130893241',
+    holder: 'LUIS ALEXANDER HERNANDEZ MARTINEZ',
+    doc: '',
   },
 ];
 
