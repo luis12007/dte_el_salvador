@@ -1,5 +1,5 @@
 const db = require('../db/db');
-const { notifyFirstSupportMessage } = require('../utils/supportNotifications');
+const { notifyFirstSupportMessage, notifyEveryCustomerMessage } = require('../utils/supportNotifications');
 
 // Inicio del día (00:00 hora El Salvador, UTC-6) expresado en UTC.
 const getSVStartOfDayUTC = () => {
@@ -124,28 +124,20 @@ const sendSupportMessage = async (req, res) => {
       .returning('*')
       .insert(payload);
 
-    // Si es el primer mensaje del día de un cliente, notificar por correo.
+    // Si es mensaje de un cliente, notificar por correo (cada mensaje, no solo el primero del día).
     if (senderRole === 'user') {
       try {
-        const startOfDay = getSVStartOfDayUTC();
-        const [{ count: todayCount } = {}] = await db('support_chat_messages')
-          .where({ user_id: userId, sender_role: 'user' })
-          .andWhere('created_at', '>=', startOfDay)
-          .count('* as count');
-
-        if (Number(todayCount) === 1) {
-          // Fire-and-forget: un fallo de correo no debe romper el guardado.
-          notifyFirstSupportMessage({
-            userId,
-            senderName: createdMessage.sender_name,
-            message: createdMessage.message,
-            createdAt: createdMessage.created_at,
-          }).catch((mailError) => {
-            console.error('Error al notificar primer mensaje de soporte por correo', mailError);
-          });
-        }
+        // Fire-and-forget: un fallo de correo no debe romper el guardado.
+        notifyEveryCustomerMessage({
+          userId,
+          senderName: createdMessage.sender_name,
+          message: createdMessage.message,
+          createdAt: createdMessage.created_at,
+        }).catch((mailError) => {
+          console.error('Error al notificar mensaje de soporte por correo', mailError);
+        });
       } catch (notifyError) {
-        console.error('Error al verificar el primer mensaje del día', notifyError);
+        console.error('Error al notificar mensaje de soporte', notifyError);
       }
     }
 
