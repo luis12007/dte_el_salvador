@@ -1214,12 +1214,6 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
         // Add sender and receiver information
         const infoX = 40;
         const infoY = 270;
-        /* rectangle with radius rounded */
-        pdfDoc.roundedRect(infoX, infoY, 250, 150, 10).fill('#EAEAEA').stroke('#000'); // Background box for sender
-        pdfDoc.roundedRect(infoX + 270, infoY, 250, 150, 10).fill('#EAEAEA').stroke('#000'); // Background box for receiver
-
-        pdfDoc.fontSize(10).font('Helvetica-Bold').fillColor('#1E3256')
-            .text('EMISOR', infoX + 10, infoY + 8)
 
 
         const truncateText = (text, maxLength) => {
