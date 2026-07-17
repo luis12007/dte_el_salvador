@@ -1,29 +1,32 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SupportChatService from '../services/SupportChatService';
+import FacturaSelectorModal from '../components/FacturaSelectorModal';
+import FacturaViewerModal from '../components/FacturaViewerModal';
 
 const parseMessageContent = (rawMessage) => {
   if (!rawMessage) {
-    return { text: '', attachment: null };
+    return { text: '', attachment: null, factura: null };
   }
 
   if (typeof rawMessage !== 'string') {
-    return { text: String(rawMessage), attachment: null };
+    return { text: String(rawMessage), attachment: null, factura: null };
   }
 
   try {
     const parsed = JSON.parse(rawMessage);
-    if (parsed && typeof parsed === 'object' && (parsed.text !== undefined || parsed.attachment !== undefined)) {
+    if (parsed && typeof parsed === 'object' && (parsed.text !== undefined || parsed.attachment !== undefined || parsed.factura !== undefined)) {
       return {
         text: parsed.text || '',
         attachment: parsed.attachment || null,
+        factura: parsed.factura || null,
       };
     }
   } catch {
-    return { text: rawMessage, attachment: null };
+    return { text: rawMessage, attachment: null, factura: null };
   }
 
-  return { text: rawMessage, attachment: null };
+  return { text: rawMessage, attachment: null, factura: null };
 };
 
 const SupportChat = ({ mode = 'user' }) => {
@@ -44,6 +47,9 @@ const SupportChat = ({ mode = 'user' }) => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [attachment, setAttachment] = useState(null);
+  const [selectedFactura, setSelectedFactura] = useState(null);
+  const [showFacturaSelector, setShowFacturaSelector] = useState(false);
+  const [viewingFactura, setViewingFactura] = useState(null);
 
   const bottomRef = useRef(null);
   const attachmentInputRef = useRef(null);
@@ -194,22 +200,40 @@ const SupportChat = ({ mode = 'user' }) => {
     setAttachment(null);
   };
 
+  const handleSelectFactura = (factura) => {
+    setSelectedFactura(factura);
+    setShowFacturaSelector(false);
+  };
+
+  const removeFactura = () => {
+    setSelectedFactura(null);
+  };
+
   const handleSend = async (event) => {
     event.preventDefault();
 
-    if ((!draft.trim() && !attachment) || !selectedUserId) {
+    if ((!draft.trim() && !attachment && !selectedFactura) || !selectedUserId) {
       return;
     }
 
     try {
       setSending(true);
-      const payload = attachment
-        ? JSON.stringify({ text: draft.trim(), attachment })
-        : draft.trim();
+      let payload;
+
+      if (selectedFactura && attachment) {
+        payload = JSON.stringify({ text: draft.trim(), attachment, factura: selectedFactura });
+      } else if (selectedFactura) {
+        payload = JSON.stringify({ text: draft.trim(), factura: selectedFactura });
+      } else if (attachment) {
+        payload = JSON.stringify({ text: draft.trim(), attachment });
+      } else {
+        payload = draft.trim();
+      }
 
       await SupportChatService.sendMessage(token, selectedUserId, payload);
       setDraft('');
       setAttachment(null);
+      setSelectedFactura(null);
       if (composerRef.current) {
         composerRef.current.style.height = 'auto';
       }
@@ -252,10 +276,23 @@ const SupportChat = ({ mode = 'user' }) => {
     }
   };
 
-  const canSend = Boolean((draft.trim() || attachment) && selectedUserId);
+  const canSend = Boolean((draft.trim() || attachment || selectedFactura) && selectedUserId);
 
   return (
-    <div className="flex h-[calc(100dvh-66px)] min-h-[calc(100dvh-66px)] flex-col overflow-hidden bg-steelblue-300 pt-[66px]">
+    <>
+      <FacturaSelectorModal
+        isOpen={showFacturaSelector}
+        onClose={() => setShowFacturaSelector(false)}
+        onSelectFactura={handleSelectFactura}
+        token={token}
+        userId={selectedUserId || userId}
+      />
+      <FacturaViewerModal
+        isOpen={Boolean(viewingFactura)}
+        onClose={() => setViewingFactura(null)}
+        factura={viewingFactura}
+      />
+      <div className="flex h-[calc(100dvh-66px)] min-h-[calc(100dvh-66px)] flex-col overflow-hidden bg-steelblue-300 pt-[66px]">
       <div className={`mx-auto flex h-full w-full px-3 py-3 sm:px-6 sm:py-5 lg:px-8 ${isAdmin ? 'max-w-7xl 2xl:max-w-[1600px]' : 'max-w-3xl'}`}>
         <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-white/20 bg-white shadow-2xl">
           {/* Header */}
@@ -356,36 +393,70 @@ const SupportChat = ({ mode = 'user' }) => {
                       const isOwnMessage = message.sender_role === currentRole;
                       return (
                         <article key={message.id} className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`max-w-[82%] sm:max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'} flex flex-col`}>
+                          <div className={`max-w-[82%] sm:max-w-[70%] ${isOwnMessage ? 'items-end' : 'items-start'} flex flex-col gap-2`}>
                             {!isOwnMessage && (
                               <span className="mb-1 px-1 text-[11px] font-medium text-slate-400">{message.sender_name}</span>
                             )}
-                            <div
-                              className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${
-                                isOwnMessage
-                                  ? 'rounded-br-md bg-steelblue-300 text-white'
-                                  : 'rounded-bl-md border border-gray-100 bg-white text-slate-800'
-                              }`}
-                            >
-                              {parsedContent.text && (
+                            {parsedContent.text && (
+                              <div
+                                className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed shadow-sm ${
+                                  isOwnMessage
+                                    ? 'rounded-br-md bg-steelblue-300 text-white'
+                                    : 'rounded-bl-md border border-gray-100 bg-white text-slate-800'
+                                }`}
+                              >
                                 <p className="whitespace-pre-wrap break-words">{parsedContent.text}</p>
-                              )}
-                              {parsedContent.attachment?.dataUrl && (
-                                <a
-                                  href={parsedContent.attachment.dataUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={`block overflow-hidden rounded-xl ${parsedContent.text ? 'mt-2' : ''} ${isOwnMessage ? 'bg-white/10' : 'bg-black/5'}`}
-                                >
-                                  <img
-                                    src={parsedContent.attachment.dataUrl}
-                                    alt={parsedContent.attachment.name || 'Adjunto'}
-                                    className="max-h-64 w-full object-cover"
-                                  />
-                                </a>
-                              )}
-                            </div>
-                            <span className={`mt-1 px-1 text-[10px] text-slate-400 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
+                              </div>
+                            )}
+                            {parsedContent.attachment?.dataUrl && (
+                              <a
+                                href={parsedContent.attachment.dataUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block overflow-hidden rounded-xl"
+                              >
+                                <img
+                                  src={parsedContent.attachment.dataUrl}
+                                  alt={parsedContent.attachment.name || 'Adjunto'}
+                                  className="max-h-64 w-full object-cover"
+                                />
+                              </a>
+                            )}
+                            {parsedContent.factura && (
+                              <button
+                                onClick={() => {
+                                  if (isAdmin) {
+                                    setViewingFactura(parsedContent.factura);
+                                  }
+                                }}
+                                className={`rounded-2xl px-4 py-3 text-left transition ${
+                                  isAdmin ? 'cursor-pointer hover:shadow-lg' : 'cursor-default'
+                                } ${
+                                  isOwnMessage
+                                    ? 'rounded-br-md bg-steelblue-400 text-white'
+                                    : 'rounded-bl-md border border-gray-200 bg-slate-50'
+                                }`}
+                              >
+                                <div className="flex items-start gap-2">
+                                  <svg className="h-5 w-5 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="font-semibold text-sm">{parsedContent.factura.re_name}</p>
+                                    <p className="text-xs opacity-80 mt-1">
+                                      Gen: {parsedContent.factura.codigo_de_generacion}
+                                    </p>
+                                    <p className="text-xs opacity-80">
+                                      Monto: ${Number(parsedContent.factura.total_a_pagar || 0).toFixed(2)}
+                                    </p>
+                                    {isAdmin && (
+                                      <p className="text-xs opacity-80 mt-1">Click para editar</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </button>
+                            )}
+                            <span className={`px-1 text-[10px] text-slate-400 ${isOwnMessage ? 'text-right' : 'text-left'}`}>
                               {formatMessageTime(message.created_at)}
                             </span>
                           </div>
@@ -439,6 +510,26 @@ const SupportChat = ({ mode = 'user' }) => {
                     </button>
                   </div>
                 )}
+                {selectedFactura && (
+                  <div className="mb-2 flex items-center gap-3 rounded-xl border border-gray-100 bg-slate-50 px-3 py-2">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-steelblue-100 text-steelblue-300">
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-slate-900">{selectedFactura.re_name}</p>
+                      <p className="text-xs text-slate-500">Generación: {selectedFactura.codigo_de_generacion}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={removeFactura}
+                      className="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                )}
                 <form onSubmit={handleSend} className="flex items-end gap-2">
                   <button
                     type="button"
@@ -449,6 +540,17 @@ const SupportChat = ({ mode = 'user' }) => {
                   >
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowFacturaSelector(true)}
+                    title="Adjuntar factura"
+                    aria-label="Adjuntar factura"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-slate-500 transition hover:bg-slate-50 hover:text-steelblue-300"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </button>
                   <textarea
@@ -481,6 +583,7 @@ const SupportChat = ({ mode = 'user' }) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
