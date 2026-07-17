@@ -20,24 +20,10 @@ const getUserInfo = async(req, res) => {
 };
 
 const putUserInfo = async(req, res) => {
-    const userId = req.params.id; // Assuming userId is passed in the route parameters
+    const userId = req.params.id;
 
-    console.log("a ver", req.body);
-    const newUserDetails = {
-        name: req.body.name,
-        nit: req.body.nit,
-        nrc: req.body.nrc,
-        descactividad: req.body.descactividad,
-        codactividad: req.body.actividad_economica,
-        direccion: req.body.direccion,
-        numero_de_telefono: req.body.numero_de_telefono,
-        correo_electronico: req.body.correo_electronico,
-        nombre_comercial: req.body.nombre_comercial,
-        tipoestablecimiento: req.body.tipoestablecimiento
-    };
-
-    console.log('Updating user with ID:', userId);
-    console.log('New user details:', newUserDetails);
+    console.log("Updating user info for ID:", userId);
+    console.log("Request body:", req.body);
 
     try {
         // Fetch existing user data
@@ -47,25 +33,24 @@ const putUserInfo = async(req, res) => {
             return res.status(404).json({ status: 404, message: 'Usuario no encontrado' });
         }
 
-        // Merge new data with existing data
+        // Merge all data from request body with existing data
         const updatedUser = {
             ...existingUser,
-            ...newUserDetails
+            ...req.body
         };
 
-        // Remove fields that should not be updated
-        delete updatedUser.id; // Assuming 'id' should not be updated
-        delete updatedUser.passwordpri; // Assuming 'passwordpri' should not be updated
-        delete updatedUser.municipio; // Assuming 'municipio' should not be updated
-        delete updatedUser.departamento; // Assuming 'departamento' should not be updated
-        delete updatedUser.tipoestablecimiento; // Assuming 'tipoestablecimiento' should not be updated
+        // Remove fields that should NOT be updated (protected fields)
+        delete updatedUser.id; // Primary key
+        delete updatedUser.id_usuario; // Foreign key
+
+        console.log('Updating with data:', updatedUser);
 
         // Update the user in the database
         await knex('emisor').where('id', userId).update(updatedUser);
 
         res.status(200).json({ message: 'Usuario actualizado correctamente' });
     } catch (error) {
-        console.log(error);
+        console.log('Error updating user:', error);
         res.status(500).json({ message: 'Error en el servidor' });
     }
 };

@@ -2,13 +2,40 @@ import React, { useState, useEffect } from 'react';
 import UserService from '../services/UserServices';
 import { toast } from 'react-toastify';
 
+// Campos que NO se deben editar (protegidos)
+const PROTECTED_FIELDS = ['id', 'id_usuario', 'usuario', 'password', 'passwordpri', 'rol', 'id_rol'];
+
+// Mapa de etiquetas para campos de la tabla emisor
+const FIELD_LABELS = {
+  id: 'ID',
+  id_usuario: 'ID Usuario',
+  usuario: 'Usuario',
+  password: 'Contraseña',
+  passwordpri: 'Contraseña Principal',
+  name: 'Nombre (Emisor)',
+  nit: 'NIT',
+  nrc: 'NRC',
+  nombre_comercial: 'Nombre Comercial',
+  descactividad: 'Descripción Actividad',
+  codactividad: 'Código Actividad',
+  direccion: 'Dirección',
+  numero_de_telefono: 'Teléfono',
+  correo_electronico: 'Correo Electrónico',
+  municipio: 'Municipio',
+  departamento: 'Departamento',
+  tipoestablecimiento: 'Tipo Establecimiento',
+  count_factura: 'Contador Facturas',
+  count_fiscal: 'Contador Fiscal',
+  rol: 'Rol',
+  id_rol: 'ID Rol',
+};
+
 const AdminUserEditorModal = ({ isOpen, onClose, userId, token }) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({});
-  const [activeTab, setActiveTab] = useState('info'); // info, emisor
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -63,17 +90,10 @@ const AdminUserEditorModal = ({ isOpen, onClose, userId, token }) => {
     return null;
   }
 
-  const infoFields = [
-    { label: 'Nombre (Emisor)', name: 'name', type: 'text' },
-    { label: 'NIT', name: 'nit', type: 'text' },
-    { label: 'NRC', name: 'nrc', type: 'text' },
-    { label: 'Nombre Comercial', name: 'nombre_comercial', type: 'text' },
-    { label: 'Descripción Actividad', name: 'descactividad', type: 'text' },
-    { label: 'Código Actividad', name: 'codactividad', type: 'text' },
-    { label: 'Dirección', name: 'direccion', type: 'text' },
-    { label: 'Teléfono', name: 'numero_de_telefono', type: 'text' },
-    { label: 'Correo Electrónico', name: 'correo_electronico', type: 'email' },
-  ];
+  // Obtener todos los campos editables de userData
+  const editableFields = Object.keys(userData)
+    .filter(key => !PROTECTED_FIELDS.includes(key))
+    .sort();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -94,30 +114,6 @@ const AdminUserEditorModal = ({ isOpen, onClose, userId, token }) => {
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-0 border-b border-gray-200 bg-gray-50 px-6 flex-shrink-0">
-          <button
-            onClick={() => setActiveTab('info')}
-            className={`px-4 py-3 font-medium text-sm border-b-2 transition ${
-              activeTab === 'info'
-                ? 'border-steelblue-300 text-steelblue-300'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Información General
-          </button>
-          <button
-            onClick={() => setActiveTab('usuario')}
-            className={`px-4 py-3 font-medium text-sm border-b-2 transition ${
-              activeTab === 'usuario'
-                ? 'border-steelblue-300 text-steelblue-300'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            Datos Tabla Usuario
-          </button>
-        </div>
-
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {loading ? (
@@ -125,78 +121,68 @@ const AdminUserEditorModal = ({ isOpen, onClose, userId, token }) => {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
             </div>
           ) : (
-            <>
-              {activeTab === 'info' && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    {infoFields.map((field) => (
-                      <div key={field.name}>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">
-                          {field.label}
-                        </label>
-                        <input
-                          type={field.type}
-                          name={field.name}
-                          value={formData[field.name] || ''}
-                          onChange={handleInputChange}
-                          disabled={!editMode}
-                          className={`w-full rounded-lg border px-3 py-2 text-sm outline-none transition ${
-                            editMode
-                              ? 'border-gray-300 bg-white focus:border-steelblue-300 focus:ring-2 focus:ring-steelblue-100'
-                              : 'border-gray-200 bg-slate-50 text-slate-600'
-                          }`}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+            <div className="space-y-4">
+              <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 mb-4">
+                <p className="text-sm text-blue-900">
+                  <span className="font-semibold">ℹ️ Campos protegidos:</span> ID, Usuario, Contraseña y Rol no se pueden editar.
+                </p>
+              </div>
 
-              {activeTab === 'usuario' && (
-                <div className="space-y-4">
-                  <div className="rounded-lg bg-slate-50 p-4">
-                    <h3 className="font-semibold text-slate-900 mb-3">Información de la Tabla Usuario</h3>
-                    <pre className="overflow-x-auto text-xs text-slate-700 whitespace-pre-wrap break-words max-h-96">
-                      {JSON.stringify(
-                        Object.entries(userData)
-                          .filter(([key]) => ['id', 'id_usuario', 'usuario', 'password', 'rol', 'id_rol'].includes(key))
-                          .reduce((obj, [key, value]) => {
-                            obj[key] = value;
-                            return obj;
-                          }, {}),
-                        null,
-                        2
-                      )}
-                    </pre>
-                  </div>
-
-                  <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-                    <h3 className="font-semibold text-blue-900 mb-2">Información Adicional del Emisor</h3>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm">
-                      {Object.entries(userData)
-                        .filter(
-                          ([key]) =>
-                            ![
-                              'id',
-                              'id_usuario',
-                              'usuario',
-                              'password',
-                              'rol',
-                              'id_rol',
-                              ...infoFields.map((f) => f.name),
-                            ].includes(key)
-                        )
-                        .map(([key, value]) => (
-                          <div key={key} className="flex flex-col">
-                            <span className="font-medium text-blue-900">{key}</span>
-                            <span className="text-blue-700">{String(value || 'N/A').substring(0, 50)}</span>
-                          </div>
-                        ))}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Campos protegidos (solo lectura) */}
+                {Object.entries(userData)
+                  .filter(([key]) => PROTECTED_FIELDS.includes(key))
+                  .map(([key, value]) => (
+                    <div key={key}>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        {FIELD_LABELS[key] || key}
+                        <span className="text-red-500 ml-1">🔒</span>
+                      </label>
+                      <input
+                        type={key.includes('password') ? 'password' : 'text'}
+                        value={value || ''}
+                        disabled
+                        className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+                      />
                     </div>
+                  ))}
+
+                {/* Campos editables */}
+                {editableFields.map((fieldName) => (
+                  <div key={fieldName}>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      {FIELD_LABELS[fieldName] || fieldName}
+                    </label>
+                    <input
+                      type={
+                        fieldName.includes('correo') || fieldName.includes('email')
+                          ? 'email'
+                          : fieldName.includes('numero') || fieldName.includes('count')
+                          ? 'number'
+                          : 'text'
+                      }
+                      name={fieldName}
+                      value={formData[fieldName] || ''}
+                      onChange={handleInputChange}
+                      disabled={!editMode}
+                      className={`w-full rounded-lg border px-3 py-2 text-sm outline-none transition ${
+                        editMode
+                          ? 'border-gray-300 bg-white focus:border-steelblue-300 focus:ring-2 focus:ring-steelblue-100'
+                          : 'border-gray-200 bg-slate-50 text-slate-600'
+                      }`}
+                    />
                   </div>
-                </div>
-              )}
-            </>
+                ))}
+              </div>
+
+              {/* JSON preview de datos completos */}
+              <div className="mt-6 rounded-lg bg-slate-50 p-4">
+                <h3 className="font-semibold text-slate-900 mb-2">Vista previa de datos (JSON)</h3>
+                <pre className="overflow-x-auto text-xs text-slate-700 whitespace-pre-wrap break-words max-h-48 bg-white p-3 rounded border border-gray-200">
+                  {JSON.stringify(formData, null, 2)}
+                </pre>
+              </div>
+            </div>
           )}
         </div>
 
@@ -226,14 +212,12 @@ const AdminUserEditorModal = ({ isOpen, onClose, userId, token }) => {
               >
                 Cerrar
               </button>
-              {activeTab === 'info' && (
-                <button
-                  onClick={() => setEditMode(true)}
-                  className="rounded-lg bg-steelblue-300 px-4 py-2 text-sm font-semibold text-white transition hover:bg-steelblue-200"
-                >
-                  Editar Información
-                </button>
-              )}
+              <button
+                onClick={() => setEditMode(true)}
+                className="rounded-lg bg-steelblue-300 px-4 py-2 text-sm font-semibold text-white transition hover:bg-steelblue-200"
+              >
+                Editar Todos los Campos
+              </button>
             </>
           )}
         </div>
