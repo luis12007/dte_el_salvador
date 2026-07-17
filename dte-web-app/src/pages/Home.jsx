@@ -7,6 +7,7 @@ import HamburguerComponent from '../components/HamburguerComponent';
 import AnnouncementService from '../services/AnnouncementService';
 import PaymentBlockedModal from '../components/PaymentBlockedModal';
 import usePaymentBlock from '../hooks/usePaymentBlock';
+import useSupportNotifications from '../hooks/useSupportNotifications';
 
 import list from '../assets/imgs/portapapeles.png';
 
@@ -27,6 +28,9 @@ const Home = () => {
 
   // Bloqueo por falta de pago (cuenta vencida).
   const { modalOpen: paymentBlockedOpen, closeModal: closePaymentBlocked, guard: guardPayment } = usePaymentBlock();
+
+  // Notificaciones de soporte
+  const { hasUnreadMessages, unreadCount } = useSupportNotifications(token, currentUserId);
 
   useEffect(() => {
     const fetchAnnouncement = async () => {
@@ -111,7 +115,7 @@ const Home = () => {
 
       {/* Hamburguer y Sidebar fuera del flujo principal */}
       <div className="absolute top-0 left-0 z-20 animate-slideInLeft">
-  <HamburguerComponent sidebar={sidebar} open={visible} />
+  <HamburguerComponent sidebar={sidebar} open={visible} hasUnreadMessages={hasUnreadMessages} unreadCount={unreadCount} />
       </div>
       <div className="absolute top-0 left-0 z-10 animate-slideInLeft">
         <SidebarComponent visible={visible} setVisible={setVisible} />

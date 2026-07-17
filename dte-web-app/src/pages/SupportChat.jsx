@@ -92,7 +92,13 @@ const SupportChat = ({ mode = 'user' }) => {
       }
       const data = await SupportChatService.getMessages(token, threadUserId);
       setMessages(Array.isArray(data) ? data : []);
-      await SupportChatService.markThreadRead(token, threadUserId);
+
+      // Marcar como leído después de cargar los mensajes
+      try {
+        await SupportChatService.markThreadRead(token, threadUserId);
+      } catch (readError) {
+        console.error('Error al marcar como leído', readError);
+      }
 
       if (isAdmin) {
         await loadThreads();

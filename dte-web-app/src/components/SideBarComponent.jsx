@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PaymentBlockedModal from "./PaymentBlockedModal";
 import usePaymentBlock from "../hooks/usePaymentBlock";
+import useSupportNotifications from "../hooks/useSupportNotifications";
 
 // Icono genérico (heroicon-style, stroke currentColor).
 const Icon = ({ d, className = "h-5 w-5" }) => (
@@ -34,9 +35,13 @@ const PATHS = {
 const GroupComponent = ({ visible, setVisible }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const token = localStorage.getItem("token");
   const currentUserId = Number(localStorage.getItem("user_id"));
   // Solo el usuario id 1 es administrador (paneles de soporte, pagos y anuncios).
   const isMainAdmin = currentUserId === 1;
+
+  // Notificaciones de soporte
+  const { hasUnreadMessages, unreadCount } = useSupportNotifications(token, currentUserId);
 
   const sections = [
     {
@@ -196,20 +201,28 @@ const GroupComponent = ({ visible, setVisible }) => {
                 >
                   <div className="overflow-hidden">
                     <div className="ml-4 mt-1 space-y-1 border-l border-gray-200 pl-3">
-                      {section.items.map((item) => (
-                        <button
-                          key={item.path}
-                          onClick={() => go(item)}
-                          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2 transition ${
-                            isActive(item.path)
-                              ? "bg-blue-50 text-steelblue-300 font-semibold"
-                              : "text-gray-600 hover:bg-slate-100 hover:text-gray-900"
-                          }`}
-                        >
-                          <Icon d={item.icon} className="h-[18px] w-[18px]" />
-                          <span className="text-sm">{item.label}</span>
-                        </button>
-                      ))}
+                      {section.items.map((item) => {
+                        const showNotification = hasUnreadMessages && item.path === "/soporte";
+                        return (
+                          <button
+                            key={item.path}
+                            onClick={() => go(item)}
+                            className={`w-full flex items-center gap-3 rounded-lg px-3 py-2 transition ${
+                              isActive(item.path)
+                                ? "bg-blue-50 text-steelblue-300 font-semibold"
+                                : "text-gray-600 hover:bg-slate-100 hover:text-gray-900"
+                            }`}
+                          >
+                            <Icon d={item.icon} className="h-[18px] w-[18px]" />
+                            <span className="text-sm flex-1 text-left">{item.label}</span>
+                            {showNotification && (
+                              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                {unreadCount > 9 ? '9+' : unreadCount}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

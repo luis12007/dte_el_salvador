@@ -1,6 +1,6 @@
 import hamburguerimg from '../assets/imgs/hamburguerimg.png';
 
-export default function HamburguerComponent({ sidebar, open = false }) {
+export default function HamburguerComponent({ sidebar, open = false, hasUnreadMessages = false, unreadCount = 0 }) {
     return (
         <button
             type="button"
@@ -21,6 +21,12 @@ export default function HamburguerComponent({ sidebar, open = false }) {
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
+            )}
+
+            {hasUnreadMessages && (
+                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
             )}
         </button>
     );

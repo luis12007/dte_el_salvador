@@ -81,6 +81,16 @@ const SupportChatService = {
 
     return parseResponse(res);
   },
+
+  getUnreadCount: async (token, userId) => {
+    const res = await fetch(`${BASE_URL}/support-chat/${userId}/unread-count`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return parseResponse(res);
+  },
 };
 
 export default SupportChatService;

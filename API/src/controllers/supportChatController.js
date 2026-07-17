@@ -173,9 +173,39 @@ const markThreadRead = async (req, res) => {
   }
 };
 
+const getUnreadCount = async (req, res) => {
+  const userId = req.params.userId;
+
+  if (!canAccessThread(req, userId)) {
+    return res.status(403).json({ message: 'No autorizado' });
+  }
+
+  const readerRole = isSupportAdmin(req.user) ? 'support' : 'user';
+
+  try {
+    const query = db('support_chat_messages').where({ user_id: userId });
+
+    let unreadCount = 0;
+
+    if (readerRole === 'support') {
+      unreadCount = await query.where({ sender_role: 'user', is_read: false }).count('* as count').first();
+    } else {
+      unreadCount = await query.where({ sender_role: 'support', is_read: false }).count('* as count').first();
+    }
+
+    const count = unreadCount?.count || 0;
+
+    return res.status(200).json({ unread_count: Number(count) });
+  } catch (error) {
+    console.error('Error al obtener contador de no leídos', error);
+    return res.status(500).json({ message: 'Error en el servidor' });
+  }
+};
+
 module.exports = {
   getSupportMessages,
   getSupportThreads,
   sendSupportMessage,
   markThreadRead,
+  getUnreadCount,
 };
