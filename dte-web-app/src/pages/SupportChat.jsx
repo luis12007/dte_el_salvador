@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SupportChatService from '../services/SupportChatService';
 import FacturaSelectorModal from '../components/FacturaSelectorModal';
 import FacturaViewerModal from '../components/FacturaViewerModal';
+import FacturaEditorModal from '../components/FacturaEditorModal';
 import AdminUserEditorModal from '../components/AdminUserEditorModal';
 
 const parseMessageContent = (rawMessage) => {
@@ -51,6 +52,7 @@ const SupportChat = ({ mode = 'user' }) => {
   const [selectedFactura, setSelectedFactura] = useState(null);
   const [showFacturaSelector, setShowFacturaSelector] = useState(false);
   const [viewingFactura, setViewingFactura] = useState(null);
+  const [editingFactura, setEditingFactura] = useState(null);
   const [showUserEditor, setShowUserEditor] = useState(false);
 
   const bottomRef = useRef(null);
@@ -295,6 +297,15 @@ const SupportChat = ({ mode = 'user' }) => {
         factura={viewingFactura}
       />
       {isAdmin && (
+        <FacturaEditorModal
+          isOpen={Boolean(editingFactura)}
+          onClose={() => setEditingFactura(null)}
+          factura={editingFactura}
+          token={token}
+          userId={selectedUserId}
+        />
+      )}
+      {isAdmin && (
         <AdminUserEditorModal
           isOpen={showUserEditor}
           onClose={() => setShowUserEditor(false)}
@@ -450,15 +461,15 @@ const SupportChat = ({ mode = 'user' }) => {
                               <button
                                 onClick={() => {
                                   if (isAdmin) {
-                                    setViewingFactura(parsedContent.factura);
+                                    setEditingFactura(parsedContent.factura);
                                   }
                                 }}
                                 className={`rounded-2xl px-4 py-3 text-left transition ${
                                   isAdmin ? 'cursor-pointer hover:shadow-lg' : 'cursor-default'
                                 } ${
                                   isOwnMessage
-                                    ? 'rounded-br-md bg-steelblue-400 text-white'
-                                    : 'rounded-bl-md border border-gray-200 bg-slate-50'
+                                    ? 'rounded-br-md bg-steelblue-300 text-white'
+                                    : 'rounded-bl-md border-2 border-steelblue-200 bg-steelblue-50'
                                 }`}
                               >
                                 <div className="flex items-start gap-2">
@@ -466,15 +477,17 @@ const SupportChat = ({ mode = 'user' }) => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                   </svg>
                                   <div className="min-w-0 flex-1">
-                                    <p className="font-semibold text-sm">{parsedContent.factura.re_name}</p>
-                                    <p className="text-xs opacity-80 mt-1">
+                                    <p className={`font-semibold text-sm ${isOwnMessage ? 'text-white' : 'text-steelblue-900'}`}>{parsedContent.factura.re_name}</p>
+                                    <p className={`text-xs opacity-80 mt-1 ${isOwnMessage ? 'text-white' : 'text-steelblue-700'}`}>
                                       Gen: {parsedContent.factura.codigo_de_generacion}
                                     </p>
-                                    <p className="text-xs opacity-80">
+                                    <p className={`text-xs opacity-80 ${isOwnMessage ? 'text-white' : 'text-steelblue-700'}`}>
                                       Monto: ${Number(parsedContent.factura.total_a_pagar || 0).toFixed(2)}
                                     </p>
                                     {isAdmin && (
-                                      <p className="text-xs opacity-80 mt-1">Click para editar</p>
+                                      <p className={`text-xs opacity-80 mt-1 ${isOwnMessage ? 'text-white' : 'text-steelblue-600 font-semibold'}`}>
+                                        Click para editar
+                                      </p>
                                     )}
                                   </div>
                                 </div>
