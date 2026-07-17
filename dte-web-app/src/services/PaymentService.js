@@ -97,6 +97,15 @@ const PaymentService = {
     });
     return parseJson(res);
   },
+
+  adminSetSkipCertificate: async (userId, token, skipCertificate) => {
+    const res = await fetch(`${BASE_URL}/payments/admin/skip-certificate/${userId}`, {
+      method: 'PUT',
+      headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ skip_certificate_validation: skipCertificate }),
+    });
+    return parseJson(res);
+  },
 };
 
 export default PaymentService;

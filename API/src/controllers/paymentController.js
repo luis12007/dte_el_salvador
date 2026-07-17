@@ -422,7 +422,8 @@ const adminListClients = async (req, res) => {
         'u.usuario as username',
         'e.name as name',
         'sc.amount as amount',
-        'sc.active as active'
+        'sc.active as active',
+        db.raw('COALESCE(sc.skip_certificate_validation, false) as skip_certificate_validation')
       );
 
     const payments = await db('service_payments').where({ period }).orderBy('id', 'desc');
@@ -442,6 +443,7 @@ const adminListClients = async (req, res) => {
         amount: u.amount != null ? Number(u.amount) : PLACEHOLDER_AMOUNT,
         configured: u.amount != null,
         active: u.active == null ? true : Boolean(u.active),
+        skip_certificate_validation: u.skip_certificate_validation == null ? false : Boolean(u.skip_certificate_validation),
         payment: p
           ? {
               id: p.id,
@@ -572,6 +574,42 @@ const adminSetAmount = async (req, res) => {
   }
 };
 
+// Configurar si se permite validar pagos sin certificado para un cliente.
+const adminSetSkipCertificate = async (req, res) => {
+  if (!isAdmin(req.user)) {
+    return res.status(403).json({ message: 'No autorizado' });
+  }
+
+  const userId = req.params.userId;
+  const { skip_certificate_validation } = req.body;
+
+  if (skip_certificate_validation == null || typeof skip_certificate_validation !== 'boolean') {
+    return res.status(400).json({ message: 'Valor de skip_certificate_validation inválido' });
+  }
+
+  try {
+    const existing = await db('subscription_config').where({ user_id: userId }).first();
+    const payload = {
+      skip_certificate_validation: Boolean(skip_certificate_validation),
+      updated_at: new Date(),
+    };
+
+    let result;
+    if (existing) {
+      [result] = await db('subscription_config').where({ user_id: userId }).update(payload).returning('*');
+    } else {
+      [result] = await db('subscription_config')
+        .insert({ user_id: userId, ...payload })
+        .returning('*');
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('Error al actualizar skip_certificate_validation', error);
+    return res.status(500).json({ message: 'Error en el servidor' });
+  }
+};
+
 module.exports = {
   getPaymentStatus,
   getSubscription,
@@ -583,4 +621,5 @@ module.exports = {
   adminGetUserPayments,
   adminReviewPayment,
   adminSetAmount,
+  adminSetSkipCertificate,
 };

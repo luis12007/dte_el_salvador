@@ -16,6 +16,8 @@ import cross from "../assets/imgs/cross.png";
 import direct from "../assets/imgs/direct.png";
 import signature from "../assets/imgs/signature.png";
 import UserService from "../services/UserServices";
+import { isNetworkError, showNetworkError } from "../utils/networkErrorHandler";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 
 const FacturaSendSelect = ({ key, content, user , GetInf }) => {
@@ -28,6 +30,7 @@ const FacturaSendSelect = ({ key, content, user , GetInf }) => {
     const [usuario, setUser] = useState([]);
     const [mailchecker, setMailChecker] = useState(true);
     const autoFixMunicipioFormatoAttemptedRef = useRef(false);
+    const isOnline = useOnlineStatus();
 
     const MUNICIPIO_FORMAT_ERROR = "Campo #/receptor/direccion/municipio no cumple el formato requerido";
 
@@ -373,7 +376,11 @@ const FacturaSendSelect = ({ key, content, user , GetInf }) => {
             return false;
         } catch (e) {
             console.log(e);
-            toast.error("Error al auto-corregir municipio");
+            if (isNetworkError(e)) {
+                showNetworkError(e, 'Error al enviar factura. Verifica tu conexión de red.');
+            } else {
+                toast.error("Error al auto-corregir municipio");
+            }
             autoFixMunicipioFormatoAttemptedRef.current = false;
             return false;
         }

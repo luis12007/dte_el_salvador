@@ -15,6 +15,8 @@ import FilterModal from "../components/FilterModal";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ExcelJS from 'exceljs';
+import useTokenValidation from "../hooks/useTokenValidation";
+import { clearSessionAndRedirect } from "../utils/tokenValidator";
 
 // Construye el mensaje y tipo de toast según el estado del ciclo de pago.
 const buildPaymentNotice = (status) => {
@@ -52,6 +54,9 @@ const buildPaymentNotice = (status) => {
 };
 
 const HomeFacturas = () => {
+  // Validar token antes de cargar datos
+  const { isValidating, isValid } = useTokenValidation();
+
   const token = localStorage.getItem("token");
   const user_id = localStorage.getItem("user_id");
   const PAGE_SIZE = 20;
@@ -142,8 +147,25 @@ const HomeFacturas = () => {
     }
   };
 
+  // Mostrar loading mientras valida token
+  if (isValidating) {
+    return (
+      <div className="w-full min-h-screen bg-steelblue-300 flex items-center justify-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Si token no es válido, no renderizar (useTokenValidation ya redirigió)
+  if (!isValid) {
+    return null;
+  }
+
   // Data fetching
   useEffect(() => {
+    // Solo cargar si token es válido
+    if (!isValid) return;
+
     const fetchData = async () => {
       try {
         /* Change to login maybe */
@@ -208,7 +230,7 @@ const HomeFacturas = () => {
 
     fetchData(); // Call the async function
 
-  }, []); // Ensure this runs only once on mount
+  }, [isValid]); // Re-run if token validation changes
 
   const findFirstAndMostRecentDate = (items) => {
     if (!items.length) {
