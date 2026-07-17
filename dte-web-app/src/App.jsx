@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Login from './pages/Logins';
 import Login_LH from './pages/Logins_LH';
 import Home from './pages/Home';
@@ -38,11 +38,19 @@ import SupportChat from './pages/SupportChat';
 import AnnouncementAdmin from './pages/AnnouncementAdmin';
 import PagoServicio from './pages/PagoServicio';
 import PaymentsAdmin from './pages/PaymentsAdmin';
+import OfflineNotification from './components/OfflineNotification';
+import { setupAuthInterceptor } from './utils/authInterceptor';
 
 /* http://localhost:3000/#/ingresar the example route */
 export default function App() {
+  useEffect(() => {
+    setupAuthInterceptor();
+  }, []);
+
   return (
-    <HashRouter>
+    <>
+      <OfflineNotification />
+      <HashRouter>
       <Routes>
         {/* public*/}
         <Route path="/*" element={<Login/>}/>
@@ -112,6 +120,7 @@ export default function App() {
 
       </Routes>
       </HashRouter>
+    </>
   );
 }
 

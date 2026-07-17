@@ -12,6 +12,7 @@ const {
   adminGetUserPayments,
   adminReviewPayment,
   adminSetAmount,
+  adminSetSkipCertificate,
 } = require('../controllers/paymentController');
 const authenticateToken = require('../middleware/verifyToken.js');
 
@@ -30,5 +31,6 @@ router.get('/admin/clients', authenticateToken, adminListClients);
 router.get('/admin/user/:userId', authenticateToken, adminGetUserPayments);
 router.put('/admin/review/:paymentId', authenticateToken, adminReviewPayment);
 router.put('/admin/amount/:userId', authenticateToken, adminSetAmount);
+router.put('/admin/skip-certificate/:userId', authenticateToken, adminSetSkipCertificate);
 
 module.exports = router;

@@ -4,43 +4,54 @@ import LoginAPI from "../services/Loginservices";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import mysoftlogo from "../assets/imgs/mysoftlogo.png";
+import { showNetworkError } from "../utils/networkErrorHandler";
+import useOnlineStatus from "../hooks/useOnlineStatus";
 
 const Login = () => {
 
   const navigate = useNavigate();
+  const isOnline = useOnlineStatus();
 
   const HomeHandler = async (props) => {
-    /* navigate("/principal"); */
-    try {
-    const result = await LoginAPI.login(props);
-    console.log(result);
-    if (result.status === "success") {
-      if (result.payment === false) {
-        toast.error("El pago no fue procesado, contacte a soporte");
-        console.log("El pago no fue procesado");
-        return;
-      }
-      const userRole = result.role ?? result.rol ?? result.id_rol ?? result.tipo_usuario ?? result.tipoUsuario ?? result.user_role;
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("user_id", result.user_id);
-      localStorage.setItem("username", result.username);
-      localStorage.setItem("ambiente", result.ambiente);
-      if (userRole !== undefined && userRole !== null && userRole !== '') {
-        localStorage.setItem("user_role", String(userRole));
-      }
-      navigate("/principal");
-      return
-
-    }else{
-      toast.error("Credenciales incorrectas");
-      console.log("Credenciales incorrectas");
-      return
+    if (!isOnline) {
+      toast.error("No tienes conexión a internet. Verifica tu conexión de red.");
+      return;
     }
 
-  } catch (error) {
-    console.log(error);
-    toast.error("Conexión no disponible");
-  }
+    try {
+      const result = await LoginAPI.login(props);
+      console.log(result);
+      if (result.status === "success") {
+        if (result.payment === false) {
+          toast.error("El pago no fue procesado, contacte a soporte");
+          console.log("El pago no fue procesado");
+          return;
+        }
+        const userRole = result.role ?? result.rol ?? result.id_rol ?? result.tipo_usuario ?? result.tipoUsuario ?? result.user_role;
+        localStorage.setItem("token", result.token);
+        localStorage.setItem("user_id", result.user_id);
+        localStorage.setItem("username", result.username);
+        localStorage.setItem("ambiente", result.ambiente);
+        if (userRole !== undefined && userRole !== null && userRole !== '') {
+          localStorage.setItem("user_role", String(userRole));
+        }
+        navigate("/principal");
+        return
+
+      }else{
+        toast.error("Credenciales incorrectas");
+        console.log("Credenciales incorrectas");
+        return
+      }
+
+    } catch (error) {
+      console.log(error);
+      if (error?.code === 'NO_CONNECTION' || error?.code === 'CONNECTION_LOST') {
+        showNetworkError(error);
+      } else {
+        toast.error("Conexión no disponible");
+      }
+    }
   }
 
   return (

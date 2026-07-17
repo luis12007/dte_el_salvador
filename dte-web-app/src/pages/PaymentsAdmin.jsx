@@ -62,6 +62,8 @@ const PaymentsAdmin = () => {
   const [reviewingId, setReviewingId] = useState(null);
   const [proofView, setProofView] = useState(null); // { mime, data, name }
   const [proofLoading, setProofLoading] = useState(false);
+  const [skipCertificateDraft, setSkipCertificateDraft] = useState(false);
+  const [savingSkipCertificate, setSavingSkipCertificate] = useState(false);
 
   const loadClients = async (targetPeriod) => {
     setLoading(true);
@@ -88,6 +90,7 @@ const PaymentsAdmin = () => {
   const openClient = async (client) => {
     setSelected(client);
     setAmountDraft(String(client.amount ?? ''));
+    setSkipCertificateDraft(Boolean(client.skip_certificate_validation ?? false));
     setDetailLoading(true);
     try {
       const rows = await PaymentService.adminGetUserPayments(client.user_id, token);
@@ -180,8 +183,24 @@ const PaymentsAdmin = () => {
     }
   };
 
-  const receivedCount = clients.filter((c) => c.period_status === 'confirmed').length;
-  const pendingCount = clients.filter((c) => c.period_status === 'pending').length;
+  const handleSaveSkipCertificate = async () => {
+    setSavingSkipCertificate(true);
+    try {
+      await PaymentService.adminSetSkipCertificate(selected.user_id, token, skipCertificateDraft);
+      toast.success(skipCertificateDraft ? 'Validación sin certificado habilitada' : 'Validación sin certificado deshabilitada');
+      setSelected((prev) => (prev ? { ...prev, skip_certificate_validation: skipCertificateDraft } : prev));
+    } catch (error) {
+      console.error('Error al guardar skip_certificate_validation', error);
+      toast.error(error?.message || 'No se pudo actualizar la configuración');
+      setSkipCertificateDraft(!skipCertificateDraft);
+    } finally {
+      setSavingSkipCertificate(false);
+    }
+  };
+
+  const clientsArray = Array.isArray(clients) ? clients : [];
+  const receivedCount = clientsArray.filter((c) => c.period_status === 'confirmed').length;
+  const pendingCount = clientsArray.filter((c) => c.period_status === 'pending').length;
 
   return (
     <div className="min-h-screen bg-steelblue-300 px-3 py-6 sm:px-6 sm:py-10 animate-fadeIn">
@@ -271,6 +290,42 @@ const PaymentsAdmin = () => {
               </div>
             </div>
 
+            {/* Validar sin certificado */}
+            <div className="mb-5 rounded-xl border border-gray-100 p-4">
+              <label className="mb-3 block text-sm font-semibold text-slate-900">Validación de pago</label>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-slate-600">Permitir validar sin certificado</p>
+                  <p className="text-xs text-slate-500">Habilita validación de pagos sin requerir certificado digital</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSkipCertificateDraft(!skipCertificateDraft)}
+                    disabled={savingSkipCertificate}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+                      skipCertificateDraft ? 'bg-emerald-500' : 'bg-gray-300'
+                    } ${savingSkipCertificate ? 'opacity-60' : ''}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                        skipCertificateDraft ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                  {savingSkipCertificate && <span className="text-xs text-slate-500">Guardando...</span>}
+                </div>
+              </div>
+              {skipCertificateDraft !== Boolean(selected.skip_certificate_validation ?? false) && (
+                <button
+                  onClick={handleSaveSkipCertificate}
+                  disabled={savingSkipCertificate}
+                  className="mt-3 rounded-lg bg-steelblue-300 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-steelblue-200 disabled:opacity-60"
+                >
+                  {savingSkipCertificate ? 'Guardando...' : 'Aplicar cambio'}
+                </button>
+              )}
+            </div>
+
             {/* Historial de pagos */}
             <p className="mb-2 text-sm font-semibold text-slate-900">Historial</p>
             {detailLoading ? (
@@ -343,13 +398,13 @@ const PaymentsAdmin = () => {
         ) : (
           /* ---------- Lista de clientes ---------- */
           <div className="p-4 sm:p-6">
-            {clients.length === 0 ? (
+            {clientsArray.length === 0 ? (
               <div className="rounded-xl border border-dashed border-gray-200 py-12 text-center text-sm text-slate-500">
                 No hay clientes.
               </div>
             ) : (
               <div className="space-y-2">
-                {clients.map((c) => {
+                {clientsArray.map((c) => {
                   const meta = statusMeta(c.period_status);
                   return (
                     <button
