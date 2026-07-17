@@ -3,7 +3,7 @@ import PlantillaService from '../services/PlantillaService';
 import { toast } from 'react-toastify';
 
 // Campos que NO se deben editar (protegidos)
-const PROTECTED_FIELDS = ['id', 'codigo_de_generacion', 'sello_de_recepcion', 'numero_de_control'];
+const PROTECTED_FIELDS = ['id', 'codigo_de_generacion', 'sello_de_recepcion'];
 
 // Mapa de etiquetas para campos de la tabla plantilla
 const FIELD_LABELS = {
@@ -28,6 +28,8 @@ const FacturaEditorModal = ({ isOpen, onClose, factura, token, userId }) => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (isOpen && factura) {
@@ -68,6 +70,29 @@ const FacturaEditorModal = ({ isOpen, onClose, factura, token, userId }) => {
   const handleCancel = () => {
     setFormData(factura);
     setEditMode(false);
+  };
+
+  const handleDelete = async () => {
+    if (!formData.codigo_de_generacion) {
+      toast.error('No se puede eliminar sin código de generación');
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      // Primero crear el registro en invalidated
+      await PlantillaService.createinvalidated(formData, token, userId);
+      // Luego eliminar la plantilla
+      await PlantillaService.deletePlantillabyCodeGeneration(formData.codigo_de_generacion, token);
+      toast.success('Factura eliminada e invalidada correctamente');
+      setShowDeleteConfirm(false);
+      onClose();
+    } catch (error) {
+      console.error('Error al eliminar factura:', error);
+      toast.error('Error al eliminar la factura');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (!isOpen || !formData) {
@@ -112,7 +137,7 @@ const FacturaEditorModal = ({ isOpen, onClose, factura, token, userId }) => {
             <div className="space-y-4">
               <div className="rounded-lg bg-blue-50 border border-blue-200 p-3 mb-4">
                 <p className="text-sm text-blue-900">
-                  <span className="font-semibold">ℹ️ Campos protegidos:</span> Código de Generación, Control, Sello de Recepción no se pueden editar.
+                  <span className="font-semibold">ℹ️ Campos protegidos:</span> Código de Generación y Sello de Recepción no se pueden editar.
                 </p>
               </div>
 
@@ -180,40 +205,90 @@ const FacturaEditorModal = ({ isOpen, onClose, factura, token, userId }) => {
         </div>
 
         {/* Footer */}
-        <div className="border-t border-gray-200 bg-slate-50 px-6 py-4 flex justify-end gap-3 flex-shrink-0">
-          {editMode ? (
-            <>
+        <div className="border-t border-gray-200 bg-slate-50 px-6 py-4 flex justify-between gap-3 flex-shrink-0">
+          <div>
+            {!editMode && (
               <button
-                onClick={handleCancel}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-100"
               >
-                Cancelar
+                🗑️ Eliminar Factura
               </button>
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="rounded-lg bg-steelblue-300 px-4 py-2 text-sm font-semibold text-white transition hover:bg-steelblue-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saving ? 'Guardando...' : 'Guardar Cambios'}
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={onClose}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
-              >
-                Cerrar
-              </button>
-              <button
-                onClick={() => setEditMode(true)}
-                className="rounded-lg bg-steelblue-300 px-4 py-2 text-sm font-semibold text-white transition hover:bg-steelblue-200"
-              >
-                Editar Todos los Campos
-              </button>
-            </>
-          )}
+            )}
+          </div>
+          <div className="flex gap-3">
+            {editMode ? (
+              <>
+                <button
+                  onClick={handleCancel}
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="rounded-lg bg-steelblue-300 px-4 py-2 text-sm font-semibold text-white transition hover:bg-steelblue-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {saving ? 'Guardando...' : 'Guardar Cambios'}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={onClose}
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+                >
+                  Cerrar
+                </button>
+                <button
+                  onClick={() => setEditMode(true)}
+                  className="rounded-lg bg-steelblue-300 px-4 py-2 text-sm font-semibold text-white transition hover:bg-steelblue-200"
+                >
+                  Editar Todos los Campos
+                </button>
+              </>
+            )}
+          </div>
         </div>
+
+        {/* Modal de confirmación de eliminación */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+              <div className="bg-red-50 border-b border-red-200 px-6 py-4">
+                <h3 className="text-lg font-bold text-red-900">⚠️ Eliminar Factura</h3>
+              </div>
+              <div className="px-6 py-4">
+                <p className="text-slate-700 mb-2">
+                  ¿Estás seguro de que deseas eliminar esta factura?
+                </p>
+                <p className="text-sm text-slate-500 mb-4">
+                  Código de generación: <span className="font-semibold">{formData.codigo_de_generacion}</span>
+                </p>
+                <p className="text-sm text-slate-600">
+                  Se eliminarán los datos de la factura y se creará un registro de invalidación.
+                  <strong className="text-red-600"> Esta acción no se puede deshacer.</strong>
+                </p>
+              </div>
+              <div className="bg-slate-50 px-6 py-4 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {deleting ? 'Eliminando...' : 'Sí, Eliminar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
