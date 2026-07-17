@@ -216,7 +216,7 @@ const GroupComponent = ({ visible, setVisible }) => {
                             <Icon d={item.icon} className="h-[18px] w-[18px]" />
                             <span className="text-sm flex-1 text-left">{item.label}</span>
                             {showNotification && (
-                              <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white shadow-lg ring-1 ring-red-700 animate-pulse">
                                 {unreadCount > 9 ? '9+' : unreadCount}
                               </span>
                             )}
