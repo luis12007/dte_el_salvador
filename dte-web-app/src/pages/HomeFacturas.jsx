@@ -54,9 +54,6 @@ const buildPaymentNotice = (status) => {
 };
 
 const HomeFacturas = () => {
-  // Validar token antes de cargar datos
-  const { isValidating, isValid } = useTokenValidation();
-
   const token = localStorage.getItem("token");
   const user_id = localStorage.getItem("user_id");
   const PAGE_SIZE = 20;
@@ -73,7 +70,9 @@ const HomeFacturas = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [isFiltered, setIsFiltered] = useState(false);
   const navigate = useNavigate();
-  
+
+  // Validar token después de todos los hooks
+  const { isValidating, isValid } = useTokenValidation();
 
   // Sidebar visibility toggle
   const [visible, setVisible] = useState(false);
@@ -147,24 +146,10 @@ const HomeFacturas = () => {
     }
   };
 
-  // Mostrar loading mientras valida token
-  if (isValidating) {
-    return (
-      <div className="w-full min-h-screen bg-steelblue-300 flex items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
-      </div>
-    );
-  }
-
-  // Si token no es válido, no renderizar (useTokenValidation ya redirigió)
-  if (!isValid) {
-    return null;
-  }
-
   // Data fetching
   useEffect(() => {
     // Solo cargar si token es válido
-    if (!isValid) return;
+    if (!isValid || isValidating) return;
 
     const fetchData = async () => {
       try {
@@ -690,6 +675,19 @@ const HomeFacturas = () => {
 
   };
 
+  // Mostrar loading mientras valida token
+  if (isValidating) {
+    return (
+      <div className="w-full min-h-screen bg-steelblue-300 flex items-center justify-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-steelblue-200 border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Si token no es válido, useTokenValidation ya redirigió
+  if (!isValid) {
+    return null;
+  }
 
   return (
     <div className="w-full min-h-screen bg-steelblue-300 flex flex-col pt-[66px] pb-8 box-border overflow-x-hidden">
