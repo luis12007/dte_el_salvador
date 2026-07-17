@@ -129,7 +129,8 @@ const getPaymentStatus = async (req, res) => {
   try {
     const parts = getSVDateParts();
     const confirmed = await db('service_payments')
-      .where({ user_id: userId, period: parts.period, status: 'confirmed' })
+      .where({ user_id: userId, period: parts.period })
+      .whereIn('status', ['confirmed', 'paid_elsewhere'])
       .first();
 
     const paid = Boolean(confirmed);
@@ -223,7 +224,7 @@ const submitTransfer = async (req, res) => {
       .orderBy('id', 'desc')
       .first();
 
-    if (existing && existing.status === 'confirmed') {
+    if (existing && ['confirmed', 'paid_elsewhere'].includes(existing.status)) {
       return res.status(409).json({ message: 'El pago de este mes ya fue confirmado.' });
     }
 
@@ -339,7 +340,7 @@ const getTicket = async (req, res) => {
     if (!canAccess(req, payment.user_id)) {
       return res.status(403).json({ message: 'No autorizado' });
     }
-    if (payment.status !== 'confirmed') {
+    if (!['confirmed', 'paid_elsewhere'].includes(payment.status)) {
       return res.status(400).json({ message: 'El ticket solo está disponible para pagos confirmados.' });
     }
 
@@ -510,7 +511,7 @@ const adminReviewPayment = async (req, res) => {
   const paymentId = req.params.paymentId;
   const { action, note } = req.body;
 
-  if (!['confirm', 'reject'].includes(action)) {
+  if (!['confirm', 'reject', 'paid_elsewhere'].includes(action)) {
     return res.status(400).json({ message: 'Acción inválida' });
   }
 
@@ -520,10 +521,12 @@ const adminReviewPayment = async (req, res) => {
       return res.status(404).json({ message: 'Pago no encontrado' });
     }
 
+    const statusByAction = { confirm: 'confirmed', reject: 'rejected', paid_elsewhere: 'paid_elsewhere' };
+
     const update = {
-      status: action === 'confirm' ? 'confirmed' : 'rejected',
+      status: statusByAction[action],
       reviewed_by: req.user?.id || null,
-      confirmed_at: action === 'confirm' ? new Date() : null,
+      confirmed_at: action === 'confirm' || action === 'paid_elsewhere' ? new Date() : null,
       note: note ? String(note).trim() : payment.note,
       updated_at: new Date(),
     };
@@ -533,6 +536,58 @@ const adminReviewPayment = async (req, res) => {
     return res.status(200).json(updated);
   } catch (error) {
     console.error('Error al revisar el pago', error);
+    return res.status(500).json({ message: 'Error en el servidor' });
+  }
+};
+
+// Confirmar manualmente el pago de un período (sin comprobante, ej: pago físico/otro lugar).
+const adminConfirmPayment = async (req, res) => {
+  if (!isAdmin(req.user)) {
+    return res.status(403).json({ message: 'No autorizado' });
+  }
+
+  const userId = req.params.userId;
+  const { period, note, method } = req.body;
+
+  if (!period || !/^\d{4}-\d{2}$/.test(period)) {
+    return res.status(400).json({ message: 'Periodo inválido' });
+  }
+
+  try {
+    const existing = await db('service_payments')
+      .where({ user_id: userId, period })
+      .orderBy('id', 'desc')
+      .first();
+
+    if (existing && (existing.status === 'confirmed' || existing.status === 'paid_elsewhere')) {
+      return res.status(409).json({ message: 'El pago de este periodo ya fue confirmado.' });
+    }
+
+    const { amount } = await getSubscriptionAmount(userId);
+
+    const payload = {
+      user_id: userId,
+      period,
+      status: 'paid_elsewhere',
+      method: method || 'manual',
+      amount: existing ? existing.amount : amount,
+      note: note ? String(note).trim() : null,
+      reviewed_by: req.user?.id || null,
+      confirmed_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    let result;
+    if (existing) {
+      [result] = await db('service_payments').where({ id: existing.id }).update(payload).returning('*');
+    } else {
+      [result] = await db('service_payments').insert(payload).returning('*');
+    }
+
+    delete result.proof;
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error('Error al confirmar el pago manualmente', error);
     return res.status(500).json({ message: 'Error en el servidor' });
   }
 };
@@ -620,6 +675,7 @@ module.exports = {
   adminListClients,
   adminGetUserPayments,
   adminReviewPayment,
+  adminConfirmPayment,
   adminSetAmount,
   adminSetSkipCertificate,
 };

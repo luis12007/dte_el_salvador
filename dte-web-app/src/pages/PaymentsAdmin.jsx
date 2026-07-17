@@ -36,6 +36,8 @@ const statusMeta = (status) => {
   switch (status) {
     case 'confirmed':
       return { label: 'Recibido', cls: 'bg-emerald-100 text-emerald-700' };
+    case 'paid_elsewhere':
+      return { label: 'Pagado en otro lugar', cls: 'bg-blue-100 text-blue-700' };
     case 'pending':
       return { label: 'En revisión', cls: 'bg-amber-100 text-amber-700' };
     case 'rejected':
@@ -64,6 +66,10 @@ const PaymentsAdmin = () => {
   const [proofLoading, setProofLoading] = useState(false);
   const [skipCertificateDraft, setSkipCertificateDraft] = useState(false);
   const [savingSkipCertificate, setSavingSkipCertificate] = useState(false);
+  const [paidElsewhereModal, setPaidElsewhereModal] = useState(null); // { paymentId, note }
+  const [savingPaidElsewhere, setSavingPaidElsewhere] = useState(false);
+  const [confirmingCurrentPayment, setConfirmingCurrentPayment] = useState(false);
+  const [currentPaymentNote, setCurrentPaymentNote] = useState('');
 
   const loadClients = async (targetPeriod) => {
     setLoading(true);
@@ -117,17 +123,49 @@ const PaymentsAdmin = () => {
     }
   };
 
-  const handleReview = async (paymentId, action) => {
+  const handleReview = async (paymentId, action, note) => {
     setReviewingId(paymentId);
     try {
-      await PaymentService.adminReview(paymentId, token, action);
-      toast.success(action === 'confirm' ? 'Pago confirmado' : 'Pago rechazado');
+      await PaymentService.adminReview(paymentId, token, action, note);
+      const messages = {
+        confirm: 'Pago confirmado',
+        reject: 'Pago rechazado',
+        paid_elsewhere: 'Pago confirmado en otro lugar'
+      };
+      toast.success(messages[action] || 'Pago actualizado');
       await refreshAfterChange();
     } catch (error) {
       console.error('Error al revisar el pago', error);
       toast.error(error?.message || 'No se pudo actualizar el pago');
     } finally {
       setReviewingId(null);
+    }
+  };
+
+  const handlePaidElsewhere = async () => {
+    if (!paidElsewhereModal) return;
+    setSavingPaidElsewhere(true);
+    try {
+      await handleReview(paidElsewhereModal.paymentId, 'paid_elsewhere', paidElsewhereModal.note);
+      setPaidElsewhereModal(null);
+    } finally {
+      setSavingPaidElsewhere(false);
+    }
+  };
+
+  const handleConfirmCurrentPayment = async () => {
+    if (!selected) return;
+    setConfirmingCurrentPayment(true);
+    try {
+      await PaymentService.adminConfirmPayment(selected.user_id, token, period, currentPaymentNote);
+      toast.success('Pago confirmado para este período');
+      setCurrentPaymentNote('');
+      await refreshAfterChange();
+    } catch (error) {
+      console.error('Error al confirmar pago', error);
+      toast.error(error?.message || 'No se pudo confirmar el pago');
+    } finally {
+      setConfirmingCurrentPayment(false);
     }
   };
 
@@ -326,6 +364,32 @@ const PaymentsAdmin = () => {
               )}
             </div>
 
+            {/* Confirmar pago del período actual sin comprobante */}
+            <div className="mb-5 rounded-xl border border-gray-100 p-4">
+              <label className="mb-3 block text-sm font-semibold text-slate-900">Confirmar pago de {period ? labelFor(period) : 'este período'}</label>
+              <p className="mb-3 text-sm text-slate-600">
+                Confirma que el cliente pagó en este período (ej: depósito físico, efectivo, etc.)
+              </p>
+              <textarea
+                value={currentPaymentNote}
+                onChange={(e) => setCurrentPaymentNote(e.target.value)}
+                placeholder="Cómo pagó (ej: Depósito bancario, Efectivo, Transferencia personal, etc.)"
+                maxLength={250}
+                className="mb-3 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-slate-800 outline-none focus:border-steelblue-200 focus:ring-2 focus:ring-steelblue-100"
+                rows={3}
+              />
+              <p className="mb-3 text-xs text-slate-500">
+                {currentPaymentNote.length}/250 caracteres
+              </p>
+              <button
+                onClick={handleConfirmCurrentPayment}
+                disabled={confirmingCurrentPayment || !currentPaymentNote.trim()}
+                className="rounded-lg bg-steelblue-300 px-4 py-2 text-sm font-semibold text-white transition hover:bg-steelblue-200 disabled:opacity-60"
+              >
+                {confirmingCurrentPayment ? 'Confirmando...' : 'Confirmar pago'}
+              </button>
+            </div>
+
             {/* Historial de pagos */}
             <p className="mb-2 text-sm font-semibold text-slate-900">Historial</p>
             {detailLoading ? (
@@ -362,14 +426,22 @@ const PaymentsAdmin = () => {
                             Ver comprobante
                           </button>
                         )}
-                        {p.status !== 'confirmed' && (
-                          <button
-                            onClick={() => handleReview(p.id, 'confirm')}
-                            disabled={reviewingId === p.id}
-                            className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-60"
-                          >
-                            {reviewingId === p.id ? '...' : 'Confirmar recibido'}
-                          </button>
+                        {p.status !== 'confirmed' && p.status !== 'paid_elsewhere' && (
+                          <>
+                            <button
+                              onClick={() => handleReview(p.id, 'confirm')}
+                              disabled={reviewingId === p.id}
+                              className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-400 disabled:opacity-60"
+                            >
+                              {reviewingId === p.id ? '...' : 'Confirmar recibido'}
+                            </button>
+                            <button
+                              onClick={() => setPaidElsewhereModal({ paymentId: p.id, note: '' })}
+                              className="rounded-lg border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50"
+                            >
+                              Pago en otro lugar
+                            </button>
+                          </>
                         )}
                         {p.status === 'pending' && (
                           <button
@@ -380,7 +452,7 @@ const PaymentsAdmin = () => {
                             Rechazar
                           </button>
                         )}
-                        {p.status === 'confirmed' && (
+                        {(p.status === 'confirmed' || p.status === 'paid_elsewhere') && (
                           <button
                             onClick={() => handleDownloadTicket(p.id)}
                             className="rounded-lg bg-steelblue-300 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-steelblue-200"
@@ -441,6 +513,50 @@ const PaymentsAdmin = () => {
         >
           <div className="max-h-[90vh] max-w-3xl overflow-auto rounded-xl bg-white p-2" onClick={(e) => e.stopPropagation()}>
             <img src={proofView.data} alt={proofView.name || 'Comprobante'} className="h-auto w-full rounded-lg" />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de pago en otro lugar */}
+      {paidElsewhereModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setPaidElsewhereModal(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="mb-4 text-lg font-semibold text-slate-900">Confirmar pago en otro lugar</h3>
+            <p className="mb-4 text-sm text-slate-600">
+              Describe dónde y cómo se realizó el pago (ej: "Depósito bancario", "Efectivo", etc.)
+            </p>
+            <textarea
+              value={paidElsewhereModal.note}
+              onChange={(e) => setPaidElsewhereModal({ ...paidElsewhereModal, note: e.target.value })}
+              placeholder="Detalles del pago..."
+              maxLength={250}
+              className="mb-4 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-slate-800 outline-none focus:border-blue-200 focus:ring-2 focus:ring-blue-100"
+              rows={4}
+            />
+            <p className="mb-4 text-xs text-slate-500">
+              {paidElsewhereModal.note.length}/250 caracteres
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPaidElsewhereModal(null)}
+                className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handlePaidElsewhere}
+                disabled={savingPaidElsewhere || !paidElsewhereModal.note.trim()}
+                className="flex-1 rounded-lg bg-blue-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:opacity-60"
+              >
+                {savingPaidElsewhere ? '...' : 'Confirmar'}
+              </button>
+            </div>
           </div>
         </div>
       )}

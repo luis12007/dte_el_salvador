@@ -11,6 +11,7 @@ const {
   adminListClients,
   adminGetUserPayments,
   adminReviewPayment,
+  adminConfirmPayment,
   adminSetAmount,
   adminSetSkipCertificate,
 } = require('../controllers/paymentController');
@@ -30,6 +31,7 @@ router.get('/ticket/:paymentId', authenticateToken, getTicket);
 router.get('/admin/clients', authenticateToken, adminListClients);
 router.get('/admin/user/:userId', authenticateToken, adminGetUserPayments);
 router.put('/admin/review/:paymentId', authenticateToken, adminReviewPayment);
+router.post('/admin/confirm/:userId', authenticateToken, adminConfirmPayment);
 router.put('/admin/amount/:userId', authenticateToken, adminSetAmount);
 router.put('/admin/skip-certificate/:userId', authenticateToken, adminSetSkipCertificate);
 

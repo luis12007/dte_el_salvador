@@ -106,6 +106,15 @@ const PaymentService = {
     });
     return parseJson(res);
   },
+
+  adminConfirmPayment: async (userId, token, period, note) => {
+    const res = await fetch(`${BASE_URL}/payments/admin/confirm/${userId}`, {
+      method: 'POST',
+      headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ period, note, method: 'manual' }),
+    });
+    return parseJson(res);
+  },
 };
 
 export default PaymentService;
