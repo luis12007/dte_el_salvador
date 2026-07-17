@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import SupportChatService from '../services/SupportChatService';
 import FacturaSelectorModal from '../components/FacturaSelectorModal';
 import FacturaViewerModal from '../components/FacturaViewerModal';
+import AdminUserEditorModal from '../components/AdminUserEditorModal';
 
 const parseMessageContent = (rawMessage) => {
   if (!rawMessage) {
@@ -50,6 +51,7 @@ const SupportChat = ({ mode = 'user' }) => {
   const [selectedFactura, setSelectedFactura] = useState(null);
   const [showFacturaSelector, setShowFacturaSelector] = useState(false);
   const [viewingFactura, setViewingFactura] = useState(null);
+  const [showUserEditor, setShowUserEditor] = useState(false);
 
   const bottomRef = useRef(null);
   const attachmentInputRef = useRef(null);
@@ -292,6 +294,14 @@ const SupportChat = ({ mode = 'user' }) => {
         onClose={() => setViewingFactura(null)}
         factura={viewingFactura}
       />
+      {isAdmin && (
+        <AdminUserEditorModal
+          isOpen={showUserEditor}
+          onClose={() => setShowUserEditor(false)}
+          userId={selectedUserId}
+          token={token}
+        />
+      )}
       <div className="flex h-[calc(100dvh-66px)] min-h-[calc(100dvh-66px)] flex-col overflow-hidden bg-steelblue-300 pt-[66px]">
       <div className={`mx-auto flex h-full w-full px-3 py-3 sm:px-6 sm:py-5 lg:px-8 ${isAdmin ? 'max-w-7xl 2xl:max-w-[1600px]' : 'max-w-3xl'}`}>
         <div className="flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl border border-white/20 bg-white shadow-2xl">
@@ -315,12 +325,26 @@ const SupportChat = ({ mode = 'user' }) => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => navigate('/principal')}
-              className="shrink-0 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/25 sm:px-4 sm:py-2 sm:text-sm"
-            >
-              Volver
-            </button>
+            <div className="flex items-center gap-2">
+              {isAdmin && selectedUserId && (
+                <button
+                  onClick={() => setShowUserEditor(true)}
+                  title="Editar usuario"
+                  className="shrink-0 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/25 sm:px-4 sm:py-2 sm:text-sm flex items-center gap-2"
+                >
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  <span className="hidden sm:inline">Editar Usuario</span>
+                </button>
+              )}
+              <button
+                onClick={() => navigate('/principal')}
+                className="shrink-0 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-white/25 sm:px-4 sm:py-2 sm:text-sm"
+              >
+                Volver
+              </button>
+            </div>
           </header>
 
           <div className={`grid min-h-0 flex-1 overflow-hidden ${isAdmin ? 'lg:grid-cols-[300px_minmax(0,1fr)] xl:grid-cols-[340px_minmax(0,1fr)]' : ''}`}>
