@@ -17,6 +17,7 @@ import EmisorService from "../services/emisor";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { isVisible } from "@testing-library/user-event/dist/utils";
+import CreditoFiscalPdfPreview from "../components/CreditoFiscalPdfPreview";
 import "./style.css";
 
 const Clientes = () => {
@@ -41,6 +42,18 @@ const Clientes = () => {
   // Estado para IVA retenido 1%
   const [isivareten1percent, setIsivareten1percent] = useState(false);
   const [ivaretenido, setIvaRetenido] = useState(0);
+  // Vista PDF: on = formularios a la izquierda + PDF en vivo a la derecha; off = vista clásica.
+  // Se lee de localStorage; si la variable no existe, queda desactivada por defecto.
+  const [pdfView, setPdfView] = useState(
+    localStorage.getItem("vista_pdf") === "on"
+  );
+
+  const togglePdfView = () => {
+    setPdfView((prev) => {
+      localStorage.setItem("vista_pdf", prev ? "off" : "on");
+      return !prev;
+    });
+  };
 
   const toggleButton = (event) => {
     event.preventDefault();
@@ -1183,7 +1196,7 @@ const Clientes = () => {
   };
 
   return (
-    <form className="m-0 w-full min-h-screen min-h-[100dvh] bg-steelblue-300 overflow-hidden flex flex-col items-center justify-start text-center pt-[17px] pb-5 pr-[15px] pl-5 box-border gap-[22px_0px] flex-1">
+    <form className="m-0 w-full min-h-screen min-h-[100dvh] bg-steelblue-300 flex flex-col items-center justify-start text-center pt-[17px] pb-5 pr-[15px] pl-5 box-border gap-[22px_0px] flex-1">
       <header className="rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-row items-center justify-center pt-4 pb-[15px] pr-3.5 pl-[17px] box-border top-[0] z-[99] sticky max-w-full self-stretch ch:w-1/3 ch:self-center">
         <div className="h-[66px] w-[390px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden max-w-full" />
         <div className="flex-1 rounded-mini bg-gainsboro-300 box-border flex flex-row items-start justify-between pt-[9px] pb-2.5 pr-[7px] pl-[15px] max-w-full gap-[20px] z-[1] border-[1px] border-solid border-white ">
@@ -1200,7 +1213,34 @@ const Clientes = () => {
           </select>
           {/* Your other elements */}
         </div>
+        {/* Toggle vista PDF */}
+        <button
+          type="button"
+          onClick={togglePdfView}
+          title={pdfView ? "Cambiar a vista clásica" : "Cambiar a vista PDF"}
+          className="cursor-pointer bg-transparent [border:none] p-0 ml-3 flex flex-row items-center gap-2 self-center"
+        >
+          <span className="text-xs font-inria-sans text-black whitespace-nowrap">
+            Vista PDF
+          </span>
+          <span
+            className={`w-10 h-5 rounded-full relative inline-block transition-colors ${
+              pdfView ? "bg-steelblue-200" : "bg-gray-400"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${
+                pdfView ? "left-[22px]" : "left-0.5"
+              }`}
+            />
+          </span>
+        </button>
       </header>
+
+      {/* Vista PDF: dos columnas con scroll propio (todo en una pantalla).
+          Vista clásica: display:contents deja las tarjetas como hijas directas del form. */}
+      <div className={pdfView ? "w-full flex flex-col ch:flex-row items-start gap-[22px] flex-1 min-h-0 text-left" : "contents"}>
+      <div className={pdfView ? "cf-form-col w-full ch:w-[420px] ch:max-w-[48%] ch:shrink-0 flex flex-col items-center justify-start gap-[22px] ch:max-h-[calc(100dvh_-_125px)] ch:overflow-y-auto ch:pr-1 ch:sticky ch:top-[95px] ch:z-[100]" : "contents"}>
       <section className=" rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start pt-0 px-0 pb-6 box-border gap-[5px] max-w-full self-stretch  ch:w-1/3 ch:self-center">
         <div className="self-stretch h-[163px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden " />
         <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1] ">
@@ -1393,6 +1433,29 @@ const Clientes = () => {
           </button>
         </div>
       </footer>
+      </div>
+
+      {/* Vista previa en vivo del PDF (se construye conforme se llenan los datos) */}
+      {pdfView && (
+        <div className="w-full ch:flex-1 ch:sticky ch:top-[95px] ch:self-start ch:max-h-[calc(100dvh_-_125px)] ch:overflow-y-auto min-w-0 text-left">
+          <CreditoFiscalPdfPreview
+            tipoDte="01"
+            userinfo={userinfo}
+            client={client}
+            listItems={Listitems}
+            subtotal={subtotal}
+            iva={iva}
+            total={total}
+            rentvalue={rentvalue}
+            ivaRetenido={ivaretenido}
+            observaciones={observaciones}
+            time={time}
+            numeroControl={getNextFormattedNumber((userinfo.count_factura ?? 0) + 1)}
+            cantidadEnLetras={convertirDineroALetras(total)}
+          />
+        </div>
+      )}
+      </div>
       {isLoading && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="loader"></div>

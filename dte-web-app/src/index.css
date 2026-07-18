@@ -279,3 +279,13 @@ body {
 .animate-delay-1200 { animation-delay: 1.2s; }
 .animate-delay-1400 { animation-delay: 1.4s; }
 .animate-delay-1600 { animation-delay: 1.6s; }
+/* Layout de dos columnas para Crear CF: los formularios llenan la columna
+   izquierda aunque sus componentes internos usen ch:w-1/3 ch:self-center */
+@media (min-width: 770px) {
+  .cf-form-col > section,
+  .cf-form-col > header,
+  .cf-form-col > footer {
+    width: 100% !important;
+    align-self: stretch !important;
+  }
+}
