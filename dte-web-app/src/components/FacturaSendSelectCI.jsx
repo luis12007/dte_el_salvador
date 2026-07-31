@@ -945,13 +945,6 @@ const FacturaSendSelectCI = ({ key, content, user , GetInf }) => {
             }
 
             if (content.tipo == "14") {
-                /* Split in this structure direccion: {
-                      municipio: userinfo.municipio, 
-                      departamento: userinfo.departamento, 
-                      complemento: userinfo.direccion 
-                    }, the string "08|08|direccion" */
-
-                const address = content.re_direccion.split("|");
                 const tributocf = content.tributocf.split("|");
                 var data = {
                     identificacion: {
@@ -995,9 +988,9 @@ const FacturaSendSelectCI = ({ key, content, user , GetInf }) => {
                         codActividad: content.re_codactividad,
                         descActividad: content.re_actividad_economica,
                         direccion: {
-                            municipio: address[1],
-                            departamento: address[0],
-                            complemento: address[2]
+                            municipio: content.municipio,
+                            departamento: content.departamento,
+                            complemento: content.complemento
                         },
                         correo: content.re_correo_electronico,
                         telefono: content.re_numero_telefono,

@@ -738,13 +738,6 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       }
 
       if (content.tipo == "14") {
-        /* Split in this structure direccion: {
-              municipio: userinfo.municipio, 
-              departamento: userinfo.departamento, 
-              complemento: userinfo.direccion 
-            }, the string "08|08|direccion" */
-
-        const address = content.re_direccion.split("|");
         const tributocf = content.tributocf.split("|");
         var data = {
           identificacion: {
@@ -788,9 +781,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             codActividad: content.re_codactividad,
             descActividad: content.re_actividad_economica,
             direccion: {
-              municipio: address[1],
-              departamento: address[0],
-              complemento: address[2],
+              municipio: content.municipio,
+              departamento: content.departamento,
+              complemento: content.complemento,
             },
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
@@ -1234,8 +1227,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1251,8 +1247,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1268,8 +1267,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1286,8 +1288,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1304,8 +1309,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1319,8 +1327,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1334,8 +1345,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1351,8 +1365,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         console.log(content.re_direccion);
 
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1366,8 +1383,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1381,8 +1401,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1396,8 +1419,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1411,8 +1437,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1426,8 +1455,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1441,8 +1473,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1456,8 +1491,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1471,8 +1509,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1486,8 +1527,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1503,8 +1547,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (content.tipo == "08") {
           const address = content.re_direccion.split("|");
           if (address[0].length == 1) {
@@ -1533,8 +1580,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (content.tipo == "08") {
           const address = content.re_direccion.split("|");
 
@@ -1563,8 +1613,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1578,8 +1631,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1593,8 +1649,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1608,8 +1667,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1623,8 +1685,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1638,8 +1703,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion ;
         }
@@ -1653,8 +1721,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1668,8 +1739,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1683,8 +1757,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1698,8 +1775,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1713,8 +1793,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1728,8 +1811,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1743,8 +1829,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1758,8 +1847,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
           
@@ -1774,8 +1866,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1789,8 +1884,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
           
@@ -1805,8 +1903,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
         }
@@ -1820,8 +1921,11 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
         data.sellado = content.sellado;
         data.sello = content.sello;
         if (content.tipo == "14") {
-          const address = content.re_direccion.split("|");
-          data.sujetoExcluido.direccion = address[2];
+          data.sujetoExcluido.direccion = {
+            municipio: content.municipio,
+            departamento: content.departamento,
+            complemento: content.complemento,
+          };
         } else if (data.receptor) {
           data.receptor.direccion = content.re_direccion;
           

@@ -367,6 +367,9 @@ const plantillacreate = async(req, res) => {
 
             re_codactividad: null,
             re_direccion: plantilla.sujetoExcluido.direccion.departamento + "|" + plantilla.sujetoExcluido.direccion.municipio + "|" + plantilla.sujetoExcluido.direccion.complemento,
+            municipio: plantilla.sujetoExcluido.direccion.municipio,
+            departamento: plantilla.sujetoExcluido.direccion.departamento,
+            complemento: plantilla.sujetoExcluido.direccion.complemento,
             re_nit: plantilla.sujetoExcluido.nit,
             re_nrc: plantilla.sujetoExcluido.nrc,
             re_actividad_economica: null,
@@ -1326,6 +1329,9 @@ const updatePlantilla = async(req, res) => {
 
             re_codactividad: null,
             re_direccion: plantilla.sujetoExcluido.direccion.departamento + "|" + plantilla.sujetoExcluido.direccion.municipio + "|" + plantilla.sujetoExcluido.direccion.complemento,
+            municipio: plantilla.sujetoExcluido.direccion.municipio,
+            departamento: plantilla.sujetoExcluido.direccion.departamento,
+            complemento: plantilla.sujetoExcluido.direccion.complemento,
             re_nit: plantilla.sujetoExcluido.nit,
             re_nrc: plantilla.sujetoExcluido.nrc,
             re_actividad_economica: null,
@@ -2124,6 +2130,9 @@ const updatePlantillaNoItems = async(req, res) => {
             /* --------------------------------------------------------- */
             /* RECEPTOR */
             re_direccion: plantilla.sujetoExcluido.direccion.departamento + "|" + plantilla.sujetoExcluido.direccion.municipio + "|" + plantilla.sujetoExcluido.direccion.complemento,
+            municipio: plantilla.sujetoExcluido.direccion.municipio,
+            departamento: plantilla.sujetoExcluido.direccion.departamento,
+            complemento: plantilla.sujetoExcluido.direccion.complemento,
 
             re_codactividad: plantilla.sujetoExcluido.codActividad,
             re_nit: plantilla.sujetoExcluido.nit,

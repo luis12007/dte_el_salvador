@@ -669,8 +669,14 @@ const EditSujEx = () => {
         event.preventDefault();
         console.log("Sending data to the server...");
         console.log("Data to send:", plantilla.plantilla);
-        const municipalities = plantilla.plantilla[0].re_direccion.split("|")[1];
-        const department = plantilla.plantilla[0].re_direccion.split("|")[0];
+        var department = selectedDepartment;
+        if (department < 10) {
+            department = "0" + department;
+        }
+        var municipalities = selectedMunicipality;
+        if (municipalities < 10) {
+            municipalities = "0" + municipalities;
+        }
         /* Counting the sentences*/
         const count = await PlantillaAPI.count(id_emisor, "01", token);
 
