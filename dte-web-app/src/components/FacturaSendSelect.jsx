@@ -67,6 +67,14 @@ const FacturaSendSelect = ({ key, content, user , GetInf }) => {
         return "";
     };
 
+    const formatDuiNumDocumento = (tipoDocumento, numDocumento) => {
+        const value = String(numDocumento ?? "");
+        if (tipoDocumento !== "13" || value === "" || value.includes("-")) {
+            return numDocumento;
+        }
+        return value.slice(0, -1) + "-" + value.slice(-1);
+    };
+
     const callFirmServiceByEmisor = async (Firm) => {
         if (id_emisor == 1 || id_emisor == 2 || id_emisor == 3) return await Firmservice.create(Firm);
         if (id_emisor == 4) return await Firmservice.HM_Clinic(Firm);
@@ -990,7 +998,7 @@ const FacturaSendSelect = ({ key, content, user , GetInf }) => {
                     },
                     sujetoExcluido: {
                         tipoDocumento: content.re_tipodocumento,
-                        numDocumento: content.re_numdocumento,
+                        numDocumento: formatDuiNumDocumento(content.re_tipodocumento, content.re_numdocumento),
                         nombre: content.re_name,
                         codActividad: content.re_codactividad,
                         descActividad: content.re_actividad_economica,

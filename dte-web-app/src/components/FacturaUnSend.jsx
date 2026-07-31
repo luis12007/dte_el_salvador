@@ -36,6 +36,14 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   // Bloqueo por falta de pago (cuenta vencida): no permite firmar/enviar.
   const { modalOpen: paymentBlockedOpen, closeModal: closePaymentBlocked, guard: guardPayment } = usePaymentBlock();
 
+  const formatDuiNumDocumento = (tipoDocumento, numDocumento) => {
+    const value = String(numDocumento ?? "");
+    if (tipoDocumento !== "13" || value === "" || value.includes("-")) {
+      return numDocumento;
+    }
+    return value.slice(0, -1) + "-" + value.slice(-1);
+  };
+
   useEffect(() => {
     if (content.tipo === "01") {
       setTipo("Factura");
@@ -776,7 +784,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           },
           sujetoExcluido: {
             tipoDocumento: content.re_tipodocumento,
-            numDocumento: content.re_numdocumento,
+            numDocumento: formatDuiNumDocumento(content.re_tipodocumento, content.re_numdocumento),
             nombre: content.re_name,
             codActividad: content.re_codactividad,
             descActividad: content.re_actividad_economica,
