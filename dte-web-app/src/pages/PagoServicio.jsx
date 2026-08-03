@@ -28,6 +28,8 @@ const statusMeta = (status) => {
   switch (status) {
     case 'confirmed':
       return { label: 'Confirmado', cls: 'bg-emerald-100 text-emerald-700' };
+    case 'paid_elsewhere':
+      return { label: 'Pagado', cls: 'bg-emerald-100 text-emerald-700' };
     case 'pending':
       return { label: 'En revisión', cls: 'bg-amber-100 text-amber-700' };
     case 'rejected':
@@ -152,7 +154,7 @@ const PagoServicio = () => {
 
   const current = sub?.currentPayment;
   const currentMeta = statusMeta(current?.status);
-  const alreadyPaid = current?.status === 'confirmed';
+  const alreadyPaid = current?.status === 'confirmed' || current?.status === 'paid_elsewhere';
 
   const TabButton = ({ id, label }) => (
     <button
@@ -352,7 +354,7 @@ const PagoServicio = () => {
                         </div>
                         <div className="flex shrink-0 items-center gap-2">
                           <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${meta.cls}`}>{meta.label}</span>
-                          {p.status === 'confirmed' && (
+                          {(p.status === 'confirmed' || p.status === 'paid_elsewhere') && (
                             <button
                               onClick={() => handleDownloadTicket(p.id)}
                               disabled={downloadingId === p.id}
