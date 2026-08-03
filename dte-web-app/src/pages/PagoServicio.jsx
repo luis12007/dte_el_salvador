@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PaymentService from '../services/PaymentService';
+import usePaymentNotifications from '../hooks/usePaymentNotifications';
 
 // Cuentas bancarias para transferencias
 const BANK_ACCOUNTS = [
@@ -57,6 +58,8 @@ const PagoServicio = () => {
   const [downloadingId, setDownloadingId] = useState(null);
   const fileInputRef = useRef(null);
 
+  const { markPaymentSeen } = usePaymentNotifications(token, userId);
+
   const loadData = async () => {
     try {
       const [subscription, mine] = await Promise.all([
@@ -79,6 +82,7 @@ const PagoServicio = () => {
       return;
     }
     loadData();
+    markPaymentSeen();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleFile = (event) => {

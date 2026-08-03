@@ -1,6 +1,16 @@
-import hamburguerimg from '../assets/imgs/hamburguerimg.png';
+import useSupportNotifications from '../hooks/useSupportNotifications';
+import usePaymentNotifications from '../hooks/usePaymentNotifications';
 
-export default function HamburguerComponent({ sidebar, open = false, hasUnreadMessages = false, unreadCount = 0 }) {
+export default function HamburguerComponent({ sidebar, open = false }) {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('user_id');
+
+    const { hasUnreadMessages, unreadCount } = useSupportNotifications(token, userId);
+    const { hasPaymentUpdate } = usePaymentNotifications(token, userId);
+
+    const hasNotification = hasUnreadMessages || hasPaymentUpdate;
+    const badgeCount = unreadCount > 0 ? unreadCount : (hasPaymentUpdate ? 1 : 0);
+
     return (
         <div className="fixed left-4 top-4 z-50 w-fit">
             <button
@@ -25,9 +35,9 @@ export default function HamburguerComponent({ sidebar, open = false, hasUnreadMe
                 )}
             </button>
 
-            {hasUnreadMessages && (
+            {hasNotification && (
                 <span className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white shadow-lg ring-2 ring-white animate-pulse">
-                    {unreadCount > 9 ? '9+' : unreadCount}
+                    {badgeCount > 9 ? '9+' : badgeCount}
                 </span>
             )}
         </div>

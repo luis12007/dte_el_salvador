@@ -1,5 +1,6 @@
 const db = require('../db/db');
 const PDFDocument = require('pdfkit');
+const { notifyNewPaymentSubmission } = require('../utils/supportNotifications');
 
 const getRequestRole = (user = {}) => user.role ?? user.rol ?? user.id_rol ?? user.tipo_usuario ?? user.tipoUsuario ?? user.user_role ?? null;
 
@@ -253,6 +254,22 @@ const submitTransfer = async (req, res) => {
 
     // No devolver el base64 del comprobante en la respuesta.
     delete result.proof;
+
+    try {
+      notifyNewPaymentSubmission({
+        userId,
+        clienteNombre: req.user?.usuario || req.user?.nombre,
+        amount: result.amount,
+        period: result.period,
+        reference: result.reference,
+        createdAt: result.updated_at,
+      }).catch((mailError) => {
+        console.error('Error al notificar el pago por correo', mailError);
+      });
+    } catch (notifyError) {
+      console.error('Error al notificar el pago', notifyError);
+    }
+
     return res.status(201).json(result);
   } catch (error) {
     console.error('Error al enviar el comprobante', error);

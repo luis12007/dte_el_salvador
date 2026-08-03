@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import PaymentBlockedModal from "./PaymentBlockedModal";
 import usePaymentBlock from "../hooks/usePaymentBlock";
 import useSupportNotifications from "../hooks/useSupportNotifications";
+import usePaymentNotifications from "../hooks/usePaymentNotifications";
 
 // Icono genérico (heroicon-style, stroke currentColor).
 const Icon = ({ d, className = "h-5 w-5" }) => (
@@ -40,8 +41,12 @@ const GroupComponent = ({ visible, setVisible }) => {
   // Solo el usuario id 1 es administrador (paneles de soporte, pagos y anuncios).
   const isMainAdmin = currentUserId === 1;
 
-  // Notificaciones de soporte
+  // Notificaciones de soporte y de pagos
   const { hasUnreadMessages, unreadCount } = useSupportNotifications(token, currentUserId);
+  const { hasPaymentUpdate } = usePaymentNotifications(token, currentUserId);
+
+  const itemHasNotification = (item) =>
+    (item.path === "/soporte" && hasUnreadMessages) || (item.path === "/pago" && hasPaymentUpdate);
 
   const sections = [
     {
@@ -170,6 +175,7 @@ const GroupComponent = ({ visible, setVisible }) => {
           {sections.map((section) => {
             const isOpen = open[section.key];
             const hasActive = section.items.some((it) => isActive(it.path));
+            const sectionHasNotification = section.items.some((it) => itemHasNotification(it));
             return (
               <div key={section.key} className="rounded-lg">
                 <button
@@ -182,6 +188,9 @@ const GroupComponent = ({ visible, setVisible }) => {
                 >
                   <Icon d={section.icon} className="h-5 w-5" />
                   <span className="flex-1 text-left text-sm font-semibold">{section.label}</span>
+                  {sectionHasNotification && (
+                    <span className="h-2.5 w-2.5 rounded-full bg-red-600 ring-2 ring-white animate-pulse" />
+                  )}
                   {section.admin && (
                     <span className="rounded-full bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-steelblue-300">
                       admin
@@ -202,7 +211,8 @@ const GroupComponent = ({ visible, setVisible }) => {
                   <div className="overflow-hidden">
                     <div className="ml-4 mt-1 space-y-1 border-l border-gray-200 pl-3">
                       {section.items.map((item) => {
-                        const showNotification = hasUnreadMessages && item.path === "/soporte";
+                        const showNotification = itemHasNotification(item);
+                        const showCount = item.path === "/soporte" && unreadCount > 0;
                         return (
                           <button
                             key={item.path}
@@ -216,9 +226,13 @@ const GroupComponent = ({ visible, setVisible }) => {
                             <Icon d={item.icon} className="h-[18px] w-[18px]" />
                             <span className="text-sm flex-1 text-left">{item.label}</span>
                             {showNotification && (
-                              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white shadow-lg ring-1 ring-red-700 animate-pulse">
-                                {unreadCount > 9 ? '9+' : unreadCount}
-                              </span>
+                              showCount ? (
+                                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-[11px] font-bold text-white shadow-lg ring-1 ring-red-700 animate-pulse">
+                                  {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                              ) : (
+                                <span className="h-2.5 w-2.5 rounded-full bg-red-600 ring-1 ring-red-700 animate-pulse" />
+                              )
                             )}
                           </button>
                         );

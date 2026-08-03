@@ -104,4 +104,45 @@ const notifyEveryCustomerMessage = async ({ userId, senderName, message, created
   return transporter.sendMail(mailOptions);
 };
 
-module.exports = { notifyFirstSupportMessage, notifyEveryCustomerMessage };
+// Avisa por correo cada vez que un cliente envía un pago (comprobante de transferencia). No bloqueante.
+const notifyNewPaymentSubmission = async ({ userId, clienteNombre, amount, period, reference, createdAt }) => {
+  const when = new Date(createdAt || Date.now()).toLocaleString('es-ES', {
+    timeZone: 'America/El_Salvador',
+  });
+  const cliente = clienteNombre || `Usuario #${userId}`;
+  const montoTexto = `$${Number(amount || 0).toFixed(2)}`;
+
+  const mailOptions = {
+    from: FROM,
+    to: NOTIFY_TO,
+    subject: `💳 Nuevo pago de ${cliente} (#${userId})`,
+    text:
+      `Un cliente envió un comprobante de pago.\n\n` +
+      `Cliente: ${cliente} (ID ${userId})\n` +
+      `Periodo: ${period}\n` +
+      `Monto: ${montoTexto}\n` +
+      `Referencia: ${reference || 'N/A'}\n` +
+      `Fecha: ${when}`,
+    html: `
+      <div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden">
+        <div style="background:#166534;color:#fff;padding:16px 20px">
+          <h2 style="margin:0;font-size:18px">💳 Nuevo pago recibido</h2>
+          <p style="margin:4px 0 0;font-size:12px;opacity:.85">Comprobante enviado por un cliente</p>
+        </div>
+        <div style="padding:20px;color:#111827">
+          <p style="margin:0 0 6px"><strong>Cliente:</strong> ${cliente} (ID ${userId})</p>
+          <p style="margin:0 0 6px"><strong>Periodo:</strong> ${period}</p>
+          <p style="margin:0 0 6px"><strong>Monto:</strong> ${montoTexto}</p>
+          <p style="margin:0 0 6px"><strong>Referencia:</strong> ${reference || 'N/A'}</p>
+          <p style="margin:0 0 14px"><strong>Fecha:</strong> ${when}</p>
+        </div>
+        <div style="padding:20px;background:#f9fafb;border-top:1px solid #e5e7eb;text-align:center;font-size:12px;color:#6b7280">
+          <a href="https://www.myspaceai.cloud" style="color:#166534;text-decoration:none;font-weight:bold">Revisar en el panel de pagos →</a>
+        </div>
+      </div>`,
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
+module.exports = { notifyFirstSupportMessage, notifyEveryCustomerMessage, notifyNewPaymentSubmission };
