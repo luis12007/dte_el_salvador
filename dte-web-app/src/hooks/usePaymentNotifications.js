@@ -3,8 +3,10 @@ import PaymentService from '../services/PaymentService';
 
 const seenKey = (userId) => `payment_seen_${userId}`;
 
+const NO_PAYMENT = 'none';
+
 const paymentSignature = (payment) =>
-  payment ? `${payment.id}:${payment.status}:${payment.confirmed_at || ''}` : null;
+  payment ? `${payment.id}:${payment.status}:${payment.confirmed_at || ''}` : NO_PAYMENT;
 
 // Detecta cuando el pago del periodo actual pasa a confirmado/pagado y el
 // cliente todavía no lo ha visto (comparado contra la última firma vista,
@@ -27,9 +29,7 @@ const usePaymentNotifications = (token, userId) => {
 
         if (stored === null) {
           // Primera vez que revisamos este usuario: no notificar por estado ya existente.
-          if (signature) {
-            localStorage.setItem(seenKey(userId), signature);
-          }
+          localStorage.setItem(seenKey(userId), signature);
           setHasPaymentUpdate(false);
           return;
         }
@@ -54,9 +54,7 @@ const usePaymentNotifications = (token, userId) => {
     try {
       const sub = await PaymentService.getSubscription(userId, token);
       const signature = paymentSignature(sub?.currentPayment);
-      if (signature) {
-        localStorage.setItem(seenKey(userId), signature);
-      }
+      localStorage.setItem(seenKey(userId), signature);
     } catch (error) {
       console.error('Error al marcar el pago como visto:', error);
     }

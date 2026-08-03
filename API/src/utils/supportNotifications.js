@@ -5,6 +5,10 @@ const NOTIFY_TO = 'luishdezmtz12@gmail.com';
 
 // Cuenta mysoftwaresv para enviar notificaciones
 const FROM = 'mysoftwaresv@gmail.com';
+
+// URLs del panel (SPA con HashRouter) a las que apuntan los botones de los correos.
+const SUPPORT_PANEL_URL = 'https://cliente-production-e629.up.railway.app/#/testadmin/support-chat';
+const PAYMENTS_PANEL_URL = 'https://cliente-production-e629.up.railway.app/#/testadmin/pagos';
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -61,6 +65,9 @@ const notifyFirstSupportMessage = async ({ userId, senderName, message, createdA
           <p style="margin:0 0 14px"><strong>Fecha:</strong> ${when}</p>
           <div style="background:#f1f5f9;border-radius:10px;padding:14px;white-space:pre-wrap;font-size:14px;color:#1f2937">${text.replace(/</g, '&lt;')}</div>
         </div>
+        <div style="padding:20px;background:#f9fafb;border-top:1px solid #e5e7eb;text-align:center;font-size:12px;color:#6b7280">
+          <a href="${SUPPORT_PANEL_URL}" style="color:#395576;text-decoration:none;font-weight:bold">Responder en el panel de soporte →</a>
+        </div>
       </div>`,
   };
 
@@ -96,7 +103,7 @@ const notifyEveryCustomerMessage = async ({ userId, senderName, message, created
           <div style="background:#f1f5f9;border-radius:10px;padding:14px;white-space:pre-wrap;font-size:14px;color:#1f2937;border-left:4px solid #1E3256">${text.replace(/</g, '&lt;')}</div>
         </div>
         <div style="padding:20px;background:#f9fafb;border-top:1px solid #e5e7eb;text-align:center;font-size:12px;color:#6b7280">
-          <a href="https://www.myspaceai.cloud" style="color:#1E3256;text-decoration:none;font-weight:bold">Responder en el panel de soporte →</a>
+          <a href="${SUPPORT_PANEL_URL}" style="color:#1E3256;text-decoration:none;font-weight:bold">Responder en el panel de soporte →</a>
         </div>
       </div>`,
   };
@@ -137,7 +144,7 @@ const notifyNewPaymentSubmission = async ({ userId, clienteNombre, amount, perio
           <p style="margin:0 0 14px"><strong>Fecha:</strong> ${when}</p>
         </div>
         <div style="padding:20px;background:#f9fafb;border-top:1px solid #e5e7eb;text-align:center;font-size:12px;color:#6b7280">
-          <a href="https://www.myspaceai.cloud" style="color:#166534;text-decoration:none;font-weight:bold">Revisar en el panel de pagos →</a>
+          <a href="${PAYMENTS_PANEL_URL}" style="color:#166534;text-decoration:none;font-weight:bold">Revisar en el panel de pagos →</a>
         </div>
       </div>`,
   };
