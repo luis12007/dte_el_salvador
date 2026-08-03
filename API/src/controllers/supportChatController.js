@@ -116,7 +116,10 @@ const sendSupportMessage = async (req, res) => {
       sender_name: req.user?.usuario || (senderRole === 'support' ? 'Soporte' : 'Usuario'),
       sender_role: senderRole,
       message: String(message).trim(),
-      is_read: senderRole === 'support',
+      // is_read indica si el DESTINATARIO ya leyó el mensaje, no el remitente.
+      // Empieza en false siempre: se marca como leído cuando el otro lado
+      // abre el hilo (markThreadRead).
+      is_read: false,
       updated_at: new Date(),
     };
 
