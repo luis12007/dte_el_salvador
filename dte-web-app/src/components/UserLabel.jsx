@@ -41,10 +41,10 @@ const UserLabel = ({ correoLuisAlexanderContaiPadding , client = {}, onSelect })
       role="button"
       tabIndex={0}
     >
-      <div className="w-full bg-white   shadow-sm px-4 py-3 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+      <div className="w-full max-w-full bg-white shadow-sm px-4 py-3 flex items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow cursor-pointer">
         {/* Avatar */}
         <img
-          className="w-12 h-13  object-cover"
+          className="w-12 h-12 shrink-0 object-contain"
           loading="lazy"
           alt="Avatar"
           src="/usuario-2@2x.png"
@@ -81,7 +81,7 @@ const UserLabel = ({ correoLuisAlexanderContaiPadding , client = {}, onSelect })
         <button
           onClick={deletehandler}
           aria-label="Eliminar"
-          className="ml-auto inline-flex items-center justify-center w-8 h-8 rounded-md text-red-600 hover:text-red-700 bg-transparent transition-colors"
+          className="ml-auto shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-md text-red-600 hover:text-red-700 bg-transparent transition-colors"
           title="Eliminar receptor"
         >
           <img src={x} alt="Eliminar" className="w-3.5 h-3.5" />
