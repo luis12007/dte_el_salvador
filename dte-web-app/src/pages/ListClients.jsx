@@ -12,11 +12,11 @@ const ListaDeServicioOClientes = () => {
     setVisible(!visible);
 }
   return (
-    <div className="w-full h-screen relative bg-steelblue-300 overflow-hidden flex flex-col items-start justify-start pt-3 px-2.5 pb-[316px] box-border gap-[22px_0px] tracking-[normal]">
-            <HamburguerComponent sidebar={sidebar} open={visible}/>
-            <SidebarComponent visible={visible} setVisible={setVisible}/>
-<div className="w-full flex flex-col items-start mt-20 justify-start gap-[22px_0px]">
-      <InnerFrame />
+    <div className="min-h-screen w-full overflow-x-hidden bg-steelblue-300 px-3 py-6 box-border sm:px-6 sm:py-10 animate-fadeIn">
+      <HamburguerComponent sidebar={sidebar} open={visible} />
+      <SidebarComponent visible={visible} setVisible={setVisible} />
+      <div className="mt-12 sm:mt-2">
+        <InnerFrame />
       </div>
     </div>
   );
