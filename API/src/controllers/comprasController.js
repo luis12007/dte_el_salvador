@@ -252,7 +252,13 @@ const cratecompra = async(req, res) => {
             console.log('error logging purchase preview', e);
         }
 
-        const result = await db('purchases').insert(JsontoDB);
+        // Evitar duplicados: si ya existe una compra con el mismo id_emisor +
+        // codigo_de_generacion, la nueva subida sobreescribe la anterior en vez
+        // de insertar una fila duplicada (codigo_de_generacion debe ser único).
+        const result = await db('purchases')
+            .insert(JsontoDB)
+            .onConflict(['id_emisor', 'codigo_de_generacion'])
+            .merge();
         console.log(result);
         return res.status(201).json({ message: 'compra creada' });
 
