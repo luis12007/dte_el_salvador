@@ -78,8 +78,9 @@ const cratecompra = async(req, res) => {
         put('codigo_de_generacion', plantilla?.identificacion?.codigoGeneracion);
         put('modelo_de_factura', plantilla?.identificacion?.tipoModelo);
         put('tipo_de_transmision', plantilla?.identificacion?.tipoOperacion);
-        // fecha_y_hora_de_generacion: usar SIEMPRE la fecha actual (YYYY-MM-DD)
-        put('fecha_y_hora_de_generacion', new Date().toISOString().split('T')[0]);
+        // fecha_y_hora_de_generacion: usar la fecha real de emisión del DTE (fecEmi),
+        // no la fecha de subida, para que los filtros por período funcionen correctamente.
+        put('fecha_y_hora_de_generacion', plantilla?.identificacion?.fecEmi ?? new Date().toISOString().split('T')[0]);
         put('horemi', plantilla?.identificacion?.horEmi);
         put('tipomoneda', plantilla?.identificacion?.tipoMoneda);
         put('tipocontingencia', plantilla?.identificacion?.tipoContingencia);
