@@ -10,7 +10,7 @@ export const validateToken = async (token, endpoint = '/plantillas/get/1?page=1&
 
   try {
     const response = await fetch(
-      `https://intuitive-bravery-production.up.railway.app${endpoint}`,
+      `${process.env.REACT_APP_API_URL || "https://intuitive-bravery-production.up.railway.app"}${endpoint}`,
       {
         method: 'GET',
         headers: {

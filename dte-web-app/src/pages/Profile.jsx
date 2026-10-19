@@ -9,6 +9,7 @@ import {
   MUNICIPIOS_POR_DEPARTAMENTO,
   DISTRITOS_POR_DEPARTAMENTO,
 } from "../data/catalogosUbicacion";
+import { DISTRITOS_POR_MUNICIPIO } from "../utils/dteSchemaAdapter";
 
 const Perfil = () => {
   const [name, setName] = useState('')
@@ -76,13 +77,13 @@ const Perfil = () => {
     // Si se elige distrito, departamento y municipio deben corresponder.
     if (distrito) {
       const municipiosValidos = MUNICIPIOS_POR_DEPARTAMENTO[departamento] || [];
-      const distritosValidos = DISTRITOS_POR_DEPARTAMENTO[departamento] || [];
+      const distritosValidos = DISTRITOS_POR_MUNICIPIO[`${departamento}-${municipio}`] || [];
       if (!municipiosValidos.some((m) => m.code === municipio)) {
         toast.error('Seleccione un municipio del departamento elegido');
         return;
       }
-      if (!distritosValidos.some((d) => d.code === distrito)) {
-        toast.error('Seleccione un distrito del departamento elegido');
+      if (!distritosValidos.includes(distrito)) {
+        toast.error('Seleccione un distrito que pertenezca al municipio elegido');
         return;
       }
     }
@@ -149,7 +150,11 @@ const Perfil = () => {
   };
 
   const municipiosDisponibles = MUNICIPIOS_POR_DEPARTAMENTO[departamento] || [];
-  const distritosDisponibles = DISTRITOS_POR_DEPARTAMENTO[departamento] || [];
+  // Solo los distritos que pertenecen al municipio elegido (Hacienda rechaza otros).
+  const codigosDistritoMunicipio = DISTRITOS_POR_MUNICIPIO[`${departamento}-${municipio}`] || [];
+  const distritosDisponibles = (DISTRITOS_POR_DEPARTAMENTO[departamento] || []).filter((d) =>
+    codigosDistritoMunicipio.includes(d.code)
+  );
 
   // Handler para el cambio en el dropdown
   const handleActividadChange = (e) => {
@@ -294,7 +299,10 @@ const Perfil = () => {
             <select
               className="w-full font-inria-sans text-xs text-darkslategray p-1 rounded border border-gray-300 bg-white"
               value={municipiosDisponibles.some((m) => m.code === municipio) ? municipio : ''}
-              onChange={(e) => setMunicipio(e.target.value)}
+              onChange={(e) => {
+                setMunicipio(e.target.value);
+                setDistrito('');
+              }}
               disabled={!departamento}
             >
               <option value="">Seleccione un municipio</option>
@@ -307,7 +315,7 @@ const Perfil = () => {
               className="w-full font-inria-sans text-xs text-darkslategray p-1 rounded border border-gray-300 bg-white"
               value={distritosDisponibles.some((d) => d.code === distrito) ? distrito : ''}
               onChange={(e) => setDistrito(e.target.value)}
-              disabled={!departamento}
+              disabled={!departamento || !municipio}
             >
               <option value="">Usar ubicación por defecto (San Salvador)</option>
               {distritosDisponibles.map((d) => (

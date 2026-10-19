@@ -33,8 +33,109 @@ const EMISOR_DIRECCION_DEFAULT = { departamento: "06", municipio: "23", distrito
 const COD_ESTABLE = "M001";
 const COD_PUNTO_VENTA = "P001";
 
-// PLACEHOLDER: la app no guarda distrito del receptor (CAT-008).
-const PLACEHOLDER_DISTRITO_RECEPTOR = "01";
+/*
+ * Distritos (CAT-008) que pertenecen a cada municipio (CAT-013), según la
+ * reorganización municipal de 2024. Clave "departamento-municipio".
+ * El primer distrito de cada lista es el que se usa por defecto cuando el
+ * receptor o el emisor no tienen distrito (o tienen uno que no corresponde).
+ * Hacienda rechaza un distrito que no pertenece al municipio
+ * ("[receptor.direccion.distrito] VALOR NO ES PERMITIDO").
+ */
+const DISTRITOS_POR_MUNICIPIO = {
+  // 01 Ahuachapán
+  "01-13": ["03", "05", "09", "12"],
+  "01-14": ["01", "02", "04", "11"],
+  "01-15": ["07", "06", "08", "10"],
+  // 02 Santa Ana
+  "02-14": ["07", "06", "11", "13"],
+  "02-15": ["10"],
+  "02-16": ["02", "04"],
+  "02-17": ["03", "01", "05", "08", "09", "12"],
+  // 03 Sonsonate
+  "03-17": ["07", "08", "10", "13"],
+  "03-18": ["15", "16", "09", "11", "14"],
+  "03-19": ["06", "02", "03", "12", "04", "05"],
+  "03-20": ["01"],
+  // 04 Chalatenango
+  "04-34": ["12", "04", "25"],
+  "04-35": ["16", "33", "13", "01", "08", "10", "24", "31", "32", "22"],
+  "04-36": ["07", "02", "03", "05", "06", "09", "11", "14", "15", "17", "18", "19", "20", "21", "23", "26", "27", "28", "29", "30"],
+  // 05 La Libertad
+  "05-23": ["12", "16", "17"],
+  "05-24": ["15", "02"],
+  "05-25": ["03", "07", "13", "21", "19"],
+  "05-26": ["01", "06", "10", "14", "22"],
+  "05-27": ["09", "05", "08", "18", "20"],
+  "05-28": ["11", "04"],
+  // 06 San Salvador
+  "06-20": ["01", "05", "06"],
+  "06-21": ["02", "09"],
+  "06-22": ["17", "07", "13", "18"],
+  "06-23": ["14", "03", "04", "08", "19"],
+  "06-24": ["10", "11", "12", "15", "16"],
+  // 07 Cuscatlán
+  "07-17": ["15", "09", "06", "07", "10"],
+  "07-18": ["02", "01", "03", "04", "05", "08", "11", "12", "13", "14", "16"],
+  // 08 La Paz
+  "08-23": ["05", "01", "09", "11", "13", "15", "20"],
+  "08-24": ["19", "02", "03", "04", "06", "07", "08", "12", "14", "16", "18"],
+  "08-25": ["21", "10", "17", "22"],
+  // 09 Cabañas
+  "09-10": ["06", "02", "05", "08", "09"],
+  "09-11": ["03", "01", "04", "07"],
+  // 10 San Vicente
+  "10-14": ["01", "04", "05", "06", "07", "08", "09"],
+  "10-15": ["10", "02", "03", "11", "12", "13"],
+  // 11 Usulután
+  "11-24": ["21", "01", "02", "05", "07", "09", "11", "12", "16"],
+  "11-25": ["23", "03", "04", "06", "10", "13", "17", "18", "20", "22"],
+  "11-26": ["08", "14", "15", "19"],
+  // 12 San Miguel
+  "12-21": ["02", "01", "04", "11", "13", "14", "16", "19"],
+  "12-22": ["17", "03", "06", "09", "12", "20"],
+  "12-23": ["05", "07", "08", "10", "15", "18"],
+  // 13 Morazán
+  "13-27": ["16", "01", "02", "03", "07", "10", "11", "14", "18", "20", "24"],
+  "13-28": ["19", "04", "05", "06", "08", "09", "12", "13", "15", "17", "21", "22", "23", "25", "26"],
+  // 14 La Unión
+  "14-19": ["16", "01", "02", "03", "06", "09", "11", "12", "13", "15"],
+  "14-20": ["08", "04", "05", "07", "10", "14", "17", "18"],
+};
+
+const pad2 = (v) => {
+  const s = reqStrSafe(v);
+  return /^\d$/.test(s) ? `0${s}` : s;
+};
+function reqStrSafe(v) {
+  return v === null || v === undefined ? "" : String(v).trim();
+}
+
+/*
+ * Devuelve { departamento, municipio, distrito } coherentes con CAT-012/013/008.
+ * - Si el distrito pertenece al municipio, se respeta.
+ * - Si el municipio es un código viejo (antes de 2024) que en realidad es un
+ *   distrito del departamento, se convierte al municipio nuevo que lo contiene.
+ * - Si falta el distrito o no corresponde, se usa el distrito por defecto del municipio.
+ * Devuelve null si el departamento/municipio no se pueden resolver.
+ */
+const resolverUbicacion = (departamento, municipio, distrito) => {
+  const dep = pad2(departamento);
+  const mun = pad2(municipio);
+  const dis = pad2(distrito);
+  const lista = DISTRITOS_POR_MUNICIPIO[`${dep}-${mun}`];
+  if (lista) {
+    return { departamento: dep, municipio: mun, distrito: lista.includes(dis) ? dis : lista[0] };
+  }
+  // Código de municipio viejo: corresponde a un distrito del departamento.
+  const candidatoDistrito = dis || mun;
+  for (const [clave, distritos] of Object.entries(DISTRITOS_POR_MUNICIPIO)) {
+    const [d, m] = clave.split("-");
+    if (d === dep && distritos.includes(candidatoDistrito)) {
+      return { departamento: dep, municipio: m, distrito: candidatoDistrito };
+    }
+  }
+  return null;
+};
 
 // NC/ND/CL: el esquema exige tipoDocumento del receptor; 36 = NIT (CAT-022).
 const TIPO_DOC_NIT = "36";
@@ -44,6 +145,12 @@ const CODIGO_RETENCION_MH_DEFAULT = "22";
 
 // CL: CAT-032 Domicilio fiscal del receptor. 1 = Domiciliado.
 const COD_DOMICILIADO_DEFAULT = 1;
+
+// Formato del número de documento del receptor (Normativa de Cumplimiento v2).
+// MH rechazó "########-#" en Factura v2 ("numDocumento no cumple el formato
+// requerido", código 096), así que DUI (13) y NIT (36) se envían solo con dígitos.
+// Si Hacienda vuelve a exigir el guion en el DUI, poner DUI_CON_GUION en true.
+const DUI_CON_GUION = false;
 
 const SCHEMA_VERSIONS = {
   "01": 2,
@@ -81,6 +188,23 @@ const optInt = (v) => {
   if (isBlank(v)) return null;
   const n = parseInt(v, 10);
   return Number.isFinite(n) ? n : null;
+};
+
+/* Número de documento según su tipo (CAT-022):
+   13 DUI -> 9 dígitos (o ########-# si DUI_CON_GUION), 36 NIT -> solo dígitos.
+   Otros tipos (pasaporte, carnet, otro) se dejan como vienen. */
+const normalizeNumDocumento = (tipoDocumento, numDocumento) => {
+  if (isBlank(numDocumento)) return numDocumento;
+  const raw = String(numDocumento).trim();
+  const tipo = isBlank(tipoDocumento) ? "" : String(tipoDocumento).trim();
+  const digits = raw.replace(/\D/g, "");
+  if (tipo === "13" && digits.length === 9) {
+    return DUI_CON_GUION ? `${digits.slice(0, 8)}-${digits.slice(8)}` : digits;
+  }
+  if (tipo === "36" && (digits.length === 9 || digits.length === 14)) {
+    return digits;
+  }
+  return raw;
 };
 
 /* Monto en letras con el mismo formato que usan las pantallas de creación. */
@@ -134,40 +258,25 @@ const normalizeNumeroControl = (numeroControl, tipoDte) => {
   return `DTE-${tipoDte}-${COD_ESTABLE}${COD_PUNTO_VENTA}-${correlativo}`;
 };
 
+/* Receptor: el distrito se valida contra su municipio. Si no se puede resolver
+   la ubicación, se usa la dirección por defecto de San Salvador. */
 const buildDireccionReceptor = (dir) => {
   if (!dir || typeof dir !== "object") return null;
-  const departamento = reqStr(dir.departamento);
-  const municipio = reqStr(dir.municipio);
-  let distrito = dir.distrito;
-  if (isBlank(distrito)) {
-    // San Salvador Centro sin distrito: se usa el distrito San Salvador.
-    distrito =
-      departamento === EMISOR_DIRECCION_DEFAULT.departamento && municipio === EMISOR_DIRECCION_DEFAULT.municipio
-        ? EMISOR_DIRECCION_DEFAULT.distrito
-        : PLACEHOLDER_DISTRITO_RECEPTOR;
-  }
-  return {
-    departamento,
-    municipio,
-    distrito: String(distrito),
-    complemento: reqStr(dir.complemento),
-  };
+  const ubicacion =
+    resolverUbicacion(dir.departamento, dir.municipio, dir.distrito) || EMISOR_DIRECCION_DEFAULT;
+  return { ...ubicacion, complemento: reqStr(dir.complemento) };
 };
 
-/* Emisor: si tiene distrito (perfil) se usa su departamento/municipio/distrito;
-   si no, la dirección fija de San Salvador. */
+/* Emisor: si tiene distrito (perfil) se usa su departamento/municipio/distrito
+   validados entre sí; si no tiene distrito o no se puede resolver, la
+   dirección fija de San Salvador. */
 const buildDireccionEmisor = (dir, distritoPerfil) => {
   const d = dir && typeof dir === "object" ? dir : {};
   const distrito = !isBlank(d.distrito) ? d.distrito : distritoPerfil;
-  if (isBlank(distrito)) {
-    return { ...EMISOR_DIRECCION_DEFAULT, complemento: reqStr(d.complemento) };
-  }
-  return {
-    departamento: reqStr(d.departamento),
-    municipio: reqStr(d.municipio),
-    distrito: String(distrito),
-    complemento: reqStr(d.complemento),
-  };
+  const ubicacion = isBlank(distrito)
+    ? EMISOR_DIRECCION_DEFAULT
+    : resolverUbicacion(d.departamento, d.municipio, distrito) || EMISOR_DIRECCION_DEFAULT;
+  return { ...ubicacion, complemento: reqStr(d.complemento) };
 };
 
 const buildIdentificacion = (ident, tipoDte, { withFusion = false, withContingencia = true } = {}) => {
@@ -321,7 +430,7 @@ const adaptFactura = (data, extra) => {
   const receptor = hasReceptor
     ? {
         tipoDocumento: optStr(r.tipoDocumento),
-        numDocumento: optStr(r.numDocumento),
+        numDocumento: optStr(normalizeNumDocumento(r.tipoDocumento, r.numDocumento)),
         nrc: optStr(r.nrc),
         nombre: optStr(r.nombre),
         codActividad: optStr(r.codActividad),
@@ -401,7 +510,7 @@ const adaptCreditoFiscal = (data, extra) => {
     documentoRelacionado: buildDocumentoRelacionado(data.documentoRelacionado),
     emisor: buildEmisor(data.emisor, { distritoPerfil: extra.distritoEmisor }),
     receptor: {
-      nit: reqStr(r.nit ?? r.numDocumento),
+      nit: reqStr(normalizeNumDocumento("36", r.nit ?? r.numDocumento)),
       nrc: optStr(r.nrc),
       nombre: reqStr(r.nombre),
       codActividad: reqStr(r.codActividad),
@@ -516,7 +625,7 @@ const adaptNota = (data, tipoDte, extra) => {
     emisor: buildEmisor(data.emisor, { establecimiento: false, distritoPerfil: extra.distritoEmisor }),
     receptor: {
       tipoDocumento: isBlank(r.tipoDocumento) ? TIPO_DOC_NIT : String(r.tipoDocumento),
-      numDocumento: reqStr(r.numDocumento ?? r.nit),
+      numDocumento: reqStr(normalizeNumDocumento(isBlank(r.tipoDocumento) ? TIPO_DOC_NIT : r.tipoDocumento, r.numDocumento ?? r.nit)),
       nrc: optStr(r.nrc),
       nombre: reqStr(r.nombre),
       codActividad: reqStr(r.codActividad),
@@ -565,7 +674,7 @@ const adaptLiquidacion = (data, extra) => {
     emisor: buildEmisor(data.emisor, { telefonoOpcional: true, distritoPerfil: extra.distritoEmisor }),
     receptor: {
       tipoDocumento: isBlank(r.tipoDocumento) ? TIPO_DOC_NIT : String(r.tipoDocumento),
-      numDocumento: reqStr(r.numDocumento ?? r.nit),
+      numDocumento: reqStr(normalizeNumDocumento(isBlank(r.tipoDocumento) ? TIPO_DOC_NIT : r.tipoDocumento, r.numDocumento ?? r.nit)),
       codDomiciliado: optInt(r.codDomiciliado) ?? COD_DOMICILIADO_DEFAULT,
       nrc: optStr(r.nrc),
       nombre: reqStr(r.nombre),
@@ -620,7 +729,7 @@ const adaptSujetoExcluido = (data, extra) => {
     emisor: buildEmisor(data.emisor, { nombreComercial: false, distritoPerfil: extra.distritoEmisor }),
     receptor: {
       tipoDocumento: reqStr(r.tipoDocumento),
-      numDocumento: reqStr(r.numDocumento),
+      numDocumento: reqStr(normalizeNumDocumento(r.tipoDocumento, r.numDocumento)),
       nombre: reqStr(r.nombre),
       codActividad: optStr(r.codActividad),
       descActividad: optStr(r.descActividad),
@@ -691,7 +800,7 @@ const adaptInvalidationForSigning = (evento) => {
       fecEmi: reqStr(d.fecEmi),
       codigoGeneracionR: optStr(d.codigoGeneracionR),
       tipoDocumento: optStr(d.tipoDocumento),
-      numDocumento: optStr(d.numDocumento),
+      numDocumento: optStr(normalizeNumDocumento(d.tipoDocumento, d.numDocumento)),
       nombre: optStr(d.nombre),
       telefono: optStr(d.telefono),
       correo: optStr(d.correo),
@@ -701,10 +810,10 @@ const adaptInvalidationForSigning = (evento) => {
       motivoAnulacion: optStr(m.motivoAnulacion),
       nombreResponsable: reqStr(m.nombreResponsable),
       tipDocResponsable: reqStr(m.tipDocResponsable),
-      numDocResponsable: reqStr(m.numDocResponsable),
+      numDocResponsable: reqStr(normalizeNumDocumento(m.tipDocResponsable, m.numDocResponsable)),
       nombreSolicita: reqStr(m.nombreSolicita),
       tipDocSolicita: reqStr(m.tipDocSolicita),
-      numDocSolicita: reqStr(m.numDocSolicita),
+      numDocSolicita: reqStr(normalizeNumDocumento(m.tipDocSolicita, m.numDocSolicita)),
     },
   };
 };
@@ -800,6 +909,8 @@ const buildClientDteJson = (legacyJson, { firma = null, sello = null, distritoEm
 module.exports = {
   SCHEMA_VERSIONS,
   EMISOR_DIRECCION_DEFAULT,
+  DISTRITOS_POR_MUNICIPIO,
+  resolverUbicacion,
   COD_ESTABLE,
   COD_PUNTO_VENTA,
   adaptDteForSigning,

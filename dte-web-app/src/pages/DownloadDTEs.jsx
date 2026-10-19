@@ -8,7 +8,7 @@ import UserService from '../services/UserServices';
 import JSZip from 'jszip';
 import { buildClientDteJson } from '../utils/dteSchemaAdapter';
 import "react-toastify/dist/ReactToastify.css";
-const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+const BASE_URL = process.env.REACT_APP_API_URL || "https://intuitive-bravery-production.up.railway.app";
 
 const sanitizeFilenamePart = (value) => {
   const raw = String(value ?? '').trim();

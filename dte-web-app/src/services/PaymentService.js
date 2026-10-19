@@ -1,4 +1,4 @@
-const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+const BASE_URL = process.env.REACT_APP_API_URL || "https://intuitive-bravery-production.up.railway.app";
 
 const authHeaders = (token) => ({ Authorization: `Bearer ${token}` });
 
