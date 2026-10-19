@@ -1,5 +1,4 @@
-//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
 
 const parseResponse = async (res) => {
   const contentType = res.headers.get('content-type') || '';

@@ -1,5 +1,5 @@
-//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+//const BASE_URL = "http://localhost:3000";
 
 function downloadPDF(data, id_emisor, codigo_de_generacion, token) {
     fetch(`${BASE_URL}/mail/bill/${id_emisor}`, {

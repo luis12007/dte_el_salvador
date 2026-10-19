@@ -1,5 +1,4 @@
-//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
 
 const AnnouncementService = {
   // Anuncio activo que ven los clientes en el home principal.
