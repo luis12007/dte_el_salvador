@@ -4,7 +4,8 @@
 import { safeFetch } from '../utils/safeFetch';
 import ErrorHandlerService from './ErrorHandlerService';
 
-const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+const BASE_URL = "http://localhost:3000";
 
 // Helper para hacer requests robustos
 const makeRequest = async (endpoint, options = {}) => {

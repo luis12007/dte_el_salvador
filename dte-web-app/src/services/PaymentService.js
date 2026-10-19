@@ -1,4 +1,5 @@
-const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+//const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
+const BASE_URL = "http://localhost:3000";
 
 const authHeaders = (token) => ({ Authorization: `Bearer ${token}` });
 
