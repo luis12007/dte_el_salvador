@@ -13,6 +13,13 @@ const UserService = {
                 }
             });
             const data = await res.json();
+            // Guardar el distrito del perfil para que el firmador lo use en la
+            // dirección del emisor (ver services/Firm.js y utils/dteSchemaAdapter.js).
+            try {
+                if (data && typeof data === 'object' && !data.message) {
+                    localStorage.setItem(`emisor_distrito_${id}`, data.distrito ? String(data.distrito) : '');
+                }
+            } catch (e) { /* localStorage no disponible */ }
             return data;
         } catch (error) {
             console.log(error);

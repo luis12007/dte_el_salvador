@@ -690,7 +690,7 @@ const EditSujEx = () => {
 
         var data = {
             identificacion: {
-                version: 1,
+                version: 2,
                 ambiente: userinfo.ambiente,
                 tipoDte: "14",
                 numeroControl: plantilla.plantilla[0].numero_de_control,
@@ -872,7 +872,7 @@ const EditSujEx = () => {
         incrementedString = incrementedString.padStart(totalDigits, "0");
 
         // Format the output with the required prefix
-        const formattedOutput = `DTE-03-00000030-${incrementedString}`;
+        const formattedOutput = `DTE-03-M001P001-${incrementedString}`;
 
         return formattedOutput;
     }

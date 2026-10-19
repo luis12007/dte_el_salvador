@@ -33,10 +33,15 @@ const putUserInfo = async(req, res) => {
             return res.status(404).json({ status: 404, message: 'Usuario no encontrado' });
         }
 
-        // Merge all data from request body with existing data
+        // Merge all data from request body with existing data.
+        // Solo se aceptan columnas que existen en la tabla emisor, para que
+        // campos extra del formulario no rompan la actualización.
+        const allowedBody = Object.fromEntries(
+            Object.entries(req.body || {}).filter(([key]) => Object.prototype.hasOwnProperty.call(existingUser, key))
+        );
         const updatedUser = {
             ...existingUser,
-            ...req.body
+            ...allowedBody
         };
 
         // Remove fields that should NOT be updated (protected fields)

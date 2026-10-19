@@ -17,6 +17,7 @@ import direct from "../assets/imgs/direct.png";
 import signature from "../assets/imgs/signature.png";
 import UserService from "../services/UserServices";
 import { v4 as uuidv4 } from "uuid";
+import { adaptInvalidationForSigning } from "../utils/dteSchemaAdapter";
 
 
 const FacturaInvalidate = ({ key, content, user }) => {
@@ -162,6 +163,38 @@ const FacturaInvalidate = ({ key, content, user }) => {
 
 
 
+  /* Envía por correo la representación gráfica del evento de invalidación.
+     Un fallo aquí no detiene la invalidación, solo se notifica. */
+  const sendInvalidationEmail = async (evento, firmaElectronica, respuestaMH) => {
+    const correo = content.re_correo_electronico;
+    if (!correo || correo.toString().trim() === "") {
+      toast.warning("El receptor no tiene correo electrónico, no se envió el PDF de invalidación");
+      return;
+    }
+    try {
+      const result = await SendEmail.sendInvalidation(
+        id_emisor,
+        {
+          codigo_de_generacion: content.codigo_de_generacion,
+          evento,
+          firmaElectronica,
+          selloRecibido: respuestaMH?.selloRecibido || null,
+          fhProcesamiento: respuestaMH?.fhProcesamiento || null,
+          correo,
+        },
+        token
+      );
+      if (result?.message === "Email sent") {
+        toast.success("PDF de invalidación enviado al receptor");
+      } else {
+        toast.error(`No se pudo enviar el PDF de invalidación: ${result?.message || "error desconocido"}`);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("No se pudo enviar el PDF de invalidación");
+    }
+  };
+
   const SendBillHandlerNoSend = async () => {
   toast.error("No se puede invalidar una factura no enviada");
   };
@@ -258,7 +291,7 @@ const FacturaInvalidate = ({ key, content, user }) => {
         codigoGeneracionR: null,
         tipoDocumento: !content.re_numdocumento ? null : content.re_tipodocumento,
         numDocumento: !content.re_numdocumento ? null : content.re_numdocumento,
-        nombre: !content.re_numdocumento ? null : content.re_numdocumento,
+        nombre: !content.re_numdocumento ? null : content.re_name,
         telefono: content.re_numero_telefono, 
         correo: content.re_correo_electronico
       },
@@ -274,7 +307,8 @@ const FacturaInvalidate = ({ key, content, user }) => {
       }
     };
   }
-  else if (content.tipo === "03"){
+  else if (content.tipo === "03" || content.tipo === "05" || content.tipo === "06"){
+      /* CCF, Nota de crédito y Nota de débito: receptor identificado por NIT */
       invalidation_obj = {
       identificacion: {
         version: 2,
@@ -369,7 +403,15 @@ const FacturaInvalidate = ({ key, content, user }) => {
     };
   }
 
-    
+    if (!invalidation_obj.identificacion) {
+      setIsLoading(false);
+      toast.error("Tipo de documento no soportado para invalidación");
+      return;
+    }
+
+    /* Adaptar al esquema vigente del MH: Evento de Invalidación v3 */
+    invalidation_obj = adaptInvalidationForSigning(invalidation_obj);
+
     console.log("invalidation_obj");
     console.log(invalidation_obj);
 
@@ -763,9 +805,13 @@ const FacturaInvalidate = ({ key, content, user }) => {
     }
 
     if (callMH.estado === "PROCESADO") {
+      toast.success("Factura invalidada con éxito");
+
+      /* Enviar al receptor el PDF y JSON del evento de invalidación
+         (antes de mover la plantilla a eliminados). */
+      await sendInvalidationEmail(invalidation_obj, firmtoken, callMH);
     setIsLoading(false);
 
-      toast.success("Factura invalidada con éxito");
     const response = await PlantillaAPI.deletePlantillabyCodeGeneration(content.codigo_de_generacion, token);
     console.log("deleted");
     console.log(response);

@@ -523,7 +523,7 @@ const CreateCI = () => {
 
     /* var data = {
           identificacion: {
-            version: 3, 
+            version: 4, 
             ambiente: userinfo.ambiente, 
             tipoDte: "03", 
             numeroControl: getNextFormattedNumber(count[0].count), 
@@ -688,7 +688,7 @@ const CreateCI = () => {
     }
     var data = {
       identificacion: {
-        version: 1,
+        version: 2,
         ambiente: userinfo.ambiente,
         tipoDte: "08",
         numeroControl: getNextFormattedNumber(userinfo.count_cl + 1),

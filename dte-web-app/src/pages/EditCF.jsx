@@ -297,14 +297,14 @@ const EditCF = () => {
 
 
           const retencionDeRenta = Number(responsePlantilla.plantilla[0].retencion_de_renta);
-          setRentvalue(retencionDeRenta)
+          setRentvalue(0) /* sin retención de renta: no existe en el esquema vigente del MH */
           const montototaloperacion = Number(responsePlantilla.plantilla[0].subtotalventas);
           /* getting the percentage */
           const percentage = (retencionDeRenta / montototaloperacion) * 100;
           console.log("Percentage of retencion_de_renta relative to total_a_pagar:", percentage);
 
           // You can also set this percentage to a state if needed
-          setPercentage(percentage.toFixed(0));
+          setPercentage(0);
 
 
         } catch (error) {
@@ -688,7 +688,7 @@ const [codigo, descripcion, tasa] = tributocf.split('|');
 
     var data = {
       identificacion: {
-        version: 3,
+        version: 4,
         ambiente: userinfo.ambiente,
         tipoDte: "03",
         numeroControl: plantilla.plantilla[0].numero_de_control,
@@ -896,7 +896,7 @@ const [codigo, descripcion, tasa] = tributocf.split('|');
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-03-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-03-M001P001-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -1077,6 +1077,7 @@ const handlePercentageChange = (e) => {
         percentage={percentage}
         rentvalue={rentvalue}
         handlePercentageChange={handlePercentageChange}
+        showRenta={false}
       />
 
       {/*             <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0.5 pl-[3px] box-border max-w-full">

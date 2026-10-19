@@ -5,6 +5,7 @@ const {
     sendMailFactura,
     sendMailCCF,
     sendMailFacturaOsegueda,
+    sendMailInvalidacion,
 } = require('../controllers/mailController.js');
 
 const { sendPDF } = require('../controllers/sendPDF.js')
@@ -16,6 +17,7 @@ router.post('/factura/:id_emisor', authenticateToken, sendMailFactura);
 router.post('/factura/osegueda/:id_emisor', authenticateToken, sendMailFacturaOsegueda);
 router.post('/CCF/:id_emisor', authenticateToken, sendMailCCF);
 router.post('/bill/:id_emisor', authenticateToken, sendPDF);
+router.post('/invalidacion/:id_emisor', authenticateToken, sendMailInvalidacion);
 
 
 

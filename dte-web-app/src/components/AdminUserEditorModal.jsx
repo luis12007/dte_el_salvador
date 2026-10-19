@@ -23,6 +23,7 @@ const FIELD_LABELS = {
   correo_electronico: 'Correo Electrónico',
   municipio: 'Municipio',
   departamento: 'Departamento',
+  distrito: 'Distrito (CAT-008)',
   tipoestablecimiento: 'Tipo Establecimiento',
   count_factura: 'Contador Facturas',
   count_fiscal: 'Contador Fiscal',

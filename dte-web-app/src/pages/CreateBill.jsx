@@ -570,7 +570,7 @@ const Clientes = () => {
 
       var data = {
         identificacion: {
-          version: 1,
+          version: 2,
           ambiente: userinfo.ambiente,
           tipoDte: "01",
           numeroControl: getNextFormattedNumber(userinfo.count_factura + 1),

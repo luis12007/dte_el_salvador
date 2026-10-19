@@ -10,7 +10,9 @@ const AdvanceItemsComponent = ({
   setListitems,
   percentage,
   handlePercentageChange,
-  rentvalue
+  rentvalue,
+  // Factura, CCF, NC y ND ya no llevan retención de renta en los esquemas vigentes del MH.
+  showRenta = true
 }) => {
 
   const itemshandleRemoves = (event, index) => {
@@ -62,6 +64,7 @@ const AdvanceItemsComponent = ({
 
 
 
+      {showRenta && (
       <section className="self-stretch flex flex-col items-start justify-start pt-0   pl-0 box-border mt-5 max-w-full ch:w-full ch:self-center">
         <div className="flex-1 w-full rounded-mini  bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-center justify-center pt-0 px-0 pb-[20px] box-border gap-[9px] max-w-full mq408:box-border">
           <div className="self-stretch h-[816px] relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
@@ -87,6 +90,7 @@ const AdvanceItemsComponent = ({
 
 
       </section>
+      )}
 
 
     </section>

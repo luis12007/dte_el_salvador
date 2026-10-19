@@ -4,6 +4,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState , useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  DEPARTAMENTOS,
+  MUNICIPIOS_POR_DEPARTAMENTO,
+  DISTRITOS_POR_DEPARTAMENTO,
+} from "../data/catalogosUbicacion";
+
 const Perfil = () => {
   const [name, setName] = useState('')
   const [nit , setNit] = useState('')
@@ -16,6 +22,11 @@ const Perfil = () => {
   const [id_usuario , setId_usuario] = useState(localStorage.getItem('user_id'))
   const [	tipo_de_establecimieto , setTipo_establecimiento] = useState('')
   const [descActividad, setDescActividad] = useState("");
+  // Dirección fiscal para los DTE (CAT-012 / CAT-013 / CAT-008).
+  // Si el distrito queda vacío, los DTE usan San Salvador / San Salvador Centro / San Salvador.
+  const [departamento, setDepartamento] = useState('')
+  const [municipio, setMunicipio] = useState('')
+  const [distrito, setDistrito] = useState('')
   const token = localStorage.getItem('token')
   const navigate = useNavigate();
 
@@ -49,6 +60,9 @@ const Perfil = () => {
         setCorreo_electronico(result.correo_electronico);
         setNombre_comercial(result.nombre_comercial);
         setTipo_establecimiento(result.tipoestablecimiento);
+        setDepartamento(result.departamento ?? '');
+        setMunicipio(result.municipio ?? '');
+        setDistrito(result.distrito ?? '');
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
@@ -59,7 +73,23 @@ const Perfil = () => {
 
   const handleSubmit = async (e) => {
 
+    // Si se elige distrito, departamento y municipio deben corresponder.
+    if (distrito) {
+      const municipiosValidos = MUNICIPIOS_POR_DEPARTAMENTO[departamento] || [];
+      const distritosValidos = DISTRITOS_POR_DEPARTAMENTO[departamento] || [];
+      if (!municipiosValidos.some((m) => m.code === municipio)) {
+        toast.error('Seleccione un municipio del departamento elegido');
+        return;
+      }
+      if (!distritosValidos.some((d) => d.code === distrito)) {
+        toast.error('Seleccione un distrito del departamento elegido');
+        return;
+      }
+    }
+
     const result = await userAPI.updateUser({
+      ...(distrito ? { departamento, municipio } : {}),
+      distrito: distrito || null,
       name,
       nit,
       nrc,
@@ -76,6 +106,9 @@ const Perfil = () => {
     console.log(result)
 
     if(result.message === "Usuario actualizado correctamente"){
+      try {
+        localStorage.setItem(`emisor_distrito_${id_usuario}`, distrito || '')
+      } catch (err) { /* localStorage no disponible */ }
       toast.success('Usuario actualizado correctamente')
       setTimeout(() => {
         navigate('/principal')
@@ -108,6 +141,15 @@ const Perfil = () => {
       }
     }
   }
+
+  const handleDepartamentoChange = (e) => {
+    setDepartamento(e.target.value);
+    setMunicipio('');
+    setDistrito('');
+  };
+
+  const municipiosDisponibles = MUNICIPIOS_POR_DEPARTAMENTO[departamento] || [];
+  const distritosDisponibles = DISTRITOS_POR_DEPARTAMENTO[departamento] || [];
 
   // Handler para el cambio en el dropdown
   const handleActividadChange = (e) => {
@@ -225,6 +267,53 @@ const Perfil = () => {
 
               />
             </div>
+          </div>
+        </div>
+        <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">
+          <div className="flex-1 flex flex-col items-start justify-start gap-[6px_0px] max-w-full rounded-lg border border-blue-100 bg-blue-50/40 p-3">
+            <div className="relative text-xs font-inria-sans font-bold text-black text-left">
+              Ubicación fiscal para DTE (departamento, municipio y distrito)
+            </div>
+            <p className="text-[11px] font-inria-sans text-darkslategray m-0">
+              {distrito
+                ? 'Esta ubicación se usará en la dirección del emisor de todos sus DTE.'
+                : 'Sin distrito: sus DTE usan San Salvador / San Salvador Centro / San Salvador.'}
+            </p>
+            <label className="text-xs font-inria-sans text-black mt-1">Departamento</label>
+            <select
+              className="w-full font-inria-sans text-xs text-darkslategray p-1 rounded border border-gray-300 bg-white"
+              value={departamento}
+              onChange={handleDepartamentoChange}
+            >
+              <option value="">Seleccione un departamento</option>
+              {DEPARTAMENTOS.map((d) => (
+                <option key={d.code} value={d.code}>{d.name}</option>
+              ))}
+            </select>
+            <label className="text-xs font-inria-sans text-black mt-1">Municipio</label>
+            <select
+              className="w-full font-inria-sans text-xs text-darkslategray p-1 rounded border border-gray-300 bg-white"
+              value={municipiosDisponibles.some((m) => m.code === municipio) ? municipio : ''}
+              onChange={(e) => setMunicipio(e.target.value)}
+              disabled={!departamento}
+            >
+              <option value="">Seleccione un municipio</option>
+              {municipiosDisponibles.map((m) => (
+                <option key={m.code} value={m.code}>{m.name}</option>
+              ))}
+            </select>
+            <label className="text-xs font-inria-sans text-black mt-1">Distrito</label>
+            <select
+              className="w-full font-inria-sans text-xs text-darkslategray p-1 rounded border border-gray-300 bg-white"
+              value={distritosDisponibles.some((d) => d.code === distrito) ? distrito : ''}
+              onChange={(e) => setDistrito(e.target.value)}
+              disabled={!departamento}
+            >
+              <option value="">Usar ubicación por defecto (San Salvador)</option>
+              {distritosDisponibles.map((d) => (
+                <option key={d.code} value={d.code}>{d.name}</option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="self-stretch flex flex-row items-start justify-start py-0 px-3.5 box-border max-w-full">

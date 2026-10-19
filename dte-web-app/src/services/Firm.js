@@ -1,3 +1,35 @@
+import { adaptDteForSigning, syncLegacyWithSigned } from "../utils/dteSchemaAdapter";
+
+/*
+ * Todo DTE o evento que se manda al firmador pasa por aquí y se convierte al
+ * esquema vigente del MH. Si el llamador mandó el formato anterior, se le
+ * actualizan versión y número de control para que lo guardado en BD y lo
+ * enviado a Hacienda coincidan con lo firmado.
+ * Pistas opcionales en el payload (no se envían al firmador):
+ *   firm.distritoEmisor  distrito del perfil del emisor
+ *   firm.totalPagar      total de la plantilla (NC/ND/CL antiguas)
+ */
+const leerDistritoPerfil = () => {
+    try {
+        const id = localStorage.getItem("user_id");
+        const v = localStorage.getItem(`emisor_distrito_${id}`);
+        return v ? v : null;
+    } catch (e) {
+        return null;
+    }
+};
+
+const prepararFirma = (firm) => {
+    if (!firm || !firm.dteJson) return firm;
+    const { distritoEmisor, totalPagar, ...payload } = firm;
+    const dteJson = adaptDteForSigning(firm.dteJson, {
+        distritoEmisor: distritoEmisor ?? leerDistritoPerfil(),
+        totalPagar,
+    });
+    syncLegacyWithSigned(firm.dteJson, dteJson);
+    return { ...payload, dteJson };
+};
+
 const BASE_URL_Firm = "https://www.myspaceai.cloud/https://www.myspaceai.cloud";
 
 
@@ -18,7 +50,7 @@ const Firm = {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(firm)
+                body: JSON.stringify(prepararFirma(firm))
             });
             const data = await res.json();
             return data;
@@ -35,7 +67,7 @@ const Firm = {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(firm)
+                body: JSON.stringify(prepararFirma(firm))
             });
             const data = await res.json();
             return data;
@@ -54,7 +86,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -68,7 +100,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -82,7 +114,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -94,7 +126,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -106,7 +138,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -118,7 +150,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -130,7 +162,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -144,7 +176,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -158,7 +190,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -170,7 +202,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -182,7 +214,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -194,7 +226,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -206,7 +238,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -218,7 +250,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -230,7 +262,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -242,7 +274,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -254,7 +286,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -266,7 +298,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -278,7 +310,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -290,7 +322,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;
@@ -302,7 +334,7 @@ const Firm = {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(firm)
+            body: JSON.stringify(prepararFirma(firm))
         });
         const data = await res.json();
         return data;

@@ -56,6 +56,25 @@ const sendMailFactura = async (req, res) => {
         }
     },
 
+    /* Envía al receptor el PDF y el JSON del Evento de Invalidación.
+       payload: { codigo_de_generacion, evento, firmaElectronica, selloRecibido, fhProcesamiento, correo } */
+    sendInvalidation: async(id_emisor, payload, token) => {
+        try {
+            const res = await fetch(`${BASE_URL}/mail/invalidacion/${id_emisor}`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            return data;
+        } catch (error) {
+            return { message: error?.message || 'Error de red' };
+        }
+    },
+
     sendCF: async(id_emisor, plantilla, token) => {
         const res = await fetch(`${BASE_URL}/CCF${id_emisor}`, {
             method: 'POST',

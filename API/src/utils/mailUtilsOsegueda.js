@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { info } = require('console');
 const QRCode = require('qrcode');
+const { buildClientDteJson } = require('./dteSchemaAdapter');
 
 /* 1
 01
@@ -832,7 +833,14 @@ const sendMailOsegueda = async(userDB, plantillaDB, itemsDB) => {
         const plantilla = { re_name: 'Factura Electronica' };
 
         /* Vars for the json */
-        const jsonContent = JSON.stringify(json, null, 2); // Replace `yourJsonObject` with the actual JSON data you want to send
+        // JSON para el receptor con el esquema vigente del MH + firma + sello (Manual 6.5).
+        const jsonCliente = buildClientDteJson(json, {
+            firma: plantillaDB.firm,
+            sello: plantillaDB.sello_de_recepcion,
+            distritoEmisor: userDB.distrito,
+            totalPagar: plantillaDB.total_a_pagar,
+        });
+        const jsonContent = JSON.stringify(jsonCliente, null, 2);
         const jsonPath = path.join(__dirname, `${user.name} ${plantilla.re_name}.json`);
 
 

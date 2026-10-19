@@ -485,7 +485,7 @@ const CreateSubEx = () => {
 
         /* var data = {
               identificacion: {
-                version: 3, 
+                version: 4, 
                 ambiente: userinfo.ambiente, 
                 tipoDte: "03", 
                 numeroControl: getNextFormattedNumber(count[0].count), 
@@ -607,7 +607,7 @@ const CreateSubEx = () => {
 
         var data = {
             identificacion: {
-                version: 1,
+                version: 2,
                 ambiente: userinfo.ambiente,
                 tipoDte: "14",
                 numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),

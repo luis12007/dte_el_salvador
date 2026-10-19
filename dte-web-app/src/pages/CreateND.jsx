@@ -501,7 +501,7 @@ const CreateND = () => {
 
     /* var data = {
           identificacion: {
-            version: 3, 
+            version: 4, 
             ambiente: userinfo.ambiente, 
             tipoDte: "03", 
             numeroControl: getNextFormattedNumber(count[0].count), 
@@ -634,7 +634,7 @@ const CreateND = () => {
     const merge_data = "03" + "|" + tipoGeneracion + "|" + numDocumento + "|" + fecha
     var data = {
       identificacion: {
-        version: 3,
+        version: 4,
         ambiente: userinfo.ambiente,
         tipoDte: "06",
         numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),
@@ -1177,6 +1177,7 @@ const CreateND = () => {
         percentage={percentage}
         rentvalue={rentvalue}
         handlePercentageChange={handlePercentageChange}
+        showRenta={false}
       />
 
 

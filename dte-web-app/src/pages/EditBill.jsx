@@ -185,14 +185,14 @@ const EditBill = () => {
             })
           };
           const retencionDeRenta = Number(responsePlantilla.plantilla[0].retencion_de_renta);
-          setRentvalue(retencionDeRenta)
+          setRentvalue(0) /* sin retención de renta: no existe en el esquema vigente del MH */
           const montototaloperacion = Number(responsePlantilla.plantilla[0].montototaloperacion);
           /* getting the percentage */
           const percentage = (retencionDeRenta / montototaloperacion) * 100;
           console.log("Percentage of retencion_de_renta relative to total_a_pagar:", percentage);
 
           // You can also set this percentage to a state if needed
-          setPercentage(percentage.toFixed(0));
+          setPercentage(0);
 
           /* setting subtotal */
           var subtotalaux = 0
@@ -729,7 +729,7 @@ const EditBill = () => {
     console.log(total)
     const data = {
       identificacion: {
-        version: 1,
+        version: 2,
         ambiente: userinfo.ambiente,
         tipoDte: "01",
         numeroControl: plantilla.plantilla[0].numero_de_control,
@@ -1002,7 +1002,7 @@ const EditBill = () => {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-01-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-01-M001P001-${incrementedString}`;
 
     return formattedOutput;
   }
@@ -1187,6 +1187,7 @@ const EditBill = () => {
           percentage={percentage}
           rentvalue={rentvalue}
           handlePercentageChange={handlePercentageChange}
+          showRenta={false}
         />
       )}
 

@@ -19,6 +19,7 @@ import UserService from "../services/UserServices";
 import EmisorService from "../services/emisor";
 import PaymentBlockedModal from "./PaymentBlockedModal";
 import usePaymentBlock from "../hooks/usePaymentBlock";
+import { adaptDteForSigning, syncLegacyWithSigned } from "../utils/dteSchemaAdapter";
 
 const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   const [tipo, setTipo] = useState("");
@@ -1177,11 +1178,21 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       /* deleting firma and sellado from data setting to null */
 
       /* -------------------------------------------- */
+      /* Se firma el JSON adaptado al esquema vigente del MH (F v2, CCF v4,
+         NC/ND v4, FSE v2). `data` conserva el formato anterior para guardarse
+         en BD; solo se actualiza su versión para que el envío use la misma
+         versión que el documento firmado. */
+      const dteJsonFirmar = adaptDteForSigning(data, {
+        totalPagar: content.total_a_pagar,
+        distritoEmisor: user.distrito,
+      });
+      // Versión y número de control quedan guardados igual que lo firmado.
+      syncLegacyWithSigned(data, dteJsonFirmar);
       const Firm = {
         nit: user.nit,
         activo: true,
         passwordPri: user.passwordpri,
-        dteJson: data,
+        dteJson: dteJsonFirmar,
       };
       console.log("---------------Firm--------------");
       console.log(Firm);
@@ -2496,7 +2507,8 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
       console.log("AUTO-FIX content (plantilla):", data);
       console.log("AUTO-FIX update response:", responseUpdate);
 
-      const parseintversion = parseInt(content.version);
+      // La versión debe ser la del documento recién firmado (esquema vigente).
+      const parseintversion = parseInt(data.identificacion.version);
       const dataSendFixed = {
         tipoDte: content.tipo,
         ambiente: content.ambiente,
@@ -2728,12 +2740,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
 
 
 
-              // Obtener plantilla actual, actualizar numeroControl y re-firmar
-              const plantilla = await PlantillaAPI.getcodegeneration(
-                content.codigo_de_generacion,
-                token,
-              );
-
+              // Incrementar el correlativo y volver a firmar con el flujo normal
+              // de validación (que arma el DTE con el esquema vigente y guarda
+              // número de control, versión y firma en BD).
               const incrementNumeroControl = (ctrl) => {
                 if (!ctrl || typeof ctrl !== "string") return ctrl;
                 const parts = ctrl.split("-");
@@ -2744,49 +2753,9 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
                 return parts.join("-");
               };
 
-              const currentCtrl =
-                (plantilla && plantilla.numero_de_control) ||
-                (plantilla?.identificacion && plantilla.identificacion.numeroControl) ||
-                content.numero_de_control;
-
-              const newCtrl = incrementNumeroControl(currentCtrl);
-
-              if (plantilla) {
-                // actualizar ambos lugares por consistencia
-                plantilla.numero_de_control = newCtrl;
-                if (!plantilla.identificacion) plantilla.identificacion = {};
-                plantilla.identificacion.numeroControl = newCtrl;
-
-                // Preparar firma
-                const Firm = {
-                  nit: user.nit,
-                  activo: true,
-                  passwordPri: user.passwordpri,
-                  dteJson: plantilla,
-                };
-
-                const responseFirm = await callFirmServiceByEmisor(Firm);
-                if (responseFirm && responseFirm.body) {
-                  plantilla.firma = responseFirm.body;
-                  // Mantener sellado/sello si existían
-                  plantilla.sellado = plantilla.sellado || content.sellado;
-                  plantilla.sello = plantilla.sello || content.sello;
-
-                  // Guardar plantilla actualizada
-                  await PlantillaAPI.updateNoItems(
-                    id_emisor,
-                    plantilla,
-                    token,
-                    plantilla.identificacion.codigoGeneracion,
-                  );
-
-                  toast.success("Re-firmada. Recargando...");
-                  setTimeout(() => window.location.reload(), 4000);
-                  return;
-                } else {
-                  toast.error("No se pudo re-firmar la plantilla");
-                }
-              }
+              content.numero_de_control = incrementNumeroControl(content.numero_de_control);
+              await ValidateBillHandler();
+              return;
             } catch (e) {
               console.error("Fallback numeroControl error:", e);
               toast.error("Error en fallback de numeroControl");

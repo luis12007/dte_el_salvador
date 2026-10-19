@@ -6,6 +6,7 @@ import PlantillaAPI from '../services/PlantillaService';
 import BillsxItemsAPI from '../services/BIllxitemsService';
 import UserService from '../services/UserServices';
 import JSZip from 'jszip';
+import { buildClientDteJson } from '../utils/dteSchemaAdapter';
 import "react-toastify/dist/ReactToastify.css";
 const BASE_URL = "https://intuitive-bravery-production.up.railway.app";
 
@@ -597,7 +598,14 @@ const DownloadDTEs = () => {
       apendice: content.apendice,
     };
 
-    return dteData;
+    // Entregar siempre el esquema vigente del MH + firma + sello.
+    // Si la firma guardada ya trae el DTE nuevo se usa tal cual se firmó.
+    return buildClientDteJson(dteData, {
+      firma: content.firm,
+      sello: content.sello_de_recepcion,
+      distritoEmisor: user?.distrito,
+      totalPagar: content.total_a_pagar,
+    });
   };
 
   const sidebar = () => {

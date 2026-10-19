@@ -643,7 +643,7 @@ const CreateCR = () => {
 
         /* var data = {
               identificacion: {
-                version: 3, 
+                version: 4, 
                 ambiente: userinfo.ambiente, 
                 tipoDte: "03", 
                 numeroControl: getNextFormattedNumber(count[0].count), 
@@ -765,7 +765,7 @@ const CreateCR = () => {
 
         var data = {
             identificacion: {
-                version: 1,
+                version: 2,
                 ambiente: userinfo.ambiente,
                 tipoDte: "14",
                 numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),
@@ -981,7 +981,7 @@ const CreateCR = () => {
         incrementedString = incrementedString.padStart(totalDigits, "0");
 
         // Format the output with the required prefix
-        const formattedOutput = `DTE-14-00000030-${incrementedString}`;
+        const formattedOutput = `DTE-14-M001P001-${incrementedString}`;
 
         return formattedOutput;
     }

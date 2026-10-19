@@ -1197,7 +1197,7 @@ const TestCF = () => {
     incrementedString = incrementedString.padStart(totalDigits, "0");
 
     // Format the output with the required prefix
-    const formattedOutput = `DTE-03-00000030-${incrementedString}`;
+    const formattedOutput = `DTE-03-M001P001-${incrementedString}`;
 
     return formattedOutput;
   }

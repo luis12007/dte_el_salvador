@@ -500,7 +500,7 @@ const CreateNC = () => {
 
     /* var data = {
           identificacion: {
-            version: 3, 
+            version: 4, 
             ambiente: userinfo.ambiente, 
             tipoDte: "03", 
             numeroControl: getNextFormattedNumber(count[0].count), 
@@ -632,7 +632,7 @@ const CreateNC = () => {
     const totaloperation = (Number(subtotal) + Number(iva));
     var data = {
       identificacion: {
-        version: 3,
+        version: 4,
         ambiente: userinfo.ambiente,
         tipoDte: "05",
         numeroControl: getNextFormattedNumber(userinfo.count_fiscal + 1),
@@ -1174,6 +1174,7 @@ const CreateNC = () => {
         percentage={percentage}
         rentvalue={rentvalue}
         handlePercentageChange={handlePercentageChange}
+        showRenta={false}
       />
 
 
