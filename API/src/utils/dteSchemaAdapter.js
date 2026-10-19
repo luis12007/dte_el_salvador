@@ -29,6 +29,9 @@
 // San Salvador (06) / San Salvador Centro (23) / distrito San Salvador (14).
 const EMISOR_DIRECCION_DEFAULT = { departamento: "06", municipio: "23", distrito: "14" };
 
+// El esquema exige complemento con al menos 1 carácter; si viene vacío se usa este.
+const COMPLEMENTO_DEFAULT = "San Salvador";
+
 // Códigos de establecimiento y punto de venta: siempre fijos.
 const COD_ESTABLE = "M001";
 const COD_PUNTO_VENTA = "P001";
@@ -258,13 +261,15 @@ const normalizeNumeroControl = (numeroControl, tipoDte) => {
   return `DTE-${tipoDte}-${COD_ESTABLE}${COD_PUNTO_VENTA}-${correlativo}`;
 };
 
-/* Receptor: el distrito se valida contra su municipio. Si no se puede resolver
-   la ubicación, se usa la dirección por defecto de San Salvador. */
+/* Receptor: igual que el emisor. Sin distrito seleccionado se envía la
+   dirección por defecto San Salvador / San Salvador Centro / San Salvador
+   (06/23/14). Con distrito, se valida contra su municipio. */
 const buildDireccionReceptor = (dir) => {
   if (!dir || typeof dir !== "object") return null;
-  const ubicacion =
-    resolverUbicacion(dir.departamento, dir.municipio, dir.distrito) || EMISOR_DIRECCION_DEFAULT;
-  return { ...ubicacion, complemento: reqStr(dir.complemento) };
+  const ubicacion = isBlank(dir.distrito)
+    ? EMISOR_DIRECCION_DEFAULT
+    : resolverUbicacion(dir.departamento, dir.municipio, dir.distrito) || EMISOR_DIRECCION_DEFAULT;
+  return { ...ubicacion, complemento: reqStr(dir.complemento) || COMPLEMENTO_DEFAULT };
 };
 
 /* Emisor: si tiene distrito (perfil) se usa su departamento/municipio/distrito
@@ -276,7 +281,7 @@ const buildDireccionEmisor = (dir, distritoPerfil) => {
   const ubicacion = isBlank(distrito)
     ? EMISOR_DIRECCION_DEFAULT
     : resolverUbicacion(d.departamento, d.municipio, distrito) || EMISOR_DIRECCION_DEFAULT;
-  return { ...ubicacion, complemento: reqStr(d.complemento) };
+  return { ...ubicacion, complemento: reqStr(d.complemento) || COMPLEMENTO_DEFAULT };
 };
 
 const buildIdentificacion = (ident, tipoDte, { withFusion = false, withContingencia = true } = {}) => {
@@ -498,13 +503,84 @@ const adaptFactura = (data, extra) => {
 };
 
 /* ------------------------------------------------------------------ */
+/* IVA (CCF, NC, ND)                                                    */
+/* ------------------------------------------------------------------ */
+
+const IVA_TASA = 0.13;
+
+const itemTieneIva = (it) =>
+  Array.isArray(it?.tributos) && it.tributos.map((t) => String(t)).includes("20");
+
+/*
+ * Hacienda valida el IVA como 13% de la base gravada redondeado a 2 decimales
+ * ("[resumen.totalIva] CALCULO INCORRECTO"). Las pantallas de creación lo
+ * obtienen restando desde un precio con IVA incluido, lo que en montos
+ * pequeños da un centavo de diferencia. Aquí se recalcula y, si cambia, se
+ * ajustan tributo 20, montoTotalOperacion, totalPagar y totalLetras con la
+ * misma diferencia (sin tocar los demás componentes del total).
+ */
+const recalcularIva = (res, items, totalPagarBase, totalLetrasBase) => {
+  const tributos = buildTributosResumen(res.tributos);
+  const iva20 = (tributos || []).find((t) => t.codigo === "20");
+  const montoTotalOperacion = money(res.montoTotalOperacion);
+  if (!iva20) {
+    return { tributos, ivaCalculado: money(res.totalIva), montoTotalOperacion, totalPagar: totalPagarBase, totalLetras: totalLetrasBase };
+  }
+  const lista = Array.isArray(items) ? items : [];
+  const conIva = lista.some(itemTieneIva);
+  const baseItems = lista
+    .filter((it) => (conIva ? itemTieneIva(it) : true))
+    .reduce((acc, it) => acc + toNum(it.ventaGravada), 0);
+  const base = (lista.length > 0 ? baseItems : toNum(res.totalGravada)) - toNum(res.descuGravada);
+  const ivaCalculado = money(base * IVA_TASA);
+  const diferencia = money(ivaCalculado - iva20.valor);
+  if (diferencia === 0) {
+    return { tributos, ivaCalculado, montoTotalOperacion, totalPagar: totalPagarBase, totalLetras: totalLetrasBase };
+  }
+  const nuevoTotal = money(totalPagarBase + diferencia);
+  return {
+    tributos: tributos.map((t) => (t.codigo === "20" ? { ...t, valor: ivaCalculado } : t)),
+    ivaCalculado,
+    montoTotalOperacion: money(montoTotalOperacion + diferencia),
+    totalPagar: nuevoTotal,
+    totalLetras: dineroALetras(nuevoTotal),
+    diferencia,
+  };
+};
+
+/* IVA por ítem (NC/ND v4). Hacienda exige que resumen.totalIva sea la suma
+   de cuerpoDocumento[].totalIva: se reparte el IVA del resumen (13% de la
+   base, 2 decimales) entre los ítems con IVA en proporción a su venta
+   gravada, con 2 decimales y ajustando el último para que la suma cuadre. */
+const ivaPorItem = (items, hayIva, totalIva) => {
+  if (!hayIva) return items.map(() => 0);
+  const conIva = items.some(itemTieneIva);
+  const aplica = items.map((it) => (conIva ? itemTieneIva(it) : true));
+  const bases = items.map((it, i) => (aplica[i] ? toNum(it.ventaGravada) : 0));
+  const indices = bases.map((b, i) => (aplica[i] ? i : -1)).filter((i) => i >= 0);
+  const repartido = distribute(totalIva, indices.map((i) => bases[i]));
+  const resultado = items.map(() => 0);
+  indices.forEach((idx, k) => {
+    resultado[idx] = repartido[k];
+  });
+  return resultado;
+};
+
+/* ------------------------------------------------------------------ */
 /* 03 Comprobante de crédito fiscal v4                                  */
 /* ------------------------------------------------------------------ */
 
 const adaptCreditoFiscal = (data, extra) => {
   const r = data.receptor || {};
   const res = data.resumen || {};
-  const { totalPagar, totalLetras } = totalSinRenta(res, res.totalPagar);
+  const sinRenta = totalSinRenta(res, res.totalPagar);
+  const iva = recalcularIva(res, data.cuerpoDocumento, sinRenta.totalPagar, sinRenta.totalLetras);
+  const { totalPagar, totalLetras } = iva;
+  // Si el pago único era por el total anterior, se ajusta al total recalculado.
+  const pagos = buildPagos(res.pagos);
+  if (pagos && pagos.length === 1 && iva.diferencia && money(pagos[0].montoPago) === money(sinRenta.totalPagar)) {
+    pagos[0].montoPago = totalPagar;
+  }
   return {
     identificacion: buildIdentificacion(data.identificacion, "03"),
     documentoRelacionado: buildDocumentoRelacionado(data.documentoRelacionado),
@@ -550,17 +626,17 @@ const adaptCreditoFiscal = (data, extra) => {
       descuGravada: money(res.descuGravada),
       porcentajeDescuento: money(res.porcentajeDescuento),
       totalDescu: money(res.totalDescu),
-      tributos: buildTributosResumen(res.tributos),
+      tributos: iva.tributos,
       subTotal: money(res.subTotal),
       ivaPerci: money(res.ivaPerci ?? res.ivaPerci1),
       ivaRete: money(res.ivaRete ?? res.ivaRete1),
-      montoTotalOperacion: money(res.montoTotalOperacion),
+      montoTotalOperacion: iva.montoTotalOperacion,
       totalNoGravado: money(res.totalNoGravado),
       totalPagar,
       totalLetras,
       saldoFavor: money(res.saldoFavor),
       condicionOperacion: toNum(res.condicionOperacion, 1),
-      pagos: buildPagos(res.pagos),
+      pagos,
       numPagoElectronico: optStr(res.numPagoElectronico),
       observaciones: observacionesFrom(data),
     },
@@ -580,20 +656,32 @@ const adaptNota = (data, tipoDte, extra) => {
   const docRelacionados = buildDocumentoRelacionado(data.documentoRelacionado) || [];
   const numeroDocumentoDefault = docRelacionados[0]?.numeroDocumento || "";
 
-  const tributos = buildTributosResumen(res.tributos);
-  const iva20 = (tributos || []).find((t) => t.codigo === "20");
   const bases = items.map((it) => toNum(it.ventaGravada));
-  const totalIva = iva20 ? iva20.valor : money(res.totalIva);
   const ivaPerci = money(res.ivaPerci ?? res.ivaPerci1);
   const ivaRete = money(res.ivaRete ?? res.ivaRete1);
 
-  // Si ya viene en formato nuevo, se respetan los montos por ítem.
+  const sinRenta = totalSinRenta(res, res.totalPagar ?? extra.totalPagar ?? res.montoTotalOperacion);
+  const iva = recalcularIva(res, items, sinRenta.totalPagar, sinRenta.totalLetras);
+  const tributos = iva.tributos;
+  const hayIva = Boolean((tributos || []).find((t) => t.codigo === "20"));
+  const { totalPagar, totalLetras } = iva;
+
+  /*
+   * Normativa de Cumplimiento 2.0, Anexo IV: cuando la nota ajusta un
+   * Comprobante de Crédito Fiscal (03), el IVA va SOLO en resumen.tributos
+   * (código 20) y totalIva va en 0, tanto por ítem como en el resumen.
+   * Los campos de IVA 13% por ítem aplican al ajustar un Comprobante de
+   * Retención (07). Enviar el IVA en totalIva al ajustar un CCF provoca
+   * "[resumen.totalIva] CALCULO INCORRECTO".
+   */
+  const ajustaComprobanteRetencion = docRelacionados.some((d) => d.tipoDocumento === "07");
+  const totalIva = ajustaComprobanteRetencion && hayIva ? iva.ivaCalculado : 0;
+
+  // Percepción y retención repartidas por ítem (si ya venían en formato nuevo, se respetan).
   const itemsYaAdaptados = items.length > 0 && items.every((it) => it.totalIva !== undefined);
-  const ivaItems = itemsYaAdaptados ? items.map((it) => amount8(it.totalIva)) : distribute(totalIva, bases);
+  const ivaItems = ajustaComprobanteRetencion ? ivaPorItem(items, hayIva, totalIva) : items.map(() => 0);
   const perciItems = itemsYaAdaptados ? items.map((it) => amount8(it.ivaPerci)) : distribute(ivaPerci, bases);
   const reteItems = itemsYaAdaptados ? items.map((it) => amount8(it.ivaRete)) : distribute(ivaRete, bases);
-
-  const { totalPagar, totalLetras } = totalSinRenta(res, res.totalPagar ?? extra.totalPagar ?? res.montoTotalOperacion);
 
   const resumen = {
     totalNoSuj: money(res.totalNoSuj),
@@ -602,7 +690,7 @@ const adaptNota = (data, tipoDte, extra) => {
     subTotalVentas: money(res.subTotalVentas),
     totalDescu: money(res.totalDescu),
     tributos,
-    montoTotalOperacion: money(res.montoTotalOperacion),
+    montoTotalOperacion: iva.montoTotalOperacion,
     ivaPerci,
     totalIva,
     ivaRete,

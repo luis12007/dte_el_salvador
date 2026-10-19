@@ -1387,14 +1387,13 @@ const CreateCI = () => {
       />
 
       {/* Card Editable para llenar información del documento */}
-      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-0 pl-[5px] box-border max-w-full">
-        <div className="flex-1 rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start px-0 pb-[29px] box-border gap-[14px] max-w-full">
-          <div className="self-stretch h-auto relative rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] hidden" />
-          
-          {/* Header */}
-          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-between pt-[11px] pb-[9px] pr-5 pl-[17px] box-border max-w-full gap-[20px] z-[1]">
-            <div className="h-[37px] w-full relative rounded-t-mini rounded-b-none bg-gainsboro-200 hidden max-w-full" />
-            <b className="relative z-[2] text-lg pt-1">Información del Documento</b>
+      <section className="self-stretch flex flex-row items-start justify-start pt-0 pb-1.5 pr-[5px] pl-0 box-border max-w-full ch:w-1/3 ch:self-center">
+        <div className="flex-1 w-full rounded-mini bg-white shadow-[0px_4px_4px_rgba(0,_0,_0,_0.25)] flex flex-col items-start justify-start px-0 pb-[20px] box-border gap-[14px] max-w-full">
+          {/* Header (mismo estilo que "Datos del producto / Servicio") */}
+          <div className="self-stretch rounded-t-mini rounded-b-none bg-gainsboro-200 flex flex-row items-start justify-start pt-[11px] px-[17px] pb-3 box-border relative whitespace-nowrap max-w-full z-[1]">
+            <b className="relative text-md font-inria-sans text-black text-left z-[2]">
+              Información del Documento
+            </b>
           </div>
 
           {/* Content */}

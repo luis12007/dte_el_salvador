@@ -11,12 +11,14 @@ import filterimg from "../assets/imgs/filter.png";
 import filterwhite from "../assets/imgs/filterwhite.png";
 import FilterModal from "../components/FilterModal";
 import FacturaInvalidate from "../components/FacturaInvalidate";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Invalidate = () => {
     const token = localStorage.getItem("token");
     const user_id = localStorage.getItem("user_id");
+    // Paginación igual que la lista de DTE (HomeFacturas): páginas de 20 desde el API.
+    const PAGE_SIZE = 20;
     const [items, setItems] = useState([]);
     const tokenminis = localStorage.getItem("tokenminis");
     const [user, setUser] = useState({});
@@ -25,11 +27,79 @@ const Invalidate = () => {
     const [loading, setLoading] = useState(true);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [filterByc, setFilterBy] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
     // Sidebar visibility toggle
     const [visible, setVisible] = useState(false);
     const toggleSidebar = () => {
         setVisible(!visible);
+    };
+
+    const sortItemsByDateTime = (list = []) => {
+        return [...list].sort((a, b) => {
+            const dateTimeA = new Date(a.fecha_y_hora_de_generacion + 'T' + (a.horemi || '00:00:00'));
+            const dateTimeB = new Date(b.fecha_y_hora_de_generacion + 'T' + (b.horemi || '00:00:00'));
+            return dateTimeB - dateTimeA;
+        });
+    };
+
+    const mergeUniqueItems = (previousItems, newItems) => {
+        const merged = new Map();
+        [...previousItems, ...newItems].forEach((item) => {
+            if (item && item.codigo_de_generacion) {
+                merged.set(item.codigo_de_generacion, item);
+            }
+        });
+        return sortItemsByDateTime(Array.from(merged.values()));
+    };
+
+    const normalizePaginatedResponse = (response) => {
+        if (Array.isArray(response)) {
+            return { items: response, hasMore: false };
+        }
+        return {
+            items: Array.isArray(response?.items) ? response.items : [],
+            hasMore: Boolean(response?.pagination?.hasMore),
+        };
+    };
+
+    const loadBillsPage = async ({ page = 1, reset = false } = {}) => {
+        try {
+            if (reset) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
+            }
+            const response = await PlantillaAPI.getByUserIdPaginated(user_id, token, page, PAGE_SIZE);
+            const { items: pageItems, hasMore: pageHasMore } = normalizePaginatedResponse(response);
+            setItems((previousItems) => {
+                const nextItems = reset ? pageItems : mergeUniqueItems(previousItems, pageItems);
+                return sortItemsByDateTime(nextItems);
+            });
+            setHasMore(pageHasMore);
+            setCurrentPage(page);
+            return pageItems;
+        } catch (error) {
+            console.error("Error loading paginated bills:", error);
+            toast.error("Error al cargar las facturas");
+            if (reset) {
+                setItems([]);
+            }
+            setHasMore(false);
+            return [];
+        } finally {
+            setLoading(false);
+            setLoadingMore(false);
+        }
+    };
+
+    const handleShowMore = async () => {
+        if (loadingMore || !hasMore) {
+            return;
+        }
+        await loadBillsPage({ page: currentPage + 1, reset: false });
     };
 
     // Data fetching
@@ -39,14 +109,7 @@ const Invalidate = () => {
                 /* Change to login maybe */
                 const resultusers = await UserService.getUserInfo(user_id, token);
                 setUser(resultusers);
-                const result = await PlantillaAPI.getByUserId(user_id, token);
-                console.log("result");
-                console.log(result);
-                /* organize the results by fecha_y_hora_de_generacion desc*/
-                result.sort((a, b) => {
-                    return new Date(b.fecha_y_hora_de_generacion) - new Date(a.fecha_y_hora_de_generacion);
-                });
-                setItems(result || []); // Default to empty array
+                await loadBillsPage({ page: 1, reset: true });
 
                 if (tokenminis === "undefined" || tokenminis === null) {
                     if(resultusers.ambiente === "00"){
@@ -73,19 +136,12 @@ const Invalidate = () => {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
+                setLoading(false);
             }
         };
 
         fetchData(); // Call the async function
-
-        // Simulate loading for 5 seconds
-        const timer = setTimeout(() => {
-            setLoading(false);
-            // Fetch or set your items here
-            // setItems(fetchedItems);
-        }, 2000);
-
-        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Ensure this runs only once on mount
 
     const excelHandler = () => {
@@ -170,7 +226,10 @@ const Invalidate = () => {
             console.error('Error fetching filtered items:', error);
         }
         console.log('Filtered items:', newItems);
-        setItems(newItems);
+        // Los filtros traen todos sus resultados: no hay más páginas.
+        setItems(Array.isArray(newItems) ? sortItemsByDateTime(newItems) : []);
+        setHasMore(false);
+        setCurrentPage(1);
         setLoading(false);
     };
 
@@ -251,7 +310,8 @@ const Invalidate = () => {
                 ) : (
                     <>
                         {Array.isArray(items) && items.length > 0 ? (
-                            Object.keys(groupedItems).map((date) => (
+                            <>
+                            {Object.keys(groupedItems).map((date) => (
                                 <div key={date}>
                                     <div className="flex items-center justify-center my-4 rounded-lg">
                                         <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">
@@ -259,11 +319,25 @@ const Invalidate = () => {
                                             <div>{transformDate(date)}</div>
                                         </div>
                                     </div>
-                                    {groupedItems[date].map((content, index) => (
-                                        <FacturaInvalidate key={index} content={content} user={user} />
+                                    {groupedItems[date].map((content) => (
+                                        <FacturaInvalidate key={content.codigo_de_generacion} content={content} user={user} />
                                     ))}
                                 </div>
-                            ))
+                            ))}
+                            {hasMore && (
+                                <div className="flex justify-center my-8">
+                                    <button
+                                        onClick={handleShowMore}
+                                        disabled={loadingMore}
+                                        className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 disabled:opacity-60 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg transition border border-white/30 shadow-md"
+                                    >
+                                        <span className="text-base font-medium">
+                                            {loadingMore ? 'Cargando más...' : 'Mostrar más'}
+                                        </span>
+                                    </button>
+                                </div>
+                            )}
+                            </>
                         ) : (
                             <div className="flex items-center justify-center my-4 rounded-lg">
                                 <div className="flex flex-col items-center border-8 px-3 py-2 drop-shadow-xl border-opacity-45 rounded-lg justify-center bg-slate-300 border-t border-gray-300">

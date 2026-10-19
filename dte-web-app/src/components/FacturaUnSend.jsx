@@ -37,6 +37,218 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
   // Bloqueo por falta de pago (cuenta vencida): no permite firmar/enviar.
   const { modalOpen: paymentBlockedOpen, closeModal: closePaymentBlocked, guard: guardPayment } = usePaymentBlock();
 
+  /* Convierte los ítems guardados en BD al formato del DTE según su tipo. */
+  const mapearItemsDesdeBD = (data) => {
+    if (!data || !Array.isArray(data)) return [];
+    data.forEach((item) => {
+      delete item.id;
+      delete item.id_items;
+      delete item.id_facturas;
+    });
+    let resultado = [];
+      if (content.tipo === "03") {
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
+            noGravado: item.nogravado,
+            psv: item.psv,
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+        console.log(newItems);
+        resultado = newItems;
+      } else if (content.tipo === "01") {
+        if (!data[0]?.tributos || data[0]?.tributos === null) {
+          const newItems = data.map((item) => {
+            const newItem = {
+              codTributo: item.codtributo,
+              descripcion: item.descripcion,
+              uniMedida: item.unimedida,
+              codigo: item.codigo,
+              cantidad: item.cantidad,
+              numItem: item.numitem,
+              tributos: item.tributos,
+              ivaItem: item.ivaitem,
+              noGravado: item.nogravado,
+              psv: item.psv,
+              montoDescu: item.montodescu,
+              numeroDocumento: item.numerodocumento,
+              precioUni: item.preciouni,
+              ventaGravada: item.ventagravada,
+              ventaExenta: item.ventaexenta,
+              ventaNoSuj: item.ventanosuj,
+              tipoItem: item.tipoitem,
+            };
+            return newItem;
+          });
+
+          console.log(newItems);
+          resultado = newItems;
+        } else {
+          const newItems = data.map((item) => {
+            const arr = [];
+            arr.push(String(item.tributos));
+            const newItem = {
+              codTributo: item.codtributo,
+              descripcion: item.descripcion,
+              uniMedida: item.unimedida,
+              codigo: item.codigo,
+              cantidad: item.cantidad,
+              numItem: item.numitem,
+              tributos: arr,
+              ivaItem: item.ivaitem,
+              noGravado: item.nogravado,
+              psv: item.psv,
+              montoDescu: item.montodescu,
+              numeroDocumento: item.numerodocumento,
+              precioUni: item.preciouni,
+              ventaGravada: item.ventagravada,
+              ventaExenta: item.ventaexenta,
+              ventaNoSuj: item.ventanosuj,
+              tipoItem: item.tipoitem,
+            };
+            return newItem;
+          });
+
+          console.log(newItems);
+          resultado = newItems;
+        }
+      } else if (content.tipo === "14") {
+        const newItems = data.map((item) => {
+          const newItem = {
+            numItem: item.numitem,
+            codigo: item.codigo,
+            uniMedida: item.unimedida,
+            precioUni: item.preciouni,
+            montoDescu: item.montodescu,
+            compra: item.ventaexenta,
+            descripcion: item.descripcion,
+            cantidad: item.cantidad,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+
+        console.log(newItems);
+        resultado = newItems;
+      } else if (content.tipo === "05") {
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+
+        console.log(newItems);
+        resultado = newItems;
+      } else if (content.tipo === "06") {
+        const newItems = data.map((item) => {
+          const newItem = {
+            codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+            numItem: item.numitem,
+            tributos: [item.tributos.toString()],
+            montoDescu: item.montodescu,
+            numeroDocumento: item.numerodocumento,
+            precioUni: item.preciouni,
+            ventaGravada: item.ventagravada,
+            ventaExenta: item.ventaexenta,
+            ventaNoSuj: item.ventanosuj,
+            tipoItem: item.tipoitem,
+          };
+          return newItem;
+        });
+
+        console.log(newItems);
+        resultado = newItems;
+      } else if (content.tipo === "08") {
+        const newItems = data.map((item) => {
+          /* here start form 1 and sum 1 each iteration to put numitem */
+          let numItem = 1;
+          const tributosNorm = (t) => (t?.[2] ? t : t ? [String(t)] : null);
+          const newItem = {
+            numItem: numItem++,
+            tipoDte: item.tipodte,
+            tipoGeneracion: item.tipogeneracion,
+            numeroDocumento: item.numerodocumento,
+            fechaGeneracion: item.fechageneracion,
+            ventaNoSuj: item.ventanosuj,
+            ventaExenta: item.ventaexenta,
+            ventaGravada: item.ventagravada,
+            exportaciones: 0,
+            tributos: tributosNorm(item.tributos) /* REVIEW */,
+            ivaItem: item.ivaitem /* item.ivaitem */ /* REVIEW */,
+            obsItem: item.obsitem,
+
+            /* codTributo: item.codtributo,
+            descripcion: item.descripcion,
+            uniMedida: item.unimedida,
+            codigo: item.codigo,
+            cantidad: item.cantidad,
+
+            montoDescu: item.montodescu,
+            precioUni: item.preciouni,
+            tipoItem: item.tipoitem, */
+          };
+          return newItem;
+        });
+
+        console.log(newItems);
+        resultado = newItems;
+      }
+    return resultado;
+  };
+
+  /* Carga los ítems del documento directamente (para no firmar sin ítems). */
+  const cargarItemsDesdeBD = async () => {
+    const data = await BillsxItemsAPI.getlist(token, content.codigo_de_generacion);
+    return mapearItemsDesdeBD(data);
+  };
+
+  /* Dirección del receptor: columnas sueltas o, si están vacías, el campo
+     combinado re_direccion "departamento|municipio|complemento". */
+  const direccionReceptorDesdePlantilla = () => {
+    const limpiar = (v) =>
+      v === null || v === undefined || String(v).trim() === "" || String(v) === "null" || String(v) === "undefined"
+        ? null
+        : String(v).trim();
+    const partes = typeof content.re_direccion === "string" ? content.re_direccion.split("|") : [];
+    return {
+      departamento: limpiar(content.departamento) ?? limpiar(partes[0]),
+      municipio: limpiar(content.municipio) ?? limpiar(partes[1]),
+      complemento: limpiar(content.complemento) ?? limpiar(partes[2]),
+    };
+  };
+
   useEffect(() => {
     if (content.tipo === "01") {
       setTipo("Factura");
@@ -73,191 +285,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           console.warn("No se obtuvieron datos de items");
           return;
         }
-        data.map((item) => {
-        delete item.id;
-        delete item.id_items;
-        delete item.id_facturas;
-      });
-
-      if (content.tipo === "03") {
-        const newItems = data.map((item) => {
-          const newItem = {
-            codTributo: item.codtributo,
-            descripcion: item.descripcion,
-            uniMedida: item.unimedida,
-            codigo: item.codigo,
-            cantidad: item.cantidad,
-            numItem: item.numitem,
-            tributos: [item.tributos.toString()],
-            noGravado: item.nogravado,
-            psv: item.psv,
-            montoDescu: item.montodescu,
-            numeroDocumento: item.numerodocumento,
-            precioUni: item.preciouni,
-            ventaGravada: item.ventagravada,
-            ventaExenta: item.ventaexenta,
-            ventaNoSuj: item.ventanosuj,
-            tipoItem: item.tipoitem,
-          };
-          return newItem;
-        });
-        console.log(newItems);
-        setItems(newItems);
-      } else if (content.tipo === "01") {
-        if (!data[0]?.tributos || data[0]?.tributos === null) {
-          const newItems = data.map((item) => {
-            const newItem = {
-              codTributo: item.codtributo,
-              descripcion: item.descripcion,
-              uniMedida: item.unimedida,
-              codigo: item.codigo,
-              cantidad: item.cantidad,
-              numItem: item.numitem,
-              tributos: item.tributos,
-              ivaItem: item.ivaitem,
-              noGravado: item.nogravado,
-              psv: item.psv,
-              montoDescu: item.montodescu,
-              numeroDocumento: item.numerodocumento,
-              precioUni: item.preciouni,
-              ventaGravada: item.ventagravada,
-              ventaExenta: item.ventaexenta,
-              ventaNoSuj: item.ventanosuj,
-              tipoItem: item.tipoitem,
-            };
-            return newItem;
-          });
-
-          console.log(newItems);
-          setItems(newItems);
-        } else {
-          const newItems = data.map((item) => {
-            const arr = [];
-            arr.push(String(item.tributos));
-            const newItem = {
-              codTributo: item.codtributo,
-              descripcion: item.descripcion,
-              uniMedida: item.unimedida,
-              codigo: item.codigo,
-              cantidad: item.cantidad,
-              numItem: item.numitem,
-              tributos: arr,
-              ivaItem: item.ivaitem,
-              noGravado: item.nogravado,
-              psv: item.psv,
-              montoDescu: item.montodescu,
-              numeroDocumento: item.numerodocumento,
-              precioUni: item.preciouni,
-              ventaGravada: item.ventagravada,
-              ventaExenta: item.ventaexenta,
-              ventaNoSuj: item.ventanosuj,
-              tipoItem: item.tipoitem,
-            };
-            return newItem;
-          });
-
-          console.log(newItems);
-          setItems(newItems);
-        }
-      } else if (content.tipo === "14") {
-        const newItems = data.map((item) => {
-          const newItem = {
-            numItem: item.numitem,
-            codigo: item.codigo,
-            uniMedida: item.unimedida,
-            precioUni: item.preciouni,
-            montoDescu: item.montodescu,
-            compra: item.ventaexenta,
-            descripcion: item.descripcion,
-            cantidad: item.cantidad,
-            tipoItem: item.tipoitem,
-          };
-          return newItem;
-        });
-
-        console.log(newItems);
-        setItems(newItems);
-      } else if (content.tipo === "05") {
-        const newItems = data.map((item) => {
-          const newItem = {
-            codTributo: item.codtributo,
-            descripcion: item.descripcion,
-            uniMedida: item.unimedida,
-            codigo: item.codigo,
-            cantidad: item.cantidad,
-            numItem: item.numitem,
-            tributos: [item.tributos.toString()],
-            montoDescu: item.montodescu,
-            numeroDocumento: item.numerodocumento,
-            precioUni: item.preciouni,
-            ventaGravada: item.ventagravada,
-            ventaExenta: item.ventaexenta,
-            ventaNoSuj: item.ventanosuj,
-            tipoItem: item.tipoitem,
-          };
-          return newItem;
-        });
-
-        console.log(newItems);
-        setItems(newItems);
-      } else if (content.tipo === "06") {
-        const newItems = data.map((item) => {
-          const newItem = {
-            codTributo: item.codtributo,
-            descripcion: item.descripcion,
-            uniMedida: item.unimedida,
-            codigo: item.codigo,
-            cantidad: item.cantidad,
-            numItem: item.numitem,
-            tributos: [item.tributos.toString()],
-            montoDescu: item.montodescu,
-            numeroDocumento: item.numerodocumento,
-            precioUni: item.preciouni,
-            ventaGravada: item.ventagravada,
-            ventaExenta: item.ventaexenta,
-            ventaNoSuj: item.ventanosuj,
-            tipoItem: item.tipoitem,
-          };
-          return newItem;
-        });
-
-        console.log(newItems);
-        setItems(newItems);
-      } else if (content.tipo === "08") {
-        const newItems = data.map((item) => {
-          /* here start form 1 and sum 1 each iteration to put numitem */
-          let numItem = 1;
-          const tributosNorm = (t) => (t?.[2] ? t : t ? [String(t)] : null);
-          const newItem = {
-            numItem: numItem++,
-            tipoDte: item.tipodte,
-            tipoGeneracion: item.tipogeneracion,
-            numeroDocumento: item.numerodocumento,
-            fechaGeneracion: item.fechageneracion,
-            ventaNoSuj: item.ventanosuj,
-            ventaExenta: item.ventaexenta,
-            ventaGravada: item.ventagravada,
-            exportaciones: 0,
-            tributos: tributosNorm(item.tributos) /* REVIEW */,
-            ivaItem: item.ivaitem /* item.ivaitem */ /* REVIEW */,
-            obsItem: item.obsitem,
-
-            /* codTributo: item.codtributo,
-            descripcion: item.descripcion,
-            uniMedida: item.unimedida,
-            codigo: item.codigo,
-            cantidad: item.cantidad,
-
-            montoDescu: item.montodescu,
-            precioUni: item.preciouni,
-            tipoItem: item.tipoitem, */
-          };
-          return newItem;
-        });
-
-        console.log(newItems);
-        setItems(newItems);
-      }
+        setItems(mapearItemsDesdeBD(data));
       } catch (error) {
         console.error("Error en itemsdata:", error);
         // Reintentar con espera exponencial si es error de recursos insuficientes
@@ -516,6 +544,21 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
     /* Firm DTE */
     // Cuenta vencida por falta de pago: no puede firmar ni enviar al ministerio.
     if (await guardPayment()) return;
+    // Asegurar que los ítems estén cargados antes de firmar.
+    let itemsFirmar = Array.isArray(Listitems) ? Listitems : [];
+    if (itemsFirmar.length === 0) {
+      try {
+        itemsFirmar = await cargarItemsDesdeBD();
+        setItems(itemsFirmar);
+      } catch (e) {
+        console.error("No se pudieron cargar los ítems:", e);
+        itemsFirmar = [];
+      }
+    }
+    if (itemsFirmar.length === 0) {
+      toast.error("El documento no tiene ítems cargados. Recarga la página e intenta de nuevo.");
+      return;
+    }
     /* -----------------CONST DATA--------------------------- */
     try {
       if (content.tipo == "01") {
@@ -573,7 +616,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           },
           otrosDocumentos: content.otrosdocumentos,
           ventaTercero: content.ventatercero,
-          cuerpoDocumento: Listitems,
+          cuerpoDocumento: itemsFirmar,
           resumen: {
             condicionOperacion: content.condicionoperacion,
             totalIva: parseFloat(content.iva_percibido) /* pending */,
@@ -687,7 +730,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
           },
           otrosDocumentos: content.otrosdocumentos,
           ventaTercero: content.ventatercero,
-          cuerpoDocumento: Listitems,
+          cuerpoDocumento: itemsFirmar,
           resumen: {
             condicionOperacion: content.condicionoperacion,
             saldoFavor: content.saldofavor,
@@ -789,7 +832,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
-          cuerpoDocumento: Listitems,
+          cuerpoDocumento: itemsFirmar,
           resumen: {
             totalCompra: content.montototaloperacion,
             descu: content.descuexenta,
@@ -871,16 +914,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             codActividad: content.re_codactividad,
             descActividad: content.re_actividad_economica,
             nombreComercial: content.re_numdocumento,
-            direccion: {
-              municipio: content.municipio,
-              departamento: content.departamento,
-              complemento: content.complemento,
-            },
+            direccion: direccionReceptorDesdePlantilla(),
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
           ventaTercero: content.ventatercero,
-          cuerpoDocumento: Listitems,
+          cuerpoDocumento: itemsFirmar,
           resumen: {
             totalNoSuj: content.totalnosuj,
             totalExenta: content.totalexenta,
@@ -989,16 +1028,12 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             codActividad: content.re_codactividad,
             descActividad: content.re_actividad_economica,
             nombreComercial: content.re_numdocumento,
-            direccion: {
-              municipio: address[1],
-              departamento: address[0],
-              complemento: address[2],
-            },
+            direccion: direccionReceptorDesdePlantilla(),
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
           ventaTercero: content.ventatercero,
-          cuerpoDocumento: Listitems,
+          cuerpoDocumento: itemsFirmar,
           resumen: {
             totalNoSuj: content.totalnosuj,
             totalExenta: content.totalexenta,
@@ -1122,7 +1157,7 @@ const FrameComponent1 = ({ key, content, user, canDelete = false }) => {
             correo: content.re_correo_electronico,
             telefono: content.re_numero_telefono,
           },
-          cuerpoDocumento: Listitems,
+          cuerpoDocumento: itemsFirmar,
           resumen: {
             totalNoSuj: content.totalnosuj,
             totalExenta: content.totalexenta,
