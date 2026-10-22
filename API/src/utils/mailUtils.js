@@ -1,5 +1,6 @@
 /* file to create objects */
 const PDFDocument = require('pdfkit');
+const { drawObservaciones } = require('./pdfObservaciones');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
@@ -1966,7 +1967,7 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
 
 
         const checkAndAddNewPage = (pdfDoc, y) => {
-            if (y > 620) {
+            if (y > 590) { // 590: deja espacio al recuadro de observaciones (130 de alto)
                 pdfDoc.addPage();
                 return 30;
             }
@@ -1978,39 +1979,8 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         // Añadir espacio entre la tabla y el resumen
         y = y + 15;
 
-        pdfDoc.roundedRect(20, y + 8, 200, 100, 8).fill('#EAEAEA').stroke('#000'); // Background box for sender
-
-        /* Truncate the text */
-
-
-
-        pdfDoc.fillColor('#1E3256').fontSize(9).text('Observaciones', 28, y + 14);
-        const funcenter = (text, startY, startX, maxCharsPerLine = 45, lineHeight = 10, maxChars = 300) => {
-            // Handle null or undefined text
-            if (!text) {
-                text = '';
-            }
-            // Truncate text if it exceeds the maximum number of characters
-            const truncatedText = text.length > maxChars ? text.slice(0, maxChars) : text;
-
-            // Set font size
-            pdfDoc.fontSize(7).fillColor('#000000');
-
-            // Loop through the truncated text and slice it into lines
-            for (let i = 0; i < truncatedText.length; i += maxCharsPerLine) {
-                // Extract a line of text
-                const line = truncatedText.slice(i, i + maxCharsPerLine);
-
-                // Calculate y position for each line
-                const yPosition = startY + (Math.floor(i / maxCharsPerLine) * lineHeight);
-
-                // Add text to PDF
-                pdfDoc.text(line, startX, yPosition);
-            }
-        };
-
-        // Example usage - handle null/undefined observaciones
-        funcenter(plantillaDB.observaciones || '', y + 26, 28);
+        // Observaciones: texto ajustado al recuadro (reduce la letra si no cabe).
+        drawObservaciones(pdfDoc, plantillaDB.observaciones, y);
         var ivaper = Number(plantillaDB.iva_percibido)
 
         if (plantillaDB.tipo === "03") {
@@ -2117,9 +2087,9 @@ const sendMail = async(userDB, plantillaDB, itemsDB) => {
         }
 
 
-        funcenter2(plantillaDB.cantidad_en_letras, y + 140, 20);
-        pdfDoc.fontSize(8).fillColor('#1E3256').text(`Responsable emisor: ${plantillaDB.documento_e}`, 20, y + 115, );
-        pdfDoc.fontSize(8).fillColor('#1E3256').text(`Responsable receptor: ${plantillaDB.documento_r}`, 20, y + 125, );
+        funcenter2(plantillaDB.cantidad_en_letras, y + 170, 20);
+        pdfDoc.fontSize(8).fillColor('#1E3256').text(`Responsable emisor: ${plantillaDB.documento_e}`, 20, y + 145, );
+        pdfDoc.fontSize(8).fillColor('#1E3256').text(`Responsable receptor: ${plantillaDB.documento_r}`, 20, y + 155, );
         /* text in the bottom right bold */
 
 
